@@ -1,0 +1,18 @@
+{
+  "root": true,
+  "env": { "es6": true, "browser": true, "node": true },
+  "extends": ["plugin:@typescript-eslint/recommended", "plugin:react-hooks/recommended"],
+  "ignorePatterns": ["dist", ".eslintrc"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["react-refresh"],
+  "rules": {
+    "react-refresh/only-export-components": ["warn", { "allowConstantExport": true }],
+    "no-var": "warn",
+    "eqeqeq": "warn",
+    "prefer-template": "warn",
+    "max-params": ["error", 3],
+    "arrow-body-style": ["warn", "as-needed"],
+    "camelcase": ["warn", { "properties": "never" }],
+    "@typescript-eslint/no-unused-vars": ["off"]
+  }
+}
