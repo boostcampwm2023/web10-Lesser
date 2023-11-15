@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { BacklogsController } from './backlogs/backlogs.controller';
 import { SprintsController } from './sprints/sprints.controller';
 import { MembersController } from './members/members.controller';
 import { ProjectsController } from './projects/projects.controller';
@@ -42,7 +41,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   ],
   controllers: [
     AppController,
-    BacklogsController,
     SprintsController,
     MembersController,
     ProjectsController,
