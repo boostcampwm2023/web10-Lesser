@@ -30,7 +30,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         password: ConfigService.get('DATABASE_PASSWORD'),
         database: ConfigService.get('DATABASE_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
+        synchronize:
+          ConfigService.get('LESSER_ENVIRONMENT') == 'deploy' ? false : true,
       }),
     }),
     BacklogsModule,
