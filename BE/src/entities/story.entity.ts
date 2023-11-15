@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne } from 'typeorm';
+import { Epic } from './epic.entity';
 
 @Entity()
 export class Story extends BaseEntity {
@@ -7,4 +8,7 @@ export class Story extends BaseEntity {
 
   @Column()
   title: string;
+
+  @ManyToOne(() => Epic, (Epic) => Epic.id, { cascade: true, nullable: false })
+  epic: Epic;
 }
