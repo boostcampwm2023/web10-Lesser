@@ -7,9 +7,10 @@ export class BacklogsController {
   constructor(private readonly backlogsService: BacklogsService) {}
 
   @Post('Epic')
-  createEpic(
+  async createEpic(
     @Body(new ValidationPipe()) body: createBacklogsEpicDto,
-  ): Promise<void> {
-    return this.backlogsService.createEpic(body);
+  ): Promise<Record<string, never>> {
+    await this.backlogsService.createEpic(body);
+    return {};
   }
 }
