@@ -6,9 +6,7 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class BacklogsService {
-  constructor(
-    @InjectRepository(Epic) private EpicRepository: Repository<Epic>,
-  ) {}
+  constructor(@InjectRepository(Epic) private EpicRepository: Repository<Epic>) {}
 
   async createEpic(dto: createBacklogsEpicDto): Promise<void> {
     const newEpic = this.EpicRepository.create({ title: dto.epicTitle });
