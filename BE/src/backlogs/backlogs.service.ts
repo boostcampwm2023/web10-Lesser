@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { createBacklogsEpicDto } from 'src/dto/create-backlogs-epic.dto';
 import { createBacklogsStoryDto } from 'src/dto/create-backlogs-story.dto';
 import { createBacklogsTaskDto } from 'src/dto/create-backlogs-task.dto';
+import { updateBacklogsEpicDto } from 'src/dto/update-backlogs-epic.dto';
 import { Epic } from 'src/entities/epic.entity';
 import { Story } from 'src/entities/story.entity';
 import { Task } from 'src/entities/task.entity';
@@ -40,5 +41,11 @@ export class BacklogsService {
       story,
     });
     await this.taskRepository.save(newTask);
+  }
+
+  async updateEpic(dto: updateBacklogsEpicDto): Promise<void> {
+    const epic = await this.epicRepository.findOne({ where: { id: dto.epic.id } });
+    epic.title = dto.epic.title;
+    await this.epicRepository.save(epic);
   }
 }
