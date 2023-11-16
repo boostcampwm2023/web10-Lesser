@@ -2,17 +2,17 @@ import TaskCard from './TaskCard';
 import { Task } from '../../pages/sprint/SprintPage';
 
 interface ColumnBoardProps {
-  boardName: string;
   taskList: Task[];
 }
 
-const ColumnBoard = ({ boardName, taskList }: ColumnBoardProps) => (
-  <div>
-    <span>{boardName}</span>
-    {taskList.map(({ id, title, user, point }) => (
-      <TaskCard key={id} taskName={title} assignee={user} taskPoint={point} />
+const ColumnBoard = ({ taskList }: ColumnBoardProps) => (
+  <ul className="flex flex-col gap-3 p-5 border rounded-lg w-72 border-green-stroke">
+    {taskList.map(({ id, title, userName, point }) => (
+      <li>
+        <TaskCard key={id} id={id} title={title} assignee={userName} point={point} />
+      </li>
     ))}
-  </div>
+  </ul>
 );
 
 export default ColumnBoard;

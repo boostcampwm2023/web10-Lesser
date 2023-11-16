@@ -10,13 +10,13 @@ const PrograssBar = (props: PrograssBarProps) => {
   const percentage = Number(currentAmount / totalAmount) * 100;
 
   return (
-    <div>
-      <span>{startText}</span>
-      <div>
-        <div>배경바</div>
-        <div>{percentage}</div>
+    <div className="flex items-center gap-3">
+      <span className="text-xs font-bold">{startText}</span>
+      <div className="relative">
+        <div className="h-2 rounded-lg w-44 bg-green-stroke"></div>
+        <div className="absolute top-0 w-12 h-2 rounded-lg bg-starbucks-green"></div>
       </div>
-      <span>{endText}</span>
+      <span className="text-xs font-bold">{endText}</span>
     </div>
   );
 };

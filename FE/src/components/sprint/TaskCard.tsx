@@ -1,16 +1,18 @@
 interface TaskCardProps {
-  taskName: string;
+  id: number;
+  title: string;
   assignee?: string;
-  taskPoint: number;
+  point: number;
 }
 
-const TaskCard = ({ taskName, assignee, taskPoint }: TaskCardProps) => (
-  <div>
-    <span>{taskName}</span>
-    <div>
+const TaskCard = ({ id, title, assignee, point }: TaskCardProps) => (
+  <div className="flex flex-col gap-5 p-3 text-sm border rounded-lg border-green-stroke bg-cool-neutral">
+    <p className="font-medium">{title}</p>
+    <p className="flex justify-between text-starbucks-green">
+      <span className="font-bold">{id}</span>
       <span>{assignee}</span>
-      <span>{taskPoint}시간</span>
-    </div>
+      <span>{point} point</span>
+    </p>
   </div>
 );
 
