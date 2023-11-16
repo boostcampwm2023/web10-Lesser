@@ -9,18 +9,18 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class BacklogsService {
   constructor(
-    @InjectRepository(Epic) private EpicRepository: Repository<Epic>,
-    @InjectRepository(Story) private StoryRepository: Repository<Story>,
+    @InjectRepository(Epic) private epicRepository: Repository<Epic>,
+    @InjectRepository(Story) private storyRepository: Repository<Story>,
   ) {}
 
   async createEpic(dto: createBacklogsEpicDto): Promise<void> {
-    const newEpic = this.EpicRepository.create({ title: dto.epicTitle });
-    await this.EpicRepository.save(newEpic);
+    const newEpic = this.epicRepository.create({ title: dto.epicTitle });
+    await this.storyRepository.save(newEpic);
   }
 
   async createStory(dto: createBacklogsStoryDto): Promise<void> {
-    const epic = await this.EpicRepository.findOne({ where: { id: dto.projectId } });
-    const newStory = this.StoryRepository.create({ title: dto.story.title, epic });
-    await this.StoryRepository.save(newStory);
+    const epic = await this.epicRepository.findOne({ where: { id: dto.projectId } });
+    const newStory = this.storyRepository.create({ title: dto.story.title, epic });
+    await this.storyRepository.save(newStory);
   }
 }

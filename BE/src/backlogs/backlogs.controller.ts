@@ -14,7 +14,6 @@ export class BacklogsController {
   }
   @Post('Story')
   async createStory(@Body(new ValidationPipe()) body: createBacklogsStoryDto): Promise<Record<string, never>> {
-    console.log('here');
     await this.backlogsService.createStory(body);
     return {};
   }

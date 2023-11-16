@@ -1,7 +1,9 @@
-import { ValidateNested, IsInt } from 'class-validator';
+import { ValidateNested, IsInt, IsString } from 'class-validator';
 
 class storyDto {
+  @IsInt()
   epicId: number;
+  @IsString()
   title: string;
 }
 
