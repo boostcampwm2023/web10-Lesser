@@ -1,7 +1,8 @@
-import { Body, Controller, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { createBacklogsEpicDto } from 'src/dto/create-backlogs-epic.dto';
 import { createBacklogsStoryDto } from 'src/dto/create-backlogs-story.dto';
 import { createBacklogsTaskDto } from 'src/dto/create-backlogs-task.dto';
+import { deleteBacklogsEpicDto } from 'src/dto/delete-backlogs-epic.dto';
 import { updateBacklogsEpicDto } from 'src/dto/update-backlogs-epic.dto';
 import { BacklogsService } from './backlogs.service';
 
@@ -19,6 +20,12 @@ export class BacklogsController {
   @Put('Epic')
   async updateEpic(@Body() body: updateBacklogsEpicDto): Promise<Record<string, never>> {
     await this.backlogsService.updateEpic(body);
+    return {};
+  }
+
+  @Delete('Epic')
+  async DeleteEpic(@Body() body: deleteBacklogsEpicDto): Promise<Record<string, never>> {
+    await this.backlogsService.deleteEpic(body);
     return {};
   }
 
