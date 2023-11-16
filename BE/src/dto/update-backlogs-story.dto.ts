@@ -4,14 +4,14 @@ import { ValidateNested, IsInt, IsString, IsNotEmpty } from 'class-validator';
 class StoryDto {
   @IsInt()
   @IsNotEmpty()
-  epicId: number;
+  id: number;
 
   @IsString()
   @IsNotEmpty()
   title: string;
 }
 
-export class CreateBacklogsStoryDto {
+export class UpdateBacklogsStoryDto {
   @IsInt()
   @IsNotEmpty()
   projectId: number;

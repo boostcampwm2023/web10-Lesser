@@ -4,34 +4,30 @@ import { ValidateNested, IsInt, IsString, IsNotEmpty, IsOptional } from 'class-v
 class TaskDto {
   @IsInt()
   @IsNotEmpty()
-  epicId: number;
-
-  @IsInt()
-  @IsNotEmpty()
-  storyId: number;
+  id: number;
 
   @IsInt()
   @IsOptional()
   userId: number;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   title: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   state: string;
 
   @IsInt()
-  @IsNotEmpty()
+  @IsOptional()
   point: number;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   condition: string;
 }
 
-export class CreateBacklogsTaskDto {
+export class UpdateBacklogsTaskDto {
   @IsInt()
   @IsNotEmpty()
   projectId: number;

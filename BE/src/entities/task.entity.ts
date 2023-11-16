@@ -22,9 +22,9 @@ export class Task extends BaseEntity {
   @Column({ nullable: true })
   userId: number;
 
-  @ManyToOne(() => Epic, (Epic) => Epic.id, { nullable: false })
+  @ManyToOne(() => Epic, (Epic) => Epic.id, { nullable: false, onDelete: 'CASCADE' })
   epic: Epic;
 
-  @ManyToOne(() => Story, (Story) => Story.id, { nullable: false })
+  @ManyToOne(() => Story, (Story) => Story.id, { nullable: false, onDelete: 'CASCADE' })
   story: Story;
 }
