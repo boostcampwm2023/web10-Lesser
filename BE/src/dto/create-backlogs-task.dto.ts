@@ -2,42 +2,42 @@ import { Type } from 'class-transformer';
 import { ValidateNested, IsInt, IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 class taskDto {
-  @IsNotEmpty()
   @IsInt()
+  @IsNotEmpty()
   epicId: number;
 
-  @IsNotEmpty()
   @IsInt()
+  @IsNotEmpty()
   storyId: number;
 
-  @IsOptional()
   @IsInt()
+  @IsOptional()
   userId: number;
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   title: string;
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   state: string;
 
-  @IsNotEmpty()
   @IsInt()
+  @IsNotEmpty()
   point: number;
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   condition: string;
 }
 
 export class createBacklogsTaskDto {
-  @IsNotEmpty()
   @IsInt()
+  @IsNotEmpty()
   projectId: number;
 
-  @IsNotEmpty()
-  @ValidateNested()
   @Type(() => taskDto)
+  @ValidateNested()
+  @IsNotEmpty()
   task: taskDto;
 }
