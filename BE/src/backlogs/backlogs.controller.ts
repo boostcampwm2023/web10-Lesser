@@ -3,6 +3,7 @@ import { CreateBacklogsEpicDto } from 'src/dto/create-backlogs-epic.dto';
 import { CreateBacklogsStoryDto } from 'src/dto/create-backlogs-story.dto';
 import { CreateBacklogsTaskDto } from 'src/dto/create-backlogs-task.dto';
 import { DeleteBacklogsEpicDto } from 'src/dto/delete-backlogs-epic.dto';
+import { DeleteBacklogsStoryDto } from 'src/dto/delete-backlogs-story.dto';
 import { UpdateBacklogsEpicDto } from 'src/dto/update-backlogs-epic.dto';
 import { UpdateBacklogsStoryDto } from 'src/dto/update-backlogs-story.dto';
 import { BacklogsService } from './backlogs.service';
@@ -35,9 +36,16 @@ export class BacklogsController {
     await this.backlogsService.createStory(body);
     return {};
   }
+
   @Put('Story')
   async updateStory(@Body() body: UpdateBacklogsStoryDto): Promise<Record<string, never>> {
     await this.backlogsService.updateStory(body);
+    return {};
+  }
+
+  @Delete('Story')
+  async DeleteStory(@Body() body: DeleteBacklogsStoryDto): Promise<Record<string, never>> {
+    await this.backlogsService.deleteStory(body);
     return {};
   }
 
