@@ -1,6 +1,6 @@
 import { IsInt, IsNotEmpty } from 'class-validator';
 
-export class deleteBacklogsEpicDto {
+export class DeleteBacklogsEpicDto {
   @IsInt()
   @IsNotEmpty()
   projectId: number;

@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { ValidateNested, IsInt, IsString, IsNotEmpty } from 'class-validator';
 
-class epicDto {
+class EpicDto {
   @IsInt()
   @IsNotEmpty()
   id: number;
@@ -11,13 +11,13 @@ class epicDto {
   title: string;
 }
 
-export class updateBacklogsEpicDto {
+export class UpdateBacklogsEpicDto {
   @IsInt()
   @IsNotEmpty()
   projectId: number;
 
-  @Type(() => epicDto)
+  @Type(() => EpicDto)
   @ValidateNested()
   @IsNotEmpty()
-  epic: epicDto;
+  epic: EpicDto;
 }

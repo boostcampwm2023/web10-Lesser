@@ -11,7 +11,7 @@ class storyDto {
   title: string;
 }
 
-export class createBacklogsStoryDto {
+export class CreateBacklogsStoryDto {
   @IsInt()
   @IsNotEmpty()
   projectId: number;
