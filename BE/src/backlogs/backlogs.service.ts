@@ -24,7 +24,7 @@ export class BacklogsService {
 
   async createEpic(dto: CreateBacklogsEpicDto): Promise<void> {
     const newEpic = this.epicRepository.create({ title: dto.epicTitle });
-    await this.storyRepository.save(newEpic);
+    await this.epicRepository.save(newEpic);
   }
 
   async createStory(dto: CreateBacklogsStoryDto): Promise<void> {
