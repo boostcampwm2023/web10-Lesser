@@ -2,11 +2,13 @@ import { useState } from 'react';
 import PrograssBar from '../../components/common/ProgressBar/ProgressBar';
 import KanbanBoard from '../../components/sprint/KanbanBoard';
 import BoardHeader from '../../components/sprint/BoardHeader';
+import FilterDropdown from '../../components/sprint/FilterDropdown';
+import { UserFilter, TaskGroup } from '../../types/sprint';
 
 export interface Task {
   id: number;
   title: string;
-  user: string;
+  userName: string;
   point: number;
   state: 'ToDo' | 'InProgress' | 'Done';
   storyTitle: string;
@@ -18,52 +20,55 @@ interface Data {
 
 type TaskGroupedByStory = Record<string, Task[]>;
 
+const data: Data = {
+  taskList: [
+    {
+      storyTitle: '유저는 로그인할 수 있다.',
+      id: 2,
+      title: '로그인 DB저장',
+      userName: '승민',
+      point: 3,
+      state: 'ToDo',
+    },
+    {
+      storyTitle: '유저는 에픽을 생성할 수 있다.',
+      id: 3,
+      title: 'API작성하기',
+      userName: '수린',
+      point: 5,
+      state: 'ToDo',
+    },
+    {
+      storyTitle: '유저는 로그인할 수 있다.',
+      id: 4,
+      title: '회원가입 기능 구현',
+      userName: '승민',
+      point: 4,
+      state: 'InProgress',
+    },
+    {
+      storyTitle: '유저는 칸반보드를 조회할 수 있다.',
+      id: 5,
+      title: 'UI 디자인',
+      userName: '용현',
+      point: 2,
+      state: 'Done',
+    },
+  ],
+};
+
 const SprintPage = () => {
-  const [taskGroup, setTaskGroup] = useState<'all' | 'group'>('all');
+  const [taskGroup, setTaskGroup] = useState<TaskGroup>('all');
+  const [userToFilter, setUserToFilter] = useState<UserFilter>('전체');
+  const [dropdownOpend, setDropdownOpend] = useState<boolean>(false);
+  const [taskList, setTaskList] = useState<Task[]>(data.taskList);
 
-  const data: Data = {
-    taskList: [
-      {
-        storyTitle: '유저는 로그인할 수 있다.',
-        id: 2,
-        title: '로그인 DB저장',
-        user: '1',
-        point: 3,
-        state: 'ToDo',
-      },
-      {
-        storyTitle: '유저는 에픽을 생성할 수 있다.',
-        id: 3,
-        title: 'API작성하기',
-        user: '4',
-        point: 5,
-        state: 'ToDo',
-      },
-      {
-        storyTitle: '유저는 로그인할 수 있다.',
-        id: 4,
-        title: '회원가입 기능 구현',
-        user: '3',
-        point: 4,
-        state: 'InProgress',
-      },
-      {
-        storyTitle: '유저는 칸반보드를 조회할 수 있다.',
-        id: 5,
-        title: 'UI 디자인',
-        user: '4',
-        point: 2,
-        state: 'Done',
-      },
-    ],
-  };
-
-  const todoList = data.taskList.filter(({ state }) => state === 'ToDo');
-  const inProgressList = data.taskList.filter(({ state }) => state === 'InProgress');
-  const doneList = data.taskList.filter(({ state }) => state === 'Done');
+  const todoList = taskList.filter(({ state }) => state === 'ToDo');
+  const inProgressList = taskList.filter(({ state }) => state === 'InProgress');
+  const doneList = taskList.filter(({ state }) => state === 'Done');
 
   // storyTitle을 기준으로 데이터를 나누기
-  const tasksByStory: TaskGroupedByStory = data.taskList.reduce((result: TaskGroupedByStory, current: Task) => {
+  const tasksByStory: TaskGroupedByStory = taskList.reduce((result: TaskGroupedByStory, current: Task) => {
     const storyTitle = current.storyTitle;
     result[storyTitle] = result[storyTitle] ?? [];
     result[storyTitle].push(current);
@@ -88,8 +93,21 @@ const SprintPage = () => {
     );
   });
 
-  const handleGroupButtonClick = () => {
-    setTaskGroup((taskGroup) => (taskGroup === 'all' ? 'group' : 'all'));
+  const handleGroupButtonClick = (taskGroup: TaskGroup): void => {
+    setTaskGroup(taskGroup);
+    setDropdownOpend(false);
+  };
+
+  const handleUserFilterButtonClick = (user: UserFilter): void => {
+    user === '전체'
+      ? setTaskList([...data.taskList])
+      : setTaskList([...data.taskList.filter(({ userName }) => user === userName)]);
+    setUserToFilter(user);
+    setDropdownOpend(false);
+  };
+
+  const handleFilterButtonClick = (): void => {
+    setDropdownOpend((prevValue) => !prevValue);
   };
 
   return (
@@ -104,16 +122,24 @@ const SprintPage = () => {
           <PrograssBar startText="태스크 60건" endText="완료 9건" totalAmount={60} currentAmount={9} />
         </div>
         <div className="flex gap-2">
-          <button
-            className="bg-starbucks-green text-true-white rounded py-1.5 px-4 font-bold text-xs"
-            onClick={handleGroupButtonClick}
-          >
-            필터
-          </button>
-          <button
-            className="bg-starbucks-green text-true-white rounded py-1.5 px-4 font-bold text-xs"
-            onClick={handleGroupButtonClick}
-          >
+          <div className="relative">
+            <button
+              onClick={handleFilterButtonClick}
+              className="bg-starbucks-green text-true-white rounded py-1.5 px-4 font-bold text-xs"
+            >
+              필터
+            </button>
+            {dropdownOpend && (
+              <FilterDropdown
+                userList={[{ name: '전체' }, { id: 4, name: '수린' }, { id: 2, name: '용현' }, { id: 1, name: '승민' }]}
+                userToFilter={userToFilter}
+                taskGroup={taskGroup}
+                onClickGroupFilterButton={handleGroupButtonClick}
+                onClickUserFilterButton={handleUserFilterButtonClick}
+              />
+            )}
+          </div>
+          <button className="bg-starbucks-green text-true-white rounded py-1.5 px-4 font-bold text-xs">
             스프린트 완료
           </button>
         </div>
