@@ -5,6 +5,7 @@ import { CreateBacklogsStoryDto } from 'src/dto/create-backlogs-story.dto';
 import { CreateBacklogsTaskDto } from 'src/dto/create-backlogs-task.dto';
 import { DeleteBacklogsEpicDto } from 'src/dto/delete-backlogs-epic.dto';
 import { DeleteBacklogsStoryDto } from 'src/dto/delete-backlogs-story.dto';
+import { DeleteBacklogsTaskDto } from 'src/dto/delete-backlogs-task.dto';
 import { UpdateBacklogsEpicDto } from 'src/dto/update-backlogs-epic.dto';
 import { UpdateBacklogsStoryDto } from 'src/dto/update-backlogs-story.dto';
 import { UpdateBacklogsTaskDto } from 'src/dto/update-backlogs-task.dto';
@@ -77,5 +78,10 @@ export class BacklogsService {
   async deleteStory(dto: DeleteBacklogsStoryDto): Promise<void> {
     const story = await this.storyRepository.findOne({ where: { id: dto.storyId } });
     await this.storyRepository.remove(story);
+  }
+
+  async deleteTask(dto: DeleteBacklogsTaskDto): Promise<void> {
+    const Task = await this.taskRepository.findOne({ where: { id: dto.taskId } });
+    await this.taskRepository.remove(Task);
   }
 }
