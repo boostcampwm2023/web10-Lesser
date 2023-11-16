@@ -2,25 +2,27 @@ import { Task } from '../../pages/sprint/SprintPage';
 import ColumnBoard from './ColumnBoard';
 
 interface KanbanBoardProps {
-  storyName?: string;
-  taskList: Task[];
+  storyTitle?: string;
+  storyId?: string;
+  todoList: Task[];
+  inProgressList: Task[];
+  doneList: Task[];
 }
 
-const KanbanBoard = ({ storyName, taskList }: KanbanBoardProps) => {
-  const todoList = taskList.filter(({ state }) => state === 'ToDo');
-  const inProgressList = taskList.filter(({ state }) => state === 'InProgress');
-  const doneList = taskList.filter(({ state }) => state === 'Done');
-
-  return (
-    <div>
-      {storyName && <span>{storyName}</span>}
-      <div>
-        <ColumnBoard boardName="Todo" taskList={todoList} />
-        <ColumnBoard boardName="In Progress" taskList={inProgressList} />
-        <ColumnBoard boardName="Done" taskList={doneList} />
-      </div>
+const KanbanBoard = ({ storyId, storyTitle, todoList, inProgressList, doneList }: KanbanBoardProps) => (
+  <div>
+    {storyTitle && (
+      <p className="flex items-center gap-2 mb-2.5">
+        <span className="text-sm font-bold text-starbucks-green">{storyId}</span>
+        <span className="text-xs font-medium ">{storyTitle}</span>
+      </p>
+    )}
+    <div className="flex justify-between">
+      <ColumnBoard taskList={todoList} />
+      <ColumnBoard taskList={inProgressList} />
+      <ColumnBoard taskList={doneList} />
     </div>
-  );
-};
+  </div>
+);
 
 export default KanbanBoard;
