@@ -5,6 +5,7 @@ import { CreateBacklogsStoryDto } from 'src/dto/create-backlogs-story.dto';
 import { CreateBacklogsTaskDto } from 'src/dto/create-backlogs-task.dto';
 import { DeleteBacklogsEpicDto } from 'src/dto/delete-backlogs-epic.dto';
 import { UpdateBacklogsEpicDto } from 'src/dto/update-backlogs-epic.dto';
+import { UpdateBacklogsStoryDto } from 'src/dto/update-backlogs-story.dto';
 import { Epic } from 'src/entities/epic.entity';
 import { Story } from 'src/entities/story.entity';
 import { Task } from 'src/entities/task.entity';
@@ -48,6 +49,12 @@ export class BacklogsService {
     const epic = await this.epicRepository.findOne({ where: { id: dto.epic.id } });
     epic.title = dto.epic.title;
     await this.epicRepository.save(epic);
+  }
+
+  async updateStory(dto: UpdateBacklogsStoryDto): Promise<void> {
+    const story = await this.storyRepository.findOne({ where: { id: dto.story.id } });
+    story.title = dto.story.title;
+    await this.storyRepository.save(story);
   }
 
   async deleteEpic(dto: DeleteBacklogsEpicDto): Promise<void> {
