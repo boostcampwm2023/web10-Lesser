@@ -28,9 +28,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: ConfigService.get('DATABASE_USER'),
         password: ConfigService.get('DATABASE_PASSWORD'),
         database: ConfigService.get('DATABASE_NAME'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize:
-          ConfigService.get('LESSER_ENVIRONMENT') == 'deploy' ? false : true,
+        entities: [`${__dirname}/**/*.entity{.ts,.js}`],
+        synchronize: ConfigService.get('LESSER_ENVIRONMENT') === 'deploy' ? false : true,
       }),
     }),
     BacklogsModule,
@@ -39,13 +38,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     ReviewsModule,
     SprintsModule,
   ],
-  controllers: [
-    AppController,
-    SprintsController,
-    MembersController,
-    ProjectsController,
-    ReviewsController,
-  ],
+  controllers: [AppController, SprintsController, MembersController, ProjectsController, ReviewsController],
   providers: [AppService],
 })
 export class AppModule {}

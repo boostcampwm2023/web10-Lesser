@@ -1,6 +1,7 @@
 import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
 import { createBacklogsEpicDto } from 'src/dto/create-backlogs-epic.dto';
 import { createBacklogsStoryDto } from 'src/dto/create-backlogs-story.dto';
+import { createBacklogsTaskDto } from 'src/dto/create-backlogs-task.dto';
 import { BacklogsService } from './backlogs.service';
 
 @Controller('backlogs')
@@ -15,6 +16,12 @@ export class BacklogsController {
   @Post('Story')
   async createStory(@Body(new ValidationPipe()) body: createBacklogsStoryDto): Promise<Record<string, never>> {
     await this.backlogsService.createStory(body);
+    return {};
+  }
+
+  @Post('Task')
+  async createTask(@Body(new ValidationPipe()) body: createBacklogsTaskDto) {
+    await this.backlogsService.createTask(body);
     return {};
   }
 }

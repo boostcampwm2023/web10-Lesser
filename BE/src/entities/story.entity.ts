@@ -9,6 +9,6 @@ export class Story extends BaseEntity {
   @Column()
   title: string;
 
-  @ManyToOne(() => Epic, (Epic) => Epic.id, { cascade: true, nullable: false })
+  @ManyToOne(() => Epic, (Epic) => Epic.id, { nullable: false })
   epic: Epic;
 }
