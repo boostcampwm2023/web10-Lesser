@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateBacklogsEpicResponseDto } from 'src/dto/create-backlogs-epic-response.dto';
 import { CreateBacklogsEpicDto } from 'src/dto/create-backlogs-epic.dto';
+import { CreateBacklogsStoryResponseDto } from 'src/dto/create-backlogs-story-response.dto';
 import { CreateBacklogsStoryDto } from 'src/dto/create-backlogs-story.dto';
+import { CreateBacklogsTaskResponseDto } from 'src/dto/create-backlogs-task-response.dto';
 import { CreateBacklogsTaskDto } from 'src/dto/create-backlogs-task.dto';
 import { DeleteBacklogsEpicDto } from 'src/dto/delete-backlogs-epic.dto';
 import { DeleteBacklogsStoryDto } from 'src/dto/delete-backlogs-story.dto';
@@ -22,18 +25,18 @@ export class BacklogsService {
     @InjectRepository(Task) private taskRepository: Repository<Task>,
   ) {}
 
-  async createEpic(dto: CreateBacklogsEpicDto): Promise<void> {
+  async createEpic(dto: CreateBacklogsEpicDto): Promise<CreateBacklogsEpicResponseDto> {
     const newEpic = this.epicRepository.create({ title: dto.epicTitle });
-    await this.epicRepository.save(newEpic);
+    return { epicId: (await this.epicRepository.save(newEpic)).id };
   }
 
-  async createStory(dto: CreateBacklogsStoryDto): Promise<void> {
+  async createStory(dto: CreateBacklogsStoryDto): Promise<CreateBacklogsStoryResponseDto> {
     const epic = await this.epicRepository.findOne({ where: { id: dto.story.epicId } });
     const newStory = this.storyRepository.create({ title: dto.story.title, epic });
-    await this.storyRepository.save(newStory);
+    return { storyId: (await this.storyRepository.save(newStory)).id };
   }
 
-  async createTask(dto: CreateBacklogsTaskDto): Promise<void> {
+  async createTask(dto: CreateBacklogsTaskDto): Promise<CreateBacklogsTaskResponseDto> {
     const epic = await this.epicRepository.findOne({ where: { id: dto.task.epicId } });
     const story = await this.storyRepository.findOne({ where: { id: dto.task.storyId } });
     const newTask = this.taskRepository.create({
@@ -45,7 +48,7 @@ export class BacklogsService {
       epic,
       story,
     });
-    await this.taskRepository.save(newTask);
+    return { taskId: (await this.taskRepository.save(newTask)).id };
   }
 
   async updateEpic(dto: UpdateBacklogsEpicDto): Promise<void> {
