@@ -64,13 +64,13 @@ export class BacklogsService {
   }
 
   async updateTask(dto: UpdateBacklogsTaskDto): Promise<void> {
-    const Task = await this.taskRepository.findOne({ where: { id: dto.task.id } });
-    Task.title = dto.task.title || Task.title;
-    Task.state = dto.task.state || Task.state;
-    Task.point = dto.task.point || Task.point;
-    Task.condition = dto.task.condition || Task.condition;
-    Task.userId = dto.task.userId || Task.userId;
-    await this.taskRepository.save(Task);
+    const task = await this.taskRepository.findOne({ where: { id: dto.task.id } });
+    task.title = dto.task.title || task.title;
+    task.state = dto.task.state || task.state;
+    task.point = dto.task.point || task.point;
+    task.condition = dto.task.condition || task.condition;
+    task.userId = dto.task.userId || task.userId;
+    await this.taskRepository.save(task);
   }
 
   async deleteEpic(dto: DeleteBacklogsEpicDto): Promise<void> {
@@ -84,7 +84,7 @@ export class BacklogsService {
   }
 
   async deleteTask(dto: DeleteBacklogsTaskDto): Promise<void> {
-    const Task = await this.taskRepository.findOne({ where: { id: dto.taskId } });
-    await this.taskRepository.remove(Task);
+    const task = await this.taskRepository.findOne({ where: { id: dto.taskId } });
+    await this.taskRepository.remove(task);
   }
 }
