@@ -1,32 +1,33 @@
+import BlockForm from '../../components/backlog/BlockFrom';
 import EpicBlock from '../../components/backlog/EpicBlock';
-import useBlock from '../../hooks/useBlock';
+import useBlock, { BacklogState } from '../../hooks/useBlock';
+import { useState } from 'react';
 
 const BacklogPage = () => {
-  const { items, newItemTitle, showForm, formRef, handleAddButton, handleFormSubmit, setNewItemTitle } = useBlock();
+  const [backlogState, setBacklogState] = useState<BacklogState>({
+    epics: [],
+  });
+
+  const { newBlockTitle, formVisibility, formRef, handleAddBlock, handleFormSubmit, setNewBlockTitle } = useBlock({
+    currentBlock: 'epics',
+    setBlock: setBacklogState,
+  });
 
   return (
     <div className="border-2 border-black">
       <h1>Backlog Page</h1>
-      {items.map((item) => (
-        <EpicBlock key={item} epicTitle={item} />
+      {backlogState.epics.map((epic, index) => (
+        <EpicBlock key={epic.title} epicIndex={index} backlogState={backlogState} setBacklogState={setBacklogState} />
       ))}
-      {showForm ? (
-        <form ref={formRef} onSubmit={handleFormSubmit}>
-          <input
-            type="text"
-            placeholder={`Enter Epic Title`}
-            value={newItemTitle}
-            onChange={(e) => setNewItemTitle(e.target.value)}
-          />
-          <button className="border px-8" type="submit">
-            + Epic 생성하기
-          </button>
-        </form>
-      ) : (
-        <button className="border px-8" onClick={handleAddButton}>
-          + Epic 생성하기
-        </button>
-      )}
+      <BlockForm
+        formRef={formRef}
+        newBlockTitle={newBlockTitle}
+        setNewBlockTitle={setNewBlockTitle}
+        formVisibility={formVisibility}
+        handleFormSubmit={handleFormSubmit}
+        handleAddBlock={handleAddBlock}
+        buttonText="+ Epic 생성하기"
+      />
     </div>
   );
 };

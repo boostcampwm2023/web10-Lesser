@@ -1,31 +1,81 @@
 import { useState, useRef, useEffect } from 'react';
+import { TaskData } from '../components/backlog/TaskModal';
 
-const useBlock = () => {
-  const [items, setItems] = useState<string[]>([]);
-  const [newItemTitle, setNewItemTitle] = useState<string>('');
-  const [showForm, setShowForm] = useState<boolean>(false);
+export interface BacklogState {
+  epics: {
+    title: string;
+    stories: {
+      title: string;
+      tasks: TaskData[];
+    }[];
+  }[];
+}
+
+interface UseBlockProps {
+  currentBlock?: 'epics' | 'stories';
+  setBlock?: React.Dispatch<React.SetStateAction<BacklogState>>;
+  epicIndex?: number;
+}
+
+const useBlock = ({ currentBlock, setBlock, epicIndex }: UseBlockProps = {}) => {
+  const [newBlockTitle, setNewBlockTitle] = useState<string>('');
+  const [formVisibility, setFormVisibility] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const handleAddButton = () => {
-    setShowForm(!showForm);
+  const handleAddBlock = () => {
+    setFormVisibility(!formVisibility);
   };
 
   const handleClickOutside = (e: MouseEvent) => {
     if (formRef.current && !formRef.current.contains(e.target as Node)) {
-      setShowForm(false);
-      setNewItemTitle('');
+      setFormVisibility(false);
+      setNewBlockTitle('');
     }
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newItemTitle.trim() !== '') {
-      setItems([...items, newItemTitle]);
-      setNewItemTitle('');
-      setShowForm(false);
+    if (newBlockTitle.trim() === '') {
+      return;
     }
-  };
 
+    setBlock!((prevState) => {
+      if (currentBlock === 'epics') {
+        const newEpic = {
+          title: newBlockTitle,
+          stories: [],
+        };
+
+        return {
+          ...prevState,
+          epics: [...prevState.epics, newEpic],
+        };
+      } else {
+        const newStory = {
+          title: newBlockTitle,
+          tasks: [],
+        };
+
+        const updatedEpics = prevState.epics.map((epic, index) => {
+          if (index === epicIndex) {
+            return {
+              ...epic,
+              stories: [...epic.stories, newStory],
+            };
+          }
+          return epic;
+        });
+
+        return {
+          ...prevState,
+          epics: updatedEpics,
+        };
+      }
+    });
+
+    setNewBlockTitle('');
+    setFormVisibility(false);
+  };
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
 
@@ -35,13 +85,12 @@ const useBlock = () => {
   }, []);
 
   return {
-    items,
-    newItemTitle,
-    showForm,
+    newBlockTitle,
+    formVisibility,
     formRef,
-    handleAddButton,
+    handleAddBlock,
     handleFormSubmit,
-    setNewItemTitle,
+    setNewBlockTitle,
   };
 };
 

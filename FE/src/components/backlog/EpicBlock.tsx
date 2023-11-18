@@ -1,44 +1,51 @@
 import { useState } from 'react';
-import useBlock from '../../hooks/useBlock';
+import useBlock, { BacklogState } from '../../hooks/useBlock';
 import StoryBlock from './StoryBlock';
+import BlockForm from './BlockFrom';
 
 interface EpicBlockProps {
-  epicTitle: string;
+  epicIndex: number;
+  backlogState: BacklogState;
+  setBacklogState: React.Dispatch<React.SetStateAction<BacklogState>>;
 }
 
-const EpicBlock = ({ epicTitle }: EpicBlockProps) => {
-  const { items, newItemTitle, showForm, formRef, handleAddButton, handleFormSubmit, setNewItemTitle } = useBlock();
-  const [showEpic, setShowEpic] = useState<boolean>(true);
-  const handleToggleEpic = () => {
-    setShowEpic(!showEpic);
+const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps) => {
+  const { newBlockTitle, formVisibility, formRef, handleAddBlock, handleFormSubmit, setNewBlockTitle } = useBlock({
+    currentBlock: 'stories',
+    setBlock: setBacklogState,
+    epicIndex: epicIndex,
+  });
+  const [epicVisibility, setEpicVisibility] = useState<boolean>(true);
+  const handleEpicToggleButton = () => {
+    setEpicVisibility(!epicVisibility);
   };
 
   return (
     <div className="my-5 border-2 border-red-600">
       <div className="flex gap-2">
-        <h2>{epicTitle}</h2>
-        <button className="border" onClick={handleToggleEpic}>
+        <h2>{backlogState.epics[epicIndex].title}</h2>
+        <button className="border" onClick={handleEpicToggleButton}>
           Toggle Epic
         </button>
       </div>
-      {showEpic && items.map((item) => <StoryBlock key={item} storyTitle={item} />)}
-      {showForm ? (
-        <form ref={formRef} onSubmit={handleFormSubmit}>
-          <input
-            type="text"
-            placeholder={`Enter Story Title`}
-            value={newItemTitle}
-            onChange={(e) => setNewItemTitle(e.target.value)}
+      {epicVisibility &&
+        backlogState.epics[epicIndex].stories.map((story, storyIndex) => (
+          <StoryBlock
+            key={story.title}
+            {...{ epicIndex, storyIndex }}
+            backlogState={backlogState}
+            setBacklogState={setBacklogState}
           />
-          <button className="border px-8" type="submit">
-            + Story 생성하기
-          </button>
-        </form>
-      ) : (
-        <button className="border px-8" onClick={handleAddButton}>
-          + Story 생성하기
-        </button>
-      )}
+        ))}
+      <BlockForm
+        formRef={formRef}
+        newBlockTitle={newBlockTitle}
+        setNewBlockTitle={setNewBlockTitle}
+        formVisibility={formVisibility}
+        handleFormSubmit={handleFormSubmit}
+        handleAddBlock={handleAddBlock}
+        buttonText="+ Story 생성하기"
+      />
     </div>
   );
 };

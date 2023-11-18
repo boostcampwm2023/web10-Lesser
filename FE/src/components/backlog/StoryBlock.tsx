@@ -1,39 +1,39 @@
 import { useState } from 'react';
 import TaskBlock from './TaskBlock';
-import TaskModal, { TaskData } from './TaskModal';
+import useBlock, { BacklogState } from '../../hooks/useBlock';
+import TaskModal from './TaskModal';
 
 interface StoryBlockProps {
-  storyTitle: string;
+  epicIndex: number;
+  storyIndex: number;
+  backlogState: BacklogState;
+  setBacklogState: React.Dispatch<React.SetStateAction<BacklogState>>;
 }
 
-const StoryBlock = ({ storyTitle }: StoryBlockProps) => {
-  const [tasks, setTasks] = useState<TaskData[]>([]);
-  const [showStory, setShowStory] = useState<boolean>(true);
-  const [showModal, setShowModal] = useState<boolean>(false);
+const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: StoryBlockProps) => {
+  const { formVisibility, handleAddBlock } = useBlock();
+  const [storyVisibility, setStoryVisibility] = useState<boolean>(true);
 
-  const handleToggleStory = () => {
-    setShowStory(!showStory);
-  };
-
-  const handleToggleModal = () => {
-    setShowModal(!showModal);
-  };
-
-  const handleTaskCreate = (taskData: TaskData) => {
-    setTasks((prevTasks) => [...prevTasks, taskData]);
+  const handleStoryToggleButton = () => {
+    setStoryVisibility(!storyVisibility);
   };
 
   return (
     <div className="border-2 border-blue-600">
       <div className="flex gap-2">
-        <h3>{storyTitle}</h3>
-        <button className="border" onClick={handleToggleStory}>
+        <h3>{backlogState.epics[epicIndex].stories[storyIndex].title}</h3>
+        <button className="border" onClick={handleStoryToggleButton}>
           Toggle Story
         </button>
       </div>
-      {showStory && tasks.map((task, index) => <TaskBlock key={index} taskData={task} />)}
-      {showModal && <TaskModal onClose={handleToggleModal} onTaskCreate={handleTaskCreate} />}
-      <button className="border px-8" onClick={handleToggleModal}>
+      {storyVisibility &&
+        backlogState.epics[epicIndex].stories[storyIndex].tasks.map((task, index) => (
+          <TaskBlock key={index} taskData={task} />
+        ))}
+      {formVisibility && (
+        <TaskModal onClose={handleAddBlock} setBacklogState={setBacklogState} {...{ epicIndex, storyIndex }} />
+      )}
+      <button className="border px-8" onClick={handleAddBlock}>
         + Task 생성하기
       </button>
     </div>

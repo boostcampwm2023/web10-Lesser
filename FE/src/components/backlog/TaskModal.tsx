@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BacklogState } from '../../hooks/useBlock';
 
 export interface TaskData {
   title: string;
@@ -9,10 +10,12 @@ export interface TaskData {
 
 interface TaskModalProps {
   onClose: () => void;
-  onTaskCreate: (taskData: TaskData) => void;
+  setBacklogState: React.Dispatch<React.SetStateAction<BacklogState>>;
+  epicIndex: number;
+  storyIndex: number;
 }
 
-const TaskModal = ({ onClose, onTaskCreate }: TaskModalProps) => {
+const TaskModal = ({ onClose, setBacklogState, epicIndex, storyIndex }: TaskModalProps) => {
   const [taskData, setTaskData] = useState<TaskData>({
     title: '',
     member: '',
@@ -34,7 +37,20 @@ const TaskModal = ({ onClose, onTaskCreate }: TaskModalProps) => {
   const handleCreateTask = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    onTaskCreate(taskData);
+    setBacklogState((prevState) => {
+      const updatedEpics = [...prevState.epics];
+      const updatedStories = [...updatedEpics[epicIndex].stories];
+      updatedStories[storyIndex] = {
+        ...updatedStories[storyIndex],
+        tasks: [...updatedStories[storyIndex].tasks, taskData],
+      };
+      updatedEpics[epicIndex] = {
+        ...updatedEpics[epicIndex],
+        stories: updatedStories,
+      };
+      return { ...prevState, epics: updatedEpics };
+    });
+
     setTaskData({
       title: '',
       point: 0,
