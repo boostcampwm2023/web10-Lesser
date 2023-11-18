@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Patch, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateBacklogsEpicResponseDto } from 'src/dto/create-backlogs-epic-response.dto';
 import { CreateBacklogsEpicDto } from 'src/dto/create-backlogs-epic.dto';
 import { CreateBacklogsStoryResponseDto } from 'src/dto/create-backlogs-story-response.dto';
@@ -57,7 +57,7 @@ export class BacklogsController {
     return this.backlogsService.createTask(body);
   }
 
-  @Put('Task')
+  @Patch('Task')
   async updateTask(@Body() body: UpdateBacklogsTaskDto): Promise<Record<string, never>> {
     await this.backlogsService.updateTask(body);
     return {};
