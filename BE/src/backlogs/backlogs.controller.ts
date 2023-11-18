@@ -1,6 +1,9 @@
-import { Body, Controller, Delete, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Patch, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { CreateBacklogsEpicResponseDto } from 'src/dto/create-backlogs-epic-response.dto';
 import { CreateBacklogsEpicDto } from 'src/dto/create-backlogs-epic.dto';
+import { CreateBacklogsStoryResponseDto } from 'src/dto/create-backlogs-story-response.dto';
 import { CreateBacklogsStoryDto } from 'src/dto/create-backlogs-story.dto';
+import { CreateBacklogsTaskResponseDto } from 'src/dto/create-backlogs-task-response.dto';
 import { CreateBacklogsTaskDto } from 'src/dto/create-backlogs-task.dto';
 import { DeleteBacklogsEpicDto } from 'src/dto/delete-backlogs-epic.dto';
 import { DeleteBacklogsStoryDto } from 'src/dto/delete-backlogs-story.dto';
@@ -16,9 +19,8 @@ export class BacklogsController {
   constructor(private readonly backlogsService: BacklogsService) {}
 
   @Post('Epic')
-  async createEpic(@Body() body: CreateBacklogsEpicDto): Promise<Record<string, never>> {
-    await this.backlogsService.createEpic(body);
-    return {};
+  async createEpic(@Body() body: CreateBacklogsEpicDto): Promise<CreateBacklogsEpicResponseDto> {
+    return this.backlogsService.createEpic(body);
   }
 
   @Put('Epic')
@@ -34,9 +36,8 @@ export class BacklogsController {
   }
 
   @Post('Story')
-  async createStory(@Body() body: CreateBacklogsStoryDto): Promise<Record<string, never>> {
-    await this.backlogsService.createStory(body);
-    return {};
+  async createStory(@Body() body: CreateBacklogsStoryDto): Promise<CreateBacklogsStoryResponseDto> {
+    return this.backlogsService.createStory(body);
   }
 
   @Put('Story')
@@ -52,12 +53,11 @@ export class BacklogsController {
   }
 
   @Post('Task')
-  async createTask(@Body() body: CreateBacklogsTaskDto) {
-    await this.backlogsService.createTask(body);
-    return {};
+  async createTask(@Body() body: CreateBacklogsTaskDto): Promise<CreateBacklogsTaskResponseDto> {
+    return this.backlogsService.createTask(body);
   }
 
-  @Put('Task')
+  @Patch('Task')
   async updateTask(@Body() body: UpdateBacklogsTaskDto): Promise<Record<string, never>> {
     await this.backlogsService.updateTask(body);
     return {};
