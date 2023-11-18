@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@font-face {
+  font-family: 'pretendard';
+  font-style: normal;
+  font-weight: normal;
+  src: url('./assets/fonts/PretendardVariable.woff2') format('woff2');
+}
