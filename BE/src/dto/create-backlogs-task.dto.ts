@@ -12,7 +12,7 @@ class TaskDto {
 
   @IsInt()
   @IsOptional()
-  userId: number;
+  userId?: number;
 
   @IsString()
   @IsNotEmpty()

@@ -8,23 +8,23 @@ class TaskDto {
 
   @IsInt()
   @IsOptional()
-  userId: number;
+  userId?: number;
 
   @IsString()
   @IsOptional()
-  title: string;
+  title?: string;
 
   @IsString()
   @IsOptional()
-  state: string;
+  state?: string;
 
   @IsInt()
   @IsOptional()
-  point: number;
+  point?: number;
 
   @IsString()
   @IsOptional()
-  condition: string;
+  condition?: string;
 }
 
 export class UpdateBacklogsTaskDto {

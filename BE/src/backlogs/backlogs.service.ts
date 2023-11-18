@@ -64,13 +64,13 @@ export class BacklogsService {
   }
 
   async updateTask(dto: UpdateBacklogsTaskDto): Promise<void> {
-    const task = await this.taskRepository.findOne({ where: { id: dto.task.id } });
-    task.title = dto.task.title || task.title;
-    task.state = dto.task.state || task.state;
-    task.point = dto.task.point || task.point;
-    task.condition = dto.task.condition || task.condition;
-    task.userId = dto.task.userId || task.userId;
-    await this.taskRepository.save(task);
+    const updateTaskData: Partial<Task> = {};
+    if (dto.task.title !== undefined) updateTaskData.title = dto.task.title;
+    if (dto.task.state !== undefined) updateTaskData.state = dto.task.state;
+    if (dto.task.point !== undefined) updateTaskData.point = dto.task.point;
+    if (dto.task.condition !== undefined) updateTaskData.condition = dto.task.condition;
+    if (dto.task.userId !== undefined) updateTaskData.userId = dto.task.userId;
+    await this.taskRepository.update(dto.task.id, updateTaskData);
   }
 
   async deleteEpic(dto: DeleteBacklogsEpicDto): Promise<void> {
