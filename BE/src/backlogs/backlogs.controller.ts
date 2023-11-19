@@ -1,70 +1,76 @@
 import { Body, Controller, Delete, Patch, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
-import { CreateBacklogsEpicResponseDto } from 'src/dto/create-backlogs-epic-response.dto';
-import { CreateBacklogsEpicDto } from 'src/dto/create-backlogs-epic.dto';
-import { CreateBacklogsStoryResponseDto } from 'src/dto/create-backlogs-story-response.dto';
-import { CreateBacklogsStoryDto } from 'src/dto/create-backlogs-story.dto';
-import { CreateBacklogsTaskResponseDto } from 'src/dto/create-backlogs-task-response.dto';
-import { CreateBacklogsTaskDto } from 'src/dto/create-backlogs-task.dto';
-import { DeleteBacklogsEpicDto } from 'src/dto/delete-backlogs-epic.dto';
-import { DeleteBacklogsStoryDto } from 'src/dto/delete-backlogs-story.dto';
-import { DeleteBacklogsTaskDto } from 'src/dto/delete-backlogs-task.dto';
-import { UpdateBacklogsEpicDto } from 'src/dto/update-backlogs-epic.dto';
-import { UpdateBacklogsStoryDto } from 'src/dto/update-backlogs-story.dto';
-import { UpdateBacklogsTaskDto } from 'src/dto/update-backlogs-task.dto';
 import { BacklogsService } from './backlogs.service';
+import {
+  CreateBacklogsEpicRequestDto,
+  CreateBacklogsEpicResponseDto,
+  DeleteBacklogsEpicRequestDto,
+  UpdateBacklogsEpicRequestDto,
+} from './dto/epic.dto';
+import {
+  CreateBacklogsStoryRequestDto,
+  CreateBacklogsStoryResponseDto,
+  DeleteBacklogsStoryRequestDto,
+  UpdateBacklogsStoryRequestDto,
+} from './dto/Story.dto';
+import {
+  CreateBacklogsTaskRequestDto,
+  CreateBacklogsTaskResponseDto,
+  DeleteBacklogsTaskRequestDto,
+  UpdateBacklogsRequestTaskDto,
+} from './dto/Task.dto';
 
 @Controller('backlogs')
 @UsePipes(ValidationPipe)
 export class BacklogsController {
   constructor(private readonly backlogsService: BacklogsService) {}
 
-  @Post('Epic')
-  async createEpic(@Body() body: CreateBacklogsEpicDto): Promise<CreateBacklogsEpicResponseDto> {
+  @Post('epic')
+  async createEpic(@Body() body: CreateBacklogsEpicRequestDto): Promise<CreateBacklogsEpicResponseDto> {
     return this.backlogsService.createEpic(body);
   }
 
-  @Put('Epic')
-  async updateEpic(@Body() body: UpdateBacklogsEpicDto): Promise<Record<string, never>> {
+  @Put('epic')
+  async updateEpic(@Body() body: UpdateBacklogsEpicRequestDto): Promise<Record<string, never>> {
     await this.backlogsService.updateEpic(body);
     return {};
   }
 
-  @Delete('Epic')
-  async DeleteEpic(@Body() body: DeleteBacklogsEpicDto): Promise<Record<string, never>> {
+  @Delete('epic')
+  async DeleteEpic(@Body() body: DeleteBacklogsEpicRequestDto): Promise<Record<string, never>> {
     await this.backlogsService.deleteEpic(body);
     return {};
   }
 
-  @Post('Story')
-  async createStory(@Body() body: CreateBacklogsStoryDto): Promise<CreateBacklogsStoryResponseDto> {
+  @Post('story')
+  async createStory(@Body() body: CreateBacklogsStoryRequestDto): Promise<CreateBacklogsStoryResponseDto> {
     return this.backlogsService.createStory(body);
   }
 
-  @Put('Story')
-  async updateStory(@Body() body: UpdateBacklogsStoryDto): Promise<Record<string, never>> {
+  @Put('story')
+  async updateStory(@Body() body: UpdateBacklogsStoryRequestDto): Promise<Record<string, never>> {
     await this.backlogsService.updateStory(body);
     return {};
   }
 
-  @Delete('Story')
-  async DeleteStory(@Body() body: DeleteBacklogsStoryDto): Promise<Record<string, never>> {
+  @Delete('story')
+  async DeleteStory(@Body() body: DeleteBacklogsStoryRequestDto): Promise<Record<string, never>> {
     await this.backlogsService.deleteStory(body);
     return {};
   }
 
-  @Post('Task')
-  async createTask(@Body() body: CreateBacklogsTaskDto): Promise<CreateBacklogsTaskResponseDto> {
+  @Post('task')
+  async createTask(@Body() body: CreateBacklogsTaskRequestDto): Promise<CreateBacklogsTaskResponseDto> {
     return this.backlogsService.createTask(body);
   }
 
-  @Patch('Task')
-  async updateTask(@Body() body: UpdateBacklogsTaskDto): Promise<Record<string, never>> {
+  @Patch('task')
+  async updateTask(@Body() body: UpdateBacklogsRequestTaskDto): Promise<Record<string, never>> {
     await this.backlogsService.updateTask(body);
     return {};
   }
 
-  @Delete('Task')
-  async DeleteTask(@Body() body: DeleteBacklogsTaskDto): Promise<Record<string, never>> {
+  @Delete('task')
+  async DeleteTask(@Body() body: DeleteBacklogsTaskRequestDto): Promise<Record<string, never>> {
     await this.backlogsService.deleteTask(body);
     return {};
   }
