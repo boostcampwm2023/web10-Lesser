@@ -1,21 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateBacklogsEpicResponseDto } from 'src/dto/create-backlogs-epic-response.dto';
-import { CreateBacklogsEpicDto } from 'src/dto/create-backlogs-epic.dto';
-import { CreateBacklogsStoryResponseDto } from 'src/dto/create-backlogs-story-response.dto';
-import { CreateBacklogsStoryDto } from 'src/dto/create-backlogs-story.dto';
-import { CreateBacklogsTaskResponseDto } from 'src/dto/create-backlogs-task-response.dto';
-import { CreateBacklogsTaskDto } from 'src/dto/create-backlogs-task.dto';
-import { DeleteBacklogsEpicDto } from 'src/dto/delete-backlogs-epic.dto';
-import { DeleteBacklogsStoryDto } from 'src/dto/delete-backlogs-story.dto';
-import { DeleteBacklogsTaskDto } from 'src/dto/delete-backlogs-task.dto';
-import { UpdateBacklogsEpicDto } from 'src/dto/update-backlogs-epic.dto';
-import { UpdateBacklogsStoryDto } from 'src/dto/update-backlogs-story.dto';
-import { UpdateBacklogsTaskDto } from 'src/dto/update-backlogs-task.dto';
-import { Epic } from 'src/entities/epic.entity';
-import { Story } from 'src/entities/story.entity';
-import { Task } from 'src/entities/task.entity';
+import { Epic } from 'src/backlogs/entities/epic.entity';
+import { Story } from 'src/backlogs/entities/story.entity';
+import { Task } from 'src/backlogs/entities/task.entity';
 import { Repository } from 'typeorm';
+import {
+  CreateBacklogsEpicRequestDto,
+  CreateBacklogsEpicResponseDto,
+  DeleteBacklogsEpicRequestDto,
+  UpdateBacklogsEpicRequestDto,
+} from './dto/epic.dto';
+import {
+  CreateBacklogsStoryRequestDto,
+  CreateBacklogsStoryResponseDto,
+  DeleteBacklogsStoryRequestDto,
+  UpdateBacklogsStoryRequestDto,
+} from './dto/Story.dto';
+import {
+  CreateBacklogsTaskRequestDto,
+  CreateBacklogsTaskResponseDto,
+  DeleteBacklogsTaskRequestDto,
+  UpdateBacklogsRequestTaskDto,
+} from './dto/Task.dto';
 
 @Injectable()
 export class BacklogsService {
@@ -25,66 +31,72 @@ export class BacklogsService {
     @InjectRepository(Task) private taskRepository: Repository<Task>,
   ) {}
 
-  async createEpic(dto: CreateBacklogsEpicDto): Promise<CreateBacklogsEpicResponseDto> {
-    const newEpic = this.epicRepository.create({ title: dto.epicTitle });
-    return { epicId: (await this.epicRepository.save(newEpic)).id };
+  async createEpic(dto: CreateBacklogsEpicRequestDto): Promise<CreateBacklogsEpicResponseDto> {
+    const newEpic = this.epicRepository.create({ title: dto.title });
+    const savedEpic = await this.epicRepository.save(newEpic);
+    return { id: savedEpic.id };
   }
 
-  async createStory(dto: CreateBacklogsStoryDto): Promise<CreateBacklogsStoryResponseDto> {
-    const epic = await this.epicRepository.findOne({ where: { id: dto.story.epicId } });
-    const newStory = this.storyRepository.create({ title: dto.story.title, epic });
-    return { storyId: (await this.storyRepository.save(newStory)).id };
+  async createStory(dto: CreateBacklogsStoryRequestDto): Promise<CreateBacklogsStoryResponseDto> {
+    const epic = await this.epicRepository.findOne({ where: { id: dto.epicId } });
+    const newStory = this.storyRepository.create({ title: dto.title, epic });
+    const savedStory = await this.storyRepository.save(newStory);
+    return { id: savedStory.id };
   }
 
-  async createTask(dto: CreateBacklogsTaskDto): Promise<CreateBacklogsTaskResponseDto> {
-    const epic = await this.epicRepository.findOne({ where: { id: dto.task.epicId } });
-    const story = await this.storyRepository.findOne({ where: { id: dto.task.storyId } });
+  async createTask(dto: CreateBacklogsTaskRequestDto): Promise<CreateBacklogsTaskResponseDto> {
+    const story = await this.storyRepository.findOne({ where: { id: dto.storyId } });
     const newTask = this.taskRepository.create({
-      title: dto.task.title,
-      state: dto.task.state,
-      point: dto.task.point,
-      condition: dto.task.condition,
-      userId: dto.task.userId,
-      epic,
+      title: dto.title,
+      state: dto.state,
+      point: dto.point,
+      condition: dto.condition,
       story,
     });
-    return { taskId: (await this.taskRepository.save(newTask)).id };
+    if (dto.userId !== undefined) newTask.userId = dto.userId;
+    const savedTask = await this.taskRepository.save(newTask);
+    return { id: savedTask.id };
   }
 
-  async updateEpic(dto: UpdateBacklogsEpicDto): Promise<void> {
-    const epic = await this.epicRepository.findOne({ where: { id: dto.epic.id } });
-    epic.title = dto.epic.title;
+  async updateEpic(dto: UpdateBacklogsEpicRequestDto): Promise<void> {
+    const epic = await this.epicRepository.findOne({ where: { id: dto.id } });
+    epic.title = dto.title;
     await this.epicRepository.save(epic);
   }
 
-  async updateStory(dto: UpdateBacklogsStoryDto): Promise<void> {
-    const story = await this.storyRepository.findOne({ where: { id: dto.story.id } });
-    story.title = dto.story.title;
+  async updateStory(dto: UpdateBacklogsStoryRequestDto): Promise<void> {
+    const story = await this.storyRepository.findOne({ where: { id: dto.id } });
+    story.title = dto.title;
     await this.storyRepository.save(story);
   }
 
-  async updateTask(dto: UpdateBacklogsTaskDto): Promise<void> {
-    const Task = await this.taskRepository.findOne({ where: { id: dto.task.id } });
-    Task.title = dto.task.title || Task.title;
-    Task.state = dto.task.state || Task.state;
-    Task.point = dto.task.point || Task.point;
-    Task.condition = dto.task.condition || Task.condition;
-    Task.userId = dto.task.userId || Task.userId;
-    await this.taskRepository.save(Task);
+  async updateTask(dto: UpdateBacklogsRequestTaskDto): Promise<void> {
+    const updateTaskData: Partial<Task> = {};
+    if ((await this.taskRepository.findOne({ where: { id: dto.id } })) === null)
+      throw new NotFoundException(`Task with ID ${dto.id} not found`);
+    if (Object.keys(dto).length <= 1)
+      throw new BadRequestException('No update data provided. Please specify the fields to be updated.');
+
+    Object.keys(dto).forEach((key) => {
+      if (dto[key] !== undefined) {
+        updateTaskData[key] = dto[key];
+      }
+    });
+    await this.taskRepository.update(dto.id, updateTaskData);
   }
 
-  async deleteEpic(dto: DeleteBacklogsEpicDto): Promise<void> {
-    const epic = await this.epicRepository.findOne({ where: { id: dto.epicId } });
+  async deleteEpic(dto: DeleteBacklogsEpicRequestDto): Promise<void> {
+    const epic = await this.epicRepository.findOne({ where: { id: dto.id } });
     await this.epicRepository.remove(epic);
   }
 
-  async deleteStory(dto: DeleteBacklogsStoryDto): Promise<void> {
-    const story = await this.storyRepository.findOne({ where: { id: dto.storyId } });
+  async deleteStory(dto: DeleteBacklogsStoryRequestDto): Promise<void> {
+    const story = await this.storyRepository.findOne({ where: { id: dto.id } });
     await this.storyRepository.remove(story);
   }
 
-  async deleteTask(dto: DeleteBacklogsTaskDto): Promise<void> {
-    const Task = await this.taskRepository.findOne({ where: { id: dto.taskId } });
-    await this.taskRepository.remove(Task);
+  async deleteTask(dto: DeleteBacklogsTaskRequestDto): Promise<void> {
+    const task = await this.taskRepository.findOne({ where: { id: dto.id } });
+    await this.taskRepository.remove(task);
   }
 }
