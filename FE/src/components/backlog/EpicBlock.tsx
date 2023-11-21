@@ -1,7 +1,12 @@
 import { useState } from 'react';
-import useBlock, { BacklogState } from '../../hooks/useBlock';
+import useBlock from '../../hooks/useBlock';
 import StoryBlock from './StoryBlock';
 import BlockForm from './BlockFrom';
+import ChevronDownIcon from '../../assets/icons/ChevronDownIcon';
+import ChevronRightIcon from '../../assets/icons/ChevronRightIcon';
+import { BacklogState } from '../../types/backlog';
+import EditIcon from '../../assets/icons/EditIcon';
+import PlusIcon from '../../assets/icons/PlusIcon';
 
 interface EpicBlockProps {
   epicIndex: number;
@@ -10,25 +15,59 @@ interface EpicBlockProps {
 }
 
 const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps) => {
-  const { newBlockTitle, formVisibility, formRef, handleAddBlock, handleFormSubmit, setNewBlockTitle } = useBlock({
+  const epicTitle = backlogState.epics[epicIndex].title;
+  const {
+    newBlockTitle,
+    updateBlockTitle,
+    isNewFormVisible,
+    formRef,
+    handleAddBlockButtonClick,
+    handleFormSubmit,
+    setNewBlockTitle,
+    setUpdateBlockTitle,
+  } = useBlock({
     currentBlock: 'stories',
     setBlock: setBacklogState,
     epicIndex: epicIndex,
+    initailTitle: epicTitle,
   });
-  const [epicVisibility, setEpicVisibility] = useState<boolean>(true);
-  const handleEpicToggleButton = () => {
-    setEpicVisibility(!epicVisibility);
+  const [isEpicVisible, setEpicVisibility] = useState<boolean>(true);
+  const [isEditorVisible, setEditorVisibility] = useState<boolean>(false);
+  const handleEpicToggleButtonClick = () => {
+    setEpicVisibility(!isEpicVisible);
+  };
+  const handleEditButtonClick = () => {
+    setEditorVisibility(!isEditorVisible);
   };
 
   return (
-    <div className="my-5 border-2 border-red-600">
+    <div className="flex flex-col gap-4 p-4 border border-house-green rounded-md">
       <div className="flex gap-2">
-        <h2>{backlogState.epics[epicIndex].title}</h2>
-        <button className="border" onClick={handleEpicToggleButton}>
-          Toggle Epic
+        <button onClick={handleEpicToggleButtonClick}>
+          {isEpicVisible ? <ChevronDownIcon /> : <ChevronRightIcon />}
         </button>
+        <div className="flex w-full gap-3 text-house-green font-bold">
+          <span className="text-l">{`Epic${epicIndex + 1}`}</span>
+          {isEditorVisible ? (
+            <BlockForm
+              formRef={formRef}
+              newBlockTitle={updateBlockTitle}
+              setNewBlockTitle={setUpdateBlockTitle}
+              handleFormSubmit={(e) => handleFormSubmit(e, 'update')}
+              onClose={handleEditButtonClick}
+              currentBlock="Story"
+            />
+          ) : (
+            <button className="group flex gap-1 hover:underline items-center" onClick={handleEditButtonClick}>
+              {epicTitle}
+              <span className="hidden group-hover:flex">
+                <EditIcon color="text-house-green" size={16} />
+              </span>
+            </button>
+          )}
+        </div>
       </div>
-      {epicVisibility &&
+      {isEpicVisible &&
         backlogState.epics[epicIndex].stories.map((story, storyIndex) => (
           <StoryBlock
             key={story.title}
@@ -37,15 +76,25 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
             setBacklogState={setBacklogState}
           />
         ))}
-      <BlockForm
-        formRef={formRef}
-        newBlockTitle={newBlockTitle}
-        setNewBlockTitle={setNewBlockTitle}
-        formVisibility={formVisibility}
-        handleFormSubmit={handleFormSubmit}
-        handleAddBlock={handleAddBlock}
-        buttonText="+ Story 생성하기"
-      />
+
+      {isNewFormVisible ? (
+        <BlockForm
+          formRef={formRef}
+          newBlockTitle={newBlockTitle}
+          setNewBlockTitle={setNewBlockTitle}
+          handleFormSubmit={(e) => handleFormSubmit(e, 'add')}
+          onClose={handleAddBlockButtonClick}
+          currentBlock="Story"
+        />
+      ) : (
+        <button
+          className={`flex w-full py-1 rounded-md text-center justify-center bg-accent-green font-bold text-true-white`}
+          onClick={handleAddBlockButtonClick}
+        >
+          <PlusIcon color="text-true-white" />
+          {`Story 생성하기`}
+        </button>
+      )}
     </div>
   );
 };

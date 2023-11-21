@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import TaskBlock from './TaskBlock';
-import useBlock, { BacklogState } from '../../hooks/useBlock';
+import useBlock from '../../hooks/useBlock';
 import TaskModal from './TaskModal';
+import ChevronDownIcon from '../../assets/icons/ChevronDownIcon';
+import ChevronRightIcon from '../../assets/icons/ChevronRightIcon';
+import PlusIcon from '../../assets/icons/PlusIcon';
+import { BacklogState } from '../../types/backlog';
+import EditIcon from './../../assets/icons/EditIcon';
 
 interface StoryBlockProps {
   epicIndex: number;
@@ -11,30 +16,46 @@ interface StoryBlockProps {
 }
 
 const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: StoryBlockProps) => {
-  const { formVisibility, handleAddBlock } = useBlock();
-  const [storyVisibility, setStoryVisibility] = useState<boolean>(true);
+  const storyTitle = backlogState.epics[epicIndex].stories[storyIndex].title;
+  const { isNewFormVisible, handleAddBlockButtonClick } = useBlock();
+  const [isStoryVisible, setStoryVisibility] = useState<boolean>(true);
 
   const handleStoryToggleButton = () => {
-    setStoryVisibility(!storyVisibility);
+    setStoryVisibility(!isStoryVisible);
   };
 
   return (
-    <div className="border-2 border-blue-600">
-      <div className="flex gap-2">
-        <h3>{backlogState.epics[epicIndex].stories[storyIndex].title}</h3>
-        <button className="border" onClick={handleStoryToggleButton}>
-          Toggle Story
-        </button>
+    <div className="border border-transparent-green rounded-md">
+      <div className="flex gap-2 p-2 bg-cool-neutral border-b">
+        <button onClick={handleStoryToggleButton}>{isStoryVisible ? <ChevronDownIcon /> : <ChevronRightIcon />}</button>
+        <div className="flex gap-3 text-house-green font-bold">
+          <span className="text-starbucks-green">{`Story${storyIndex + 1}`}</span>
+          <button className="group flex gap-1 hover:underline items-center">
+            {storyTitle}
+            <span className="hidden group-hover:flex">
+              <EditIcon color="text-house-green" size={16} />
+            </span>
+          </button>
+        </div>
       </div>
-      {storyVisibility &&
+      {isStoryVisible &&
         backlogState.epics[epicIndex].stories[storyIndex].tasks.map((task, index) => (
           <TaskBlock key={index} taskData={task} />
         ))}
-      {formVisibility && (
-        <TaskModal onClose={handleAddBlock} setBacklogState={setBacklogState} {...{ epicIndex, storyIndex }} />
+      {isNewFormVisible && (
+        <TaskModal
+          onClose={handleAddBlockButtonClick}
+          setBacklogState={setBacklogState}
+          {...{ epicIndex, storyIndex }}
+        />
       )}
-      <button className="border px-8" onClick={handleAddBlock}>
-        + Task 생성하기
+
+      <button
+        className={`flex w-full py-1 rounded-md text-center justify-center bg-cool-neutral font-bold text-light-gray`}
+        onClick={handleAddBlockButtonClick}
+      >
+        <PlusIcon color="text-light-gray" />
+        {`Task 생성하기`}
       </button>
     </div>
   );

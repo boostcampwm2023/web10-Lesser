@@ -1,39 +1,35 @@
 import { useState, useRef, useEffect } from 'react';
-import { TaskData } from '../components/backlog/TaskModal';
+import { BacklogState } from '../types/backlog';
 
-export interface BacklogState {
-  epics: {
-    title: string;
-    stories: {
-      title: string;
-      tasks: TaskData[];
-    }[];
-  }[];
-}
-
-interface UseBlockProps {
+interface BlockOptions {
   currentBlock?: 'epics' | 'stories';
   setBlock?: React.Dispatch<React.SetStateAction<BacklogState>>;
   epicIndex?: number;
+  storyIndex?: number;
+  initailTitle?: string;
 }
 
-const useBlock = ({ currentBlock, setBlock, epicIndex }: UseBlockProps = {}) => {
+const useBlock = ({ currentBlock, setBlock, epicIndex, storyIndex, initailTitle }: BlockOptions = {}) => {
   const [newBlockTitle, setNewBlockTitle] = useState<string>('');
-  const [formVisibility, setFormVisibility] = useState<boolean>(false);
+  const [updateBlockTitle, setUpdateBlockTitle] = useState<string>(initailTitle!);
+  const [isNewFormVisible, setNewFormVisibility] = useState<boolean>(false);
+  // const [isUpdateFormVisible, setUpdateFormVisibility] = useState<boolean>(false);
+
   const formRef = useRef<HTMLFormElement>(null);
 
-  const handleAddBlock = () => {
-    setFormVisibility(!formVisibility);
+  const handleAddBlockButtonClick = () => {
+    setNewFormVisibility(!isNewFormVisible);
+    setNewBlockTitle('');
   };
 
-  const handleClickOutside = (e: MouseEvent) => {
+  const handleOutsideClick = (e: MouseEvent) => {
     if (formRef.current && !formRef.current.contains(e.target as Node)) {
-      setFormVisibility(false);
+      setNewFormVisibility(false);
       setNewBlockTitle('');
     }
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent, action: 'add' | 'update') => {
     e.preventDefault();
     if (newBlockTitle.trim() === '') {
       return;
@@ -41,56 +37,102 @@ const useBlock = ({ currentBlock, setBlock, epicIndex }: UseBlockProps = {}) => 
 
     setBlock!((prevState) => {
       if (currentBlock === 'epics') {
-        const newEpic = {
-          title: newBlockTitle,
-          stories: [],
-        };
+        if (action === 'add') {
+          const newEpic = {
+            title: newBlockTitle,
+            stories: [],
+          };
 
-        return {
-          ...prevState,
-          epics: [...prevState.epics, newEpic],
-        };
+          return {
+            ...prevState,
+            epics: [...prevState.epics, newEpic],
+          };
+        } else {
+          const updatedEpics = prevState.epics.map((epic, index) => {
+            if (index === epicIndex) {
+              return {
+                ...epic,
+                title: newBlockTitle,
+              };
+            }
+            return epic;
+          });
+
+          return {
+            ...prevState,
+            epics: updatedEpics,
+          };
+        }
       } else {
-        const newStory = {
-          title: newBlockTitle,
-          tasks: [],
-        };
+        if (action === 'add') {
+          const newStory = {
+            title: newBlockTitle,
+            tasks: [],
+          };
 
-        const updatedEpics = prevState.epics.map((epic, index) => {
-          if (index === epicIndex) {
-            return {
-              ...epic,
-              stories: [...epic.stories, newStory],
-            };
-          }
-          return epic;
-        });
+          const updatedEpics = prevState.epics.map((epic, index) => {
+            if (index === epicIndex) {
+              return {
+                ...epic,
+                stories: [...epic.stories, newStory],
+              };
+            }
+            return epic;
+          });
 
-        return {
-          ...prevState,
-          epics: updatedEpics,
-        };
+          return {
+            ...prevState,
+            epics: updatedEpics,
+          };
+        } else {
+          const updatedEpics = prevState.epics.map((epic, index) => {
+            if (index === epicIndex) {
+              const updatedStories = epic.stories.map((story, index) => {
+                if (index === storyIndex) {
+                  return {
+                    ...story,
+                    title: newBlockTitle,
+                  };
+                }
+                return story;
+              });
+
+              return {
+                ...epic,
+                stories: updatedStories,
+              };
+            }
+            return epic;
+          });
+
+          return {
+            ...prevState,
+            epics: updatedEpics,
+          };
+        }
       }
     });
 
     setNewBlockTitle('');
-    setFormVisibility(false);
+    setNewFormVisibility(false);
   };
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleOutsideClick);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, []);
 
   return {
     newBlockTitle,
-    formVisibility,
+    updateBlockTitle,
+    isNewFormVisible,
     formRef,
-    handleAddBlock,
+    handleAddBlockButtonClick,
     handleFormSubmit,
     setNewBlockTitle,
+    setUpdateBlockTitle,
   };
 };
 
