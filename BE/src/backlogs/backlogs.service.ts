@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Epic } from 'src/backlogs/entities/epic.entity';
 import { Story } from 'src/backlogs/entities/story.entity';
 import { Task } from 'src/backlogs/entities/task.entity';
 import { Project } from 'src/projects/entity/project.entity';
 import { Repository } from 'typeorm';
+import { MEpic, ReadBacklogResponseDto } from './dto/backlog.dto';
 import {
   CreateBacklogsEpicRequestDto,
   CreateBacklogsEpicResponseDto,
@@ -32,6 +33,39 @@ export class BacklogsService {
     @InjectRepository(Story) private storyRepository: Repository<Story>,
     @InjectRepository(Task) private taskRepository: Repository<Task>,
   ) {}
+
+  async readBacklog(id: number): Promise<ReadBacklogResponseDto> {
+    const project = await this.projectRepository.findOne({ where: { id } });
+    if (project === null) throw new NotFoundException(`Project with ID ${id} not found`);
+    const backlog: ReadBacklogResponseDto = { epicList: [] };
+    const epicDataList = await this.epicRepository.find({ where: { project: { id: project.id } } });
+    epicDataList.forEach((epicData) => {
+      backlog.epicList.push({ id: epicData.id, title: epicData.title, storyList: [] });
+    });
+    await Promise.all(backlog.epicList.map((epic) => this.populateEpicWithStories(epic)));
+    return backlog;
+  }
+
+  private async populateEpicWithStories(epic: MEpic) {
+    const storyDataList = await this.storyRepository.find({ where: { epic: { id: epic.id } } });
+    await Promise.all(storyDataList.map((storyData) => this.populateStoryWithTasks(storyData, epic)));
+  }
+
+  private async populateStoryWithTasks(storyData: Story, epic: MEpic) {
+    const story = { id: storyData.id, title: storyData.title, taskList: [] };
+    const taskDataList = await this.taskRepository.find({ where: { story: { id: story.id } } });
+    taskDataList.forEach((taskData) => {
+      story.taskList.push({
+        userName: null,
+        id: taskData.id,
+        title: taskData.title,
+        state: taskData.state,
+        point: taskData.point,
+        condition: taskData.condition,
+      });
+    });
+    epic.storyList.push(story);
+  }
 
   async createEpic(dto: CreateBacklogsEpicRequestDto): Promise<CreateBacklogsEpicResponseDto> {
     const project = await this.projectRepository.findOne({ where: { id: dto.projectId } });
