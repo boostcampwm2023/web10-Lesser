@@ -38,7 +38,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     ReviewsModule,
     SprintsModule,
   ],
-  controllers: [AppController, SprintsController, MembersController, ProjectsController, ReviewsController],
+  controllers: [AppController, SprintsController, MembersController, ReviewsController],
   providers: [AppService],
 })
 export class AppModule {}

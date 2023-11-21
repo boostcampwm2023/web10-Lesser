@@ -19,7 +19,6 @@ module.exports = {
     'no-var': 'warn',
     eqeqeq: 'warn',
     'prefer-template': 'warn',
-    'max-params': ['error', 3],
     'arrow-body-style': ['warn', 'as-needed'],
     camelcase: ['warn', { properties: 'never' }],
     '@typescript-eslint/no-unused-vars': ['off'],
