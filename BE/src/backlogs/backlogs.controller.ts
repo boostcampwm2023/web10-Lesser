@@ -5,7 +5,7 @@ import {
   CreateBacklogsEpicResponseDto,
   DeleteBacklogsEpicRequestDto,
   UpdateBacklogsEpicRequestDto,
-} from './dto/epic.dto';
+} from './dto/Epic.dto';
 import {
   CreateBacklogsStoryRequestDto,
   CreateBacklogsStoryResponseDto,
