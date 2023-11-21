@@ -10,11 +10,9 @@ const BacklogPage = () => {
     epics: [],
   });
 
-  const { newBlockTitle, isNewFormVisible, formRef, handleAddBlockButtonClick, handleFormSubmit, setNewBlockTitle } =
-    useBlock({
-      currentBlock: 'epics',
-      setBlock: setBacklogState,
-    });
+  const { isNewFormVisible, formRef, handleAddBlockButtonClick, handleFormSubmit } = useBlock({
+    setBlock: setBacklogState,
+  });
 
   return (
     <main className="flex flex-col gap-5 font-pretendard select-none">
@@ -27,12 +25,10 @@ const BacklogPage = () => {
       ))}
       {isNewFormVisible ? (
         <BlockForm
+          initialTitle=""
           formRef={formRef}
-          newBlockTitle={newBlockTitle}
-          setNewBlockTitle={setNewBlockTitle}
-          handleFormSubmit={(e) => handleFormSubmit(e, 'add')}
+          handleFormSubmit={(e) => handleFormSubmit(e, 'add', 'epics')}
           onClose={handleAddBlockButtonClick}
-          currentBlock="Epic"
         />
       ) : (
         <button

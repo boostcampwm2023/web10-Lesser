@@ -17,27 +17,20 @@ interface EpicBlockProps {
 const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps) => {
   const epicTitle = backlogState.epics[epicIndex].title;
   const {
-    newBlockTitle,
-    updateBlockTitle,
     isNewFormVisible,
+    isUpdateFormVisible,
     formRef,
     handleAddBlockButtonClick,
+    handleEditBlockButtonClick,
     handleFormSubmit,
-    setNewBlockTitle,
-    setUpdateBlockTitle,
   } = useBlock({
-    currentBlock: 'stories',
     setBlock: setBacklogState,
     epicIndex: epicIndex,
-    initailTitle: epicTitle,
   });
   const [isEpicVisible, setEpicVisibility] = useState<boolean>(true);
-  const [isEditorVisible, setEditorVisibility] = useState<boolean>(false);
+
   const handleEpicToggleButtonClick = () => {
     setEpicVisibility(!isEpicVisible);
-  };
-  const handleEditButtonClick = () => {
-    setEditorVisibility(!isEditorVisible);
   };
 
   return (
@@ -48,17 +41,15 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
         </button>
         <div className="flex w-full gap-3 text-house-green font-bold">
           <span className="text-l">{`Epic${epicIndex + 1}`}</span>
-          {isEditorVisible ? (
+          {isUpdateFormVisible ? (
             <BlockForm
+              initialTitle={epicTitle}
               formRef={formRef}
-              newBlockTitle={updateBlockTitle}
-              setNewBlockTitle={setUpdateBlockTitle}
-              handleFormSubmit={(e) => handleFormSubmit(e, 'update')}
-              onClose={handleEditButtonClick}
-              currentBlock="Story"
+              handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'epics')}
+              onClose={handleEditBlockButtonClick}
             />
           ) : (
-            <button className="group flex gap-1 hover:underline items-center" onClick={handleEditButtonClick}>
+            <button className="group flex gap-1 hover:underline items-center" onClick={handleEditBlockButtonClick}>
               {epicTitle}
               <span className="hidden group-hover:flex">
                 <EditIcon color="text-house-green" size={16} />
@@ -79,12 +70,10 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
 
       {isNewFormVisible ? (
         <BlockForm
+          initialTitle=""
           formRef={formRef}
-          newBlockTitle={newBlockTitle}
-          setNewBlockTitle={setNewBlockTitle}
-          handleFormSubmit={(e) => handleFormSubmit(e, 'add')}
+          handleFormSubmit={(e) => handleFormSubmit(e, 'add', 'stories')}
           onClose={handleAddBlockButtonClick}
-          currentBlock="Story"
         />
       ) : (
         <button

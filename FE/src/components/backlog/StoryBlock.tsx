@@ -7,6 +7,7 @@ import ChevronRightIcon from '../../assets/icons/ChevronRightIcon';
 import PlusIcon from '../../assets/icons/PlusIcon';
 import { BacklogState } from '../../types/backlog';
 import EditIcon from './../../assets/icons/EditIcon';
+import BlockForm from './BlockFrom';
 
 interface StoryBlockProps {
   epicIndex: number;
@@ -17,7 +18,18 @@ interface StoryBlockProps {
 
 const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: StoryBlockProps) => {
   const storyTitle = backlogState.epics[epicIndex].stories[storyIndex].title;
-  const { isNewFormVisible, handleAddBlockButtonClick } = useBlock();
+  const {
+    isNewFormVisible,
+    isUpdateFormVisible,
+    formRef,
+    handleAddBlockButtonClick,
+    handleEditBlockButtonClick,
+    handleFormSubmit,
+  } = useBlock({
+    setBlock: setBacklogState,
+    epicIndex: epicIndex,
+    storyIndex: storyIndex,
+  });
   const [isStoryVisible, setStoryVisibility] = useState<boolean>(true);
 
   const handleStoryToggleButton = () => {
@@ -28,14 +40,23 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
     <div className="border border-transparent-green rounded-md">
       <div className="flex gap-2 p-2 bg-cool-neutral border-b">
         <button onClick={handleStoryToggleButton}>{isStoryVisible ? <ChevronDownIcon /> : <ChevronRightIcon />}</button>
-        <div className="flex gap-3 text-house-green font-bold">
-          <span className="text-starbucks-green">{`Story${storyIndex + 1}`}</span>
-          <button className="group flex gap-1 hover:underline items-center">
-            {storyTitle}
-            <span className="hidden group-hover:flex">
-              <EditIcon color="text-house-green" size={16} />
-            </span>
-          </button>
+        <div className="flex w-full gap-3 text-house-green font-bold">
+          <span className="flex items-center text-starbucks-green">{`Story${storyIndex + 1}`}</span>
+          {isUpdateFormVisible ? (
+            <BlockForm
+              initialTitle={storyTitle}
+              formRef={formRef}
+              handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'stories')}
+              onClose={handleEditBlockButtonClick}
+            />
+          ) : (
+            <button className="group flex gap-1 hover:underline items-center" onClick={handleEditBlockButtonClick}>
+              {storyTitle}
+              <span className="hidden group-hover:flex">
+                <EditIcon color="text-house-green" size={16} />
+              </span>
+            </button>
+          )}
         </div>
       </div>
       {isStoryVisible &&

@@ -2,36 +2,36 @@ import { useState, useRef, useEffect } from 'react';
 import { BacklogState } from '../types/backlog';
 
 interface BlockOptions {
-  currentBlock?: 'epics' | 'stories';
   setBlock?: React.Dispatch<React.SetStateAction<BacklogState>>;
   epicIndex?: number;
   storyIndex?: number;
-  initailTitle?: string;
 }
 
-const useBlock = ({ currentBlock, setBlock, epicIndex, storyIndex, initailTitle }: BlockOptions = {}) => {
-  const [newBlockTitle, setNewBlockTitle] = useState<string>('');
-  const [updateBlockTitle, setUpdateBlockTitle] = useState<string>(initailTitle!);
+const useBlock = ({ setBlock, epicIndex, storyIndex }: BlockOptions = {}) => {
   const [isNewFormVisible, setNewFormVisibility] = useState<boolean>(false);
-  // const [isUpdateFormVisible, setUpdateFormVisibility] = useState<boolean>(false);
-
+  const [isUpdateFormVisible, setUpdateFormVisibility] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleAddBlockButtonClick = () => {
     setNewFormVisibility(!isNewFormVisible);
-    setNewBlockTitle('');
+  };
+
+  const handleEditBlockButtonClick = () => {
+    setUpdateFormVisibility(!isUpdateFormVisible);
   };
 
   const handleOutsideClick = (e: MouseEvent) => {
     if (formRef.current && !formRef.current.contains(e.target as Node)) {
       setNewFormVisibility(false);
-      setNewBlockTitle('');
     }
   };
 
-  const handleFormSubmit = (e: React.FormEvent, action: 'add' | 'update') => {
+  const handleFormSubmit = (e: React.FormEvent, action: 'add' | 'update', currentBlock: 'epics' | 'stories') => {
     e.preventDefault();
-    if (newBlockTitle.trim() === '') {
+
+    const blockTitle = formRef.current?.querySelector('input')?.value;
+
+    if (blockTitle?.trim() === '') {
       return;
     }
 
@@ -39,7 +39,7 @@ const useBlock = ({ currentBlock, setBlock, epicIndex, storyIndex, initailTitle 
       if (currentBlock === 'epics') {
         if (action === 'add') {
           const newEpic = {
-            title: newBlockTitle,
+            title: blockTitle!,
             stories: [],
           };
 
@@ -52,7 +52,7 @@ const useBlock = ({ currentBlock, setBlock, epicIndex, storyIndex, initailTitle 
             if (index === epicIndex) {
               return {
                 ...epic,
-                title: newBlockTitle,
+                title: blockTitle!,
               };
             }
             return epic;
@@ -66,7 +66,7 @@ const useBlock = ({ currentBlock, setBlock, epicIndex, storyIndex, initailTitle 
       } else {
         if (action === 'add') {
           const newStory = {
-            title: newBlockTitle,
+            title: blockTitle!,
             tasks: [],
           };
 
@@ -91,7 +91,7 @@ const useBlock = ({ currentBlock, setBlock, epicIndex, storyIndex, initailTitle 
                 if (index === storyIndex) {
                   return {
                     ...story,
-                    title: newBlockTitle,
+                    title: blockTitle!,
                   };
                 }
                 return story;
@@ -113,8 +113,8 @@ const useBlock = ({ currentBlock, setBlock, epicIndex, storyIndex, initailTitle 
       }
     });
 
-    setNewBlockTitle('');
     setNewFormVisibility(false);
+    setUpdateFormVisibility(false);
   };
   useEffect(() => {
     document.addEventListener('mousedown', handleOutsideClick);
@@ -125,14 +125,12 @@ const useBlock = ({ currentBlock, setBlock, epicIndex, storyIndex, initailTitle 
   }, []);
 
   return {
-    newBlockTitle,
-    updateBlockTitle,
     isNewFormVisible,
+    isUpdateFormVisible,
     formRef,
     handleAddBlockButtonClick,
+    handleEditBlockButtonClick,
     handleFormSubmit,
-    setNewBlockTitle,
-    setUpdateBlockTitle,
   };
 };
 
