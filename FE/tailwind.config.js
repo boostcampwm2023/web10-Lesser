@@ -14,6 +14,16 @@ export default {
         'starbucks-green': '#006241',
         'green-stroke': '#8E9C99',
         'rewards-gold': '#CBA258',
+        'error-red': '#d62b1f',
+      },
+      fontFamily: {
+        pretendard: ['pretendard'],
+      },
+      fontSize: {
+        s: '12px',
+        r: '14px',
+        m: '16px',
+        l: '24px',
       },
     },
   },
