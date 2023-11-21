@@ -15,6 +15,7 @@ export default {
         'green-stroke': '#8E9C99',
         'rewards-gold': '#CBA258',
         'error-red': '#d62b1f',
+        'light-gray': '#879298',
       },
       fontFamily: {
         pretendard: ['pretendard'],
