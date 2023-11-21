@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Patch, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Put,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { BacklogsService } from './backlogs.service';
 import {
   CreateBacklogsEpicRequestDto,
@@ -23,6 +35,11 @@ import {
 @UsePipes(ValidationPipe)
 export class BacklogsController {
   constructor(private readonly backlogsService: BacklogsService) {}
+
+  @Get(':id')
+  readBacklog(@Param('id', ParseIntPipe) id) {
+    return this.backlogsService.readBacklog(id);
+  }
 
   @Post('epic')
   async createEpic(@Body() body: CreateBacklogsEpicRequestDto): Promise<CreateBacklogsEpicResponseDto> {
