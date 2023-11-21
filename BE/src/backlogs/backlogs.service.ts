@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Epic } from 'src/backlogs/entities/epic.entity';
 import { Story } from 'src/backlogs/entities/story.entity';
 import { Task } from 'src/backlogs/entities/task.entity';
+import { Project } from 'src/projects/entity/project.entity';
 import { Repository } from 'typeorm';
 import {
   CreateBacklogsEpicRequestDto,
@@ -26,13 +27,15 @@ import {
 @Injectable()
 export class BacklogsService {
   constructor(
+    @InjectRepository(Project) private projectRepository: Repository<Project>,
     @InjectRepository(Epic) private epicRepository: Repository<Epic>,
     @InjectRepository(Story) private storyRepository: Repository<Story>,
     @InjectRepository(Task) private taskRepository: Repository<Task>,
   ) {}
 
   async createEpic(dto: CreateBacklogsEpicRequestDto): Promise<CreateBacklogsEpicResponseDto> {
-    const newEpic = this.epicRepository.create({ title: dto.title });
+    const project = await this.projectRepository.findOne({ where: { id: dto.projectId } });
+    const newEpic = this.epicRepository.create({ title: dto.title, project: project });
     const savedEpic = await this.epicRepository.save(newEpic);
     return { id: savedEpic.id };
   }
