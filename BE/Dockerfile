@@ -1,4 +1,4 @@
-FROM node:20.9.0 as builder
+FROM node:20.9.0
 
 RUN mkdir /usr/src/app
 
@@ -6,8 +6,8 @@ WORKDIR /usr/src/app
 
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 
-COPY ./app/package.json ./
-COPY ./app/tsconfig.json ./
+COPY package.json ./
+COPY tsconfig.json ./
 
 RUN npm install
 
