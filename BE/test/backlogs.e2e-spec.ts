@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '../src/app.module';
 
 describe('e2e 테스트 시작', () => {
   let app: INestApplication;
@@ -28,39 +28,38 @@ describe('e2e 테스트 시작', () => {
     let postEpicResponse;
     let postStoryResponse;
     let postTaskResponse;
-    const postEpicPayload = { projectId: 3, epicTitle: '이거슨타이틀' };
+    const postEpicPayload = { projectId: null, title: '이거슨타이틀' };
     const postStoryPayload = {
-      projectId: 3,
-      story: {
-        epicId: null,
-        title: '회원은 로그인을 할 수 없다.',
-      },
+      epicId: null,
+      title: '회원은 로그인을 할 수 없다.',
     };
     const postTaskPayload = {
-      projectId: 1,
-      task: {
-        epicId: null,
-        storyId: null,
-        userId: 1,
-        title: 'ERD작성하기',
-        state: 'ToDo',
-        point: 0,
-        condition: '인수조건은 다음과같다~~',
-      },
+      storyId: null,
+      title: 'ERD작성하기',
+      state: 'ToDo',
+      point: 0,
+      condition: '인수조건은 다음과같다~~',
     };
+    const PROJECT_URI = '/api/projects';
     describe('POST /api/epic 에픽생성', () => {
       it('성공', async () => {
+        const projectResponse = await request(httpServer)
+          .post(PROJECT_URI)
+          .send({ name: 'Lesser' })
+          .expect(HttpStatus.CREATED);
+        expect(typeof projectResponse.body.id).toBe('number');
+        postEpicPayload.projectId = projectResponse.body.id;
         postEpicResponse = await request(httpServer).post(epicURI).send(postEpicPayload).expect(HttpStatus.CREATED);
-        expect(postEpicResponse.body).toHaveProperty('epicId');
-        expect(typeof postEpicResponse.body.epicId).toBe('number');
+        expect(postEpicResponse.body).toHaveProperty('id');
+        expect(typeof postEpicResponse.body.id).toBe('number');
       });
 
       it('잘못된 데이터 형식', () =>
         request(httpServer)
           .post(epicURI)
           .send({
-            projectId: '3',
-            epicTitle: '이거슨타이틀',
+            projectId: postEpicPayload.projectId,
+            title: 3,
           })
           .expect(HttpStatus.BAD_REQUEST));
 
@@ -68,7 +67,7 @@ describe('e2e 테스트 시작', () => {
         request(httpServer)
           .post(epicURI)
           .send({
-            projectId: 3,
+            id: postEpicPayload.projectId,
           })
           .expect(HttpStatus.BAD_REQUEST));
     });
@@ -77,11 +76,8 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .put(epicURI)
           .send({
-            projectId: 3,
-            epic: {
-              id: postEpicResponse.body.epicId,
-              title: '수정된 제목',
-            },
+            id: postEpicResponse.body.id,
+            title: '수정된 제목',
           })
           .expect(HttpStatus.OK);
       });
@@ -89,11 +85,8 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .put(epicURI)
           .send({
-            projectId: '1',
-            epic: {
-              id: postEpicResponse.body.epicId,
-              title: '수정된 제목',
-            },
+            id: postEpicResponse.body.id,
+            title: 3,
           })
           .expect(HttpStatus.BAD_REQUEST);
       });
@@ -101,10 +94,7 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .put(epicURI)
           .send({
-            projectId: '1',
-            epic: {
-              id: postEpicResponse.body.epicId,
-            },
+            id: postEpicResponse.body.id,
           })
           .expect(HttpStatus.BAD_REQUEST);
       });
@@ -114,8 +104,7 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .delete(epicURI)
           .send({
-            projectId: 1,
-            epicId: postEpicResponse.body.epicId,
+            id: postEpicResponse.body.id,
           })
           .expect(HttpStatus.OK);
       });
@@ -123,8 +112,7 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .delete(epicURI)
           .send({
-            projectId: 1,
-            epicId: postEpicResponse.body.epicId,
+            id: postEpicResponse.body.id,
           })
           .expect(HttpStatus.INTERNAL_SERVER_ERROR);
       });
@@ -132,38 +120,29 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .delete(epicURI)
           .send({
-            projectId: '1',
-            epicId: postEpicResponse.body.epicId,
+            id: 'postEpicResponse.body.epicId,',
           })
           .expect(HttpStatus.BAD_REQUEST);
       });
       it('데이터 필드 누락', async () => {
-        await request(httpServer)
-          .delete(epicURI)
-          .send({
-            epicId: postEpicResponse.body.epicId,
-          })
-          .expect(HttpStatus.BAD_REQUEST);
+        await request(httpServer).delete(epicURI).send({}).expect(HttpStatus.BAD_REQUEST);
       });
     });
     describe('POST /api/story 스토리생성', () => {
       it('성공', async () => {
         postEpicResponse = await request(httpServer).post(epicURI).send(postEpicPayload).expect(HttpStatus.CREATED);
-        postStoryPayload.story.epicId = postEpicResponse.body.epicId;
+        postStoryPayload.epicId = postEpicResponse.body.id;
         postStoryResponse = await request(httpServer).post(storyURI).send(postStoryPayload).expect(HttpStatus.CREATED);
-        expect(postStoryResponse.body).toHaveProperty('storyId');
-        expect(typeof postStoryResponse.body.storyId).toBe('number');
+        expect(postStoryResponse.body).toHaveProperty('id');
+        expect(typeof postStoryResponse.body.id).toBe('number');
       });
 
       it('잘못된 데이터 형식', () =>
         request(httpServer)
           .post(storyURI)
           .send({
-            projectId: 3,
-            story: {
-              epicId: postEpicResponse.body.epicId,
-              title: 3,
-            },
+            epicId: postEpicResponse.body.id,
+            title: 3,
           })
           .expect(HttpStatus.BAD_REQUEST));
 
@@ -171,10 +150,7 @@ describe('e2e 테스트 시작', () => {
         request(httpServer)
           .post(epicURI)
           .send({
-            projectId: 3,
-            story: {
-              epicId: postEpicResponse.body.epicId,
-            },
+            epicId: postEpicResponse.body.id,
           })
           .expect(HttpStatus.BAD_REQUEST));
     });
@@ -183,11 +159,8 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .put(storyURI)
           .send({
-            projectId: 1,
-            story: {
-              id: postStoryResponse.body.storyId,
-              title: '수정된 스토리',
-            },
+            id: postStoryResponse.body.id,
+            title: '수정된 스토리',
           })
           .expect(HttpStatus.OK);
       });
@@ -196,11 +169,8 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .put(storyURI)
           .send({
-            projectId: 1,
-            story: {
-              id: postStoryResponse.body.storyId,
-              title: 1,
-            },
+            id: postStoryResponse.body.id,
+            title: 3,
           })
           .expect(HttpStatus.BAD_REQUEST));
 
@@ -208,55 +178,40 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .put(storyURI)
           .send({
-            projectId: 1,
-            story: {
-              id: postStoryResponse.body.storyId,
-            },
+            id: postStoryResponse.body.id,
           })
           .expect(HttpStatus.BAD_REQUEST));
     });
     describe('DELETE /api/story 스토리삭제', () => {
       it('성공', async () => {
-        await request(httpServer)
-          .delete(storyURI)
-          .send({ projectId: 1, storyId: postStoryResponse.body.storyId })
-          .expect(HttpStatus.OK);
+        await request(httpServer).delete(storyURI).send({ id: postStoryResponse.body.id }).expect(HttpStatus.OK);
       });
 
       it('잘못된 데이터 형식', async () =>
-        await request(httpServer)
-          .delete(storyURI)
-          .send({ projectId: '1', storyId: postStoryResponse.body.storyId })
-          .expect(HttpStatus.BAD_REQUEST));
+        await request(httpServer).delete(storyURI).send({ id: '1' }).expect(HttpStatus.BAD_REQUEST));
 
       it('데이터 필드 누락', async () =>
-        await request(httpServer).delete(storyURI).send({ projectId: 1 }).expect(HttpStatus.BAD_REQUEST));
+        await request(httpServer).delete(storyURI).send({}).expect(HttpStatus.BAD_REQUEST));
     });
     describe('POST /api/task 태스크 생성', () => {
       it('성공', async () => {
         postEpicResponse = await request(httpServer).post(epicURI).send(postEpicPayload).expect(HttpStatus.CREATED);
-        postStoryPayload.story.epicId = postEpicResponse.body.epicId;
+        postStoryPayload.epicId = postEpicResponse.body.id;
         postStoryResponse = await request(httpServer).post(storyURI).send(postStoryPayload).expect(HttpStatus.CREATED);
-        postTaskPayload.task.epicId = postEpicResponse.body.epicId;
-        postTaskPayload.task.storyId = postStoryResponse.body.storyId;
+        postTaskPayload.storyId = postStoryResponse.body.id;
         postTaskResponse = await request(httpServer).post(taskURI).send(postTaskPayload).expect(HttpStatus.CREATED);
-        expect(postTaskResponse.body).toHaveProperty('taskId');
-        expect(typeof postTaskResponse.body.taskId).toBe('number');
+        expect(postTaskResponse.body).toHaveProperty('id');
+        expect(typeof postTaskResponse.body.id).toBe('number');
       });
       it('잘못된 데이터 형식', () =>
         request(httpServer)
           .post(taskURI)
           .send({
-            projectId: 1,
-            task: {
-              epicId: null,
-              storyId: null,
-              userId: 1,
-              title: 'ERD작성하기',
-              state: 'ToDo',
-              point: '0',
-              condition: '인수조건은 다음과같다~~',
-            },
+            storyId: postStoryResponse.body.id,
+            title: 'ERD작성하기',
+            state: 'ToDo',
+            point: '0',
+            condition: '인수조건은 다음과같다~~',
           })
           .expect(HttpStatus.BAD_REQUEST));
 
@@ -264,15 +219,10 @@ describe('e2e 테스트 시작', () => {
         request(httpServer)
           .post(taskURI)
           .send({
-            projectId: 1,
-            task: {
-              epicId: null,
-              storyId: null,
-              userId: 1,
-              title: 'ERD작성하기',
-              point: 0,
-              condition: '인수조건은 다음과같다~~',
-            },
+            storyId: postStoryResponse.body.id,
+            title: 'ERD작성하기',
+            state: 'ToDo',
+            condition: '인수조건은 다음과같다~~',
           })
           .expect(HttpStatus.BAD_REQUEST));
     });
@@ -281,14 +231,11 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .patch(taskURI)
           .send({
-            projectId: 1,
-            task: {
-              id: postTaskResponse.body.taskId,
-              userId: 3,
-              state: 'ToDo2',
-              point: 10,
-              condition: '인수조건은 다음과같다~~',
-            },
+            id: postTaskResponse.body.id,
+            title: '수정된 제목',
+            state: 'ToDo',
+            point: 0,
+            condition: '인수조건은 다음과같다~~',
           })
           .expect(HttpStatus.OK));
 
@@ -296,14 +243,11 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .patch(taskURI)
           .send({
-            projectId: 1,
-            task: {
-              id: postTaskResponse.body.taskId,
-              userId: '3',
-              state: 'ToDo2',
-              point: 10,
-              condition: '인수조건은 다음과같다~~',
-            },
+            id: postTaskResponse.body.id,
+            title: '수정된 제목',
+            state: 3,
+            point: 0,
+            condition: '인수조건은 다음과같다~~',
           })
           .expect(400));
 
@@ -311,13 +255,9 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .patch(taskURI)
           .send({
-            projectId: 1,
-            task: {
-              userId: '3',
-              state: 'ToDo2',
-              point: 10,
-              condition: '인수조건은 다음과같다~~',
-            },
+            title: '수정된 제목',
+            point: 0,
+            condition: '인수조건은 다음과같다~~',
           })
           .expect(400));
     });
@@ -327,8 +267,7 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .delete(taskURI)
           .send({
-            projectId: 1,
-            taskId: postTaskResponse.body.taskId,
+            id: postTaskResponse.body.id,
           })
           .expect(200));
 
@@ -336,8 +275,7 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .delete(taskURI)
           .send({
-            projectId: '1',
-            taskId: postTaskResponse.body.taskId,
+            id: 'postTaskResponse.body.id',
           })
           .expect(HttpStatus.BAD_REQUEST));
 
@@ -345,7 +283,7 @@ describe('e2e 테스트 시작', () => {
         await request(httpServer)
           .delete(taskURI)
           .send({
-            projectId: 1,
+            id: 'postTaskResponse.body.id',
           })
           .expect(HttpStatus.BAD_REQUEST));
     });
