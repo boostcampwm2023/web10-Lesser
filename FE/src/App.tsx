@@ -1,11 +1,5 @@
-import SideNavigationBar from './components/backlog/SideNavigationBar';
-
 function App() {
-  return (
-    <>
-      <SideNavigationBar />
-    </>
-  );
+  return <></>;
 }
 
 export default App;

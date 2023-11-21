@@ -31,25 +31,35 @@ const navigationInformation: NavigationInformation[] = [
   {
     pageName: '내 프로젝트',
     pageURI: 'projects',
+    description: '내 프로젝트를 볼 수 있는 페이지',
   },
 ];
 
-const NavigationButton = ({ pageName, description, pageURI, currentURI }: NavigationButtonProps) => (
-  <button>
-    <p>{pageName}</p>
-    {currentURI === pageURI && <p>{description}</p>}
-  </button>
-);
+const NavigationButton = ({ pageName, description, pageURI, currentURI }: NavigationButtonProps) => {
+  const URIIsSame = currentURI === pageURI;
+
+  return (
+    <button
+      className={`flex flex-col items-center gap-2.5 w-full ${
+        URIIsSame ? 'bg-true-white py-3 px-5 rounded-lg' : 'py-3'
+      }`}
+    >
+      <p className={`text-lg font-bold ${URIIsSame ? 'text-house-green' : 'text-true-white'}`}>{pageName}</p>
+      {URIIsSame && <p className="text-xs font-medium text-house-green">{description}</p>}
+    </button>
+  );
+};
 
 const SideNavigationBar = () => {
   const currentURI = 'backlog';
+
   return (
-    <nav>
-      <div>
+    <nav className="flex flex-col items-center px-6 py-8 rounded-lg w-52 bg-house-green gap-2.5">
+      <div className="mb-5">
         <img src={lesserLogo} alt="로고" />
-        <p>적고 쉽고 애자일하게 일하자</p>
+        <p className="text-xs font-medium text-true-white">적고 쉽고 애자일하게 일하자</p>
       </div>
-      <hr />
+      <hr className="w-full h-px bg-true-white" />
       <ul>
         {navigationInformation.map(({ pageName, description, pageURI }) => (
           <li>
@@ -63,6 +73,7 @@ const SideNavigationBar = () => {
           </li>
         ))}
       </ul>
+      <button className="py-3 text-lg font-bold text-true-white mb-44">로그아웃</button>
     </nav>
   );
 };
