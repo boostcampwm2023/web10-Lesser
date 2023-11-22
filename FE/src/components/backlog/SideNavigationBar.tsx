@@ -1,14 +1,6 @@
+import { NavigationInformation } from '../../types/navigation';
+import NavigationButton from './NavigationButton';
 import lesserLogo from '../../assets/icons/lesserLogo.svg';
-
-interface NavigationInformation {
-  pageName: string;
-  description?: string;
-  pageURI: string;
-}
-
-interface NavigationButtonProps extends NavigationInformation {
-  currentURI: string;
-}
 
 const navigationInformation: NavigationInformation[] = [
   {
@@ -35,21 +27,6 @@ const navigationInformation: NavigationInformation[] = [
   },
 ];
 
-const NavigationButton = ({ pageName, description, pageURI, currentURI }: NavigationButtonProps) => {
-  const URIIsSame = currentURI === pageURI;
-
-  return (
-    <button
-      className={`flex flex-col items-center gap-2.5 w-full ${
-        URIIsSame ? 'bg-true-white py-3 px-5 rounded-lg' : 'py-3'
-      }`}
-    >
-      <p className={`text-lg font-bold ${URIIsSame ? 'text-house-green' : 'text-true-white'}`}>{pageName}</p>
-      {URIIsSame && <p className="text-xs font-medium text-house-green">{description}</p>}
-    </button>
-  );
-};
-
 const SideNavigationBar = () => {
   const currentURI = 'backlog';
 
@@ -62,14 +39,8 @@ const SideNavigationBar = () => {
       <hr className="w-full h-px bg-true-white" />
       <ul>
         {navigationInformation.map(({ pageName, description, pageURI }) => (
-          <li>
-            <NavigationButton
-              key={pageName}
-              pageName={pageName}
-              description={description}
-              pageURI={pageURI}
-              currentURI={currentURI}
-            />
+          <li key={pageName}>
+            <NavigationButton pageName={pageName} description={description} pageURI={pageURI} currentURI={currentURI} />
           </li>
         ))}
       </ul>
