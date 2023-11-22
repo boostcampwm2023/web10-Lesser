@@ -3,7 +3,7 @@ import ProjectCard from '../components/project/ProjectCard';
 import whiteCross from '../assets/images/cross.png';
 import { Link } from 'react-router-dom';
 
-const dummyData: Array<projectElement> = [
+const projectList: Array<projectElement> = [
   {
     title: 'Lesser',
     description: '애자일 프로젝트 관리 툴',
@@ -79,7 +79,7 @@ const ProjectPage = () => {
         </div>
       </header>
       <div className="flex flex-wrap gap-x-5 gap-y-4 w-[76rem] min-w-[76rem] mx-auto">
-        {dummyData.map(({ title, description, taskNum, projectId }) => (
+        {projectList.map(({ title, description, taskNum, projectId }) => (
           <li key={projectId} className="list-none">
             <ProjectCard title={title} description={description} taskNum={taskNum} />
           </li>
