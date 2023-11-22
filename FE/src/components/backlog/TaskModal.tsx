@@ -29,6 +29,9 @@ const TaskModal = ({ onClose, setBacklogState, epicIndex, storyIndex }: TaskModa
 
   const handleCreateTaskButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (taskData.title.trim() === '' || taskData.member.trim() === '' || taskData.completionCondition.trim() === '') {
+      return;
+    }
 
     setBacklogState((prevState) => {
       const updatedEpics = [...prevState.epics];
