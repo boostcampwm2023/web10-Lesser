@@ -1,4 +1,4 @@
-import { Task } from '../../pages/sprint/SprintPage';
+import { Task } from '../../types/sprint';
 import ColumnBoard from './ColumnBoard';
 
 interface KanbanBoardProps {
@@ -17,7 +17,7 @@ const KanbanBoard = ({ storyId, storyTitle, todoList, inProgressList, doneList }
         <span className="text-xs font-medium ">{storyTitle}</span>
       </p>
     )}
-    <div className="flex justify-between">
+    <div className="flex justify-between gap-8">
       <ColumnBoard taskList={todoList} />
       <ColumnBoard taskList={inProgressList} />
       <ColumnBoard taskList={doneList} />
