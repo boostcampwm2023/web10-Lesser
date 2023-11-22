@@ -30,8 +30,10 @@ const TaskModal = ({ onClose, setBacklogState, task, epicIndex, storyIndex, task
 
   const handleNumberInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const parsedValue = parseInt(value, 10);
-    setTaskData((prevData) => ({ ...prevData, [name]: isNaN(parsedValue) ? '' : parsedValue }));
+    const parsedValue = Number(value);
+
+    setTaskData((prevData) => ({ ...prevData, [name]: isNaN(parsedValue) ? 0 : parsedValue }));
+    e.target.value = parsedValue.toString();
   };
 
   const handleCreateTaskButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
