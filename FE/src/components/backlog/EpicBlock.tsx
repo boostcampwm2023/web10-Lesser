@@ -43,6 +43,7 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
           <span className="text-l">{`Epic${epicIndex + 1}`}</span>
           {updateFormVisible ? (
             <BlockForm
+              currentBlock="epic"
               initialTitle={epicTitle}
               formRef={formRef}
               handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'epics')}
@@ -71,6 +72,7 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
       {epicVisible &&
         (newFormVisible ? (
           <BlockForm
+            currentBlock="story"
             initialTitle=""
             formRef={formRef}
             handleFormSubmit={(e) => handleFormSubmit(e, 'add', 'stories')}

@@ -25,6 +25,7 @@ const BacklogPage = () => {
       ))}
       {newFormVisible ? (
         <BlockForm
+          currentBlock="epic"
           initialTitle=""
           formRef={formRef}
           handleFormSubmit={(e) => handleFormSubmit(e, 'add', 'epics')}

@@ -44,6 +44,7 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
           <span className="flex items-center text-starbucks-green">{`Story${storyIndex + 1}`}</span>
           {updateFormVisible ? (
             <BlockForm
+              currentBlock="story"
               initialTitle={storyTitle}
               formRef={formRef}
               handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'stories')}
