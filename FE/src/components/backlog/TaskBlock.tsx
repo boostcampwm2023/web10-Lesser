@@ -6,7 +6,7 @@ interface TaskBlockProps {
 }
 
 const TaskBlock = ({ taskData }: TaskBlockProps) => (
-  <div className="flex border-b py-2 px-4 gap-16 text-house-green text-r whitespace-nowrap ">
+  <div className="flex border-t py-2 px-4 gap-16 text-house-green text-r whitespace-nowrap ">
     <p className="font-bold">Task</p>
     <p className="w-full">Title: {taskData.title}</p>
     <p>{taskData.point} POINT</p>

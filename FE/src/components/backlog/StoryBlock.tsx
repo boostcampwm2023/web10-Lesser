@@ -38,7 +38,7 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
 
   return (
     <div className="border border-transparent-green rounded-md">
-      <div className="flex gap-2 p-2 bg-cool-neutral border-b">
+      <div className="flex gap-2 p-2 bg-cool-neutral">
         <button onClick={handleStoryToggleButton}>{storyVisible ? <ChevronDownIcon /> : <ChevronRightIcon />}</button>
         <div className="flex w-full gap-3 text-house-green font-bold">
           <span className="flex items-center text-starbucks-green">{`Story${storyIndex + 1}`}</span>
@@ -71,13 +71,15 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
         />
       )}
 
-      <button
-        className={`flex w-full py-1 rounded-md text-center justify-center bg-cool-neutral font-bold text-light-gray`}
-        onClick={handleAddBlockButtonClick}
-      >
-        <PlusIcon color="text-light-gray" />
-        {`Task 생성하기`}
-      </button>
+      {storyVisible && (
+        <button
+          className={`flex w-full py-1 rounded-md text-center justify-center border-t bg-cool-neutral font-bold text-light-gray`}
+          onClick={handleAddBlockButtonClick}
+        >
+          <PlusIcon color="text-light-gray" />
+          {`Task 생성하기`}
+        </button>
+      )}
     </div>
   );
 };

@@ -68,22 +68,23 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
           />
         ))}
 
-      {newFormVisible ? (
-        <BlockForm
-          initialTitle=""
-          formRef={formRef}
-          handleFormSubmit={(e) => handleFormSubmit(e, 'add', 'stories')}
-          onClose={handleAddBlockButtonClick}
-        />
-      ) : (
-        <button
-          className={`flex w-full py-1 rounded-md text-center justify-center bg-accent-green font-bold text-true-white`}
-          onClick={handleAddBlockButtonClick}
-        >
-          <PlusIcon color="text-true-white" />
-          {`Story 생성하기`}
-        </button>
-      )}
+      {epicVisible &&
+        (newFormVisible ? (
+          <BlockForm
+            initialTitle=""
+            formRef={formRef}
+            handleFormSubmit={(e) => handleFormSubmit(e, 'add', 'stories')}
+            onClose={handleAddBlockButtonClick}
+          />
+        ) : (
+          <button
+            className={`flex w-full py-1 rounded-md text-center justify-center bg-accent-green font-bold text-true-white`}
+            onClick={handleAddBlockButtonClick}
+          >
+            <PlusIcon color="text-true-white" />
+            {`Story 생성하기`}
+          </button>
+        ))}
     </div>
   );
 };
