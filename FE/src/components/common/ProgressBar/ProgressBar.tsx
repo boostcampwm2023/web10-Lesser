@@ -1,13 +1,12 @@
 interface PrograssBarProps {
   startText: string;
   endText: string;
-  totalAmount: number;
-  currentAmount: number;
+  totalAmount?: number;
+  currentAmount?: number;
 }
 
 const PrograssBar = (props: PrograssBarProps) => {
-  const { startText, endText, totalAmount, currentAmount } = props;
-  const percentage = Number(currentAmount / totalAmount) * 100;
+  const { startText, endText } = props;
 
   return (
     <div className="flex items-center gap-3">

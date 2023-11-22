@@ -7,3 +7,9 @@
   font-weight: normal;
   src: url('./assets/fonts/PretendardVariable.woff2') format('woff2');
 }
+
+html,
+body,
+#root {
+  height: 100%;
+}
