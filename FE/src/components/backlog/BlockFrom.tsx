@@ -1,38 +1,40 @@
+import CheckIcon from './../../assets/icons/CheckIcon';
+import ClosedIcon from './../../assets/icons/ClosedIcon';
+import { useState } from 'react';
+
 interface BlockFormProps {
+  initialTitle: string;
   formRef: React.RefObject<HTMLFormElement>;
-  newBlockTitle: string;
-  setNewBlockTitle: React.Dispatch<React.SetStateAction<string>>;
-  formVisibility: boolean;
   handleFormSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  handleAddBlock: () => void;
-  buttonText: string;
+  onClose: () => void;
 }
 
-const BlockForm = ({
-  formRef,
-  newBlockTitle,
-  setNewBlockTitle,
-  formVisibility,
-  handleFormSubmit,
-  handleAddBlock,
-  buttonText,
-}: BlockFormProps) =>
-  formVisibility ? (
-    <form ref={formRef} onSubmit={handleFormSubmit}>
+const BlockForm = ({ initialTitle, formRef, handleFormSubmit, onClose }: BlockFormProps) => {
+  const [blockTitle, setBlockTitle] = useState<string>(initialTitle);
+  const placeholder = initialTitle
+    ? '이 기능에서 사용자는 어떤 것을 할 수 있나요? 예시) 사용자는 로그인 할 수 있다'
+    : '어떤 기능을 계획할 예정인가요? 예시) 회원 기능';
+  return (
+    <form className="flex w-full gap-1 py-1" ref={formRef} onSubmit={handleFormSubmit} name="blockForm">
       <input
+        className="w-full border outline-starbucks-green"
         type="text"
-        placeholder={`제목을 입력하세요`}
-        value={newBlockTitle}
-        onChange={(e) => setNewBlockTitle(e.target.value)}
+        placeholder={placeholder}
+        value={blockTitle}
+        onChange={(e) => {
+          setBlockTitle(e.target.value);
+        }}
       />
-      <button className="border px-8" type="submit">
-        {buttonText}
-      </button>
+      <div className="flex gap-1">
+        <button type="submit">
+          <CheckIcon color="text-true-white" backgroundColor="bg-starbucks-green" />
+        </button>
+        <button type="button" onClick={onClose}>
+          <ClosedIcon color="text-true-white" backgroundColor="bg-error-red" />
+        </button>
+      </div>
     </form>
-  ) : (
-    <button className="border px-8" type="submit" onClick={handleAddBlock}>
-      {buttonText}
-    </button>
   );
+};
 
 export default BlockForm;
