@@ -16,6 +16,7 @@ export default {
         'rewards-gold': '#CBA258',
         'error-red': '#d62b1f',
         'light-gray': '#879298',
+        'transparent-green': '#D2D7D6',
       },
       fontFamily: {
         pretendard: ['pretendard'],
@@ -24,6 +25,7 @@ export default {
         s: '12px',
         r: '14px',
         m: '16px',
+        ml: '18px',
         l: '24px',
       },
     },
