@@ -1,5 +1,23 @@
+import { Routes, Route } from 'react-router-dom';
+import ProjectPage from './pages/ProjectPage';
+import LoginPage from './pages/LoginPage';
+import MainPage from './pages/MainPage';
+import BacklogPage from './pages/BacklogPage';
+import SprintPage from './pages/SprintPage';
+import ReviewPage from './pages/ReviewPage';
+
 function App() {
-  return <></>;
+  return (
+    <Routes>
+      <Route path="/project" element={<ProjectPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route element={<MainPage />}>
+        <Route path="/backlog" element={<BacklogPage />} />
+        <Route path="/sprint" element={<SprintPage />} />
+        <Route path="/review" element={<ReviewPage />} />
+      </Route>
+    </Routes>
+  );
 }
 
 export default App;
