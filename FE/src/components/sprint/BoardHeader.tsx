@@ -4,7 +4,7 @@ interface BaordHeaderProps {
   boardDescription: string;
 }
 const BoardHeader = ({ boardName, taskNumber, boardDescription }: BaordHeaderProps) => (
-  <div className="w-72 px-2.5 mb-2.5">
+  <div className="w-4/12 px-2.5 mb-2.5">
     <p className="flex justify-between text-2xl font-bold text-house-green">
       <span>{boardName}</span>
       <span>{taskNumber}</span>
