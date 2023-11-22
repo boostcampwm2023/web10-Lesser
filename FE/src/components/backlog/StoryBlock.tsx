@@ -19,8 +19,8 @@ interface StoryBlockProps {
 const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: StoryBlockProps) => {
   const storyTitle = backlogState.epics[epicIndex].stories[storyIndex].title;
   const {
-    isNewFormVisible,
-    isUpdateFormVisible,
+    newFormVisible,
+    updateFormVisible,
     formRef,
     handleAddBlockButtonClick,
     handleEditBlockButtonClick,
@@ -30,22 +30,23 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
     epicIndex: epicIndex,
     storyIndex: storyIndex,
   });
-  const [isStoryVisible, setStoryVisibility] = useState<boolean>(true);
+  const [storyVisible, setStoryVisibility] = useState<boolean>(true);
 
   const handleStoryToggleButton = () => {
-    setStoryVisibility(!isStoryVisible);
+    setStoryVisibility(!storyVisible);
   };
 
   return (
     <div className="border border-transparent-green rounded-md">
-      <div className="flex gap-2 p-2 bg-cool-neutral border-b">
-        <button onClick={handleStoryToggleButton}>{isStoryVisible ? <ChevronDownIcon /> : <ChevronRightIcon />}</button>
+      <div className="flex gap-2 p-2 bg-cool-neutral">
+        <button onClick={handleStoryToggleButton}>{storyVisible ? <ChevronDownIcon /> : <ChevronRightIcon />}</button>
         <div className="flex w-full gap-3 text-house-green font-bold">
           <span className="flex items-center text-starbucks-green">{`Story${storyIndex + 1}`}</span>
-          {isUpdateFormVisible ? (
+          {updateFormVisible ? (
             <BlockForm
               initialTitle={storyTitle}
               formRef={formRef}
+              placeholder="이 기능에서 사용자는 어떤 것을 할 수 있나요? 예시) 사용자는 로그인 할 수 있다"
               handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'stories')}
               onClose={handleEditBlockButtonClick}
             />
@@ -59,11 +60,11 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
           )}
         </div>
       </div>
-      {isStoryVisible &&
-        backlogState.epics[epicIndex].stories[storyIndex].tasks.map((task, index) => (
-          <TaskBlock key={index} taskData={task} />
+      {storyVisible &&
+        backlogState.epics[epicIndex].stories[storyIndex].tasks.map((task, taskIndex) => (
+          <TaskBlock key={taskIndex} {...{ task, epicIndex, storyIndex, taskIndex, setBacklogState }} />
         ))}
-      {isNewFormVisible && (
+      {newFormVisible && (
         <TaskModal
           onClose={handleAddBlockButtonClick}
           setBacklogState={setBacklogState}
@@ -71,13 +72,15 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
         />
       )}
 
-      <button
-        className={`flex w-full py-1 rounded-md text-center justify-center bg-cool-neutral font-bold text-light-gray`}
-        onClick={handleAddBlockButtonClick}
-      >
-        <PlusIcon color="text-light-gray" />
-        {`Task 생성하기`}
-      </button>
+      {storyVisible && (
+        <button
+          className={`flex w-full py-1 rounded-md text-center justify-center border-t bg-cool-neutral font-bold text-light-gray`}
+          onClick={handleAddBlockButtonClick}
+        >
+          <PlusIcon color="text-light-gray" />
+          {`Task 생성하기`}
+        </button>
+      )}
     </div>
   );
 };

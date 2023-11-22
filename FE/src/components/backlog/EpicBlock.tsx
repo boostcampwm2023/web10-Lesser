@@ -17,8 +17,8 @@ interface EpicBlockProps {
 const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps) => {
   const epicTitle = backlogState.epics[epicIndex].title;
   const {
-    isNewFormVisible,
-    isUpdateFormVisible,
+    newFormVisible,
+    updateFormVisible,
     formRef,
     handleAddBlockButtonClick,
     handleEditBlockButtonClick,
@@ -27,23 +27,24 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
     setBlock: setBacklogState,
     epicIndex: epicIndex,
   });
-  const [isEpicVisible, setEpicVisibility] = useState<boolean>(true);
+  const [epicVisible, setEpicVisibility] = useState<boolean>(true);
 
   const handleEpicToggleButtonClick = () => {
-    setEpicVisibility(!isEpicVisible);
+    setEpicVisibility(!epicVisible);
   };
 
   return (
     <div className="flex flex-col gap-4 p-4 border border-house-green rounded-md">
       <div className="flex gap-2">
         <button onClick={handleEpicToggleButtonClick}>
-          {isEpicVisible ? <ChevronDownIcon /> : <ChevronRightIcon />}
+          {epicVisible ? <ChevronDownIcon /> : <ChevronRightIcon />}
         </button>
         <div className="flex w-full gap-3 text-house-green font-bold">
           <span className="text-l">{`Epic${epicIndex + 1}`}</span>
-          {isUpdateFormVisible ? (
+          {updateFormVisible ? (
             <BlockForm
               initialTitle={epicTitle}
+              placeholder="어떤 기능을 계획할 예정인가요? 예시) 회원 기능"
               formRef={formRef}
               handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'epics')}
               onClose={handleEditBlockButtonClick}
@@ -58,7 +59,7 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
           )}
         </div>
       </div>
-      {isEpicVisible &&
+      {epicVisible &&
         backlogState.epics[epicIndex].stories.map((story, storyIndex) => (
           <StoryBlock
             key={story.title}
@@ -68,22 +69,24 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
           />
         ))}
 
-      {isNewFormVisible ? (
-        <BlockForm
-          initialTitle=""
-          formRef={formRef}
-          handleFormSubmit={(e) => handleFormSubmit(e, 'add', 'stories')}
-          onClose={handleAddBlockButtonClick}
-        />
-      ) : (
-        <button
-          className={`flex w-full py-1 rounded-md text-center justify-center bg-accent-green font-bold text-true-white`}
-          onClick={handleAddBlockButtonClick}
-        >
-          <PlusIcon color="text-true-white" />
-          {`Story 생성하기`}
-        </button>
-      )}
+      {epicVisible &&
+        (newFormVisible ? (
+          <BlockForm
+            initialTitle=""
+            placeholder="이 기능에서 사용자는 어떤 것을 할 수 있나요? 예시) 사용자는 로그인 할 수 있다"
+            formRef={formRef}
+            handleFormSubmit={(e) => handleFormSubmit(e, 'add', 'stories')}
+            onClose={handleAddBlockButtonClick}
+          />
+        ) : (
+          <button
+            className="flex w-full py-1 rounded-md text-center justify-center bg-accent-green font-bold text-true-white"
+            onClick={handleAddBlockButtonClick}
+          >
+            <PlusIcon color="text-true-white" />
+            {`Story 생성하기`}
+          </button>
+        ))}
     </div>
   );
 };

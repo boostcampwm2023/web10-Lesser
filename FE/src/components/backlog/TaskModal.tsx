@@ -4,17 +4,24 @@ import { BacklogState, TaskData } from '../../types/backlog';
 interface TaskModalProps {
   onClose: () => void;
   setBacklogState: React.Dispatch<React.SetStateAction<BacklogState>>;
+  task?: TaskData;
   epicIndex: number;
   storyIndex: number;
+  taskIndex?: number;
 }
 
-const TaskModal = ({ onClose, setBacklogState, epicIndex, storyIndex }: TaskModalProps) => {
-  const [taskData, setTaskData] = useState<TaskData>({
-    title: '',
-    member: '',
-    point: 0,
-    completionCondition: '',
-  });
+const TaskModal = ({ onClose, setBacklogState, task, epicIndex, storyIndex, taskIndex }: TaskModalProps) => {
+  const [taskData, setTaskData] = useState<TaskData>(
+    task
+      ? task
+      : {
+          title: '',
+          member: '',
+          point: 0,
+          completionCondition: '',
+        },
+  );
+  const [editTask, setEditTask] = useState<boolean>(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -23,20 +30,31 @@ const TaskModal = ({ onClose, setBacklogState, epicIndex, storyIndex }: TaskModa
 
   const handleNumberInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const parsedValue = parseInt(value, 10);
-    setTaskData((prevData) => ({ ...prevData, [name]: isNaN(parsedValue) ? '' : parsedValue }));
+    const parsedValue = Number(value);
+
+    setTaskData((prevData) => ({ ...prevData, [name]: isNaN(parsedValue) ? 0 : parsedValue }));
+    e.target.value = parsedValue.toString();
   };
 
   const handleCreateTaskButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (taskData.title.trim() === '' || taskData.member.trim() === '' || taskData.completionCondition.trim() === '') {
+      return;
+    }
 
     setBacklogState((prevState) => {
       const updatedEpics = [...prevState.epics];
       const updatedStories = [...updatedEpics[epicIndex].stories];
-      updatedStories[storyIndex] = {
-        ...updatedStories[storyIndex],
-        tasks: [...updatedStories[storyIndex].tasks, taskData],
-      };
+
+      if (task) {
+        updatedStories[storyIndex].tasks[taskIndex!] = taskData;
+      } else {
+        updatedStories[storyIndex] = {
+          ...updatedStories[storyIndex],
+          tasks: [...updatedStories[storyIndex].tasks, taskData],
+        };
+      }
+
       updatedEpics[epicIndex] = {
         ...updatedEpics[epicIndex],
         stories: updatedStories,
@@ -53,6 +71,11 @@ const TaskModal = ({ onClose, setBacklogState, epicIndex, storyIndex }: TaskModa
     onClose();
   };
 
+  const handleUpdateTaskButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setEditTask(!editTask);
+  };
+
   return (
     <div className="fixed w-screen h-screen top-0 left-0 z-10 flex items-center justify-center bg-black bg-opacity-60">
       <div className="w-5/12 h-3/4 rounded-md bg-white p-8 text-house-green">
@@ -64,13 +87,18 @@ const TaskModal = ({ onClose, setBacklogState, epicIndex, storyIndex }: TaskModa
               Story를 구현하기 위해 필요한 업무를 작성합니다
             </label>
             <input
-              className="w-full p-2 border rounded-sm border-starbucks-green text-s outline-starbucks-green"
+              className={`w-full p-2 ${
+                editTask || !task
+                  ? 'border rounded-sm border-starbucks-green outline-starbucks-green text-s'
+                  : 'bg-transparent text-r'
+              } `}
               type="text"
               id="title"
               name="title"
               placeholder="어떤 업무를 수행할 예정인가요?"
               value={taskData.title}
               onChange={handleInputChange}
+              disabled={!editTask && !!task}
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -78,8 +106,13 @@ const TaskModal = ({ onClose, setBacklogState, epicIndex, storyIndex }: TaskModa
               <span className="text-m font-bold pr-2">인수조건</span>
               Task를 완료하기 위한 조건을 작성합니다.
             </label>
+
             <textarea
-              className="w-full p-2 border rounded-sm border-starbucks-green text-s resize-none outline-starbucks-green"
+              className={`w-full p-2 resize-none ${
+                editTask || !task
+                  ? 'border rounded-sm border-starbucks-green outline-starbucks-green text-s'
+                  : 'bg-transparent text-r'
+              }`}
               rows={5}
               id="completionCondition"
               name="completionCondition"
@@ -90,6 +123,7 @@ const TaskModal = ({ onClose, setBacklogState, epicIndex, storyIndex }: TaskModa
               }
               value={taskData.completionCondition}
               onChange={handleInputChange}
+              disabled={!editTask && !!task}
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -98,13 +132,18 @@ const TaskModal = ({ onClose, setBacklogState, epicIndex, storyIndex }: TaskModa
               Task를 수행할 멤버를 선정합니다
             </label>
             <input
-              className="w-1/3 p-2 border rounded-sm border-starbucks-green text-s outline-starbucks-green"
+              className={`w-1/3 p-2 ${
+                editTask || !task
+                  ? 'border rounded-sm border-starbucks-green outline-starbucks-green text-s'
+                  : 'bg-transparent text-r'
+              }`}
               type="text"
               id="member"
               name="member"
               placeholder="담당자"
               value={taskData.member}
               onChange={handleInputChange}
+              disabled={!editTask && !!task}
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -112,14 +151,20 @@ const TaskModal = ({ onClose, setBacklogState, epicIndex, storyIndex }: TaskModa
               <span className="text-m font-bold pr-2">Point</span>
               Task를 완료하기 위해 소요되는 시간을 예상합니다
             </label>
-            <div className="flex w-1/3 pr-3 items-center border rounded-sm border-starbucks-green justify-between">
+
+            <div
+              className={`flex w-1/3 pr-3 items-center ${
+                editTask || !task ? 'border rounded-sm border-starbucks-green' : ''
+              } justify-between`}
+            >
               <input
-                className="w-full p-2 text-s outline-none"
+                className={`w-full p-2 ${editTask || !task ? 'text-s outline-none' : 'bg-transparent text-r'}`}
                 type="number"
                 id="point"
                 name="point"
                 value={taskData.point}
                 onChange={handleNumberInputChange}
+                disabled={!editTask && !!task}
               />
               <p className="font-bold text-starbucks-green">Point</p>
             </div>
@@ -132,13 +177,14 @@ const TaskModal = ({ onClose, setBacklogState, epicIndex, storyIndex }: TaskModa
                 onClose();
               }}
             >
-              취소
+              {editTask || !task ? '취소' : '닫기'}
             </button>
+
             <button
               className="border-2 rounded-md border-starbucks-green px-4 py-1 bg-starbucks-green font-bold text-true-white"
-              onClick={handleCreateTaskButtonClick}
+              onClick={editTask || !task ? handleCreateTaskButtonClick : handleUpdateTaskButtonClick}
             >
-              확인
+              {editTask || !task ? '확인' : '수정'}
             </button>
           </div>
         </form>
