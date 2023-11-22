@@ -10,7 +10,7 @@ const BacklogPage = () => {
     epics: [],
   });
 
-  const { isNewFormVisible, formRef, handleAddBlockButtonClick, handleFormSubmit } = useBlock({
+  const { newFormVisible, formRef, handleAddBlockButtonClick, handleFormSubmit } = useBlock({
     setBlock: setBacklogState,
   });
 
@@ -23,7 +23,7 @@ const BacklogPage = () => {
       {backlogState.epics.map((epic, index) => (
         <EpicBlock key={epic.title} epicIndex={index} backlogState={backlogState} setBacklogState={setBacklogState} />
       ))}
-      {isNewFormVisible ? (
+      {newFormVisible ? (
         <BlockForm
           initialTitle=""
           formRef={formRef}

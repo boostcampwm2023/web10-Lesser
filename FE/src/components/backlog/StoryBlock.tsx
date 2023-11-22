@@ -19,8 +19,8 @@ interface StoryBlockProps {
 const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: StoryBlockProps) => {
   const storyTitle = backlogState.epics[epicIndex].stories[storyIndex].title;
   const {
-    isNewFormVisible,
-    isUpdateFormVisible,
+    newFormVisible,
+    updateFormVisible,
     formRef,
     handleAddBlockButtonClick,
     handleEditBlockButtonClick,
@@ -30,19 +30,19 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
     epicIndex: epicIndex,
     storyIndex: storyIndex,
   });
-  const [isStoryVisible, setStoryVisibility] = useState<boolean>(true);
+  const [storyVisible, setStoryVisibility] = useState<boolean>(true);
 
   const handleStoryToggleButton = () => {
-    setStoryVisibility(!isStoryVisible);
+    setStoryVisibility(!storyVisible);
   };
 
   return (
     <div className="border border-transparent-green rounded-md">
       <div className="flex gap-2 p-2 bg-cool-neutral border-b">
-        <button onClick={handleStoryToggleButton}>{isStoryVisible ? <ChevronDownIcon /> : <ChevronRightIcon />}</button>
+        <button onClick={handleStoryToggleButton}>{storyVisible ? <ChevronDownIcon /> : <ChevronRightIcon />}</button>
         <div className="flex w-full gap-3 text-house-green font-bold">
           <span className="flex items-center text-starbucks-green">{`Story${storyIndex + 1}`}</span>
-          {isUpdateFormVisible ? (
+          {updateFormVisible ? (
             <BlockForm
               initialTitle={storyTitle}
               formRef={formRef}
@@ -59,11 +59,11 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
           )}
         </div>
       </div>
-      {isStoryVisible &&
+      {storyVisible &&
         backlogState.epics[epicIndex].stories[storyIndex].tasks.map((task, index) => (
           <TaskBlock key={index} taskData={task} />
         ))}
-      {isNewFormVisible && (
+      {newFormVisible && (
         <TaskModal
           onClose={handleAddBlockButtonClick}
           setBacklogState={setBacklogState}

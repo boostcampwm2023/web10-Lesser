@@ -11,9 +11,8 @@ const TaskBlock = ({ taskData }: TaskBlockProps) => (
     <p className="w-full">Title: {taskData.title}</p>
     <p>{taskData.point} POINT</p>
     <p>멤버 {taskData.member}</p>
-    {/* <p>Completion Condition{taskData.completionCondition}</p> */}
     <button className="flex items-center font-bold">
-      상세보기 <ChevronRightIcon size="14" />
+      상세보기 <ChevronRightIcon size={14} />
     </button>
   </div>
 );

@@ -8,16 +8,16 @@ interface BlockOptions {
 }
 
 const useBlock = ({ setBlock, epicIndex, storyIndex }: BlockOptions = {}) => {
-  const [isNewFormVisible, setNewFormVisibility] = useState<boolean>(false);
-  const [isUpdateFormVisible, setUpdateFormVisibility] = useState<boolean>(false);
+  const [newFormVisible, setNewFormVisibility] = useState<boolean>(false);
+  const [updateFormVisible, setUpdateFormVisibility] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleAddBlockButtonClick = () => {
-    setNewFormVisibility(!isNewFormVisible);
+    setNewFormVisibility(!newFormVisible);
   };
 
   const handleEditBlockButtonClick = () => {
-    setUpdateFormVisibility(!isUpdateFormVisible);
+    setUpdateFormVisibility(!updateFormVisible);
   };
 
   const handleOutsideClick = (e: MouseEvent) => {
@@ -125,8 +125,8 @@ const useBlock = ({ setBlock, epicIndex, storyIndex }: BlockOptions = {}) => {
   }, []);
 
   return {
-    isNewFormVisible,
-    isUpdateFormVisible,
+    newFormVisible,
+    updateFormVisible,
     formRef,
     handleAddBlockButtonClick,
     handleEditBlockButtonClick,
