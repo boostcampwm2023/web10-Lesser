@@ -25,8 +25,8 @@ const BacklogPage = () => {
       ))}
       {newFormVisible ? (
         <BlockForm
-          currentBlock="epic"
           initialTitle=""
+          placeholder="어떤 기능을 계획할 예정인가요? 예시) 회원 기능"
           formRef={formRef}
           handleFormSubmit={(e) => handleFormSubmit(e, 'add', 'epics')}
           onClose={handleAddBlockButtonClick}

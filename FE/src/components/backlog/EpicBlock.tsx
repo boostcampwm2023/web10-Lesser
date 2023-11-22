@@ -43,8 +43,8 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
           <span className="text-l">{`Epic${epicIndex + 1}`}</span>
           {updateFormVisible ? (
             <BlockForm
-              currentBlock="epic"
               initialTitle={epicTitle}
+              placeholder="어떤 기능을 계획할 예정인가요? 예시) 회원 기능"
               formRef={formRef}
               handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'epics')}
               onClose={handleEditBlockButtonClick}
@@ -72,15 +72,15 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
       {epicVisible &&
         (newFormVisible ? (
           <BlockForm
-            currentBlock="story"
             initialTitle=""
+            placeholder="이 기능에서 사용자는 어떤 것을 할 수 있나요? 예시) 사용자는 로그인 할 수 있다"
             formRef={formRef}
             handleFormSubmit={(e) => handleFormSubmit(e, 'add', 'stories')}
             onClose={handleAddBlockButtonClick}
           />
         ) : (
           <button
-            className={`flex w-full py-1 rounded-md text-center justify-center bg-accent-green font-bold text-true-white`}
+            className="flex w-full py-1 rounded-md text-center justify-center bg-accent-green font-bold text-true-white"
             onClick={handleAddBlockButtonClick}
           >
             <PlusIcon color="text-true-white" />

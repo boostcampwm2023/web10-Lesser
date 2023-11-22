@@ -34,8 +34,8 @@ const TaskBlock = ({ epicIndex, storyIndex, taskIndex, task, setBacklogState }: 
 
       {updateFormVisible ? (
         <BlockForm
-          currentBlock="task"
           initialTitle={task.title}
+          placeholder="이 story를 구현하기 위한 구체적인 작업에는 어떤 것이 있나요? 예시) 로그인 페이지 UI 디자인"
           formRef={formRef}
           handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'tasks')}
           onClose={handleEditBlockButtonClick}

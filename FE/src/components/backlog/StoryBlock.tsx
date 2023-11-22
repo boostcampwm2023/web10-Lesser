@@ -44,9 +44,9 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
           <span className="flex items-center text-starbucks-green">{`Story${storyIndex + 1}`}</span>
           {updateFormVisible ? (
             <BlockForm
-              currentBlock="story"
               initialTitle={storyTitle}
               formRef={formRef}
+              placeholder="이 기능에서 사용자는 어떤 것을 할 수 있나요? 예시) 사용자는 로그인 할 수 있다"
               handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'stories')}
               onClose={handleEditBlockButtonClick}
             />
