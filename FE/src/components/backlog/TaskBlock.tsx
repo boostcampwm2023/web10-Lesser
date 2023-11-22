@@ -3,6 +3,7 @@ import ChevronRightIcon from '../../assets/icons/ChevronRightIcon';
 import useBlock from '../../hooks/useBlock';
 import EditIcon from '../../assets/icons/EditIcon';
 import BlockForm from './BlockFrom';
+import TaskModal from './TaskModal';
 
 interface TaskBlockProps {
   epicIndex: number;
@@ -13,7 +14,14 @@ interface TaskBlockProps {
 }
 
 const TaskBlock = ({ epicIndex, storyIndex, taskIndex, task, setBacklogState }: TaskBlockProps) => {
-  const { updateFormVisible, formRef, handleEditBlockButtonClick, handleFormSubmit } = useBlock({
+  const {
+    newFormVisible,
+    updateFormVisible,
+    formRef,
+    handleAddBlockButtonClick,
+    handleEditBlockButtonClick,
+    handleFormSubmit,
+  } = useBlock({
     setBlock: setBacklogState,
     epicIndex: epicIndex,
     storyIndex: storyIndex,
@@ -42,9 +50,17 @@ const TaskBlock = ({ epicIndex, storyIndex, taskIndex, task, setBacklogState }: 
       )}
       <p>{task.point} POINT</p>
       <p>{task.member}</p>
-      <button className="flex items-center font-bold">
+      <button className="flex items-center font-bold" onClick={handleAddBlockButtonClick}>
         상세보기 <ChevronRightIcon size={14} />
       </button>
+
+      {newFormVisible && (
+        <TaskModal
+          onClose={handleAddBlockButtonClick}
+          setBacklogState={setBacklogState}
+          {...{ task, epicIndex, storyIndex, taskIndex }}
+        />
+      )}
     </div>
   );
 };
