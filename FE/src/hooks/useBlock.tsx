@@ -5,9 +5,10 @@ interface BlockOptions {
   setBlock?: React.Dispatch<React.SetStateAction<BacklogState>>;
   epicIndex?: number;
   storyIndex?: number;
+  taskIndex?: number;
 }
 
-const useBlock = ({ setBlock, epicIndex, storyIndex }: BlockOptions = {}) => {
+const useBlock = ({ setBlock, epicIndex, storyIndex, taskIndex }: BlockOptions = {}) => {
   const [newFormVisible, setNewFormVisibility] = useState<boolean>(false);
   const [updateFormVisible, setUpdateFormVisibility] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
@@ -26,7 +27,11 @@ const useBlock = ({ setBlock, epicIndex, storyIndex }: BlockOptions = {}) => {
     }
   };
 
-  const handleFormSubmit = (e: React.FormEvent, action: 'add' | 'update', currentBlock: 'epics' | 'stories') => {
+  const handleFormSubmit = (
+    e: React.FormEvent,
+    action: 'add' | 'update',
+    currentBlock: 'epics' | 'stories' | 'tasks',
+  ) => {
     e.preventDefault();
 
     const blockTitle = formRef.current?.querySelector('input')?.value;
@@ -63,7 +68,7 @@ const useBlock = ({ setBlock, epicIndex, storyIndex }: BlockOptions = {}) => {
             epics: updatedEpics,
           };
         }
-      } else {
+      } else if (currentBlock === 'stories') {
         if (action === 'add') {
           const newStory = {
             title: blockTitle!,
@@ -110,6 +115,26 @@ const useBlock = ({ setBlock, epicIndex, storyIndex }: BlockOptions = {}) => {
             epics: updatedEpics,
           };
         }
+      } else {
+        const updatedEpics = [...prevState.epics];
+        const updatedStories = [...updatedEpics[epicIndex!].stories];
+        updatedStories[storyIndex!] = {
+          ...updatedStories[storyIndex!],
+          tasks: updatedStories[storyIndex!].tasks.map((task, index) => {
+            if (index === taskIndex) {
+              return {
+                ...task,
+                title: blockTitle!,
+              };
+            }
+            return task;
+          }),
+        };
+        updatedEpics[epicIndex!] = {
+          ...updatedEpics[epicIndex!],
+          stories: updatedStories,
+        };
+        return { ...prevState, epics: updatedEpics };
       }
     });
 

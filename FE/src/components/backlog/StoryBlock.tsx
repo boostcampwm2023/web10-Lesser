@@ -61,8 +61,8 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
         </div>
       </div>
       {storyVisible &&
-        backlogState.epics[epicIndex].stories[storyIndex].tasks.map((task, index) => (
-          <TaskBlock key={index} taskData={task} />
+        backlogState.epics[epicIndex].stories[storyIndex].tasks.map((task, taskIndex) => (
+          <TaskBlock key={taskIndex} {...{ task, epicIndex, storyIndex, taskIndex, setBacklogState }} />
         ))}
       {newFormVisible && (
         <TaskModal
