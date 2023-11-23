@@ -1,76 +1,22 @@
-import { projectElement } from '../types/project';
-import ProjectCard from '../components/project/ProjectCard';
-import whiteCross from '../assets/images/cross.png';
 import { Link } from 'react-router-dom';
-
-const projectList: Array<projectElement> = [
-  {
-    title: 'Lesser',
-    description: '애자일 프로젝트 관리 툴',
-    taskNum: 3,
-    projectId: 0,
-  },
-
-  {
-    title: 'Lesser',
-    description: '애자일 프로젝트 관리 툴',
-    taskNum: 3,
-    projectId: 1,
-  },
-  {
-    title: 'Lesser',
-    description: '애자일 프로젝트 관리 툴',
-    taskNum: 3,
-    projectId: 2,
-  },
-  {
-    title: 'Lesser',
-    description: '애자일 프로젝트 관리 툴',
-    taskNum: 3,
-    projectId: 3,
-  },
-  {
-    title: 'Lesser',
-    description: '애자일 프로젝트 관리 툴',
-    taskNum: 3,
-    projectId: 4,
-  },
-  {
-    title: 'Lesser',
-    description: '애자일 프로젝트 관리 툴',
-    taskNum: 3,
-    projectId: 5,
-  },
-  {
-    title: 'Lesser',
-    description: '애자일 프로젝트 관리 툴',
-    taskNum: 3,
-    projectId: 6,
-  },
-  {
-    title: 'Lesser',
-    description: '애자일 프로젝트 관리 툴',
-    taskNum: 3,
-    projectId: 7,
-  },
-  {
-    title: 'Lesser',
-    description: '애자일 프로젝트 관리 툴',
-    taskNum: 3,
-    projectId: 8,
-  },
-  {
-    title: 'Lesser',
-    description: '애자일 프로젝트 관리 툴',
-    taskNum: 3,
-    projectId: 9,
-  },
-];
+import { api } from '../apis/api';
+import { useEffect, useState } from 'react';
+import { projectElement } from '../types/project';
+import whiteCross from '../assets/images/cross.png';
+import ProjectCard from '../components/project/ProjectCard';
 
 const ProjectPage = () => {
+  const [projectList, setProjectList] = useState<Array<projectElement>>([]);
+
+  useEffect(() => {
+    api.get('/projects').then((response) => {
+      setProjectList(response.data);
+    });
+  }, []);
+
   return (
     <>
-      <header className="flex gap-2 justify-center min-w-[76rem] mt-8 mb-6">
+      <header className="flex gap-2 justify-center min-w-[76rem] pt-8 mb-6">
         <p className="bg-house-green w-[66.5rem] h-14 font-bold font-pretendard text-true-white text-l ps-3 flex flex-col justify-center rounded-[0.25rem]">
           내 프로젝트
         </p>
@@ -79,9 +25,9 @@ const ProjectPage = () => {
         </p>
       </header>
       <ul className="flex flex-wrap gap-x-5 gap-y-4 w-[76rem] min-w-[76rem] mx-auto">
-        {projectList.map(({ title, description, taskNum, projectId }) => (
-          <li key={projectId} className="list-none">
-            <ProjectCard title={title} description={description} taskNum={taskNum} />
+        {projectList.map(({ id, name, nextPage, subject, myTaskCount }: projectElement) => (
+          <li key={id} className="list-none">
+            <ProjectCard {...{ name, nextPage, subject, id, myTaskCount }} />
           </li>
         ))}
         <Link

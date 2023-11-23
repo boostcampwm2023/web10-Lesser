@@ -1,7 +1,9 @@
 export interface projectCardElement {
-  title: string;
-  description: string;
-  taskNum: number;
+  id: number;
+  name: string;
+  subject: string;
+  nextPage: string;
+  myTaskCount: number;
 }
 
 export interface projectElement extends projectCardElement {
