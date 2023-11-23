@@ -78,7 +78,7 @@ const TaskModal = ({ onClose, setBacklogState, task, epicIndex, storyIndex, task
 
   return (
     <div className="fixed w-screen h-screen top-0 left-0 z-10 flex items-center justify-center bg-black bg-opacity-60">
-      <div className="w-5/12 h-3/4 rounded-md bg-white p-8 text-house-green">
+      <div className="w-[31.875rem] h-[33.75rem] rounded-md bg-white p-6 text-house-green">
         <form className="flex flex-col h-full justify-between">
           <p className="text-l font-bold">Task</p>
           <div className="flex flex-col gap-2">
@@ -87,7 +87,7 @@ const TaskModal = ({ onClose, setBacklogState, task, epicIndex, storyIndex, task
               Story를 구현하기 위해 필요한 업무를 작성합니다
             </label>
             <input
-              className={`w-full p-2 ${
+              className={`w-full py-2 px-2.5 ${
                 editTask || !task
                   ? 'border rounded-sm border-starbucks-green outline-starbucks-green text-s'
                   : 'bg-transparent text-r'
@@ -108,12 +108,12 @@ const TaskModal = ({ onClose, setBacklogState, task, epicIndex, storyIndex, task
             </label>
 
             <textarea
-              className={`w-full p-2 resize-none ${
+              className={`w-full py-2 px-2.5 resize-none ${
                 editTask || !task
                   ? 'border rounded-sm border-starbucks-green outline-starbucks-green text-s'
                   : 'bg-transparent text-r'
               }`}
-              rows={5}
+              rows={editTask || !task ? 4 : 0}
               id="completionCondition"
               name="completionCondition"
               placeholder={
@@ -132,7 +132,7 @@ const TaskModal = ({ onClose, setBacklogState, task, epicIndex, storyIndex, task
               Task를 수행할 멤버를 선정합니다
             </label>
             <input
-              className={`w-1/3 p-2 ${
+              className={`w-[9.375rem] py-2 px-2.5 ${
                 editTask || !task
                   ? 'border rounded-sm border-starbucks-green outline-starbucks-green text-s'
                   : 'bg-transparent text-r'
@@ -153,12 +153,12 @@ const TaskModal = ({ onClose, setBacklogState, task, epicIndex, storyIndex, task
             </label>
 
             <div
-              className={`flex w-1/3 pr-3 items-center ${
+              className={`flex w-[9.375rem] pr-3 items-center ${
                 editTask || !task ? 'border rounded-sm border-starbucks-green' : ''
               } justify-between`}
             >
               <input
-                className={`w-full p-2 ${editTask || !task ? 'text-s outline-none' : 'bg-transparent text-r'}`}
+                className={`w-full py-2 px-2.5 ${editTask || !task ? 'text-s outline-none' : 'bg-transparent text-r'}`}
                 type="number"
                 id="point"
                 name="point"
@@ -169,9 +169,9 @@ const TaskModal = ({ onClose, setBacklogState, task, epicIndex, storyIndex, task
               <p className="font-bold text-starbucks-green">Point</p>
             </div>
           </div>
-          <div className="flex justify-end gap-5">
+          <div className="flex justify-end gap-3">
             <button
-              className="border-2 rounded-md border-starbucks-green px-4 py-1 font-bold text-starbucks-green"
+              className="border-2 rounded-md border-starbucks-green px-4 py-1.5 font-bold text-starbucks-green text-s"
               onClick={(e) => {
                 e.preventDefault();
                 onClose();
@@ -181,7 +181,7 @@ const TaskModal = ({ onClose, setBacklogState, task, epicIndex, storyIndex, task
             </button>
 
             <button
-              className="border-2 rounded-md border-starbucks-green px-4 py-1 bg-starbucks-green font-bold text-true-white"
+              className="border-2 rounded-md border-starbucks-green px-4 py-1.5 bg-starbucks-green font-bold text-true-white text-s"
               onClick={editTask || !task ? handleCreateTaskButtonClick : handleUpdateTaskButtonClick}
             >
               {editTask || !task ? '확인' : '수정'}

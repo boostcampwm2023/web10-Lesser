@@ -37,10 +37,10 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
   };
 
   return (
-    <div className="border border-transparent-green rounded-md">
-      <div className="flex gap-2 p-2 bg-cool-neutral">
+    <div className="border border-transparent-green rounded-md bg-cool-neutral ">
+      <div className="flex gap-[0.313rem] py-2 px-2.5">
         <button onClick={handleStoryToggleButton}>{storyVisible ? <ChevronDownIcon /> : <ChevronRightIcon />}</button>
-        <div className="flex w-full gap-3 text-house-green font-bold">
+        <div className="flex w-full gap-2.5 text-house-green font-bold">
           <span className="flex items-center text-starbucks-green">{`Story${storyIndex + 1}`}</span>
           {updateFormVisible ? (
             <BlockForm
@@ -51,7 +51,10 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
               onClose={handleEditBlockButtonClick}
             />
           ) : (
-            <button className="group flex gap-1 hover:underline items-center" onClick={handleEditBlockButtonClick}>
+            <button
+              className="group flex gap-[0.313rem] hover:underline items-center"
+              onClick={handleEditBlockButtonClick}
+            >
               {storyTitle}
               <span className="hidden group-hover:flex">
                 <EditIcon color="text-house-green" size={16} />
@@ -74,7 +77,7 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
 
       {storyVisible && (
         <button
-          className={`flex w-full py-1 rounded-md text-center justify-center border-t bg-cool-neutral font-bold text-light-gray`}
+          className={`flex w-full py-[0.188rem] text-center justify-center border-t font-bold text-light-gray`}
           onClick={handleAddBlockButtonClick}
         >
           <PlusIcon color="text-light-gray" />
