@@ -34,12 +34,12 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4 border border-house-green rounded-md">
-      <div className="flex gap-2">
+    <div className="flex flex-col gap-5 py-[0.938rem] px-6 border border-house-green rounded-md">
+      <div className="flex gap-[0.313rem]">
         <button onClick={handleEpicToggleButtonClick}>
           {epicVisible ? <ChevronDownIcon /> : <ChevronRightIcon />}
         </button>
-        <div className="flex w-full gap-3 text-house-green font-bold">
+        <div className="flex w-full gap-[0.563rem] text-house-green font-bold">
           <span className="text-l">{`Epic${epicIndex + 1}`}</span>
           {updateFormVisible ? (
             <BlockForm
@@ -50,7 +50,10 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
               onClose={handleEditBlockButtonClick}
             />
           ) : (
-            <button className="group flex gap-1 hover:underline items-center" onClick={handleEditBlockButtonClick}>
+            <button
+              className="group flex gap-[0.313rem] hover:underline items-center"
+              onClick={handleEditBlockButtonClick}
+            >
               {epicTitle}
               <span className="hidden group-hover:flex">
                 <EditIcon color="text-house-green" size={16} />
@@ -80,7 +83,7 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
           />
         ) : (
           <button
-            className="flex w-full py-1 rounded-md text-center justify-center bg-accent-green font-bold text-true-white"
+            className="flex w-full py-[0.313rem] rounded-md text-center justify-center bg-accent-green font-bold text-true-white"
             onClick={handleAddBlockButtonClick}
           >
             <PlusIcon color="text-true-white" />
