@@ -9,7 +9,7 @@ export class ProjectsService {
   constructor(@InjectRepository(Project) private projectRespository: Repository<Project>) {}
 
   async createProject(dto: CreateProjectRequestDto): Promise<CreateProjectResponseDto> {
-    const newProject = this.projectRespository.create({ name: dto.name });
+    const newProject = this.projectRespository.create({ name: dto.name, subject: dto.subject });
     const savedProject = await this.projectRespository.save(newProject);
     return { id: savedProject.id };
   }
@@ -20,6 +20,7 @@ export class ProjectsService {
       const project = new ReadProjectListResponseDto();
       project.id = projectData.id;
       project.name = projectData.name;
+      project.subject = projectData.subject;
       project.nextPage = 'backlogs';
       return project;
     });
