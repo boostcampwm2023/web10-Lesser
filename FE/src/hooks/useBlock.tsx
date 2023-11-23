@@ -149,10 +149,14 @@ const useBlock = ({ block, setBlock, epicIndex, storyIndex, taskIndex }: BlockOp
           ...updatedStories[storyIndex!],
           taskList: updatedStories[storyIndex!].taskList.map((task, index) => {
             if (index === taskIndex) {
+              const { state, point, condition, userId } = task;
               api.patch('/backlogs/task', {
                 id: block.epicList[epicIndex!].storyList[storyIndex!].taskList[taskIndex!].id,
                 title: blockTitle,
-                state: 'ToDo',
+                state,
+                point,
+                condition,
+                userId,
               });
               return {
                 ...task,

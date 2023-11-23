@@ -1,11 +1,11 @@
 export interface TaskData {
   id?: number;
   title: string;
-  state?: 'ToDo';
+  state: 'ToDo';
   point: number;
   condition: string;
   userName: string;
-  userId?: string;
+  userId: number;
 }
 
 export interface BacklogState {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BacklogState, TaskData } from '../../types/backlog';
+import { api } from '../../apis/api';
 
 interface TaskModalProps {
   onClose: () => void;
@@ -27,7 +28,9 @@ const TaskModal = ({
           title: '',
           userName: '',
           point: 0,
+          state: 'ToDo',
           condition: '',
+          userId: 0,
         },
   );
   const [editTask, setEditTask] = useState<boolean>(false);
@@ -45,12 +48,35 @@ const TaskModal = ({
     e.target.value = parsedValue.toString();
   };
 
-  const handleCreateTaskButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleCreateTaskButtonClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (taskData.title.trim() === '' || taskData.userName.trim() === '' || taskData.condition.trim() === '') {
       return;
     }
-    console.log(backlogState);
+
+    const storyId = backlogState.epicList[epicIndex].storyList[storyIndex].id;
+    const { title, state, point, condition, userId } = taskData;
+    if (task) {
+      const res = api.post('/backlogs/story', {
+        storyId,
+        title,
+        state,
+        point,
+        condition,
+        userId,
+      });
+      const id = (await res).data.id;
+      setTaskData((prevData) => ({ ...prevData, id }));
+    } else {
+      api.patch('/backlogs/task', {
+        id: backlogState.epicList[epicIndex!].storyList[storyIndex!].taskList[taskIndex!].id,
+        title,
+        state,
+        point,
+        condition,
+        userId,
+      });
+    }
 
     setBacklogState((prevState) => {
       const updatedEpics = [...prevState.epicList];
@@ -76,7 +102,9 @@ const TaskModal = ({
       title: '',
       point: 0,
       userName: '',
+      state: 'ToDo',
       condition: '',
+      userId: 0,
     });
     onClose();
   };

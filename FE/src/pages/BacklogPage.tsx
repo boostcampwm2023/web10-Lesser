@@ -25,7 +25,6 @@ const BacklogPage = () => {
     block: backlogState,
     setBlock: setBacklogState,
   });
-  console.log(backlogState.epicList);
 
   return (
     <main className="flex flex-col min-w-[60.25rem] font-pretendard select-none">
