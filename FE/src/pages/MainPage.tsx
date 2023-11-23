@@ -3,7 +3,9 @@ import SideNavigationBar from '../components/backlog/SideNavigationBar';
 const MainPage = () => (
   <div className="flex p-8">
     <SideNavigationBar />
-    <Outlet />
+    <div className="ml-[15.75rem]">
+      <Outlet />
+    </div>
   </div>
 );
 
