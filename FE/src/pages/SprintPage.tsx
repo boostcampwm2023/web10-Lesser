@@ -103,7 +103,7 @@ const SprintPage = () => {
   };
 
   return (
-    <section className="w-9/12">
+    <section className="min-w-[60.25rem]">
       <div className="flex mb-2.5">
         <h1 className="mr-2 text-2xl font-bold text-starbucks-green">스프린트 1</h1>
         <span className="self-end text-xs h-fit">백로그와 칸반보드가 보이는 이슈관리 프로토 타입을 만들자</span>

@@ -6,7 +6,7 @@ interface ColumnBoardProps {
 }
 
 const ColumnBoard = ({ taskList }: ColumnBoardProps) => (
-  <ul className="flex flex-col w-4/12 min-h-full gap-3 p-5 border rounded-lg border-green-stroke">
+  <ul className="flex flex-col w-[18.75rem] min-h-full gap-3 p-5 border rounded-lg border-transparent-green">
     {taskList.map(({ id, title, userName, point }) => (
       <li>
         <TaskCard key={id} id={id} title={title} assignee={userName} point={point} />
