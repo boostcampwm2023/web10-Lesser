@@ -13,6 +13,7 @@ import { SprintsModule } from './sprints/sprints.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LesserJwtModule } from './common/lesser-jwt/lesser-jwt.module';
+import { AuthModule } from './common/auth/auth.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { LesserJwtModule } from './common/lesser-jwt/lesser-jwt.module';
     ReviewsModule,
     SprintsModule,
     LesserJwtModule,
+    AuthModule,
   ],
   controllers: [AppController, SprintsController, ReviewsController],
   providers: [AppService],
