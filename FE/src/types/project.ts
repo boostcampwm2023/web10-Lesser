@@ -3,7 +3,7 @@ export interface projectCardElement {
   name: string;
   subject: string;
   nextPage: string;
-  taskNum: number;
+  myTaskCount: number;
 }
 
 export interface projectElement extends projectCardElement {

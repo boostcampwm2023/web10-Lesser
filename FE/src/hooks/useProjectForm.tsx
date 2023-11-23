@@ -15,8 +15,9 @@ const fetchProjectPost = ({ name, subject }: projectPostBody, navigate: Navigate
     })
     .then((response) => {
       const projectId = response.data.id;
+      const nextRef = projectId ? '/backlog' : '/backlog';
       // 임시 backlog 연결
-      navigate('/backlog');
+      navigate(nextRef);
     });
 };
 

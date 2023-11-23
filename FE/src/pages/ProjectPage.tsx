@@ -10,7 +10,6 @@ const ProjectPage = () => {
 
   useEffect(() => {
     api.get('/projects').then((response) => {
-      console.log(response);
       setProjectList(response.data);
     });
   }, []);
@@ -26,9 +25,9 @@ const ProjectPage = () => {
         </p>
       </header>
       <ul className="flex flex-wrap gap-x-5 gap-y-4 w-[76rem] min-w-[76rem] mx-auto">
-        {projectList.map(({ id, name, nextPage, subject }: projectElement) => (
+        {projectList.map(({ id, name, nextPage, subject, myTaskCount }: projectElement) => (
           <li key={id} className="list-none">
-            <ProjectCard {...{ name, nextPage, subject, id, taskNum: 2 }} />
+            <ProjectCard {...{ name, nextPage, subject, id, myTaskCount }} />
           </li>
         ))}
         <Link

@@ -1,8 +1,8 @@
 import { projectCardElement } from '../../types/project';
 import { Link } from 'react-router-dom';
 
-const ProjectCard = ({ id, name, subject, nextPage, taskNum }: projectCardElement) => {
-  const nextRef = nextPage === 'backlogs' ? '/sprint' : '/sprint';
+const ProjectCard = ({ id, name, subject, nextPage, myTaskCount }: projectCardElement) => {
+  const nextRef = nextPage === 'backlogs' ? '/sprint' : `/sprint/${id}`;
   return (
     <Link
       to={nextRef}
@@ -15,7 +15,7 @@ const ProjectCard = ({ id, name, subject, nextPage, taskNum }: projectCardElemen
       <div className="flex gap-1">
         <p className="font-pretendard text-s text-true-black font-medium">내 진행 업무</p>
         <div className="font-pretendard text-s bg-starbucks-green w-6 h-4 flex justify-center content-center rounded-[0.25rem]">
-          <p className="text-true-white text-s font-medium">{taskNum}</p>
+          <p className="text-true-white text-s font-medium">{myTaskCount}</p>
         </div>
       </div>
     </Link>
