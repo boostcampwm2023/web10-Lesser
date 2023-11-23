@@ -13,3 +13,7 @@ class BaseProjectDto {
 
 export class CreateProjectRequestDto extends PickType(BaseProjectDto, ['name']) {}
 export class CreateProjectResponseDto extends PickType(BaseProjectDto, ['id']) {}
+
+export class ReadProjectListResponseDto extends BaseProjectDto {
+  nextPage: string;
+}
