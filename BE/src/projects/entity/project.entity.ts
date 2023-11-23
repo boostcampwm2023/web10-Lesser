@@ -7,4 +7,7 @@ export class Project extends BaseEntity {
 
   @Column()
   name: string;
+
+  @Column()
+  subject: string;
 }

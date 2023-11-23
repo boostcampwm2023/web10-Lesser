@@ -9,7 +9,15 @@ class BaseProjectDto {
   @IsString()
   @IsNotEmpty()
   name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  subject: string;
 }
 
-export class CreateProjectRequestDto extends PickType(BaseProjectDto, ['name']) {}
+export class CreateProjectRequestDto extends PickType(BaseProjectDto, ['name', 'subject']) {}
 export class CreateProjectResponseDto extends PickType(BaseProjectDto, ['id']) {}
+
+export class ReadProjectListResponseDto extends BaseProjectDto {
+  nextPage: string;
+}
