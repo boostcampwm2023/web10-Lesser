@@ -8,9 +8,11 @@ import {
   Patch,
   Post,
   Put,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { IsLoginGuard } from 'src/common/auth/IsLogin.guard';
 import { BacklogsService } from './backlogs.service';
 import {
   CreateBacklogsEpicRequestDto,
@@ -32,6 +34,7 @@ import {
 } from './dto/Task.dto';
 
 @Controller('backlogs')
+@UseGuards(IsLoginGuard)
 @UsePipes(ValidationPipe)
 export class BacklogsController {
   constructor(private readonly backlogsService: BacklogsService) {}
