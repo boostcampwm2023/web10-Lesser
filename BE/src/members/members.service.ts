@@ -25,7 +25,7 @@ export class MembersService {
     const { github_id } = githubUser;
 
     const findMember = await this.memberRepository.findOne({ where: { github_id } });
-    let memberId = findMember ? findMember.id : null;   // user 정보 없으면 회원가입
+    let memberId = findMember ? findMember.id : null; // user 정보 없으면 회원가입
     if (!findMember) {
       const newMember = this.memberRepository.create({
         github_id: githubUser.github_id,
