@@ -90,8 +90,9 @@ export class MembersService {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    const data = await response.json();
-    const [primaryEmail] = data.filter((email) => email.primary === true);
+    const emailList = await response.json();
+    if (!Array.isArray(emailList)) throw new Error('Email list is not an array.');
+    const primaryEmail = emailList.find((email) => email.primary === true);
     return primaryEmail.email;
   }
 }
