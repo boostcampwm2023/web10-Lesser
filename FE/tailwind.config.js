@@ -27,6 +27,7 @@ export default {
         m: '16px',
         ml: '18px',
         l: '24px',
+        xl: '36px',
       },
     },
   },
