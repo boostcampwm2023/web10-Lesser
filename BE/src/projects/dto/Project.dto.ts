@@ -1,5 +1,5 @@
 import { PickType } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 class BaseProjectDto {
   @IsInt()
@@ -20,4 +20,5 @@ export class CreateProjectResponseDto extends PickType(BaseProjectDto, ['id']) {
 
 export class ReadProjectListResponseDto extends BaseProjectDto {
   nextPage: string;
+  myTaskCount: number;
 }
