@@ -12,7 +12,7 @@ import {
 @Injectable()
 export class LesserJwtService {
   constructor(private readonly jwtService: JwtService) {}
-  getAccessToken(userId: string) {
+  getAccessToken(userId: number) {
     const payload = { sub: userId };
     const options = { expiresIn: ACCESS_TOKEN_EXPIRATION };
     return this.jwtService.signAsync(payload, options);
@@ -33,7 +33,6 @@ export class LesserJwtService {
       if (e instanceof JsonWebTokenError) throw new UnauthorizedException(INVALID_MSG);
       throw new UnauthorizedException(UNKNOWN_MSG);
     }
-    if (payload.sub === undefined) console.log(NO_USER_MSG);
     return payload.sub;
   }
 
