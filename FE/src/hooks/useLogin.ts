@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 const login = async (code: string | null, navigate: NavigateFunction, setSearchParams: SetURLSearchParams) => {
   api
-    .post(`${import.meta.env.VITE_BASE_URL}/members/login`, { code })
+    .post(`/members/login`, { code })
     .then((response) => {
       const { accessToken, refreshToken } = response.data;
       setAccessToken(accessToken);
@@ -24,7 +24,7 @@ const useLogin = () => {
   const navigate = useNavigate();
 
   const handleLoginButtonClick = (): void => {
-    location.href = import.meta.env.VITE_OAUTH_URL;
+    location.href = `https://github.com/login/oauth/authorize?client_id=9d51217b46b2a7fca4fe&scope=user:email%20repo`;
   };
 
   useEffect(() => {

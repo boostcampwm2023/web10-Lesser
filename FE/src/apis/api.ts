@@ -7,7 +7,7 @@ const setAccessToken = (newAccessToken: string): void => {
 };
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
+  baseURL: `https://lesser-project.site/api`,
   headers: {
     'Content-Type': 'application/json',
   },
