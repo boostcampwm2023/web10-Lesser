@@ -30,6 +30,10 @@ const useProjectForm = () => {
     if (!projectNameRef.current) {
       return;
     }
+    if (!projectNameRef.current.value) {
+      window.alert('이름을 입력해주세요');
+      return;
+    }
     setProjectName(projectNameRef.current.value);
     setProcess((process) => process + 1);
     projectNameRef.current.value = '';
@@ -38,16 +42,20 @@ const useProjectForm = () => {
     if (!projectSubjectRef.current) {
       return;
     }
+    if (!projectSubjectRef.current.value) {
+      window.alert('주제를 입력해주세요');
+      return;
+    }
     const projectSubject = projectSubjectRef.current.value;
     fetchProjectPost({ name: projectName, subject: projectSubject }, navigate);
   };
 
   return {
     process,
-    handleNextButtonClick,
-    handleSubmitButtonClick,
     projectNameRef,
     projectSubjectRef,
+    handleNextButtonClick,
+    handleSubmitButtonClick,
   };
 };
 

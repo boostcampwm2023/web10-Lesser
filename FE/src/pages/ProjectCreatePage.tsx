@@ -16,8 +16,8 @@ const ProjectCreatePage = () => {
           <p className="text-sm items-center my-auto">돌아가기</p>
         </Link>
         <div className="flex gap-[5rem] m-auto">
-          <ProjectProcessText processNum={1} processName="프로젝트 이름" active={process === 0} />
-          <ProjectProcessText processNum={2} processName="프로젝트 주제" active={process === 1} />
+          <ProjectProcessText processNum={1} processName="프로젝트 이름" active={process >= 0} />
+          <ProjectProcessText processNum={2} processName="프로젝트 주제" active={process >= 1} />
         </div>
       </div>
       {!process ? (
