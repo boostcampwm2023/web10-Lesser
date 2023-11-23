@@ -10,10 +10,11 @@ interface TaskBlockProps {
   storyIndex: number;
   taskIndex: number;
   task: TaskData;
+  backlogState: BacklogState;
   setBacklogState: React.Dispatch<React.SetStateAction<BacklogState>>;
 }
 
-const TaskBlock = ({ epicIndex, storyIndex, taskIndex, task, setBacklogState }: TaskBlockProps) => {
+const TaskBlock = ({ epicIndex, storyIndex, taskIndex, task, backlogState, setBacklogState }: TaskBlockProps) => {
   const {
     newFormVisible,
     updateFormVisible,
@@ -22,6 +23,7 @@ const TaskBlock = ({ epicIndex, storyIndex, taskIndex, task, setBacklogState }: 
     handleEditBlockButtonClick,
     handleFormSubmit,
   } = useBlock({
+    block: backlogState,
     setBlock: setBacklogState,
     epicIndex: epicIndex,
     storyIndex: storyIndex,
@@ -37,7 +39,7 @@ const TaskBlock = ({ epicIndex, storyIndex, taskIndex, task, setBacklogState }: 
             initialTitle={task.title}
             placeholder="이 story를 구현하기 위한 구체적인 작업에는 어떤 것이 있나요? 예시) 로그인 페이지 UI 디자인"
             formRef={formRef}
-            handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'tasks')}
+            handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'taskList')}
             onClose={handleEditBlockButtonClick}
           />
         ) : (
@@ -54,7 +56,7 @@ const TaskBlock = ({ epicIndex, storyIndex, taskIndex, task, setBacklogState }: 
       </p>
 
       <p>{task.point} POINT</p>
-      <p>{task.member}</p>
+      <p>{task.userName}</p>
       <button className="flex items-center font-bold" onClick={handleAddBlockButtonClick}>
         상세보기 <ChevronRightIcon size={14} />
       </button>
@@ -62,8 +64,7 @@ const TaskBlock = ({ epicIndex, storyIndex, taskIndex, task, setBacklogState }: 
       {newFormVisible && (
         <TaskModal
           onClose={handleAddBlockButtonClick}
-          setBacklogState={setBacklogState}
-          {...{ task, epicIndex, storyIndex, taskIndex }}
+          {...{ backlogState, setBacklogState, task, epicIndex, storyIndex, taskIndex }}
         />
       )}
     </div>

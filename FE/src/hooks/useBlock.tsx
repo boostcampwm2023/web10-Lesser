@@ -1,14 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
 import { BacklogState } from '../types/backlog';
+import { api } from '../apis/api';
 
 interface BlockOptions {
-  setBlock?: React.Dispatch<React.SetStateAction<BacklogState>>;
+  block: BacklogState;
+  setBlock: React.Dispatch<React.SetStateAction<BacklogState>>;
   epicIndex?: number;
   storyIndex?: number;
   taskIndex?: number;
 }
 
-const useBlock = ({ setBlock, epicIndex, storyIndex, taskIndex }: BlockOptions = {}) => {
+const useBlock = ({ block, setBlock, epicIndex, storyIndex, taskIndex }: BlockOptions) => {
   const [newFormVisible, setNewFormVisibility] = useState<boolean>(false);
   const [updateFormVisible, setUpdateFormVisibility] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
@@ -27,10 +29,10 @@ const useBlock = ({ setBlock, epicIndex, storyIndex, taskIndex }: BlockOptions =
     }
   };
 
-  const handleFormSubmit = (
+  const handleFormSubmit = async (
     e: React.FormEvent,
     action: 'add' | 'update',
-    currentBlock: 'epics' | 'stories' | 'tasks',
+    currentBlock: 'epicList' | 'storyList' | 'taskList',
   ) => {
     e.preventDefault();
 
@@ -40,20 +42,26 @@ const useBlock = ({ setBlock, epicIndex, storyIndex, taskIndex }: BlockOptions =
       return;
     }
 
-    setBlock!((prevState) => {
-      if (currentBlock === 'epics') {
+    try {
+      if (currentBlock === 'epicList') {
         if (action === 'add') {
+          const res = await api.post('/backlogs/epic', {
+            projectId: 1,
+            title: blockTitle,
+          });
+
           const newEpic = {
+            id: res.data.id,
             title: blockTitle!,
-            stories: [],
+            storyList: [],
           };
 
-          return {
+          setBlock((prevState) => ({
             ...prevState,
-            epics: [...prevState.epics, newEpic],
-          };
+            epicList: [...prevState.epicList, newEpic],
+          }));
         } else {
-          const updatedEpics = prevState.epics.map((epic, index) => {
+          const updatedEpics = block.epicList.map((epic, index) => {
             if (index === epicIndex) {
               return {
                 ...epic,
@@ -63,36 +71,50 @@ const useBlock = ({ setBlock, epicIndex, storyIndex, taskIndex }: BlockOptions =
             return epic;
           });
 
-          return {
+          api.put('/backlogs/epic', {
+            id: block.epicList[epicIndex!].id,
+            title: blockTitle,
+          });
+
+          setBlock((prevState) => ({
             ...prevState,
-            epics: updatedEpics,
-          };
+            epicList: updatedEpics,
+          }));
         }
-      } else if (currentBlock === 'stories') {
+      } else if (currentBlock === 'storyList') {
         if (action === 'add') {
+          const epicId = block.epicList[epicIndex!].id;
+          const id = api
+            .post('/backlogs/story', {
+              epicId,
+              title: blockTitle,
+            })
+            .then((res) => res.data.id);
+
           const newStory = {
+            id,
             title: blockTitle!,
-            tasks: [],
+            taskList: [],
           };
 
-          const updatedEpics = prevState.epics.map((epic, index) => {
+          const updatedEpics = block.epicList.map((epic, index) => {
             if (index === epicIndex) {
               return {
                 ...epic,
-                stories: [...epic.stories, newStory],
+                storyList: [...epic.storyList, newStory],
               };
             }
             return epic;
           });
 
           return {
-            ...prevState,
-            epics: updatedEpics,
+            ...block,
+            epicList: updatedEpics,
           };
         } else {
-          const updatedEpics = prevState.epics.map((epic, index) => {
+          const updatedEpics = block.epicList.map((epic, index) => {
             if (index === epicIndex) {
-              const updatedStories = epic.stories.map((story, index) => {
+              const updatedStories = epic.storyList.map((story, index) => {
                 if (index === storyIndex) {
                   return {
                     ...story,
@@ -104,24 +126,34 @@ const useBlock = ({ setBlock, epicIndex, storyIndex, taskIndex }: BlockOptions =
 
               return {
                 ...epic,
-                stories: updatedStories,
+                storyList: updatedStories,
               };
             }
             return epic;
           });
 
+          api.put('/backlogs/story', {
+            id: block.epicList[epicIndex!].storyList[storyIndex!].id,
+            title: blockTitle,
+          });
+
           return {
-            ...prevState,
-            epics: updatedEpics,
+            ...block,
+            epicList: updatedEpics,
           };
         }
       } else {
-        const updatedEpics = [...prevState.epics];
-        const updatedStories = [...updatedEpics[epicIndex!].stories];
+        const updatedEpics = [...block.epicList];
+        const updatedStories = [...updatedEpics[epicIndex!].storyList];
         updatedStories[storyIndex!] = {
           ...updatedStories[storyIndex!],
-          tasks: updatedStories[storyIndex!].tasks.map((task, index) => {
+          taskList: updatedStories[storyIndex!].taskList.map((task, index) => {
             if (index === taskIndex) {
+              api.patch('/backlogs/task', {
+                id: block.epicList[epicIndex!].storyList[storyIndex!].taskList[taskIndex!].id,
+                title: blockTitle,
+                state: 'ToDo',
+              });
               return {
                 ...task,
                 title: blockTitle!,
@@ -132,15 +164,19 @@ const useBlock = ({ setBlock, epicIndex, storyIndex, taskIndex }: BlockOptions =
         };
         updatedEpics[epicIndex!] = {
           ...updatedEpics[epicIndex!],
-          stories: updatedStories,
+          storyList: updatedStories,
         };
-        return { ...prevState, epics: updatedEpics };
+
+        return { ...block, epicList: updatedEpics };
       }
-    });
+    } catch (error) {
+      console.error('Error:', error);
+    }
 
     setNewFormVisibility(false);
     setUpdateFormVisibility(false);
   };
+
   useEffect(() => {
     document.addEventListener('mousedown', handleOutsideClick);
 

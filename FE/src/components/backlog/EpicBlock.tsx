@@ -15,7 +15,7 @@ interface EpicBlockProps {
 }
 
 const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps) => {
-  const epicTitle = backlogState.epics[epicIndex].title;
+  const epicTitle = backlogState.epicList[epicIndex].title;
   const {
     newFormVisible,
     updateFormVisible,
@@ -24,6 +24,7 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
     handleEditBlockButtonClick,
     handleFormSubmit,
   } = useBlock({
+    block: backlogState,
     setBlock: setBacklogState,
     epicIndex: epicIndex,
   });
@@ -46,7 +47,7 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
               initialTitle={epicTitle}
               placeholder="어떤 기능을 계획할 예정인가요? 예시) 회원 기능"
               formRef={formRef}
-              handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'epics')}
+              handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'epicList')}
               onClose={handleEditBlockButtonClick}
             />
           ) : (
@@ -63,7 +64,7 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
         </div>
       </div>
       {epicVisible &&
-        backlogState.epics[epicIndex].stories.map((story, storyIndex) => (
+        backlogState.epicList[epicIndex].storyList.map((story, storyIndex) => (
           <StoryBlock
             key={story.title}
             {...{ epicIndex, storyIndex }}
@@ -78,7 +79,7 @@ const EpicBlock = ({ epicIndex, backlogState, setBacklogState }: EpicBlockProps)
             initialTitle=""
             placeholder="이 기능에서 사용자는 어떤 것을 할 수 있나요? 예시) 사용자는 로그인 할 수 있다"
             formRef={formRef}
-            handleFormSubmit={(e) => handleFormSubmit(e, 'add', 'stories')}
+            handleFormSubmit={(e) => handleFormSubmit(e, 'add', 'storyList')}
             onClose={handleAddBlockButtonClick}
           />
         ) : (
