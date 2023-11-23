@@ -72,9 +72,8 @@ const SprintPage = () => {
     const inProgressList = taskList.filter(({ state }) => state === 'InProgress');
     const doneList = taskList.filter(({ state }) => state === 'Done');
     return (
-      <li>
+      <li key={storyTitle}>
         <KanbanBoard
-          key={storyTitle}
           storyTitle={storyTitle}
           storyId="LES-12"
           todoList={todoList}
