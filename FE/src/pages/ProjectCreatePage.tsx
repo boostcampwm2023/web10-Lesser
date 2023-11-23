@@ -1,6 +1,9 @@
-import { ReactNode } from 'react';
-const ProjectCreatePage = (): ReactNode => {
-  return <div>ProjectCreatePage</div>;
+const ProjectCreatePage = () => {
+  return (
+    <>
+      <div></div>
+    </>
+  );
 };
 
 export default ProjectCreatePage;
