@@ -1,7 +1,7 @@
+import { useSearchParams } from 'react-router-dom';
 import GithubLogin from '../assets/icons/GithubLogin';
 import LesserTextLogo from '../assets/icons/LesserTextLogo';
 import loginImage from '../assets/images/login-image.png';
-import { useSearchParams } from 'react-router-dom';
 
 const LoginPage = () => {
   const [serchParams] = useSearchParams();
