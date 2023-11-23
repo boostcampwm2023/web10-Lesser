@@ -40,7 +40,7 @@ import { LesserJwtModule } from './common/lesser-jwt/lesser-jwt.module';
     SprintsModule,
     LesserJwtModule,
   ],
-  controllers: [AppController, SprintsController, MembersController, ReviewsController],
+  controllers: [AppController, SprintsController, ReviewsController],
   providers: [AppService],
 })
 export class AppModule {}

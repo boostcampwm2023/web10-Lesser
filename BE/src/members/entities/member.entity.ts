@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class Member extends BaseEntity {
@@ -6,11 +6,14 @@ export class Member extends BaseEntity {
   id: number;
 
   @Column()
-  email: string;
+  github_id: string;
 
   @Column()
   username: string;
 
   @Column()
-  password: string;
+  email: string;
+
+  @Column()
+  image_url: string;
 }
