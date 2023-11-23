@@ -1,6 +1,8 @@
 export interface projectCardElement {
-  title: string;
-  description: string;
+  id: number;
+  name: string;
+  subject: string;
+  nextPage: string;
   taskNum: number;
 }
 
