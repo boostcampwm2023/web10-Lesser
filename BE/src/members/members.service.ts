@@ -5,12 +5,14 @@ import { Repository } from 'typeorm';
 import { LoginRequestDto } from './dto/login-request.dto';
 import { GithubUser } from './dto/member.dto';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MembersService {
   constructor(
     @InjectRepository(Member) private memberRepository: Repository<Member>,
     private lesserJwtService: LesserJwtService,
+    private configService: ConfigService,
   ) {}
 
   async githubLogin(dto: LoginRequestDto) {
@@ -47,8 +49,8 @@ export class MembersService {
 
   async getGithubAccessToken(code: string) {
     const body = {
-      client_id: process.env.GITHUB_CLIENT_ID,
-      client_secret: process.env.GITHUB_CLIENT_SECRET,
+      client_id: this.configService.get('GITHUB_CLIENT_ID'),
+      client_secret: this.configService.get('GITHUB_CLIENT_SECRET'),
       code: code,
     };
     const response = await fetch('https://github.com/login/oauth/access_token', {
@@ -91,6 +93,7 @@ export class MembersService {
       },
     });
     const emailList = await response.json();
+    console.log(emailList);
     if (!Array.isArray(emailList)) throw new Error('Email list is not an array.');
     const primaryEmail = emailList.find((email) => email.primary === true);
     return primaryEmail.email;
