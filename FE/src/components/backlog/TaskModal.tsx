@@ -57,6 +57,15 @@ const TaskModal = ({
     const storyId = backlogState.epicList[epicIndex].storyList[storyIndex].id;
     const { title, state, point, condition, userId } = taskData;
     if (task) {
+      api.patch('/backlogs/task', {
+        id: backlogState.epicList[epicIndex!].storyList[storyIndex!].taskList[taskIndex!].id,
+        title,
+        state,
+        point,
+        condition,
+        userId,
+      });
+    } else {
       const res = api.post('/backlogs/story', {
         storyId,
         title,
@@ -67,15 +76,6 @@ const TaskModal = ({
       });
       const id = (await res).data.id;
       setTaskData((prevData) => ({ ...prevData, id }));
-    } else {
-      api.patch('/backlogs/task', {
-        id: backlogState.epicList[epicIndex!].storyList[storyIndex!].taskList[taskIndex!].id,
-        title,
-        state,
-        point,
-        condition,
-        userId,
-      });
     }
 
     setBacklogState((prevState) => {
