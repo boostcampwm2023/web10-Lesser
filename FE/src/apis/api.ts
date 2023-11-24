@@ -27,7 +27,7 @@ const requestFail = async (error: AxiosError) => {
   }
 
   // 액세스 토큰 만료 지남
-  if (status === 401 && message === 'expired token') {
+  if (status === 401 && (message === 'expired token' || refreshToken)) {
     try {
       const response = await api.post('/member/refresh', {
         headers: {
@@ -41,7 +41,6 @@ const requestFail = async (error: AxiosError) => {
     }
   }
 
-  // 그냥 다시 로그인해야하는 상황
   if (status === 401) {
     return Promise.reject(newError);
   }
@@ -64,7 +63,7 @@ const refreshSucceed = async (response: AxiosResponse, config: InternalAxiosRequ
 };
 
 const refreshFail = (error: AxiosError) => {
-  const newError = structuredClone(error);
+  const newError = error;
   sessionStorage.removeItem('refresh-token');
   newError.status = 401;
   newError.message = '';
