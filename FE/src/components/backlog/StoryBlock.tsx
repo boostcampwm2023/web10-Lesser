@@ -17,7 +17,7 @@ interface StoryBlockProps {
 }
 
 const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: StoryBlockProps) => {
-  const storyTitle = backlogState.epics[epicIndex].stories[storyIndex].title;
+  const storyTitle = backlogState.epicList[epicIndex].storyList[storyIndex].title;
   const {
     newFormVisible,
     updateFormVisible,
@@ -26,6 +26,7 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
     handleEditBlockButtonClick,
     handleFormSubmit,
   } = useBlock({
+    block: backlogState,
     setBlock: setBacklogState,
     epicIndex: epicIndex,
     storyIndex: storyIndex,
@@ -47,7 +48,7 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
               initialTitle={storyTitle}
               formRef={formRef}
               placeholder="이 기능에서 사용자는 어떤 것을 할 수 있나요? 예시) 사용자는 로그인 할 수 있다"
-              handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'stories')}
+              handleFormSubmit={(e) => handleFormSubmit(e, 'update', 'storyList')}
               onClose={handleEditBlockButtonClick}
             />
           ) : (
@@ -64,14 +65,13 @@ const StoryBlock = ({ epicIndex, storyIndex, backlogState, setBacklogState }: St
         </div>
       </div>
       {storyVisible &&
-        backlogState.epics[epicIndex].stories[storyIndex].tasks.map((task, taskIndex) => (
-          <TaskBlock key={taskIndex} {...{ task, epicIndex, storyIndex, taskIndex, setBacklogState }} />
+        backlogState.epicList[epicIndex].storyList[storyIndex].taskList.map((task, taskIndex) => (
+          <TaskBlock key={taskIndex} {...{ task, epicIndex, storyIndex, taskIndex, backlogState, setBacklogState }} />
         ))}
       {newFormVisible && (
         <TaskModal
           onClose={handleAddBlockButtonClick}
-          setBacklogState={setBacklogState}
-          {...{ epicIndex, storyIndex }}
+          {...{ handleAddBlockButtonClick, backlogState, setBacklogState, epicIndex, storyIndex }}
         />
       )}
 

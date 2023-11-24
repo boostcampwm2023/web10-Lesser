@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { BacklogState, TaskData } from '../../types/backlog';
+import { api } from '../../apis/api';
 
 interface TaskModalProps {
   onClose: () => void;
+  backlogState: BacklogState;
   setBacklogState: React.Dispatch<React.SetStateAction<BacklogState>>;
   task?: TaskData;
   epicIndex: number;
@@ -10,15 +12,25 @@ interface TaskModalProps {
   taskIndex?: number;
 }
 
-const TaskModal = ({ onClose, setBacklogState, task, epicIndex, storyIndex, taskIndex }: TaskModalProps) => {
+const TaskModal = ({
+  onClose,
+  backlogState,
+  setBacklogState,
+  task,
+  epicIndex,
+  storyIndex,
+  taskIndex,
+}: TaskModalProps) => {
   const [taskData, setTaskData] = useState<TaskData>(
     task
       ? task
       : {
           title: '',
-          member: '',
+          userName: '',
           point: 0,
-          completionCondition: '',
+          state: 'ToDo',
+          condition: '',
+          userId: 0,
         },
   );
   const [editTask, setEditTask] = useState<boolean>(false);
@@ -36,37 +48,63 @@ const TaskModal = ({ onClose, setBacklogState, task, epicIndex, storyIndex, task
     e.target.value = parsedValue.toString();
   };
 
-  const handleCreateTaskButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleCreateTaskButtonClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (taskData.title.trim() === '' || taskData.member.trim() === '' || taskData.completionCondition.trim() === '') {
+    if (taskData.title.trim() === '' || taskData.userName.trim() === '' || taskData.condition.trim() === '') {
       return;
     }
 
+    const storyId = backlogState.epicList[epicIndex].storyList[storyIndex].id;
+    const { title, state, point, condition, userId } = taskData;
+    if (task) {
+      const res = api.post('/backlogs/story', {
+        storyId,
+        title,
+        state,
+        point,
+        condition,
+        userId,
+      });
+      const id = (await res).data.id;
+      setTaskData((prevData) => ({ ...prevData, id }));
+    } else {
+      api.patch('/backlogs/task', {
+        id: backlogState.epicList[epicIndex!].storyList[storyIndex!].taskList[taskIndex!].id,
+        title,
+        state,
+        point,
+        condition,
+        userId,
+      });
+    }
+
     setBacklogState((prevState) => {
-      const updatedEpics = [...prevState.epics];
-      const updatedStories = [...updatedEpics[epicIndex].stories];
+      const updatedEpics = [...prevState.epicList];
+      const updatedStories = [...updatedEpics[epicIndex].storyList];
 
       if (task) {
-        updatedStories[storyIndex].tasks[taskIndex!] = taskData;
+        updatedStories[storyIndex].taskList[taskIndex!] = taskData;
       } else {
         updatedStories[storyIndex] = {
           ...updatedStories[storyIndex],
-          tasks: [...updatedStories[storyIndex].tasks, taskData],
+          taskList: [...updatedStories[storyIndex].taskList, taskData],
         };
       }
 
       updatedEpics[epicIndex] = {
         ...updatedEpics[epicIndex],
-        stories: updatedStories,
+        storyList: updatedStories,
       };
-      return { ...prevState, epics: updatedEpics };
+      return { ...prevState, epicList: updatedEpics };
     });
 
     setTaskData({
       title: '',
       point: 0,
-      member: '',
-      completionCondition: '',
+      userName: '',
+      state: 'ToDo',
+      condition: '',
+      userId: 0,
     });
     onClose();
   };
@@ -102,7 +140,7 @@ const TaskModal = ({ onClose, setBacklogState, task, epicIndex, storyIndex, task
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-s" htmlFor="completionCondition">
+            <label className="text-s" htmlFor="condition">
               <span className="text-m font-bold pr-2">인수조건</span>
               Task를 완료하기 위한 조건을 작성합니다.
             </label>
@@ -114,20 +152,20 @@ const TaskModal = ({ onClose, setBacklogState, task, epicIndex, storyIndex, task
                   : 'bg-transparent text-r'
               }`}
               rows={editTask || !task ? 4 : 0}
-              id="completionCondition"
-              name="completionCondition"
+              id="condition"
+              name="condition"
               placeholder={
                 '예시 조건)\n' +
                 '몇 개의 테스트 코드를 통과해야 합니다\n' +
                 '사전에 작성한 예상 유저 시나리오와 비교하여 동작을 확인합니다'
               }
-              value={taskData.completionCondition}
+              value={taskData.condition}
               onChange={handleInputChange}
               disabled={!editTask && !!task}
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="member" className="text-s">
+            <label htmlFor="userName" className="text-s">
               <span className="text-m font-bold pr-2">담당자</span>
               Task를 수행할 멤버를 선정합니다
             </label>
@@ -138,10 +176,10 @@ const TaskModal = ({ onClose, setBacklogState, task, epicIndex, storyIndex, task
                   : 'bg-transparent text-r'
               }`}
               type="text"
-              id="member"
-              name="member"
+              id="userName"
+              name="userName"
               placeholder="담당자"
-              value={taskData.member}
+              value={taskData.userName}
               onChange={handleInputChange}
               disabled={!editTask && !!task}
             />

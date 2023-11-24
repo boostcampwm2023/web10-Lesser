@@ -1,16 +1,21 @@
 export interface TaskData {
+  id?: number;
   title: string;
-  member: string;
+  state: 'ToDo';
   point: number;
-  completionCondition: string;
+  condition: string;
+  userName: string;
+  userId: number;
 }
 
 export interface BacklogState {
-  epics: {
+  epicList: {
+    id: number;
     title: string;
-    stories: {
+    storyList: {
+      id: number;
       title: string;
-      tasks: TaskData[];
+      taskList: TaskData[];
     }[];
   }[];
 }
