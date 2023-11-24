@@ -54,7 +54,6 @@ const TaskModal = ({
       return;
     }
 
-    const storyId = backlogState.epicList[epicIndex].storyList[storyIndex].id;
     const { title, state, point, condition, userId } = taskData;
     if (task) {
       api.patch('/backlogs/task', {
@@ -66,7 +65,8 @@ const TaskModal = ({
         userId,
       });
     } else {
-      const res = api.post('/backlogs/story', {
+      const storyId = backlogState.epicList[epicIndex].storyList[storyIndex].id;
+      const res = api.post('/backlogs/task', {
         storyId,
         title,
         state,
