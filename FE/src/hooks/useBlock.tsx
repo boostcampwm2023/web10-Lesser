@@ -26,6 +26,7 @@ const useBlock = ({ block, setBlock, epicIndex, storyIndex, taskIndex }: BlockOp
   const handleOutsideClick = (e: MouseEvent) => {
     if (formRef.current && !formRef.current.contains(e.target as Node)) {
       setNewFormVisibility(false);
+      setUpdateFormVisibility(false);
     }
   };
 
