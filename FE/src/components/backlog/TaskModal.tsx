@@ -66,7 +66,7 @@ const TaskModal = ({
       });
     } else {
       const storyId = backlogState.epicList[epicIndex].storyList[storyIndex].id;
-      const res = api.post('/backlogs/story', {
+      const res = api.post('/backlogs/task', {
         storyId,
         title,
         state,
