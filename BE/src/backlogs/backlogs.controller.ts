@@ -33,8 +33,8 @@ import {
   UpdateBacklogsRequestTaskDto,
 } from './dto/Task.dto';
 
+// @UseGuards(IsLoginGuard)
 @Controller('backlogs')
-@UseGuards(IsLoginGuard)
 @UsePipes(ValidationPipe)
 export class BacklogsController {
   constructor(private readonly backlogsService: BacklogsService) {}
