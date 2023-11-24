@@ -168,8 +168,10 @@ const useBlock = ({ block, setBlock, epicIndex, storyIndex, taskIndex }: BlockOp
           ...updatedEpics[epicIndex!],
           storyList: updatedStories,
         };
-
-        return { ...block, epicList: updatedEpics };
+        setBlock(() => ({
+          ...block,
+          epicList: updatedEpics,
+        }));
       }
     } catch (error) {
       console.error('Error:', error);
