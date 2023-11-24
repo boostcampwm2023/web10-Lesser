@@ -84,15 +84,13 @@ const useBlock = ({ block, setBlock, epicIndex, storyIndex, taskIndex }: BlockOp
       } else if (currentBlock === 'storyList') {
         if (action === 'add') {
           const epicId = block.epicList[epicIndex!].id;
-          const id = api
-            .post('/backlogs/story', {
-              epicId,
-              title: blockTitle,
-            })
-            .then((res) => res.data.id);
+          const res = api.post('/backlogs/story', {
+            epicId,
+            title: blockTitle,
+          });
 
           const newStory = {
-            id,
+            id: (await res).data.id,
             title: blockTitle!,
             taskList: [],
           };
@@ -107,10 +105,10 @@ const useBlock = ({ block, setBlock, epicIndex, storyIndex, taskIndex }: BlockOp
             return epic;
           });
 
-          return {
+          setBlock(() => ({
             ...block,
             epicList: updatedEpics,
-          };
+          }));
         } else {
           const updatedEpics = block.epicList.map((epic, index) => {
             if (index === epicIndex) {
@@ -137,10 +135,10 @@ const useBlock = ({ block, setBlock, epicIndex, storyIndex, taskIndex }: BlockOp
             title: blockTitle,
           });
 
-          return {
+          setBlock(() => ({
             ...block,
             epicList: updatedEpics,
-          };
+          }));
         }
       } else {
         const updatedEpics = [...block.epicList];
