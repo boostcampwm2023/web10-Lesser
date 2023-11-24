@@ -3,7 +3,7 @@ import { IsLoginGuard } from 'src/common/auth/IsLogin.guard';
 import { CreateProjectRequestDto, CreateProjectResponseDto, ReadProjectListResponseDto } from './dto/Project.dto';
 import { ProjectsService } from './projects.service';
 
-@UseGuards(IsLoginGuard)
+// @UseGuards(IsLoginGuard)
 @Controller('projects')
 export class ProjectsController {
   constructor(private readonly projectsSevice: ProjectsService) {}
