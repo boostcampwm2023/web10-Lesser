@@ -5,7 +5,12 @@ import { Story } from 'src/backlogs/entities/story.entity';
 import { Task } from 'src/backlogs/entities/task.entity';
 import { Project } from 'src/projects/entity/project.entity';
 import { Repository } from 'typeorm';
-import { MEpic, ReadBacklogResponseDto } from './dto/backlog.dto';
+import {
+  ReadBacklogTaskResponseDto,
+  ReadBacklogEpicResponseDto,
+  ReadBacklogStoryResponseDto,
+  ReadBacklogResponseDto,
+} from './dto/backlog.dto';
 import {
   CreateBacklogsEpicRequestDto,
   CreateBacklogsEpicResponseDto,
@@ -35,36 +40,60 @@ export class BacklogsService {
   ) {}
 
   async readBacklog(id: number): Promise<ReadBacklogResponseDto> {
-    const project = await this.projectRepository.findOne({ where: { id } });
-    if (project === null) throw new NotFoundException(`Project with ID ${id} not found`);
-    const backlog: ReadBacklogResponseDto = { epicList: [] };
-    const epicDataList = await this.epicRepository.find({ where: { project: { id: project.id } } });
-    epicDataList.forEach((epicData) => {
-      backlog.epicList.push({ id: epicData.id, title: epicData.title, storyList: [] });
-    });
-    await Promise.all(backlog.epicList.map((epic) => this.populateEpicWithStories(epic)));
+    const project = await this.findProject(id);
+    const backlog = new ReadBacklogResponseDto();
+    backlog.epicList = await this.findEpics(project.id);
     return backlog;
   }
 
-  private async populateEpicWithStories(epic: MEpic) {
-    const storyDataList = await this.storyRepository.find({ where: { epic: { id: epic.id } } });
-    await Promise.all(storyDataList.map((storyData) => this.populateStoryWithTasks(storyData, epic)));
+  private async findProject(id: number): Promise<Project> {
+    const project = await this.projectRepository.findOne({ where: { id } });
+    if (project === null) {
+      throw new NotFoundException(`Project with ID ${id} not found`);
+    }
+    return project;
   }
 
-  private async populateStoryWithTasks(storyData: Story, epic: MEpic) {
-    const story = { id: storyData.id, title: storyData.title, taskList: [] };
-    const taskDataList = await this.taskRepository.find({ where: { story: { id: story.id } } });
-    taskDataList.forEach((taskData) => {
-      story.taskList.push({
-        userName: null,
-        id: taskData.id,
-        title: taskData.title,
-        state: taskData.state,
-        point: taskData.point,
-        condition: taskData.condition,
-      });
-    });
-    epic.storyList.push(story);
+  private async findEpics(projectId: number): Promise<ReadBacklogEpicResponseDto[]> {
+    const epicDataList = await this.epicRepository.find({ where: { project: { id: projectId } } });
+    return Promise.all(epicDataList.map(async (epicData) => this.buildEpic(epicData)));
+  }
+
+  private async buildEpic(epicData: Epic): Promise<ReadBacklogEpicResponseDto> {
+    const epic = new ReadBacklogEpicResponseDto();
+    epic.id = epicData.id;
+    epic.title = epicData.title;
+    epic.storyList = await this.findStories(epic.id);
+    return epic;
+  }
+
+  private async findStories(epicId: number): Promise<ReadBacklogStoryResponseDto[]> {
+    const storyDataList = await this.storyRepository.find({ where: { epic: { id: epicId } } });
+    return Promise.all(storyDataList.map(async (storyData) => this.buildStory(storyData)));
+  }
+
+  private async buildStory(storyData: Story): Promise<ReadBacklogStoryResponseDto> {
+    const story = new ReadBacklogStoryResponseDto();
+    story.id = storyData.id;
+    story.title = storyData.title;
+    story.taskList = await this.findTasks(story.id);
+    return story;
+  }
+
+  private async findTasks(storyId: number): Promise<ReadBacklogTaskResponseDto[]> {
+    const taskDataList = await this.taskRepository.find({ where: { story: { id: storyId } } });
+    return taskDataList.map((taskData) => this.buildTask(taskData));
+  }
+
+  private buildTask(taskData: Task): ReadBacklogTaskResponseDto {
+    const task = new ReadBacklogTaskResponseDto();
+    task.id = taskData.id;
+    task.point = taskData.point;
+    task.state = taskData.state;
+    task.condition = taskData.condition;
+    task.title = taskData.title;
+    task.userName = null; //추후 유저로직 추가
+    return task;
   }
 
   async createEpic(dto: CreateBacklogsEpicRequestDto): Promise<CreateBacklogsEpicResponseDto> {

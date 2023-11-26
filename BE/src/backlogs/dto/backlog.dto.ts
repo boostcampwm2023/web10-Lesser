@@ -1,18 +1,18 @@
 import { OmitType, PickType } from '@nestjs/swagger';
 import { baseEpicDto, baseStoryDto, baseTaskDto } from './baseType.dto';
 
-export class MTask extends OmitType(baseTaskDto, ['storyId', 'userId']) {
+export class ReadBacklogTaskResponseDto extends OmitType(baseTaskDto, ['storyId', 'userId']) {
   userName: string;
 }
 
-export class MStory extends PickType(baseStoryDto, ['id', 'title']) {
-  taskList: MTask[];
+export class ReadBacklogStoryResponseDto extends PickType(baseStoryDto, ['id', 'title']) {
+  taskList: ReadBacklogTaskResponseDto[];
 }
 
-export class MEpic extends PickType(baseEpicDto, ['id', 'title']) {
-  storyList: MStory[];
+export class ReadBacklogEpicResponseDto extends PickType(baseEpicDto, ['id', 'title']) {
+  storyList: ReadBacklogStoryResponseDto[];
 }
 
 export class ReadBacklogResponseDto {
-  epicList: MEpic[];
+  epicList: ReadBacklogEpicResponseDto[];
 }

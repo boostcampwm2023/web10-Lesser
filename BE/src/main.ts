@@ -7,7 +7,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
-  app.enableCors();
+  //추후에 origin을 Lesser사이트로 변경
+  app.enableCors({ origin: true, credentials: true });
 
   const config = new DocumentBuilder()
     .setTitle('Lesser API')
