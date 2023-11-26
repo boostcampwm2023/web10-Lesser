@@ -83,48 +83,59 @@ export class MembersService {
       client_secret: this.configService.get('GITHUB_CLIENT_SECRET'),
       code: code,
     };
-    const response = await fetch('https://github.com/login/oauth/access_token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    const oauthData = await response.json();
-    const accessToken = oauthData.access_token;
-    return accessToken;
+    try {
+      const response = await fetch('https://github.com/login/oauth/access_token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+      const oauthData = await response.json();
+      const accessToken = oauthData.access_token;
+      return accessToken;
+    } catch (err) {
+      throw new Error(err.message);
+    }
   }
 
   async fetchGithubUser(accessToken: string): Promise<GithubUser> {
-    const response = await fetch('https://api.github.com/user', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    const data = await response.json();
-    const githubUser: GithubUser = {
-      github_id: data.id,
-      username: data.login,
-      email: data.email,
-      image_url: data.avatar_url,
-    };
-    return githubUser;
+    try {
+      const response = await fetch('https://api.github.com/user', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const data = await response.json();
+      const githubUser: GithubUser = {
+        github_id: data.id,
+        username: data.login,
+        email: data.email,
+        image_url: data.avatar_url,
+      };
+      return githubUser;
+    } catch (err) {
+      throw new Error(err.message);
+    }
   }
 
   async fetchGithubEmail(accessToken: string): Promise<string> {
-    const response = await fetch('https://api.github.com/user/emails', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    const emailList = await response.json();
-    if (!Array.isArray(emailList)) throw new Error('Email list is not an array.');
-    const primaryEmail = emailList.find((email) => email.primary === true);
-    return primaryEmail.email;
+    try {
+      const response = await fetch('https://api.github.com/user/emails', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const emailList = await response.json();
+      const primaryEmail = emailList.find((email) => email.primary === true);
+      return primaryEmail.email;
+    } catch (err) {
+      throw new Error(err.message);
+    }
   }
 }
