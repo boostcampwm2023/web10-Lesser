@@ -4,6 +4,7 @@ import { Member } from './entities/member.entity';
 import { Repository } from 'typeorm';
 import { LoginRequestDto } from './dto/login-request.dto';
 import { GithubUser } from './dto/member.dto';
+import { Tokens } from './dto/tokens.dto';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
 import { ConfigService } from '@nestjs/config';
 
@@ -14,6 +15,7 @@ export class MembersService {
     private lesserJwtService: LesserJwtService,
     private configService: ConfigService,
   ) {}
+  private loggedMembers = new Map();
 
   async githubLogin(dto: LoginRequestDto) {
     const githubAccessToken = await this.getGithubAccessToken(dto.code);
@@ -41,10 +43,38 @@ export class MembersService {
       this.lesserJwtService.getAccessToken(memberId),
       this.lesserJwtService.getRefreshToken(),
     ]);
-    return {
+
+    this.loggedMembers.set(lesserRefreshToken, { memberId });
+
+    const tokens: Tokens = {
       accessToken: lesserAccessToken,
       refreshToken: lesserRefreshToken,
     };
+    return tokens;
+  }
+
+  logout(id: number) {
+    for (let [refreshToken, memberId] of this.loggedMembers.entries()) {
+      if (memberId === id) {
+        this.loggedMembers.delete(refreshToken);
+        break;
+      }
+    }
+  }
+
+  async refresh(refreshToken: string) {
+    const memberId = this.loggedMembers.get(refreshToken).memberId;
+    this.loggedMembers.delete(refreshToken);
+    const [newAccesToken, newRefreshToken] = await Promise.all([
+      this.lesserJwtService.getAccessToken(memberId),
+      this.lesserJwtService.getRefreshToken(),
+    ]);
+    this.loggedMembers.set(newRefreshToken, memberId);
+    const tokens: Tokens = {
+      accessToken: newAccesToken,
+      refreshToken: newRefreshToken,
+    };
+    return tokens;
   }
 
   async getGithubAccessToken(code: string) {
@@ -93,7 +123,6 @@ export class MembersService {
       },
     });
     const emailList = await response.json();
-    console.log(emailList);
     if (!Array.isArray(emailList)) throw new Error('Email list is not an array.');
     const primaryEmail = emailList.find((email) => email.primary === true);
     return primaryEmail.email;

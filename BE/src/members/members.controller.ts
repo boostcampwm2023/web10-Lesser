@@ -3,6 +3,10 @@ import { MembersService } from './members.service';
 import { LoginRequestDto } from './dto/login-request.dto';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
 
+interface CustomHeaders {
+  authorization: string;
+}
+
 @Controller('members')
 export class MembersController {
   constructor(
@@ -11,20 +15,26 @@ export class MembersController {
   ) {}
 
   @Post('login')
-  login(@Body() body: LoginRequestDto) {
-    return this.membersService.githubLogin(body);
+  async login(@Body() body: LoginRequestDto) {
+    const tokens = await this.membersService.githubLogin(body);
+    return tokens;
+  }
+
+  @Post('logout')
+  async logout(@Req() request: Request & { headers: CustomHeaders }) {
+    const { authorization } = request.headers;
+    const token = authorization.split('Bearer ')[1];
+    this.lesserJwtService.veifryToken(token);
+    const userId = await this.lesserJwtService.getUserId(token);
+    this.membersService.logout(userId);
   }
 
   @Post('refresh')
-  async generateAccessToken(@Req() request: Request) {
-    const headers: any = request.headers;
-    const authorization = headers.authorization;
+  async generateAccessToken(@Req() request: Request & { headers: CustomHeaders }) {
+    const { authorization } = request.headers;
     const token = authorization.split('Bearer ')[1];
     this.lesserJwtService.veifryToken(token);
-    const userId = -1;
-    return {
-      accessToken: await this.lesserJwtService.getAccessToken(userId),
-      refreshToken: await this.lesserJwtService.getRefreshToken(),
-    };
+    const tokens = await this.membersService.refresh(token);
+    return tokens;
   }
 }
