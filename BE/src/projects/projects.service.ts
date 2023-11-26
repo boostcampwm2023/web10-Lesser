@@ -39,14 +39,17 @@ export class ProjectsService {
   }
 
   private async getTaskCount(projectId: number): Promise<number> {
-    let ret = 0;
     const epicDataList = await this.epicRepository.find({ where: { project: { id: projectId } } });
-    for (let i = 0; i < epicDataList.length; i++) {
-      const storyDataList = await this.storyRepository.find({ where: { epic: { id: epicDataList[i].id } } });
-      for (let j = 0; j < storyDataList.length; j++) {
-        ret += (await this.taskRepository.find({ where: { story: { id: storyDataList[j].id } } })).length;
-      }
-    }
-    return ret;
+    const taskDataLists = await Promise.all(
+      epicDataList.map(async (epicData) => {
+        const storyDataList = await this.storyRepository.find({ where: { epic: { id: epicData.id } } });
+        return await Promise.all(
+          storyDataList.map(
+            async (storyData) => await this.taskRepository.find({ where: { story: { id: storyData.id } } }),
+          ),
+        );
+      }),
+    );
+    return taskDataLists.flat(2).length;
   }
 }
