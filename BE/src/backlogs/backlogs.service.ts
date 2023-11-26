@@ -5,7 +5,12 @@ import { Story } from 'src/backlogs/entities/story.entity';
 import { Task } from 'src/backlogs/entities/task.entity';
 import { Project } from 'src/projects/entity/project.entity';
 import { Repository } from 'typeorm';
-import { MTask, MEpic, MStory, ReadBacklogResponseDto } from './dto/backlog.dto';
+import {
+  ReadBacklogTaskResponseDto,
+  ReadBacklogEpicResponseDto,
+  ReadBacklogStoryResponseDto,
+  ReadBacklogResponseDto,
+} from './dto/backlog.dto';
 import {
   CreateBacklogsEpicRequestDto,
   CreateBacklogsEpicResponseDto,
@@ -49,39 +54,39 @@ export class BacklogsService {
     return project;
   }
 
-  private async findEpics(projectId: number): Promise<MEpic[]> {
+  private async findEpics(projectId: number): Promise<ReadBacklogEpicResponseDto[]> {
     const epicDataList = await this.epicRepository.find({ where: { project: { id: projectId } } });
     return Promise.all(epicDataList.map(async (epicData) => this.buildEpic(epicData)));
   }
 
-  private async buildEpic(epicData: Epic): Promise<MEpic> {
-    const epic = new MEpic();
+  private async buildEpic(epicData: Epic): Promise<ReadBacklogEpicResponseDto> {
+    const epic = new ReadBacklogEpicResponseDto();
     epic.id = epicData.id;
     epic.title = epicData.title;
     epic.storyList = await this.findStories(epic.id);
     return epic;
   }
 
-  private async findStories(epicId: number): Promise<MStory[]> {
+  private async findStories(epicId: number): Promise<ReadBacklogStoryResponseDto[]> {
     const storyDataList = await this.storyRepository.find({ where: { epic: { id: epicId } } });
     return Promise.all(storyDataList.map(async (storyData) => this.buildStory(storyData)));
   }
 
-  private async buildStory(storyData: Story): Promise<MStory> {
-    const story = new MStory();
+  private async buildStory(storyData: Story): Promise<ReadBacklogStoryResponseDto> {
+    const story = new ReadBacklogStoryResponseDto();
     story.id = storyData.id;
     story.title = storyData.title;
     story.taskList = await this.findTasks(story.id);
     return story;
   }
 
-  private async findTasks(storyId: number): Promise<MTask[]> {
+  private async findTasks(storyId: number): Promise<ReadBacklogTaskResponseDto[]> {
     const taskDataList = await this.taskRepository.find({ where: { story: { id: storyId } } });
     return taskDataList.map((taskData) => this.buildTask(taskData));
   }
 
-  private buildTask(taskData: Task): MTask {
-    const task = new MTask();
+  private buildTask(taskData: Task): ReadBacklogTaskResponseDto {
+    const task = new ReadBacklogTaskResponseDto();
     task.id = taskData.id;
     task.point = taskData.point;
     task.state = taskData.state;
