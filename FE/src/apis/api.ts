@@ -1,5 +1,7 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
+const REFRESH_TOKEN = 'refreshToken';
+
 let accessToken: string | undefined;
 
 const setAccessToken = (newAccessToken: string): void => {
@@ -16,9 +18,7 @@ const api = axios.create({
 const requestSucceed = (response: AxiosResponse): AxiosResponse => response;
 
 const requestFail = async (error: AxiosError) => {
-  accessToken = undefined;
-  const refreshToken = sessionStorage.getItem('refresh-token');
-  const { status, config, message } = error;
+  const refreshToken = sessionStorage.getItem(REFRESH_TOKEN);
   const newError = refreshFail(error);
 
   // refreshToken이 없으면 다시 로그인
@@ -27,23 +27,31 @@ const requestFail = async (error: AxiosError) => {
   }
 
   // 액세스 토큰 만료 지남
-  if (status === 401 && (message === 'expired token' || refreshToken)) {
+  if (error.response?.status === 401 && (error.message === 'expired token' || refreshToken)) {
     try {
-      const response = await api.post('/member/refresh', {
-        headers: {
-          Authorization: `Bearer ${refreshToken}`,
+      accessToken = undefined;
+      const response = await api.post(
+        '/members/refresh',
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${refreshToken}`,
+          },
         },
-      });
+      );
 
-      return await refreshSucceed(response, config);
+      return await refreshSucceed(response, error.config);
     } catch {
       return Promise.reject(newError);
     }
   }
 
-  if (status === 401) {
+  if (error.status === 401) {
+    accessToken = undefined;
     return Promise.reject(newError);
   }
+
+  return Promise.reject(error);
 };
 
 const refreshSucceed = async (response: AxiosResponse, config: InternalAxiosRequestConfig | undefined) => {
@@ -51,7 +59,7 @@ const refreshSucceed = async (response: AxiosResponse, config: InternalAxiosRequ
   const newAccessToken = response.data.accessToken;
   const newRefreshToken = response.data.refreshToken;
   accessToken = newAccessToken;
-  sessionStorage.setItem('refresh-token', newRefreshToken);
+  sessionStorage.setItem(REFRESH_TOKEN, newRefreshToken);
 
   // 토큰을 새로 담아 재요청
   if (config) {
@@ -64,7 +72,7 @@ const refreshSucceed = async (response: AxiosResponse, config: InternalAxiosRequ
 
 const refreshFail = (error: AxiosError) => {
   const newError = error;
-  sessionStorage.removeItem('refresh-token');
+  sessionStorage.removeItem(REFRESH_TOKEN);
   newError.status = 401;
   newError.message = '';
 
