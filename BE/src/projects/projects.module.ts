@@ -8,12 +8,13 @@ import { AuthModule } from 'src/common/auth/auth.module';
 import { IsLoginGuard } from 'src/common/auth/IsLogin.guard';
 import { LesserJwtModule } from 'src/common/lesser-jwt/lesser-jwt.module';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
+import { Member } from 'src/members/entities/member.entity';
 import { Project } from './entity/project.entity';
 import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Project, Epic, Story, Task]), LesserJwtModule],
+  imports: [TypeOrmModule.forFeature([Project, Epic, Story, Task, Member]), LesserJwtModule],
   controllers: [ProjectsController],
   providers: [ProjectsService],
 })

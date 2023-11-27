@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Epic } from 'src/backlogs/entities/epic.entity';
 import { Story } from 'src/backlogs/entities/story.entity';
 import { Task } from 'src/backlogs/entities/task.entity';
+import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
+import { Member } from 'src/members/entities/member.entity';
 import { Repository } from 'typeorm';
 import { CreateProjectRequestDto, CreateProjectResponseDto, ReadProjectListResponseDto } from './dto/Project.dto';
 import { Project } from './entity/project.entity';
@@ -14,10 +16,17 @@ export class ProjectsService {
     @InjectRepository(Epic) private epicRepository: Repository<Epic>,
     @InjectRepository(Story) private storyRepository: Repository<Story>,
     @InjectRepository(Task) private taskRepository: Repository<Task>,
+    @InjectRepository(Member) private memberRepository: Repository<Member>,
   ) {}
 
-  async createProject(dto: CreateProjectRequestDto): Promise<CreateProjectResponseDto> {
-    const newProject = this.projectRespository.create({ name: dto.name, subject: dto.subject });
+  async createProject(
+    dto: CreateProjectRequestDto,
+    memberInfo: memberDecoratorType,
+  ): Promise<CreateProjectResponseDto> {
+    const member = await this.memberRepository.findOne({ where: { id: memberInfo.id } });
+    if (!member) throw new InternalServerErrorException();
+    const newProject = this.projectRespository.create({ name: dto.name, subject: dto.subject, members: [] });
+    newProject.members.push(member);
     const savedProject = await this.projectRespository.save(newProject);
     return { id: savedProject.id };
   }

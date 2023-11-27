@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+import { Member } from 'src/members/entities/member.entity';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany } from 'typeorm';
 
 @Entity()
 export class Project extends BaseEntity {
@@ -10,4 +11,8 @@ export class Project extends BaseEntity {
 
   @Column()
   subject: string;
+
+  @ManyToMany(() => Member)
+  @JoinTable()
+  members: Member[];
 }

@@ -12,7 +12,7 @@ export class IsLoginGuard implements CanActivate {
   private async validateRequest(request) {
     if (request.headers.authorization === undefined) throw new UnauthorizedException();
     const accessToken = request.headers.authorization.split('Bearer ')[1];
-    request.userId = await this.lesserJwtService.getUserId(accessToken);
+    request.member = { id: await this.lesserJwtService.getUserId(accessToken) };
     return true;
   }
 }
