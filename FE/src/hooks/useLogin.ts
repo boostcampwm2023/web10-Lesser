@@ -24,7 +24,7 @@ const useLogin = () => {
   const navigate = useNavigate();
 
   const handleLoginButtonClick = (): void => {
-    location.href = `https://github.com/login/oauth/authorize?client_id=9d51217b46b2a7fca4fe&scope=user:email%20repo`;
+    location.href = `${import.meta.env.VITE_GITHUB_OAUTH_URL}?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID}&scope=user:email%20repo`;
   };
 
   useEffect(() => {
