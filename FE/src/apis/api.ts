@@ -9,7 +9,7 @@ const setAccessToken = (newAccessToken: string): void => {
 };
 
 const api = axios.create({
-  baseURL: `https://lesser-project.site/api`,
+  baseURL: import.meta.env.VITE_NEST_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
