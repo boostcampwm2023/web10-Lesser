@@ -1,6 +1,10 @@
 # 1. Builder Stage
 FROM node:20.9.0 as builder
 
+ARG VITE_NEST_API_URL
+ARG VITE_GITHUB_OAUTH_URL
+ARG VITE_GITHUB_CLIENT_ID
+
 RUN mkdir /usr/src/app
 
 WORKDIR /usr/src/app
@@ -13,7 +17,10 @@ RUN npm install
 
 COPY . /usr/src/app
 
-RUN npm run build
+RUN VITE_NEST_API_URL=$VITE_NEST_API_URL \
+    VITE_GITHUB_OAUTH_URL=$VITE_GITHUB_OAUTH_URL \
+    VITE_GITHUB_CLIENT_ID=$VITE_GITHUB_CLIENT_ID \
+    npm run build
 
 # 2. Nginx Stage
 FROM nginx
