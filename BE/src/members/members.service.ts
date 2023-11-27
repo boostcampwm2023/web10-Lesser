@@ -69,7 +69,7 @@ export class MembersService {
       this.lesserJwtService.getAccessToken(memberId),
       this.lesserJwtService.getRefreshToken(),
     ]);
-    this.loggedMembers.set(newRefreshToken, memberId);
+    this.loggedMembers.set(newRefreshToken, { memberId });
     const tokens: Tokens = {
       accessToken: newAccesToken,
       refreshToken: newRefreshToken,
