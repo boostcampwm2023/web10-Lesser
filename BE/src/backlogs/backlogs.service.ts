@@ -40,9 +40,8 @@ export class BacklogsService {
     @InjectRepository(Task) private taskRepository: Repository<Task>,
   ) {}
 
-  async readBacklog(id: number, memberInfo: memberDecoratorType): Promise<ReadBacklogResponseDto> {
+  async readBacklog(id: number): Promise<ReadBacklogResponseDto> {
     const project = await this.findProject(id);
-    await this.checkProjectAuth(project, memberInfo.id);
     const backlog = new ReadBacklogResponseDto();
     backlog.epicList = await this.findEpics(project.id);
     return backlog;
@@ -54,13 +53,6 @@ export class BacklogsService {
       throw new NotFoundException(`Project with ID ${id} not found`);
     }
     return project;
-  }
-
-  private async checkProjectAuth(project: Project, memberId: number) {
-    const isMember = project.members.some((member) => member.id === memberId);
-    if (!isMember) {
-      throw new ForbiddenException();
-    }
   }
 
   private async findEpics(projectId: number): Promise<ReadBacklogEpicResponseDto[]> {
