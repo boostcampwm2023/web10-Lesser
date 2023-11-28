@@ -10,6 +10,12 @@ const useKanbanDrag = (setTaskList: React.Dispatch<React.SetStateAction<Task[]>>
   };
 
   const handleDragDrop = (e: React.DragEvent, state: TaskState, boardStoryId: number | undefined = undefined) => {
+    const taskData = e.dataTransfer.getData('taskData');
+
+    if (!taskData) {
+      return;
+    }
+
     const { id: taskId, storyId } = JSON.parse(e.dataTransfer.getData('taskData'));
 
     if (boardStoryId && storyId !== boardStoryId) {
