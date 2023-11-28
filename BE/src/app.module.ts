@@ -42,7 +42,7 @@ import { AuthModule } from './common/auth/auth.module';
     LesserJwtModule,
     AuthModule,
   ],
-  controllers: [AppController, SprintsController, ReviewsController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
