@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 import { projectElement } from '../types/project';
 import whiteCross from '../assets/images/cross.png';
 import ProjectCard from '../components/project/ProjectCard';
+import useLogout from '../hooks/useLogout';
 
 const ProjectPage = () => {
   const [projectList, setProjectList] = useState<Array<projectElement>>([]);
+  const handleLogoutButtonClick = useLogout();
 
   useEffect(() => {
     api.get('/projects').then((response) => {
@@ -20,9 +22,12 @@ const ProjectPage = () => {
         <p className="bg-house-green w-[66.5rem] h-14 font-bold font-pretendard text-true-white text-l ps-3 flex flex-col justify-center rounded-[0.25rem]">
           내 프로젝트
         </p>
-        <p className="bg-house-green w-[8.6875rem] h-14 font-bold font-pretendard text-true-white text-ml flex flex-col justify-center rounded-[0.25rem] text-center">
+        <button
+          className="bg-house-green w-[8.6875rem] h-14 font-bold font-pretendard text-true-white text-ml flex flex-col justify-center items-center rounded-[0.25rem]"
+          onClick={handleLogoutButtonClick}
+        >
           로그아웃
-        </p>
+        </button>
       </header>
       <ul className="flex flex-wrap gap-x-5 gap-y-4 w-[76rem] min-w-[76rem] mx-auto">
         {projectList.map(({ id, name, nextPage, subject, myTaskCount }: projectElement) => (
@@ -34,7 +39,7 @@ const ProjectPage = () => {
           to={'/project/create'}
           className="w-[7.5rem] h-[7.5rem] flex flex-col justify-center content-center gap-2 bg-starbucks-green rounded-[0.25rem] cursor-pointer"
         >
-          <p className="text-true-white font-pretendard font-bold text-r text-center">새 프로젝트 생성</p>
+          <p className="font-bold text-center text-true-white font-pretendard text-r">새 프로젝트 생성</p>
           <img src={whiteCross} className="w-4 h-4 mx-auto" />
         </Link>
       </ul>

@@ -2,6 +2,7 @@ import { NavigationInformation } from '../../types/navigation';
 import NavigationButton from './NavigationButton';
 import lesserLogo from '../../assets/icons/lesserLogo.svg';
 import { Link, useLocation } from 'react-router-dom';
+import useLogout from '../../hooks/useLogout';
 
 const navigationInformation: NavigationInformation[] = [
   {
@@ -25,6 +26,7 @@ const navigationInformation: NavigationInformation[] = [
 
 const SideNavigationBar = () => {
   const currentURI = useLocation().pathname;
+  const handleLogoutButtonClick = useLogout();
 
   return (
     <nav className="flex flex-col items-center px-6 py-8 top-[32px] rounded-lg w-52 bg-house-green gap-2.5 mr-10 min-w-[13.125rem] min-h-[calc(100vh-64px)] max-h-[calc(100vh-64px)] sticky">
@@ -43,7 +45,9 @@ const SideNavigationBar = () => {
       <Link to={'project'} className="py-3 text-lg font-bold text-true-white">
         내 프로젝트
       </Link>
-      <button className="py-3 text-lg font-bold text-true-white">로그아웃</button>
+      <button className="py-3 text-lg font-bold text-true-white" onClick={handleLogoutButtonClick}>
+        로그아웃
+      </button>
     </nav>
   );
 };
