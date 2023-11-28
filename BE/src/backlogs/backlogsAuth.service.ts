@@ -16,14 +16,45 @@ export class BacklogsAuthService {
     @InjectRepository(Task) private taskRepository: Repository<Task>,
   ) {}
   async checkProjectAuth(projectId: number, memberInfo: memberDecoratorType) {
-    const project = await this.projectRepository.findOne({ where: { id: projectId }, relations: ['members'] });
-    if (project === null) throw new NotFoundException(`Project with ID ${projectId} not found`);
-    const isMember = project.members.some((member) => member.id === memberInfo.id);
-    if (!isMember) throw new ForbiddenException();
+    const queryData = await this.projectRepository
+      .createQueryBuilder('project')
+      .innerJoin('project.members', 'member')
+      .where('project.id = : projectId', { projectId })
+      .andWhere('member.id = : memberId', { memberId: memberInfo.id })
+      .getOne();
+    if (queryData === null) throw new ForbiddenException();
   }
   async checkEpicAuth(epicId: number, memberInfo: memberDecoratorType) {
-    // await this.epicRepository();
+    const queryData = await this.epicRepository
+      .createQueryBuilder('epic')
+      .innerJoin('epic.project', 'project')
+      .innerJoin('project.members', 'member')
+      .where('epic.id = :epicId', { epicId })
+      .andWhere('member.id = :memberId', { memberId: memberInfo.id })
+      .getOne();
+    if (queryData === null) throw new ForbiddenException();
   }
-  async checkStoryAuth(storyId: number, memberInfo: memberDecoratorType) {}
-  async checkTaskAuth(taskId: number, memberInfo: memberDecoratorType) {}
+  async checkStoryAuth(storyId: number, memberInfo: memberDecoratorType) {
+    const queryData = await this.storyRepository
+      .createQueryBuilder('story')
+      .innerJoin('story.epic', 'epic')
+      .innerJoin('epic.project', 'project')
+      .innerJoin('project.members', 'member')
+      .where('story.id = :storyId', { storyId })
+      .andWhere('member.id = :memberId', { memberId: memberInfo.id })
+      .getOne();
+    if (queryData === null) throw new ForbiddenException();
+  }
+  async checkTaskAuth(taskId: number, memberInfo: memberDecoratorType) {
+    const queryData = await this.taskRepository
+      .createQueryBuilder('task')
+      .innerJoin('task.story', 'story')
+      .innerJoin('story.epic', 'epic')
+      .innerJoin('epic.project', 'project')
+      .innerJoin('project.members', 'member')
+      .where('task.id = :taskId', { taskId })
+      .andWhere('member.id = :memberId', { memberId: memberInfo.id })
+      .getOne();
+    if (queryData === null) throw new ForbiddenException();
+  }
 }
