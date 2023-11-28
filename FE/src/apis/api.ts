@@ -1,10 +1,9 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-
-const REFRESH_TOKEN = 'refreshToken';
+import { REFRESH_TOKEN } from '../constants/constants';
 
 let accessToken: string | undefined;
 
-const setAccessToken = (newAccessToken: string): void => {
+const setAccessToken = (newAccessToken: string | undefined): void => {
   accessToken = newAccessToken;
 };
 
