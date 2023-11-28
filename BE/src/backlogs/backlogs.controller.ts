@@ -13,7 +13,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { IsLoginGuard } from 'src/common/auth/IsLogin.guard';
+import { Member } from 'src/common/decorators/memberDecorator';
+import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
 import { BacklogsService } from './backlogs.service';
+import { BacklogsAuthService } from './backlogsAuth.service';
 import {
   CreateBacklogsEpicRequestDto,
   CreateBacklogsEpicResponseDto,
@@ -33,19 +36,27 @@ import {
   UpdateBacklogsRequestTaskDto,
 } from './dto/Task.dto';
 
-// @UseGuards(IsLoginGuard)
+@UseGuards(IsLoginGuard)
 @Controller('backlogs')
 @UsePipes(ValidationPipe)
 export class BacklogsController {
-  constructor(private readonly backlogsService: BacklogsService) {}
+  constructor(
+    private readonly backlogsService: BacklogsService,
+    private readonly backlogsAuthService: BacklogsAuthService,
+  ) {}
 
   @Get(':id')
-  readBacklog(@Param('id', ParseIntPipe) id) {
-    return this.backlogsService.readBacklog(id);
+  async readBacklog(@Param('id', ParseIntPipe) id, @Member() memberInfo: memberDecoratorType) {
+    await this.backlogsAuthService.checkProjectAuth(id, memberInfo);
+    return this.backlogsService.readBacklog(id, memberInfo);
   }
 
   @Post('epic')
-  async createEpic(@Body() body: CreateBacklogsEpicRequestDto): Promise<CreateBacklogsEpicResponseDto> {
+  async createEpic(
+    @Body() body: CreateBacklogsEpicRequestDto,
+    @Member() memberInfo: memberDecoratorType,
+  ): Promise<CreateBacklogsEpicResponseDto> {
+    await this.backlogsAuthService.checkProjectAuth(body.projectId, memberInfo);
     return this.backlogsService.createEpic(body);
   }
 
