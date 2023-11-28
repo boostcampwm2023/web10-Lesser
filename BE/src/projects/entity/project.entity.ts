@@ -12,7 +12,7 @@ export class Project extends BaseEntity {
   @Column()
   subject: string;
 
-  @ManyToMany(() => Member)
-  @JoinTable()
+  @ManyToMany(() => Member, (Member) => Member.projects)
+  @JoinTable({ name: 'Member_Project' })
   members: Member[];
 }
