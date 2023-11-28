@@ -1,12 +1,18 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { query } from 'express';
 import { Epic } from 'src/backlogs/entities/epic.entity';
 import { Story } from 'src/backlogs/entities/story.entity';
 import { Task } from 'src/backlogs/entities/task.entity';
 import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
 import { Member } from 'src/members/entities/member.entity';
 import { Repository } from 'typeorm';
-import { CreateProjectRequestDto, CreateProjectResponseDto, ReadProjectListResponseDto } from './dto/Project.dto';
+import {
+  CreateProjectRequestDto,
+  CreateProjectResponseDto,
+  ReadProjectListResponseDto,
+  ReadUserResponseDto,
+} from './dto/Project.dto';
 import { Project } from './entity/project.entity';
 
 @Injectable()
@@ -46,6 +52,7 @@ export class ProjectsService {
         project.subject = projectData.subject;
         project.nextPage = 'backlogs';
         project.myTaskCount = await this.getTaskCount(project.id);
+        project.userList = await this.getUserList(projectData.id);
         return project;
       }),
     );
@@ -65,5 +72,20 @@ export class ProjectsService {
       }),
     );
     return taskDataLists.flat(2).length;
+  }
+
+  private async getUserList(projectId: number): Promise<ReadUserResponseDto[]> {
+    const projectData = await this.projectRespository
+      .createQueryBuilder('project')
+      .innerJoinAndSelect('project.members', 'member')
+      .where('project.id = :projectId', { projectId })
+      .getOne();
+
+    return projectData.members.map((member) => {
+      const readUserResponse = new ReadUserResponseDto();
+      readUserResponse.userId = member.id;
+      readUserResponse.userName = member.email;
+      return readUserResponse;
+    });
   }
 }
