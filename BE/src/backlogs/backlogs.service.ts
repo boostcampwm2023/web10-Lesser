@@ -4,6 +4,7 @@ import { Epic } from 'src/backlogs/entities/epic.entity';
 import { Story } from 'src/backlogs/entities/story.entity';
 import { Task } from 'src/backlogs/entities/task.entity';
 import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
+import { Member } from 'src/members/entities/member.entity';
 import { Project } from 'src/projects/entity/project.entity';
 import { Repository } from 'typeorm';
 import {
@@ -38,6 +39,7 @@ export class BacklogsService {
     @InjectRepository(Epic) private epicRepository: Repository<Epic>,
     @InjectRepository(Story) private storyRepository: Repository<Story>,
     @InjectRepository(Task) private taskRepository: Repository<Task>,
+    @InjectRepository(Member) private memberRepository: Repository<Member>,
   ) {}
 
   async readBacklog(id: number): Promise<ReadBacklogResponseDto> {
@@ -82,7 +84,7 @@ export class BacklogsService {
   }
 
   private async findTasks(storyId: number): Promise<ReadBacklogTaskResponseDto[]> {
-    const taskDataList = await this.taskRepository.find({ where: { story: { id: storyId } } });
+    const taskDataList = await this.taskRepository.find({ where: { story: { id: storyId } }, relations: ['member'] });
     return taskDataList.map((taskData) => this.buildTask(taskData));
   }
 
@@ -93,7 +95,7 @@ export class BacklogsService {
     task.state = taskData.state;
     task.condition = taskData.condition;
     task.title = taskData.title;
-    task.userName = null; //추후 유저로직 추가
+    task.userId = taskData.member === null ? null : taskData.member.id;
     return task;
   }
 
@@ -120,7 +122,11 @@ export class BacklogsService {
       condition: dto.condition,
       story,
     });
-    if (dto.userId !== undefined) newTask.userId = dto.userId;
+    if (dto.userId !== null) {
+      const member = await this.memberRepository.findOne({ where: { id: dto.userId } });
+      if (member === null) throw new NotFoundException();
+      newTask.member = member;
+    } else newTask.member = null;
     const savedTask = await this.taskRepository.save(newTask);
     return { id: savedTask.id };
   }
@@ -139,17 +145,24 @@ export class BacklogsService {
 
   async updateTask(dto: UpdateBacklogsRequestTaskDto): Promise<void> {
     const updateTaskData: Partial<Task> = {};
-    if ((await this.taskRepository.findOne({ where: { id: dto.id } })) === null)
-      throw new NotFoundException(`Task with ID ${dto.id} not found`);
+    if (dto.id === undefined) throw new BadRequestException('id must required');
     if (Object.keys(dto).length <= 1)
       throw new BadRequestException('No update data provided. Please specify the fields to be updated.');
 
-    Object.keys(dto).forEach((key) => {
+    if (dto.userId === null) updateTaskData.member = null;
+    else if (dto.userId !== undefined) {
+      const member = await this.memberRepository.findOne({ where: { id: dto.userId } });
+      if (member === null) throw new NotFoundException();
+      updateTaskData.member = member;
+    }
+
+    Object.keys(dto).forEach(async (key) => {
       if (dto[key] !== undefined) {
-        updateTaskData[key] = dto[key];
+        if (key !== 'userId') updateTaskData[key] = dto[key];
       }
     });
-    await this.taskRepository.update(dto.id, updateTaskData);
+    const updateResult = await this.taskRepository.update(dto.id, updateTaskData);
+    if (updateResult.affected === 0) throw new NotFoundException();
   }
 
   async deleteEpic(dto: DeleteBacklogsEpicRequestDto): Promise<void> {
