@@ -31,8 +31,13 @@ export class ProjectsService {
     return { id: savedProject.id };
   }
 
-  async readProjectList(): Promise<ReadProjectListResponseDto[]> {
-    const projectListData = await this.projectRespository.find();
+  async readProjectList(memberInfo: memberDecoratorType): Promise<ReadProjectListResponseDto[]> {
+    const projectListData = await this.projectRespository
+      .createQueryBuilder('project')
+      .innerJoinAndSelect('project.members', 'members')
+      .where('members.id = :id', { id: memberInfo.id })
+      .getMany();
+
     const projectList = Promise.all(
       projectListData.map(async (projectData) => {
         const project = new ReadProjectListResponseDto();

@@ -18,7 +18,7 @@ export class ProjectsController {
   }
 
   @Get()
-  readProjectList(): Promise<ReadProjectListResponseDto[]> {
-    return this.projectsSevice.readProjectList();
+  readProjectList(@Member() memberInfo: memberDecoratorType): Promise<ReadProjectListResponseDto[]> {
+    return this.projectsSevice.readProjectList(memberInfo);
   }
 }
