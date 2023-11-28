@@ -48,7 +48,7 @@ export class BacklogsController {
   @Get(':id')
   async readBacklog(@Param('id', ParseIntPipe) id, @Member() memberInfo: memberDecoratorType) {
     await this.backlogsAuthService.checkProjectAuth(id, memberInfo);
-    return this.backlogsService.readBacklog(id, memberInfo);
+    return this.backlogsService.readBacklog(id);
   }
 
   @Post('epic')
