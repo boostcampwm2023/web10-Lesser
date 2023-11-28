@@ -1,85 +1,66 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PrograssBar from '../components/common/ProgressBar/ProgressBar';
 import KanbanBoard from '../components/sprint/KanbanBoard';
+import ColumnBoard from '../components/sprint/ColumnBoard';
 import BoardHeader from '../components/sprint/BoardHeader';
 import FilterDropdown from '../components/sprint/FilterDropdown';
 import { Task } from '../types/sprint';
 import { UserFilter, TaskGroup } from '../types/sprint';
+import axios from 'axios';
 
-interface Data {
-  taskList: Task[];
-}
-
-type TaskGroupedByStory = Record<string, Task[]>;
-
-const data: Data = {
-  taskList: [
-    {
-      storyTitle: '유저는 로그인할 수 있다.',
-      id: 2,
-      title: '로그인 DB저장',
-      userName: '승민',
-      point: 3,
-      state: 'ToDo',
-    },
-    {
-      storyTitle: '유저는 에픽을 생성할 수 있다.',
-      id: 3,
-      title: 'API작성하기',
-      userName: '수린',
-      point: 5,
-      state: 'ToDo',
-    },
-    {
-      storyTitle: '유저는 로그인할 수 있다.',
-      id: 4,
-      title: '회원가입 기능 구현',
-      userName: '승민',
-      point: 4,
-      state: 'InProgress',
-    },
-    {
-      storyTitle: '유저는 칸반보드를 조회할 수 있다.',
-      id: 5,
-      title: 'UI 디자인',
-      userName: '용현',
-      point: 2,
-      state: 'Done',
-    },
-  ],
-};
+type TaskGroupedByStory = Record<string, { storyNumber: number; taskList: Task[]; storyId: number }>;
 
 const SprintPage = () => {
   const [taskGroup, setTaskGroup] = useState<TaskGroup>('all');
   const [userToFilter, setUserToFilter] = useState<UserFilter>('전체');
   const [dropdownOpend, setDropdownOpend] = useState<boolean>(false);
-  const [taskList, setTaskList] = useState<Task[]>(data.taskList);
+  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [currentTaskList, setCurrentTaskList] = useState<Task[]>([]);
 
-  const todoList = taskList.filter(({ state }) => state === 'ToDo');
-  const inProgressList = taskList.filter(({ state }) => state === 'InProgress');
-  const doneList = taskList.filter(({ state }) => state === 'Done');
+  useEffect(() => {
+    axios.get('src/data/sprint.json').then((response) => {
+      setTaskList(response.data.taskList);
+      setCurrentTaskList(response.data.taskList);
+    });
+  }, []);
+
+  const userList = [
+    { id: 0, name: '전체' },
+    { id: 1, name: '피카츄' },
+    { id: 2, name: '파이리' },
+    { id: 3, name: '꼬부기' },
+    { id: 4, name: '잠만보' },
+  ];
+
+  const todoList = currentTaskList.filter(({ state }) => state === 'ToDo');
+  const inProgressList = currentTaskList.filter(({ state }) => state === 'InProgress');
+  const doneList = currentTaskList.filter(({ state }) => state === 'Done');
 
   // storyTitle을 기준으로 데이터를 나누기
-  const tasksByStory: TaskGroupedByStory = taskList.reduce((result: TaskGroupedByStory, current: Task) => {
+  const tasksByStory: TaskGroupedByStory = currentTaskList.reduce((result: TaskGroupedByStory, current: Task) => {
     const storyTitle = current.storyTitle;
-    result[storyTitle] = result[storyTitle] ?? [];
-    result[storyTitle].push(current);
+    result[storyTitle] = result[storyTitle] ?? {
+      storyNumber: current.storyNumber,
+      storyId: current.storyId,
+      taskList: [],
+    };
+    result[storyTitle].taskList.push(current);
     return result;
   }, {});
 
-  const storyKanbanBoards = Object.entries(tasksByStory).map(([storyTitle, taskList]) => {
+  // 그룹화 된 칸반보드
+  const storyKanbanBoards = Object.entries(tasksByStory).map(([storyTitle, { storyNumber, taskList, storyId }]) => {
     const todoList = taskList.filter(({ state }) => state === 'ToDo');
     const inProgressList = taskList.filter(({ state }) => state === 'InProgress');
     const doneList = taskList.filter(({ state }) => state === 'Done');
+
     return (
       <li key={storyTitle}>
-        <KanbanBoard
-          storyTitle={storyTitle}
-          storyId="LES-12"
-          todoList={todoList}
-          inProgressList={inProgressList}
-          doneList={doneList}
-        />
+        <KanbanBoard storyTitle={storyTitle} {...{ storyNumber }}>
+          <ColumnBoard taskList={todoList} state="ToDo" {...{ setTaskList, storyId }} />
+          <ColumnBoard taskList={inProgressList} state="InProgress" {...{ setTaskList, storyId }} />
+          <ColumnBoard taskList={doneList} state="Done" {...{ setTaskList, storyId }} />
+        </KanbanBoard>
       </li>
     );
   });
@@ -91,8 +72,9 @@ const SprintPage = () => {
 
   const handleUserFilterButtonClick = (user: UserFilter): void => {
     user === '전체'
-      ? setTaskList([...data.taskList])
-      : setTaskList([...data.taskList.filter(({ userName }) => user === userName)]);
+      ? setCurrentTaskList([...taskList])
+      : setCurrentTaskList([...taskList.filter(({ userName }) => user === userName)]);
+
     setUserToFilter(user);
     setDropdownOpend(false);
   };
@@ -122,7 +104,7 @@ const SprintPage = () => {
             </button>
             {dropdownOpend && (
               <FilterDropdown
-                userList={[{ name: '전체' }, { id: 4, name: '수린' }, { id: 2, name: '용현' }, { id: 1, name: '승민' }]}
+                userList={userList}
                 userToFilter={userToFilter}
                 taskGroup={taskGroup}
                 onClickGroupFilterButton={handleGroupButtonClick}
@@ -149,7 +131,11 @@ const SprintPage = () => {
         <ul className="flex flex-col gap-y-1.5">
           {taskGroup === 'all' ? (
             <li>
-              <KanbanBoard todoList={todoList} inProgressList={inProgressList} doneList={doneList} />
+              <KanbanBoard>
+                <ColumnBoard taskList={todoList} state="ToDo" {...{ setTaskList }} />
+                <ColumnBoard taskList={inProgressList} state="InProgress" {...{ setTaskList }} />
+                <ColumnBoard taskList={doneList} state="Done" {...{ setTaskList }} />
+              </KanbanBoard>
             </li>
           ) : (
             storyKanbanBoards
