@@ -1,3 +1,4 @@
+import { Member } from 'src/members/entities/member.entity';
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne } from 'typeorm';
 import { Story } from './story.entity';
 
@@ -18,8 +19,8 @@ export class Task extends BaseEntity {
   @Column()
   condition: string;
 
-  @Column({ nullable: true })
-  userId: number;
+  @ManyToOne(() => Member, (Member) => Member.id, { nullable: true })
+  member: Member;
 
   @ManyToOne(() => Story, (Story) => Story.id, { nullable: false, onDelete: 'CASCADE' })
   story: Story;
