@@ -8,7 +8,7 @@ export class baseEpicDto {
 
   @IsInt()
   @IsNotEmpty()
-  projectId: number;
+  parentId: number;
 
   @IsString()
   @IsNotEmpty()
@@ -24,7 +24,7 @@ export class baseStoryDto {
 
   @IsInt()
   @IsNotEmpty()
-  epicId: number;
+  parentId: number;
 
   @IsString()
   @IsNotEmpty()
@@ -40,7 +40,7 @@ export class baseTaskDto {
 
   @IsInt()
   @IsNotEmpty()
-  storyId: number;
+  parentId: number;
 
   @IsString()
   @IsNotEmpty()

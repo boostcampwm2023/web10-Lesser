@@ -105,7 +105,7 @@ export class BacklogsService {
   }
 
   async createEpic(dto: CreateBacklogsEpicRequestDto): Promise<CreateBacklogsEpicResponseDto> {
-    const project = await this.projectRepository.findOne({ where: { id: dto.projectId } });
+    const project = await this.projectRepository.findOne({ where: { id: dto.parentId } });
     const epicCount = await this.getEpicCount(project.id);
     const newEpic = this.epicRepository.create({ title: dto.title, project: project, sequence: epicCount });
     const savedEpic = await this.epicRepository.save(newEpic);
@@ -120,7 +120,7 @@ export class BacklogsService {
   }
 
   async createStory(dto: CreateBacklogsStoryRequestDto): Promise<CreateBacklogsStoryResponseDto> {
-    const epic = await this.epicRepository.findOne({ where: { id: dto.epicId }, relations: ['project'] });
+    const epic = await this.epicRepository.findOne({ where: { id: dto.parentId }, relations: ['project'] });
     const storyCount = await this.getStoryCount(epic.project.id);
     const newStory = this.storyRepository.create({ title: dto.title, epic, sequence: storyCount });
     const savedStory = await this.storyRepository.save(newStory);
@@ -135,7 +135,7 @@ export class BacklogsService {
   }
 
   async createTask(dto: CreateBacklogsTaskRequestDto): Promise<CreateBacklogsTaskResponseDto> {
-    const story = await this.storyRepository.findOne({ where: { id: dto.storyId }, relations: ['epic'] });
+    const story = await this.storyRepository.findOne({ where: { id: dto.parentId }, relations: ['epic'] });
     const epic = await this.epicRepository.findOne({ where: { id: story.epic.id }, relations: ['project'] });
     const taskCount = await this.getTaskCount(epic.project.id);
     const newTask = this.taskRepository.create({
