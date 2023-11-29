@@ -31,21 +31,19 @@ const ReviewSprint = () => (
       </div>
     </div>
     <div className="flex flex-col gap-6 w-full h-[24.313rem] p-6 bg-true-white border border-transparent-green rounded-md text-r text-house-green overflow-x-hidden overflow-y-auto">
-      <div>
+      <ul>
         <span className="w-[5.625rem] font-bold text-starbucks-green">완료 Task</span>
-        <ul>
-          <li className="flex w-[57.25rem] justify-between py-[0.563rem] pl-2.5 pr-[0.438rem] border-t border-x last:border-b border-transparent-green font-medium">
-            <span className="w-[4rem] font-bold">Task1</span>
-            <span className="w-[33.75rem]">[FE] 에픽 목록을 화면에 렌더링 하는 코드를 작성</span>
-            <span className="w-[6.25rem]">멤버 A</span>
-            <span className="w-[5rem]">2 POINT</span>
-            <span className="flex items-center font-bold">
-              상세보기 <ChevronRightIcon size={14} />
-            </span>
-          </li>
-        </ul>
-      </div>
-      <div>
+        <li className="flex w-[57.25rem] justify-between py-[0.563rem] pl-2.5 pr-[0.438rem] border-t border-x last:border-b border-transparent-green font-medium">
+          <span className="w-[4rem] font-bold">Task1</span>
+          <span className="w-[33.75rem]">[FE] 에픽 목록을 화면에 렌더링 하는 코드를 작성</span>
+          <span className="w-[6.25rem]">멤버 A</span>
+          <span className="w-[5rem]">2 POINT</span>
+          <span className="flex items-center font-bold">
+            상세보기 <ChevronRightIcon size={14} />
+          </span>
+        </li>
+      </ul>
+      <ul>
         <span className="w-[5.625rem] font-bold text-error-red">미완료 Task</span>
         <li className="flex w-[57.25rem] justify-between py-[0.563rem] pl-2.5 pr-[0.438rem] border-t border-x last:border-b border-transparent-green font-medium">
           <span className="w-[4rem] font-bold">Task1</span>
@@ -56,7 +54,7 @@ const ReviewSprint = () => (
             상세보기 <ChevronRightIcon size={14} />
           </span>
         </li>
-      </div>
+      </ul>
     </div>
   </div>
 );
