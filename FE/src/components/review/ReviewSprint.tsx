@@ -1,5 +1,6 @@
 import ChevronRightIcon from './../../assets/icons/ChevronRightIcon';
 import DountChart from './DonutChart';
+import ReviewSprintInfo from './ReviewSprintInfo';
 
 const ReviewSprint = () => (
   <div className="flex flex-col w-[60.25rem] h-[34.563rem] gap-6">
@@ -24,18 +25,9 @@ const ReviewSprint = () => (
         </div>
       </div>
       <div className="flex flex-col gap-4 w-[39.375rem] h-full p-6 bg-true-white border border-transparent-green rounded-md text-s">
-        <p className="flex w-full items-center gap-8">
-          <span className="w-[5.625rem] font-bold text-r">스프린트 목표</span>
-          <span className="flex-1 font-medium">백로그와 칸반보드가 보이는 이슈 관리 프로토타입을 만들자</span>
-        </p>
-        <p className="flex w-full items-center gap-8">
-          <span className="w-[5.625rem] font-bold text-r">스프린트 기간</span>
-          <span className="flex-1 font-medium">23.07.11 ~ 23.07.20</span>
-        </p>
-        <p className="flex w-full items-center gap-8">
-          <span className="w-[5.625rem] font-bold text-r">전체 Task</span>
-          <span className="flex-1 font-medium">72 개</span>
-        </p>
+        <ReviewSprintInfo label="스프린트 목표" content="백로그와 칸반보드가 보이는 이슈 관리 프로토타입을 만들자" />
+        <ReviewSprintInfo label="스프린트 기간" content="23.07.11 ~ 23.07.20" />
+        <ReviewSprintInfo label="전체 Task" content="72 개" />
       </div>
     </div>
     <div className="flex flex-col gap-6 w-full h-[24.313rem] p-6 bg-true-white border border-transparent-green rounded-md text-r text-house-green overflow-x-hidden overflow-y-auto">
