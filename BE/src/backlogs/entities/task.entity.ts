@@ -20,6 +20,9 @@ export class Task extends BaseEntity {
   @Column()
   condition: string;
 
+  @Column()
+  sequence: number;
+
   @ManyToOne(() => Member, (Member) => Member.id, { nullable: true })
   member: Member;
 

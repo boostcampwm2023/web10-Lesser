@@ -6,6 +6,7 @@ import { Task } from 'src/backlogs/entities/task.entity';
 import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
 import { Member } from 'src/members/entities/member.entity';
 import { Project } from 'src/projects/entity/project.entity';
+import { ProjectCounter } from 'src/projects/entity/projectCounter.entity';
 import { Repository } from 'typeorm';
 import {
   ReadBacklogTaskResponseDto,
@@ -40,6 +41,7 @@ export class BacklogsService {
     @InjectRepository(Story) private storyRepository: Repository<Story>,
     @InjectRepository(Task) private taskRepository: Repository<Task>,
     @InjectRepository(Member) private memberRepository: Repository<Member>,
+    @InjectRepository(ProjectCounter) private projectCounterRepository: Repository<ProjectCounter>,
   ) {}
 
   async readBacklog(id: number): Promise<ReadBacklogResponseDto> {
@@ -66,6 +68,7 @@ export class BacklogsService {
     const epic = new ReadBacklogEpicResponseDto();
     epic.id = epicData.id;
     epic.title = epicData.title;
+    epic.sequence = epicData.sequence;
     epic.storyList = await this.findStories(epic.id);
     return epic;
   }
@@ -79,6 +82,7 @@ export class BacklogsService {
     const story = new ReadBacklogStoryResponseDto();
     story.id = storyData.id;
     story.title = storyData.title;
+    story.sequence = storyData.sequence;
     story.taskList = await this.findTasks(story.id);
     return story;
   }
@@ -95,31 +99,51 @@ export class BacklogsService {
     task.state = taskData.state;
     task.condition = taskData.condition;
     task.title = taskData.title;
+    task.sequence = taskData.sequence;
     task.userId = taskData.member === null ? null : taskData.member.id;
     return task;
   }
 
   async createEpic(dto: CreateBacklogsEpicRequestDto): Promise<CreateBacklogsEpicResponseDto> {
-    const project = await this.projectRepository.findOne({ where: { id: dto.projectId } });
-    const newEpic = this.epicRepository.create({ title: dto.title, project: project });
+    const project = await this.projectRepository.findOne({ where: { id: dto.parentId } });
+    const epicCount = await this.getEpicCount(project.id);
+    const newEpic = this.epicRepository.create({ title: dto.title, project: project, sequence: epicCount });
     const savedEpic = await this.epicRepository.save(newEpic);
-    return { id: savedEpic.id };
+    return { id: savedEpic.id, sequence: epicCount };
+  }
+
+  private async getEpicCount(projectId: number) {
+    const projectCounter = await this.projectCounterRepository.findOne({ where: { projectId } });
+    projectCounter.epicCount++;
+    await projectCounter.save();
+    return projectCounter.epicCount;
   }
 
   async createStory(dto: CreateBacklogsStoryRequestDto): Promise<CreateBacklogsStoryResponseDto> {
-    const epic = await this.epicRepository.findOne({ where: { id: dto.epicId } });
-    const newStory = this.storyRepository.create({ title: dto.title, epic });
+    const epic = await this.epicRepository.findOne({ where: { id: dto.parentId }, relations: ['project'] });
+    const storyCount = await this.getStoryCount(epic.project.id);
+    const newStory = this.storyRepository.create({ title: dto.title, epic, sequence: storyCount });
     const savedStory = await this.storyRepository.save(newStory);
-    return { id: savedStory.id };
+    return { id: savedStory.id, sequence: storyCount };
+  }
+
+  private async getStoryCount(projectId: number) {
+    const projectCounter = await this.projectCounterRepository.findOne({ where: { projectId } });
+    projectCounter.storyCount++;
+    await projectCounter.save();
+    return projectCounter.storyCount;
   }
 
   async createTask(dto: CreateBacklogsTaskRequestDto): Promise<CreateBacklogsTaskResponseDto> {
-    const story = await this.storyRepository.findOne({ where: { id: dto.storyId } });
+    const story = await this.storyRepository.findOne({ where: { id: dto.parentId }, relations: ['epic'] });
+    const epic = await this.epicRepository.findOne({ where: { id: story.epic.id }, relations: ['project'] });
+    const taskCount = await this.getTaskCount(epic.project.id);
     const newTask = this.taskRepository.create({
       title: dto.title,
       state: dto.state,
       point: dto.point,
       condition: dto.condition,
+      sequence: taskCount,
       story,
     });
     if (dto.userId !== null) {
@@ -128,7 +152,15 @@ export class BacklogsService {
       newTask.member = member;
     } else newTask.member = null;
     const savedTask = await this.taskRepository.save(newTask);
-    return { id: savedTask.id };
+
+    return { id: savedTask.id, sequence: taskCount };
+  }
+
+  private async getTaskCount(projectId: number) {
+    const projectCounter = await this.projectCounterRepository.findOne({ where: { projectId } });
+    projectCounter.taskCount++;
+    await projectCounter.save();
+    return projectCounter.taskCount;
   }
 
   async updateEpic(dto: UpdateBacklogsEpicRequestDto): Promise<void> {

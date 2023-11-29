@@ -14,6 +14,7 @@ import {
   ReadUserResponseDto,
 } from './dto/Project.dto';
 import { Project } from './entity/project.entity';
+import { ProjectCounter } from './entity/projectCounter.entity';
 
 @Injectable()
 export class ProjectsService {
@@ -23,6 +24,7 @@ export class ProjectsService {
     @InjectRepository(Story) private storyRepository: Repository<Story>,
     @InjectRepository(Task) private taskRepository: Repository<Task>,
     @InjectRepository(Member) private memberRepository: Repository<Member>,
+    @InjectRepository(ProjectCounter) private projectCounterRepository: Repository<ProjectCounter>,
   ) {}
 
   async createProject(
@@ -34,6 +36,8 @@ export class ProjectsService {
     const newProject = this.projectRespository.create({ name: dto.name, subject: dto.subject, members: [] });
     newProject.members.push(member);
     const savedProject = await this.projectRespository.save(newProject);
+    const newProjectCounter = this.projectCounterRepository.create({ projectId: newProject.id });
+    await this.projectCounterRepository.save(newProjectCounter);
     return { id: savedProject.id };
   }
 

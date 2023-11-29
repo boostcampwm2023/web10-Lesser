@@ -8,11 +8,13 @@ export class baseEpicDto {
 
   @IsInt()
   @IsNotEmpty()
-  projectId: number;
+  parentId: number;
 
   @IsString()
   @IsNotEmpty()
   title: string;
+
+  sequence: number;
 }
 
 export class baseStoryDto {
@@ -22,11 +24,13 @@ export class baseStoryDto {
 
   @IsInt()
   @IsNotEmpty()
-  epicId: number;
+  parentId: number;
 
   @IsString()
   @IsNotEmpty()
   title: string;
+
+  sequence: number;
 }
 
 export class baseTaskDto {
@@ -36,7 +40,7 @@ export class baseTaskDto {
 
   @IsInt()
   @IsNotEmpty()
-  storyId: number;
+  parentId: number;
 
   @IsString()
   @IsNotEmpty()
@@ -56,4 +60,6 @@ export class baseTaskDto {
   @IsString()
   @IsNotEmpty()
   condition: string;
+
+  sequence: number;
 }
