@@ -1,5 +1,5 @@
 import { PickType } from '@nestjs/swagger';
-import { IsDateString, IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 class BaseSprintDto {
   @IsInt()
@@ -23,11 +23,14 @@ class BaseSprintDto {
   endDate: Date;
 
   @IsDateString()
-  actualEndDate: Date;
+  closedDate: Date;
 
   @IsInt()
   @IsNotEmpty()
   projectId: number;
+
+  @IsArray()
+  taskList: number[];
 }
 
 export class CreateSprintRequestDto extends PickType(BaseSprintDto, [
@@ -36,5 +39,6 @@ export class CreateSprintRequestDto extends PickType(BaseSprintDto, [
   'startDate',
   'endDate',
   'projectId',
+  'taskList',
 ]) {}
 export class CreateSprintResponseDto extends PickType(BaseSprintDto, ['id']) {}

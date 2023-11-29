@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Sprint } from './entities/sprint.entity';
 import { Repository } from 'typeorm';
@@ -6,6 +6,9 @@ import { Project } from 'src/projects/entity/project.entity';
 import { CreateSprintRequestDto, CreateSprintResponseDto } from './dto/Sprint.dto';
 import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
 import { Review } from 'src/reviews/entities/review.entity';
+import { Member } from 'src/members/entities/member.entity';
+import { Task } from 'src/backlogs/entities/task.entity';
+import { SprintToTask } from './entities/sprint-task.entity';
 
 @Injectable()
 export class SprintsService {
@@ -13,15 +16,19 @@ export class SprintsService {
     @InjectRepository(Sprint) private sprintRepository: Repository<Sprint>,
     @InjectRepository(Project) private projectRepository: Repository<Project>,
     @InjectRepository(Review) private reviewRepository: Repository<Review>,
+    @InjectRepository(Member) private memberRepository: Repository<Member>,
+    @InjectRepository(Task) private taskRepository: Repository<Task>,
+    @InjectRepository(SprintToTask) private sprintToTaskRepository: Repository<SprintToTask>,
   ) {}
 
-  async createSprint(
-    dto: CreateSprintRequestDto,
-    // memberInfo: memberDecoratorType,
-  ): Promise<CreateSprintResponseDto> {
-    // const member = await this.memberRepository.findOne({ where: { id: memberInfo.id } });
-    // if (!member) throw new InternalServerErrorException();
+  async createSprint(dto: CreateSprintRequestDto, memberInfo: memberDecoratorType): Promise<CreateSprintResponseDto> {
+    const member = await this.memberRepository.findOne({ where: { id: memberInfo.id } });
+    if (!member) throw new InternalServerErrorException();
+
     const project = await this.projectRepository.findOne({ where: { id: dto.projectId } });
+    const tasks = await this.taskRepository.createQueryBuilder('task').whereInIds(dto.taskList).getMany();
+    if (tasks.length !== dto.taskList.length) throw new BadRequestException('Reqeust includes invalid task id.');
+
     const newSprint = this.sprintRepository.create({
       title: dto.title,
       goal: dto.goal,
@@ -30,6 +37,16 @@ export class SprintsService {
       project: project,
     });
     const savedSprint = await this.sprintRepository.save(newSprint);
+
+    const sprintToTasks = tasks.map((task) => {
+      const sprintToTask = this.sprintToTaskRepository.create({
+        sprint: savedSprint,
+        task: task,
+      });
+      return sprintToTask;
+    });
+    await this.sprintToTaskRepository.save(sprintToTasks);
+
     return { id: savedSprint.id };
   }
 }
