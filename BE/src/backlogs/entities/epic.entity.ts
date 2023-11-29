@@ -9,6 +9,9 @@ export class Epic extends BaseEntity {
   @Column()
   title: string;
 
+  @Column()
+  sequence: number;
+
   @ManyToOne(() => Project, (Project) => Project.id, { nullable: false, onDelete: 'CASCADE' })
   project: Project;
 }

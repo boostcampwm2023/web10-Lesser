@@ -5,4 +5,4 @@ export class CreateBacklogsEpicRequestDto extends PickType(baseEpicDto, ['projec
 export class UpdateBacklogsEpicRequestDto extends PickType(baseEpicDto, ['id', 'title']) {}
 export class DeleteBacklogsEpicRequestDto extends PickType(baseEpicDto, ['id']) {}
 
-export class CreateBacklogsEpicResponseDto extends PickType(baseEpicDto, ['id']) {}
+export class CreateBacklogsEpicResponseDto extends PickType(baseEpicDto, ['id', 'sequence']) {}

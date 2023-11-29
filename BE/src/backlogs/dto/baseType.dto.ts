@@ -13,6 +13,8 @@ export class baseEpicDto {
   @IsString()
   @IsNotEmpty()
   title: string;
+
+  sequence: number;
 }
 
 export class baseStoryDto {
@@ -27,6 +29,8 @@ export class baseStoryDto {
   @IsString()
   @IsNotEmpty()
   title: string;
+
+  sequence: number;
 }
 
 export class baseTaskDto {
@@ -56,4 +60,6 @@ export class baseTaskDto {
   @IsString()
   @IsNotEmpty()
   condition: string;
+
+  sequence: number;
 }
