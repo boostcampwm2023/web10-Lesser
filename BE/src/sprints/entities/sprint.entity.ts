@@ -7,7 +7,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
+import { SprintToTask } from './sprint-task.entity';
 
 @Entity()
 export class Sprint extends BaseEntity {
@@ -27,7 +29,7 @@ export class Sprint extends BaseEntity {
   end_date: Date;
 
   @Column({ type: 'timestamp', nullable: true })
-  actual_end_date: Date;
+  closed_date: Date;
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
@@ -37,4 +39,7 @@ export class Sprint extends BaseEntity {
 
   @ManyToOne(() => Project, (project) => project.id, { nullable: false, onDelete: 'CASCADE' })
   project: Project;
+
+  @OneToMany(() => SprintToTask, (sprintToTask) => sprintToTask.sprint)
+  sprintToTasks: SprintToTask[];
 }
