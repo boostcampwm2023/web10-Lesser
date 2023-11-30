@@ -36,7 +36,7 @@ import {
   UpdateBacklogsRequestTaskDto,
 } from './dto/Task.dto';
 
-// @UseGuards(IsLoginGuard)
+@UseGuards(IsLoginGuard)
 @Controller('backlogs')
 @UsePipes(ValidationPipe)
 export class BacklogsController {
