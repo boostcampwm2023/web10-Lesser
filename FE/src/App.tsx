@@ -6,19 +6,27 @@ import BacklogPage from './pages/BacklogPage';
 import SprintPage from './pages/SprintPage';
 import ReviewPage from './pages/ReviewPage';
 import ProjectCreatePage from './pages/ProjectCreatePage';
+import { ModalProvider } from './modal/ModalProvider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <Routes>
-      <Route path="/project" element={<ProjectPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/project/create" element={<ProjectCreatePage />} />
-      <Route element={<MainPage />}>
-        <Route path="/backlog" element={<BacklogPage />} />
-        <Route path="/sprint" element={<SprintPage />} />
-        <Route path="/review/sprint/*" element={<ReviewPage />} />
-      </Route>
-    </Routes>
+    <QueryClientProvider client={queryClient}>
+      <ModalProvider>
+        <Routes>
+          <Route path="/project" element={<ProjectPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/project/create" element={<ProjectCreatePage />} />
+          <Route element={<MainPage />}>
+            <Route path="/backlog" element={<BacklogPage />} />
+            <Route path="/sprint" element={<SprintPage />} />
+            <Route path="/review" element={<ReviewPage />} />
+          </Route>
+        </Routes>
+      </ModalProvider>
+    </QueryClientProvider>
   );
 }
 

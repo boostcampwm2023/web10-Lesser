@@ -8,7 +8,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex h-full min-w-[95rem]">
-      <div className="flex items-center justify-center w-1/2">
+      <div className="flex items-center justify-center w-1/2 bg-true-white">
         <img className="w-[38rem] h-[38rem]" src={loginImage} alt="로그인하는 레서" />
       </div>
       <div className="flex flex-col items-center justify-center w-1/2 bg-cool-neutral">
