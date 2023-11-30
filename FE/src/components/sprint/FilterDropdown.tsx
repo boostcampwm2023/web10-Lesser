@@ -24,11 +24,11 @@ const FilterDropdown = (props: FilterDropdownProps) => {
       <p className="font-bold text-center ">멤버별 필터</p>
       {userList.map(({ id, name }) => (
         <p
-          key={id}
+          key={name}
           className={`text-center text-xs hover:cursor-pointer ${
-            name === userToFilter ? activeMenuClass : inactiveMenuClass
+            id === userToFilter ? activeMenuClass : inactiveMenuClass
           }`}
-          onClick={() => onClickUserFilterButton(name)}
+          onClick={() => onClickUserFilterButton(id)}
         >
           {name}
         </p>

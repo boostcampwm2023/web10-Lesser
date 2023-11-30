@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import PrograssBar from '../components/common/ProgressBar/ProgressBar';
 import KanbanBoard from '../components/sprint/KanbanBoard';
 import ColumnBoard from '../components/sprint/ColumnBoard';
@@ -7,63 +7,76 @@ import FilterDropdown from '../components/sprint/FilterDropdown';
 import { Task } from '../types/sprint';
 import { UserFilter, TaskGroup } from '../types/sprint';
 import axios from 'axios';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 
-type TaskGroupedByStory = Record<string, { storyNumber: number; taskList: Task[]; storyId: number }>;
+interface BoardTaskListObject {
+  [key: string]: number | undefined | Task[] | string;
+  storyId?: number;
+  storyNumber?: number;
+  storyTitle?: string;
+  ToDo: Task[];
+  InProgress: Task[];
+  Done: Task[];
+}
+
+type TaskGroupedByStory = Record<number, BoardTaskListObject>;
 
 const SprintPage = () => {
   const [taskGroup, setTaskGroup] = useState<TaskGroup>('all');
-  const [userToFilter, setUserToFilter] = useState<UserFilter>('전체');
+  const [userToFilter, setUserToFilter] = useState<UserFilter>(undefined);
   const [dropdownOpend, setDropdownOpend] = useState<boolean>(false);
   const [taskList, setTaskList] = useState<Task[]>([]);
+  // const [boardTaskList, setBoardTaskList] = useState<BoardTaskListObject[]>([]);
   const [currentTaskList, setCurrentTaskList] = useState<Task[]>([]);
 
   useEffect(() => {
     axios.get('src/data/sprint.json').then((response) => {
-      setTaskList(response.data.taskList);
-      setCurrentTaskList(response.data.taskList);
+      const taskList = response.data.taskList;
+
+      setTaskList(taskList);
+      setCurrentTaskList(taskList);
     });
   }, []);
 
+  const boardTaskList = useMemo<BoardTaskListObject[]>(() => {
+    if (taskGroup === 'all') {
+      const ToDo = currentTaskList.filter(({ state }: Task) => state === 'ToDo');
+      const InProgress = currentTaskList.filter(({ state }: Task) => state === 'InProgress');
+      const Done = currentTaskList.filter(({ state }: Task) => state === 'Done');
+      const newBoardTaskList = { ToDo, InProgress, Done };
+
+      return [newBoardTaskList];
+    }
+
+    const taskList = currentTaskList.reduce((acc: TaskGroupedByStory, current: Task) => {
+      const { storyId, storyNumber, storyTitle } = current;
+      acc[storyId] = acc[storyId] ?? {
+        storyNumber: storyNumber,
+        storyId: storyId,
+        storyTitle,
+        ToDo: [],
+        InProgress: [],
+        Done: [],
+      };
+
+      const taskState = current.state;
+      if (taskState === 'ToDo' || taskState === 'InProgress' || taskState === 'Done') {
+        acc[storyId][taskState]?.push(current);
+      }
+
+      return acc;
+    }, {});
+
+    return Object.values(taskList);
+  }, [currentTaskList, taskGroup]);
+
   const userList = [
-    { id: 0, name: '전체' },
+    { name: '전체' },
     { id: 1, name: '피카츄' },
     { id: 2, name: '파이리' },
     { id: 3, name: '꼬부기' },
     { id: 4, name: '잠만보' },
   ];
-
-  const todoList = currentTaskList.filter(({ state }) => state === 'ToDo');
-  const inProgressList = currentTaskList.filter(({ state }) => state === 'InProgress');
-  const doneList = currentTaskList.filter(({ state }) => state === 'Done');
-
-  // storyTitle을 기준으로 데이터를 나누기
-  const tasksByStory: TaskGroupedByStory = currentTaskList.reduce((result: TaskGroupedByStory, current: Task) => {
-    const storyTitle = current.storyTitle;
-    result[storyTitle] = result[storyTitle] ?? {
-      storyNumber: current.storyNumber,
-      storyId: current.storyId,
-      taskList: [],
-    };
-    result[storyTitle].taskList.push(current);
-    return result;
-  }, {});
-
-  // 그룹화 된 칸반보드
-  const storyKanbanBoards = Object.entries(tasksByStory).map(([storyTitle, { storyNumber, taskList, storyId }]) => {
-    const todoList = taskList.filter(({ state }) => state === 'ToDo');
-    const inProgressList = taskList.filter(({ state }) => state === 'InProgress');
-    const doneList = taskList.filter(({ state }) => state === 'Done');
-
-    return (
-      <li key={storyTitle}>
-        <KanbanBoard storyTitle={storyTitle} {...{ storyNumber }}>
-          <ColumnBoard taskList={todoList} state="ToDo" {...{ setTaskList, storyId }} />
-          <ColumnBoard taskList={inProgressList} state="InProgress" {...{ setTaskList, storyId }} />
-          <ColumnBoard taskList={doneList} state="Done" {...{ setTaskList, storyId }} />
-        </KanbanBoard>
-      </li>
-    );
-  });
 
   const handleGroupButtonClick = (taskGroup: TaskGroup): void => {
     setTaskGroup(taskGroup);
@@ -71,9 +84,9 @@ const SprintPage = () => {
   };
 
   const handleUserFilterButtonClick = (user: UserFilter): void => {
-    user === '전체'
+    user === undefined
       ? setCurrentTaskList([...taskList])
-      : setCurrentTaskList([...taskList.filter(({ userName }) => user === userName)]);
+      : setCurrentTaskList([...taskList.filter(({ userId }) => user === userId)]);
 
     setUserToFilter(user);
     setDropdownOpend(false);
@@ -82,6 +95,39 @@ const SprintPage = () => {
   const handleFilterButtonClick = (): void => {
     setDropdownOpend((prevValue) => !prevValue);
   };
+
+  const handleDragEnd = (result: DropResult) => {
+    const { destination, source, draggableId } = result;
+    const [sourceStoryId] = source.droppableId.split(' ');
+
+    if (!destination) {
+      return;
+    }
+
+    const [destinationStoryId, state] = destination.droppableId.split(' ');
+
+    if (sourceStoryId !== destinationStoryId) {
+      return;
+    }
+
+    setTaskList((prevTaskList) => {
+      const targetTask = { ...prevTaskList.filter(({ id }) => id === Number(draggableId))[0] };
+      targetTask.state = state;
+
+      return [...prevTaskList.filter(({ id }) => id !== Number(draggableId)), targetTask];
+    });
+
+    setCurrentTaskList((prevCurrentTaskList) => {
+      const targetTask = { ...prevCurrentTaskList.filter(({ id }) => id === Number(draggableId))[0] };
+      targetTask.state = state;
+
+      return [...prevCurrentTaskList.filter(({ id }) => id !== Number(draggableId)), targetTask];
+    });
+  };
+
+  const todoNumber = currentTaskList.filter(({ state }) => state === 'ToDo').length;
+  const inProgressNumber = currentTaskList.filter(({ state }) => state === 'InProgress').length;
+  const doneNumber = currentTaskList.filter(({ state }) => state === 'Done').length;
 
   return (
     <section className="min-w-[60.25rem]">
@@ -123,23 +169,27 @@ const SprintPage = () => {
           <BoardHeader
             boardName="할 일"
             boardDescription="스프린트 내 아직 진행되지 않은 업무"
-            taskNumber={todoList.length}
+            taskNumber={todoNumber}
           />
-          <BoardHeader boardName="진행 중" boardDescription="현재 진행 중인 업무" taskNumber={inProgressList.length} />
-          <BoardHeader boardName="완료" boardDescription="스프린트 중 완료된 모든 업무" taskNumber={doneList.length} />
+          <BoardHeader boardName="진행 중" boardDescription="현재 진행 중인 업무" taskNumber={inProgressNumber} />
+          <BoardHeader boardName="완료" boardDescription="스프린트 중 완료된 모든 업무" taskNumber={doneNumber} />
         </div>
         <ul className="flex flex-col gap-y-1.5">
-          {taskGroup === 'all' ? (
-            <li>
-              <KanbanBoard>
-                <ColumnBoard taskList={todoList} state="ToDo" {...{ setTaskList }} />
-                <ColumnBoard taskList={inProgressList} state="InProgress" {...{ setTaskList }} />
-                <ColumnBoard taskList={doneList} state="Done" {...{ setTaskList }} />
-              </KanbanBoard>
-            </li>
-          ) : (
-            storyKanbanBoards
-          )}
+          {boardTaskList?.map((taskListByStory, index) => {
+            const { storyId, storyNumber, storyTitle } = taskListByStory;
+
+            return (
+              <li key={index}>
+                <DragDropContext onDragEnd={handleDragEnd}>
+                  <KanbanBoard {...{ storyId, storyNumber, storyTitle }}>
+                    <ColumnBoard taskList={taskListByStory?.ToDo} state="ToDo" {...{ setTaskList }} />
+                    <ColumnBoard taskList={taskListByStory?.InProgress} state="InProgress" {...{ setTaskList }} />
+                    <ColumnBoard taskList={taskListByStory?.Done} state="Done" {...{ setTaskList }} />
+                  </KanbanBoard>
+                </DragDropContext>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </section>
