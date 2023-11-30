@@ -105,10 +105,10 @@ export class ProjectsService {
   async readProgressSprint(projectId: number): Promise<GetSprintProgressResponseDto | GetSprintNotProgressResponseDto> {
     const progressSprintData = await this.entityManager
       .createQueryBuilder(Sprint, 'Sprint')
-      .innerJoinAndSelect('Sprint.sprintToTasks', 'SprintToTask')
-      .innerJoinAndSelect('SprintToTask.task', 'Task')
-      .innerJoinAndSelect('Task.story', 'Story')
-      .innerJoinAndSelect('Task.member', 'Member')
+      .leftJoinAndSelect('Sprint.sprintToTasks', 'SprintToTask')
+      .leftJoinAndSelect('SprintToTask.task', 'Task')
+      .leftJoinAndSelect('Task.story', 'Story')
+      .leftJoinAndSelect('Task.member', 'Member')
       .where('Sprint.closed_date is null')
       .andWhere('Sprint.project_id = :projectId', { projectId })
       .getOne();
