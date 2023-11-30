@@ -6,6 +6,7 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { Sprint } from './sprint.entity';
 import { Task } from 'src/backlogs/entities/task.entity';
@@ -19,9 +20,11 @@ export class SprintToTask extends BaseEntity {
   completed_at: Date;
 
   @ManyToOne(() => Sprint, (sprint) => sprint.id)
+  @JoinColumn({ name: 'sprintId' })
   sprint: Sprint;
 
   @ManyToOne(() => Task, (task) => task.id)
+  @JoinColumn({ name: 'taskId' })
   task: Task;
 
   @CreateDateColumn({ type: 'timestamp' })
