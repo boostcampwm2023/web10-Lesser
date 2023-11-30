@@ -2,7 +2,7 @@ import { projectCardElement } from '../../types/project';
 import { Link } from 'react-router-dom';
 
 const ProjectCard = ({ id, name, subject, nextPage, myTaskCount }: projectCardElement) => {
-  const nextRef = nextPage === 'backlogs' ? '/sprint' : `/sprint/${id}`;
+  const nextRef = nextPage === 'backlogs' ? '/backlog' : `/sprint/${id}`;
   return (
     <Link
       to={nextRef}

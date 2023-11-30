@@ -1,5 +1,6 @@
 import { useModal } from '../../../modal/useModal';
 import { ReadBacklogTaskResponseDto } from '../../../types/backlog';
+import BacklogDeleteModal from './BacklogDeleteModal';
 import TaskUpdateModal from './TaskUpdateModal';
 
 interface TaskModalProps extends ReadBacklogTaskResponseDto {
@@ -7,8 +8,9 @@ interface TaskModalProps extends ReadBacklogTaskResponseDto {
 }
 
 const TaskModal = (props: TaskModalProps) => {
-  const { userId, title, point, condition, close } = props;
-  const modal = useModal(false);
+  const { userId, title, point, condition, id, close } = props;
+  const updateModal = useModal(false);
+  const deleteModal = useModal();
 
   return (
     <div className="fixed top-0 left-0 bg-black w-screen h-screen bg-opacity-30 flex justify-center items-center font-pretendard">
@@ -60,12 +62,21 @@ const TaskModal = (props: TaskModalProps) => {
             onClick={close}
           >
             취소
+          </button>{' '}
+          <button
+            type="button"
+            className="rounded-md px-4 py-1.5 font-bold text-true-white bg-error-red text-s"
+            onClick={() => {
+              deleteModal.open(<BacklogDeleteModal url="/task" id={id} close={deleteModal.close} />);
+            }}
+          >
+            삭제
           </button>
           <button
             type="button"
             className="border-2 rounded-md border-starbucks-green px-4 py-1.5 bg-starbucks-green font-bold text-true-white text-s"
             onClick={() => {
-              modal.open(<TaskUpdateModal close={modal.close} defaultData={props} />);
+              updateModal.open(<TaskUpdateModal close={updateModal.close} defaultData={props} />);
               close();
             }}
           >
