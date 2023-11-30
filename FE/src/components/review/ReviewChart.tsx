@@ -1,25 +1,63 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { SelectedSprint } from '../../types/review';
+interface TaskList {
+  completedAt: string;
+  condition: string;
+  id: number;
+  memberId: number;
+  point: number;
+}
 
-const data = [
-  { date: '2023-01-01', remaining: 10, ideal: 10 },
-  { date: '2023-01-02', remaining: 10, ideal: 7.5 },
-  { date: '2023-01-03', remaining: 9, ideal: 5 },
-  { date: '2023-01-04', remaining: 9, ideal: 2.5 },
-  { date: '2023-01-05', remaining: 9, ideal: 0 },
-];
+const createChartData = (startDate: string, endDate: string, taskList: TaskList[]) => {
+  const chartData = [];
+  const taskCount = taskList.length;
+  const dateCount = (Number(new Date(endDate)) - Number(new Date(startDate))) / (24 * 60 * 60 * 1000);
+  const tasksPerDay = taskCount / dateCount;
+  const currentDate = new Date(startDate);
+  const completedTask = taskList.filter((task) => task.completedAt);
+  let ideal = taskList.length;
+  let remaining = taskList.length;
 
-const maxYValue = Math.max(...data.map((entry) => entry.ideal));
+  while (currentDate <= new Date(endDate)) {
+    if (completedTask.some((task) => new Date(task.completedAt).toString() === currentDate.toString())) {
+      remaining -= 1;
+    }
 
-const ReviewChart = () => (
-  <LineChart width={964} height={550} data={data} margin={{ top: 25, left: 5, right: 10 }}>
-    <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="date" />
-    <YAxis dataKey="ideal" domain={[0, maxYValue]} label={{ value: '이슈 개수', angle: -90 }} />
-    <Tooltip />
-    <Legend />
-    <Line type="step" dataKey="remaining" stroke="#8884d8" dot={{ r: 0 }} activeDot={{ r: 5 }} />
-    <Line type="linear" dataKey="ideal" stroke="#82ca9d" dot={{ r: 0 }} activeDot={{ r: 0 }} />
-  </LineChart>
-);
+    chartData.push({ date: formatDate(currentDate), ideal: ideal.toFixed(2), remaining });
+    currentDate.setDate(currentDate.getDate() + 1);
+    ideal -= tasksPerDay;
+  }
+
+  return chartData;
+};
+
+const formatDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+};
+
+const ReviewChart = (sprint: SelectedSprint) => {
+  const chartData = createChartData(sprint.startDate!, sprint.endDate!, sprint.taskList!);
+  const taskCount = sprint.taskList!.length;
+
+  return (
+    <LineChart width={964} height={550} data={chartData} margin={{ top: 25, left: 5, right: 10 }}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="date" interval={Math.ceil(chartData.length / 10)} />
+      <YAxis
+        dataKey="ideal"
+        domain={[0, taskCount]}
+        label={{ value: '태스크 개수', angle: -90, position: 'insideLeft' }}
+      />
+      <Tooltip />
+      <Legend />
+      <Line type="step" dataKey="remaining" stroke="#8884d8" dot={{ r: 0 }} activeDot={{ r: 5 }} />
+      <Line type="linear" dataKey="ideal" stroke="#82ca9d" dot={{ r: 0 }} activeDot={{ r: 0 }} />
+    </LineChart>
+  );
+};
 
 export default ReviewChart;

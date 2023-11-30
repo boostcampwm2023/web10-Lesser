@@ -1,12 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import ChevronDownIcon from './../../assets/icons/ChevronDownIcon';
 import { Link, useParams } from 'react-router-dom';
+import { Sprint } from '../../types/review';
 
-const ReviewHeader = () => {
+interface ReviewHeaderProps {
+  sprintList: Sprint[];
+  currentSprintId: number;
+}
+
+const ReviewHeader = ({ sprintList, currentSprintId }: ReviewHeaderProps) => {
   const reviewTabs = ['스프린트 정보', '차트', '회고란'];
+  const { '*': currentReviewTab } = useParams();
+
   const [sprintListVisibility, setSprintListVisibility] = useState<boolean>(false);
   const btnRef = useRef<HTMLButtonElement>(null);
-  const { '*': currentReviewTab } = useParams();
 
   const handleSprintListButtonClick = () => {
     setSprintListVisibility(!sprintListVisibility);
@@ -44,9 +51,11 @@ const ReviewHeader = () => {
 
         {sprintListVisibility && (
           <ul className="flex flex-col w-[5.75rem] gap-[0.313rem] absolute top-8 p-3 items-center border border-light-gray rounded-md bg-true-white z-10 text-light-gray">
-            {['SPRINT 2', 'SPRINT 3', 'SPRINT 4'].map((sprint, index) => (
-              <li key={index}>
-                <button>{sprint}</button>
+            {Object.values(sprintList).map((sprint) => (
+              <li key={sprint.title}>
+                <button className={`${currentSprintId === sprint.sprintId && 'font-bold text-starbucks-green'}`}>
+                  {sprint.title}
+                </button>
               </li>
             ))}
           </ul>
