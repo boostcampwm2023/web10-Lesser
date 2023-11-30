@@ -1,5 +1,6 @@
 import { Member } from 'src/members/entities/member.entity';
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany } from 'typeorm';
+import { Sprint } from 'src/sprints/entities/sprint.entity';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 
 @Entity()
 export class Project extends BaseEntity {
@@ -15,4 +16,7 @@ export class Project extends BaseEntity {
   @ManyToMany(() => Member, (Member) => Member.projects)
   @JoinTable({ name: 'Member_Project' })
   members: Member[];
+
+  @OneToMany((type) => Sprint, (Sprint) => Sprint.project)
+  sprints: Sprint[];
 }

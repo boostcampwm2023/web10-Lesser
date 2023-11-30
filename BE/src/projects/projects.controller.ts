@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { IsLoginGuard } from 'src/common/auth/IsLogin.guard';
 import { Member } from 'src/common/decorators/memberDecorator';
 import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
+import { GetSprintNotProgressResponseDto, GetSprintProgressResponseDto } from './dto/GetSprintProgressRequest.dto';
 import { CreateProjectRequestDto, CreateProjectResponseDto, ReadProjectListResponseDto } from './dto/Project.dto';
 import { ProjectsService } from './projects.service';
 
@@ -20,5 +21,13 @@ export class ProjectsController {
   @Get()
   readProjectList(@Member() memberInfo: memberDecoratorType): Promise<ReadProjectListResponseDto[]> {
     return this.projectsSevice.readProjectList(memberInfo);
+  }
+
+  @Get(':projectId/sprints/progress')
+  readProgressSprint(
+    @Member() memberInfo,
+    @Param('projectId', ParseIntPipe) projectId: number,
+  ): Promise<GetSprintProgressResponseDto | GetSprintNotProgressResponseDto> {
+    return this.projectsSevice.readProgressSprint(projectId);
   }
 }

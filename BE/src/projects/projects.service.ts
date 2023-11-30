@@ -1,12 +1,19 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { query } from 'express';
 import { Epic } from 'src/backlogs/entities/epic.entity';
 import { Story } from 'src/backlogs/entities/story.entity';
 import { Task } from 'src/backlogs/entities/task.entity';
 import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
 import { Member } from 'src/members/entities/member.entity';
-import { Repository } from 'typeorm';
+import { SprintToTask } from 'src/sprints/entities/sprint-task.entity';
+import { Sprint } from 'src/sprints/entities/sprint.entity';
+import { EntityManager, IsNull, Repository } from 'typeorm';
+import {
+  GetSprintNotProgressResponseDto,
+  GetSprintProgressResponseDto,
+  GetSprintProgressTaskResponseDto,
+} from './dto/GetSprintProgressRequest.dto';
 import {
   CreateProjectRequestDto,
   CreateProjectResponseDto,
@@ -25,6 +32,8 @@ export class ProjectsService {
     @InjectRepository(Task) private taskRepository: Repository<Task>,
     @InjectRepository(Member) private memberRepository: Repository<Member>,
     @InjectRepository(ProjectCounter) private projectCounterRepository: Repository<ProjectCounter>,
+    @InjectRepository(Sprint) private sprintRepository: Repository<Sprint>,
+    @InjectEntityManager() private entityManager: EntityManager,
   ) {}
 
   async createProject(
@@ -91,5 +100,46 @@ export class ProjectsService {
       readUserResponse.userName = member.email;
       return readUserResponse;
     });
+  }
+
+  async readProgressSprint(projectId: number): Promise<GetSprintProgressResponseDto | GetSprintNotProgressResponseDto> {
+    const progressSprintData = await this.entityManager
+      .createQueryBuilder(Sprint, 'Sprint')
+      .innerJoinAndSelect('Sprint.sprintToTasks', 'SprintToTask')
+      .innerJoinAndSelect('SprintToTask.task', 'Task')
+      .innerJoinAndSelect('Task.story', 'story')
+      .innerJoinAndSelect('Task.member', 'Member')
+      .where('sprint.closed_date is null')
+      .andWhere('sprint.project_id = :projectId', { projectId })
+      .getOne();
+    if (progressSprintData === null) return { sprintEnd: true, sprintModal: false };
+    return this.buildSprintProgressResponse(progressSprintData);
+  }
+
+  private buildSprintProgressResponse(progressSprintData: Sprint): GetSprintProgressResponseDto {
+    const sprintProgressResponse = new GetSprintProgressResponseDto();
+    sprintProgressResponse.sprintTitle = progressSprintData.title;
+    sprintProgressResponse.sprintGoal = progressSprintData.goal;
+    sprintProgressResponse.sprintStartDate = progressSprintData.start_date;
+    sprintProgressResponse.sprintEndDate = progressSprintData.end_date;
+    sprintProgressResponse.sprintEnd = false;
+    //나중에 end_date가 현재보다 과거일 때 스프린트 삭제로직 추가
+    sprintProgressResponse.sprintModal = progressSprintData.end_date < new Date();
+    sprintProgressResponse.taskList = this.buildSprintProgressTask(progressSprintData.sprintToTasks);
+    return sprintProgressResponse;
+  }
+  private buildSprintProgressTask(sprintToTasks: SprintToTask[]): GetSprintProgressTaskResponseDto[] {
+    return sprintToTasks.map((sprintToTask) => ({
+      id: sprintToTask.task.id,
+      sequence: sprintToTask.task.sequence,
+      title: sprintToTask.task.title,
+      userId: sprintToTask.task.member.id,
+      point: sprintToTask.task.point,
+      state: sprintToTask.task.state,
+      condition: sprintToTask.task.condition,
+      storyId: sprintToTask.task.story.id,
+      storySequence: sprintToTask.task.story.sequence,
+      storyTitle: sprintToTask.task.story.title,
+    }));
   }
 }
