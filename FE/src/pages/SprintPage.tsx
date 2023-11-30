@@ -9,6 +9,7 @@ import { UserFilter, TaskGroup } from '../types/sprint';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { useNavigate } from 'react-router';
 import { api } from '../apis/api';
+import { transformDate } from '../utils/date';
 
 interface BoardTaskListObject {
   [key: string]: number | undefined | Task[] | string;
@@ -23,8 +24,8 @@ interface BoardTaskListObject {
 interface Sprint {
   sprintTitle: string;
   sprintGoal: string;
-  sprintStartDate: Date;
-  sprintEndDate: Date;
+  sprintStartDate: string;
+  sprintEndDate: string;
   sprintEnd: boolean;
   sprintModal: boolean;
   taskList: Task[];
@@ -39,7 +40,6 @@ const SprintPage = () => {
   const [dropdownOpend, setDropdownOpend] = useState<boolean>(false);
   const [taskList, setTaskList] = useState<Task[]>([]);
   const [currentTaskList, setCurrentTaskList] = useState<Task[]>([]);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -156,8 +156,8 @@ const SprintPage = () => {
       <div className="flex justify-between mb-4">
         <div className="flex gap-x-8">
           <PrograssBar
-            startText={String(sprint.sprintStartDate)}
-            endText={String(sprint.sprintEndDate)}
+            startText={transformDate(sprint.sprintStartDate)}
+            endText={transformDate(sprint.sprintEndDate)}
             totalAmount={5}
             currentAmount={3}
           />
