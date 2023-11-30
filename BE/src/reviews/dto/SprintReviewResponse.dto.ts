@@ -12,6 +12,7 @@ class SprintListItem {
 
 class TaskInfo {
   id: number;
+  title: string;
   point: number;
   condition: string;
   memberId: number;

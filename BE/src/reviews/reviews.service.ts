@@ -3,11 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './entities/review.entity';
 import { IsNull, Not, Repository } from 'typeorm';
 import { Sprint } from 'src/sprints/entities/sprint.entity';
-import {
-  CreateReviewRequestDto,
-  CreateReviewResponseDto,
-  ReadReviewResponseDto,
-} from './dto/Review.dto';
+import { CreateReviewRequestDto, CreateReviewResponseDto, ReadReviewResponseDto } from './dto/Review.dto';
 import { SprintReviewResponseDto } from './dto/SprintReviewResponse.dto';
 import { SprintToTask } from 'src/sprints/entities/sprint-task.entity';
 
@@ -61,9 +57,10 @@ export class ReviewsService {
 
     const taskList = sprintTasks.map((sprintTask) => ({
       id: sprintTask.task.id,
+      title: sprintTask.task.title,
       point: sprintTask.task.point,
       condition: sprintTask.task.condition,
-      memberId: sprintTask.task.member.id,
+      memberId: sprintTask.task.member ? sprintTask.task.member.id : null,
       completedAt: sprintTask.completed_at,
     }));
 
