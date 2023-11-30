@@ -1,23 +1,25 @@
-import { ReactNode, useContext, useEffect, useMemo, useState } from "react";
-import { ModalContext } from "./ModalProvider";
+import { ReactNode, useContext, useEffect, useMemo, useState } from 'react';
+import { ModalContext } from './ModalProvider';
 
 let elementId = 0;
 
-export const useModal = () => {
+export const useModal = (defaultClose = true) => {
   const [id] = useState(() => String(elementId++));
 
   const context = useContext(ModalContext);
 
   if (context == null) {
-    throw new Error("모달을 사용하기 위해선 ModalProvider 내에 컴포넌트가 존재해야 합니다.");
+    throw new Error('모달을 사용하기 위해선 ModalProvider 내에 컴포넌트가 존재해야 합니다.');
   }
 
   const { mount, unmount } = context;
 
   useEffect(() => {
-    return () => {
-      unmount(id);
-    };
+    if (defaultClose) {
+      return () => {
+        unmount(id);
+      };
+    }
   }, [id, unmount]);
 
   return useMemo(
@@ -29,6 +31,6 @@ export const useModal = () => {
         unmount(id);
       },
     }),
-    [id, mount, unmount]
+    [id, mount, unmount],
   );
 };
