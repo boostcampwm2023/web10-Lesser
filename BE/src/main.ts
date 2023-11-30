@@ -8,7 +8,11 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
   //추후에 origin을 Lesser사이트로 변경
-  app.enableCors({ origin: true, credentials: true });
+  app.enableCors({
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'DELETE', 'PATCH', 'PUT', 'OPTIONS', 'HEAD'],
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Lesser API')
