@@ -9,12 +9,12 @@ interface FilterDropdownProps {
   userList: User[];
   userToFilter: UserFilter;
   taskGroup: TaskGroup;
-  onClickUserFilterButton: (user: UserFilter) => void;
-  onClickGroupFilterButton: (group: TaskGroup) => void;
+  onUserFilterButtonClick: (user: UserFilter) => void;
+  onGroupFilterButtonClick: (group: TaskGroup) => void;
 }
 
 const FilterDropdown = (props: FilterDropdownProps) => {
-  const { userToFilter, taskGroup, userList, onClickGroupFilterButton, onClickUserFilterButton } = props;
+  const { userToFilter, taskGroup, userList, onGroupFilterButtonClick, onUserFilterButtonClick } = props;
 
   const activeMenuClass = 'text-starbucks-green font-medium';
   const inactiveMenuClass = 'text-green-stroke';
@@ -24,11 +24,11 @@ const FilterDropdown = (props: FilterDropdownProps) => {
       <p className="font-bold text-center ">멤버별 필터</p>
       {userList.map(({ id, name }) => (
         <p
-          key={id}
+          key={name}
           className={`text-center text-xs hover:cursor-pointer ${
-            name === userToFilter ? activeMenuClass : inactiveMenuClass
+            id === userToFilter ? activeMenuClass : inactiveMenuClass
           }`}
-          onClick={() => onClickUserFilterButton(name)}
+          onClick={() => onUserFilterButtonClick(id)}
         >
           {name}
         </p>
@@ -39,7 +39,7 @@ const FilterDropdown = (props: FilterDropdownProps) => {
         className={`text-center text-xs hover:cursor-pointer ${
           taskGroup === 'all' ? activeMenuClass : inactiveMenuClass
         }`}
-        onClick={() => onClickGroupFilterButton('all')}
+        onClick={() => onGroupFilterButtonClick('all')}
       >
         전체 태스크
       </p>
@@ -47,7 +47,7 @@ const FilterDropdown = (props: FilterDropdownProps) => {
         className={`text-center text-xs hover:cursor-pointer ${
           taskGroup === 'story' ? activeMenuClass : inactiveMenuClass
         }`}
-        onClick={() => onClickGroupFilterButton('story')}
+        onClick={() => onGroupFilterButtonClick('story')}
       >
         스토리 그룹
       </p>

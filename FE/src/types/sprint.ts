@@ -1,18 +1,18 @@
 export type TaskGroup = 'all' | 'story';
 
-export type UserFilter = '전체' | string;
+export type UserFilter = undefined | number;
 
-export type TaskState = 'ToDo' | 'InProgress' | 'Done';
+export type TaskState = 'ToDo' | 'InProgress' | 'Done' | string;
 
 export interface Task {
   id: number;
+  sequencd: number;
   title: string;
   userId: number;
-  userName: string;
   point: number;
   state: TaskState;
   storyId: number;
-  storyNumber: number;
+  storySequence: number;
   storyTitle: string;
   condition: string;
 }
