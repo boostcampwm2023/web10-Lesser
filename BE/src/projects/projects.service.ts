@@ -107,10 +107,10 @@ export class ProjectsService {
       .createQueryBuilder(Sprint, 'Sprint')
       .innerJoinAndSelect('Sprint.sprintToTasks', 'SprintToTask')
       .innerJoinAndSelect('SprintToTask.task', 'Task')
-      .innerJoinAndSelect('Task.story', 'story')
+      .innerJoinAndSelect('Task.story', 'Story')
       .innerJoinAndSelect('Task.member', 'Member')
-      .where('sprint.closed_date is null')
-      .andWhere('sprint.project_id = :projectId', { projectId })
+      .where('Sprint.closed_date is null')
+      .andWhere('Sprint.project_id = :projectId', { projectId })
       .getOne();
     if (progressSprintData === null) return { sprintEnd: true, sprintModal: false };
     return this.buildSprintProgressResponse(progressSprintData);
