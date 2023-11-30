@@ -51,8 +51,8 @@ const SprintPage = () => {
     const taskList = currentTaskList.reduce((acc: TaskGroupedByStory, current: Task) => {
       const { storyId, storyNumber, storyTitle } = current;
       acc[storyId] = acc[storyId] ?? {
-        storyNumber: storyNumber,
-        storyId: storyId,
+        storyNumber,
+        storyId,
         storyTitle,
         ToDo: [],
         InProgress: [],
@@ -182,9 +182,9 @@ const SprintPage = () => {
               <li key={index}>
                 <DragDropContext onDragEnd={handleDragEnd}>
                   <KanbanBoard {...{ storyId, storyNumber, storyTitle }}>
-                    <ColumnBoard taskList={taskListByStory?.ToDo} state="ToDo" {...{ setTaskList }} />
-                    <ColumnBoard taskList={taskListByStory?.InProgress} state="InProgress" {...{ setTaskList }} />
-                    <ColumnBoard taskList={taskListByStory?.Done} state="Done" {...{ setTaskList }} />
+                    <ColumnBoard taskList={taskListByStory?.ToDo} state="ToDo" {...{ storyId }} />
+                    <ColumnBoard taskList={taskListByStory?.InProgress} state="InProgress" {...{ storyId }} />
+                    <ColumnBoard taskList={taskListByStory?.Done} state="Done" {...{ storyId }} />
                   </KanbanBoard>
                 </DragDropContext>
               </li>
