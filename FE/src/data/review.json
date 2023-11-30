@@ -1,0 +1,46 @@
+{
+  "sprintList": [
+    { "sprintId": 1, "title": "sprint1" },
+    { "sprintId": 2, "title": "sprint2" }
+  ],
+  "selectedSprint": {
+    "id": 1,
+    "title": "스프린트 제목",
+    "goal": "스프린트 목표",
+    "startDate": "2023-11-21T00:00:00.000Z",
+    "endDate": "2023-11-30T00:00:00.000Z",
+    "closedDate": "2023-11-29T00:00:00.000Z",
+    "completedCount": 20,
+    "imcompleteCount": 9,
+    "taskList": [
+      {
+        "title": "태스크 제목3",
+        "completedAt": "2023-11-25T00:00:00.000Z",
+        "condition": "22",
+        "id": 3,
+        "memberId": 1,
+        "point": 2
+      },
+      {
+        "title": "태스크 제목4",
+        "completedAt": null,
+        "condition": "인수",
+        "id": 4,
+        "memberId": 1,
+        "point": 1
+      },
+      {
+        "title": "태스크 제목5",
+        "completedAt": null,
+        "condition": "인수",
+        "id": 5,
+        "memberId": 1,
+        "point": 4
+      }
+    ],
+    "remi": {
+      "id": 1,
+      "content": "KPT 회고를 해봤다. 어쩌구저쩌구"
+    }
+  }
+}

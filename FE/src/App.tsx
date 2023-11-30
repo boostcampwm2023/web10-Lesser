@@ -16,7 +16,7 @@ function App() {
       <Route element={<MainPage />}>
         <Route path="/backlog" element={<BacklogPage />} />
         <Route path="/sprint" element={<SprintPage />} />
-        <Route path="/review" element={<ReviewPage />} />
+        <Route path="/review/sprint/*" element={<ReviewPage />} />
       </Route>
     </Routes>
   );

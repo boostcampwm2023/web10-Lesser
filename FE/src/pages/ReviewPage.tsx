@@ -1,19 +1,31 @@
 import ReviewHeader from '../components/review/ReviewHeader';
-import { useState } from 'react';
 import ReviewSprint from './../components/review/ReviewSprint';
 import ReviewChart from '../components/review/ReviewChart';
 import ReviewReminiscing from '../components/review/ReviewReminiscing';
+import { Route, Routes } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../apis/api';
 
-const reviewTabs = ['스프린트 정보', '차트', '회고란'];
 const ReviewPage = () => {
-  const [reviewTab, setReviewTab] = useState(reviewTabs[0]);
+  const { isLoading, error, data } = useQuery({
+    queryKey: ['review'],
+    queryFn: () => api.get('/reviews?project=1&sprint=0').then((res) => res.data),
+  });
 
   return (
     <>
-      <ReviewHeader reviewTabs={reviewTabs} currentReviewTab={reviewTab} onReviewTabChange={setReviewTab} />
-      {reviewTab === '스프린트 정보' && <ReviewSprint />}
-      {reviewTab === '차트' && <ReviewChart />}
-      {reviewTab === '회고란' && <ReviewReminiscing />}
+      {isLoading && <p>Loading...</p>}
+      {error && <p>Something is wrong 😢</p>}
+      {data && (
+        <>
+          <ReviewHeader sprintList={data.sprintList} currentSprintId={data.selectedSprint.id} />
+          <Routes>
+            <Route path="/" element={<ReviewSprint {...data.selectedSprint} />} />
+            <Route path="/chart" element={<ReviewChart {...data.selectedSprint} />} />
+            <Route path="/remi" element={<ReviewReminiscing />} />
+          </Routes>
+        </>
+      )}
     </>
   );
 };

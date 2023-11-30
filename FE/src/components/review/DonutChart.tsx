@@ -11,7 +11,7 @@ const DountChart = ({ percent }: DountChartProps) => (
       fill="none"
       stroke="#006241"
       strokeWidth="30"
-      strokeDasharray={`${2 * Math.PI * 80 * percent} ${2 * Math.PI * 80 * (1 - percent)}`}
+      strokeDasharray={`${(2 * Math.PI * 80 * percent) / 100} ${2 * Math.PI * 80 * (1 - percent / 100)}`}
       strokeDashoffset={2 * Math.PI * 80 * 0.25}
     />
   </svg>

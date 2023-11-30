@@ -1,15 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import ChevronDownIcon from './../../assets/icons/ChevronDownIcon';
+import { Link, useParams } from 'react-router-dom';
+import { Sprint } from '../../types/review';
 
 interface ReviewHeaderProps {
-  reviewTabs: string[];
-  currentReviewTab: string;
-  onReviewTabChange: React.Dispatch<React.SetStateAction<string>>;
+  sprintList: Sprint[];
+  currentSprintId: number;
 }
 
-const ReviewHeader = ({ reviewTabs, currentReviewTab, onReviewTabChange }: ReviewHeaderProps) => {
+const ReviewHeader = ({ sprintList, currentSprintId }: ReviewHeaderProps) => {
+  const reviewTabs = ['스프린트 정보', '차트', '회고란'];
+  const { '*': currentReviewTab } = useParams();
+
   const [sprintListVisibility, setSprintListVisibility] = useState<boolean>(false);
   const btnRef = useRef<HTMLButtonElement>(null);
+
   const handleSprintListButtonClick = () => {
     setSprintListVisibility(!sprintListVisibility);
   };
@@ -46,25 +51,30 @@ const ReviewHeader = ({ reviewTabs, currentReviewTab, onReviewTabChange }: Revie
 
         {sprintListVisibility && (
           <ul className="flex flex-col w-[5.75rem] gap-[0.313rem] absolute top-8 p-3 items-center border border-light-gray rounded-md bg-true-white z-10 text-light-gray">
-            {['SPRINT 2', 'SPRINT 3', 'SPRINT 4'].map((sprint, index) => (
-              <li key={index}>
-                <button>{sprint}</button>
+            {Object.values(sprintList).map((sprint) => (
+              <li key={sprint.title}>
+                <button className={`${currentSprintId === sprint.sprintId && 'font-bold text-starbucks-green'}`}>
+                  {sprint.title}
+                </button>
               </li>
             ))}
           </ul>
         )}
 
         <ul className="flex gap-3 text-r text-light-gray">
-          {reviewTabs.map((tab, index) => (
-            <li key={index}>
-              <button
-                className={`${currentReviewTab === tab && 'font-bold text-starbucks-green'}`}
-                onClick={() => onReviewTabChange(tab)}
-              >
-                {tab}
-              </button>
-            </li>
-          ))}
+          {reviewTabs.map((tab, index) => {
+            const urlSegment = tab === '차트' ? '/chart' : tab === '회고란' ? '/remi' : '';
+            return (
+              <li key={index}>
+                <Link
+                  to={`/review/sprint${urlSegment}`}
+                  className={`${currentReviewTab === urlSegment.substring(1) && 'font-bold text-starbucks-green'}`}
+                >
+                  {tab}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
       <div className="h-[0.063rem] mb-6 bg-transparent-green"></div>
