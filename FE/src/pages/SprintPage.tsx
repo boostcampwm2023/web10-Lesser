@@ -8,6 +8,7 @@ import { Task } from '../types/sprint';
 import { UserFilter, TaskGroup } from '../types/sprint';
 import axios from 'axios';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import { useNavigate } from 'react-router';
 
 interface BoardTaskListObject {
   [key: string]: number | undefined | Task[] | string;
@@ -26,8 +27,9 @@ const SprintPage = () => {
   const [userToFilter, setUserToFilter] = useState<UserFilter>(undefined);
   const [dropdownOpend, setDropdownOpend] = useState<boolean>(false);
   const [taskList, setTaskList] = useState<Task[]>([]);
-  // const [boardTaskList, setBoardTaskList] = useState<BoardTaskListObject[]>([]);
   const [currentTaskList, setCurrentTaskList] = useState<Task[]>([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get('src/data/sprint.json').then((response) => {
@@ -125,6 +127,10 @@ const SprintPage = () => {
     });
   };
 
+  const handleSprintEndButtonClick = () => {
+    navigate('/review');
+  };
+
   const todoNumber = currentTaskList.filter(({ state }) => state === 'ToDo').length;
   const inProgressNumber = currentTaskList.filter(({ state }) => state === 'InProgress').length;
   const doneNumber = currentTaskList.filter(({ state }) => state === 'Done').length;
@@ -153,12 +159,15 @@ const SprintPage = () => {
                 userList={userList}
                 userToFilter={userToFilter}
                 taskGroup={taskGroup}
-                onClickGroupFilterButton={handleGroupButtonClick}
-                onClickUserFilterButton={handleUserFilterButtonClick}
+                onGroupFilterButtonClick={handleGroupButtonClick}
+                onUserFilterButtonClick={handleUserFilterButtonClick}
               />
             )}
           </div>
-          <button className="bg-starbucks-green text-true-white rounded py-1.5 px-4 font-bold text-xs">
+          <button
+            className="bg-starbucks-green text-true-white rounded py-1.5 px-4 font-bold text-xs"
+            onClick={handleSprintEndButtonClick}
+          >
             스프린트 완료
           </button>
         </div>
