@@ -43,7 +43,7 @@ const SprintPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get('/projects/2/sprints/progress').then((response) => {
+    api.get('/projects/8/sprints/progress').then((response) => {
       const taskList = response.data.taskList;
 
       setSprint(response.data);
