@@ -1,15 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import ChevronDownIcon from './../../assets/icons/ChevronDownIcon';
+import { Link, useParams } from 'react-router-dom';
 
-interface ReviewHeaderProps {
-  reviewTabs: string[];
-  currentReviewTab: string;
-  onReviewTabChange: React.Dispatch<React.SetStateAction<string>>;
-}
-
-const ReviewHeader = ({ reviewTabs, currentReviewTab, onReviewTabChange }: ReviewHeaderProps) => {
+const ReviewHeader = () => {
+  const reviewTabs = ['스프린트 정보', '차트', '회고란'];
   const [sprintListVisibility, setSprintListVisibility] = useState<boolean>(false);
   const btnRef = useRef<HTMLButtonElement>(null);
+  const { '*': currentReviewTab } = useParams();
+
   const handleSprintListButtonClick = () => {
     setSprintListVisibility(!sprintListVisibility);
   };
@@ -55,16 +53,19 @@ const ReviewHeader = ({ reviewTabs, currentReviewTab, onReviewTabChange }: Revie
         )}
 
         <ul className="flex gap-3 text-r text-light-gray">
-          {reviewTabs.map((tab, index) => (
-            <li key={index}>
-              <button
-                className={`${currentReviewTab === tab && 'font-bold text-starbucks-green'}`}
-                onClick={() => onReviewTabChange(tab)}
-              >
-                {tab}
-              </button>
-            </li>
-          ))}
+          {reviewTabs.map((tab, index) => {
+            const urlSegment = tab === '차트' ? '/chart' : tab === '회고란' ? '/remi' : '';
+            return (
+              <li key={index}>
+                <Link
+                  to={`/review/sprint${urlSegment}`}
+                  className={`${currentReviewTab === urlSegment.substring(1) && 'font-bold text-starbucks-green'}`}
+                >
+                  {tab}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
       <div className="h-[0.063rem] mb-6 bg-transparent-green"></div>
