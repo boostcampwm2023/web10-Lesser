@@ -140,7 +140,7 @@ export class BacklogsService {
     const taskCount = await this.getTaskCount(epic.project.id);
     const newTask = this.taskRepository.create({
       title: dto.title,
-      state: dto.state,
+      state: 'ToDo',
       point: dto.point,
       condition: dto.condition,
       sequence: taskCount,
