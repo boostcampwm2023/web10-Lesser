@@ -6,9 +6,9 @@ import BoardHeader from '../components/sprint/BoardHeader';
 import FilterDropdown from '../components/sprint/FilterDropdown';
 import { Task } from '../types/sprint';
 import { UserFilter, TaskGroup } from '../types/sprint';
-import axios from 'axios';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { useNavigate } from 'react-router';
+import { api } from '../apis/api';
 
 interface BoardTaskListObject {
   [key: string]: number | undefined | Task[] | string;
@@ -20,9 +20,20 @@ interface BoardTaskListObject {
   Done: Task[];
 }
 
+interface Sprint {
+  sprintTitle: string;
+  sprintGoal: string;
+  sprintStartDate: Date;
+  sprintEndDate: Date;
+  sprintEnd: boolean;
+  sprintModal: boolean;
+  taskList: Task[];
+}
+
 type TaskGroupedByStory = Record<number, BoardTaskListObject>;
 
 const SprintPage = () => {
+  const [sprint, setSprint] = useState<Sprint>(Object);
   const [taskGroup, setTaskGroup] = useState<TaskGroup>('all');
   const [userToFilter, setUserToFilter] = useState<UserFilter>(undefined);
   const [dropdownOpend, setDropdownOpend] = useState<boolean>(false);
@@ -32,9 +43,10 @@ const SprintPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('src/data/sprint.json').then((response) => {
+    api.get('/projects/2/sprints/progress').then((response) => {
       const taskList = response.data.taskList;
 
+      setSprint(response.data);
       setTaskList(taskList);
       setCurrentTaskList(taskList);
     });
@@ -51,9 +63,9 @@ const SprintPage = () => {
     }
 
     const taskList = currentTaskList.reduce((acc: TaskGroupedByStory, current: Task) => {
-      const { storyId, storyNumber, storyTitle } = current;
+      const { storyId, storySequence, storyTitle } = current;
       acc[storyId] = acc[storyId] ?? {
-        storyNumber,
+        storySequence,
         storyId,
         storyTitle,
         ToDo: [],
@@ -138,13 +150,23 @@ const SprintPage = () => {
   return (
     <section className="min-w-[60.25rem]">
       <div className="flex mb-2.5">
-        <h1 className="mr-2 text-2xl font-bold text-starbucks-green">스프린트 1</h1>
-        <span className="self-end text-xs h-fit">백로그와 칸반보드가 보이는 이슈관리 프로토 타입을 만들자</span>
+        <h1 className="mr-2 text-2xl font-bold text-starbucks-green">{sprint.sprintTitle}</h1>
+        <span className="self-end text-xs h-fit">{sprint.sprintGoal}</span>
       </div>
       <div className="flex justify-between mb-4">
         <div className="flex gap-x-8">
-          <PrograssBar startText="23.11.14" endText="23.11.17" totalAmount={5} currentAmount={3} />
-          <PrograssBar startText="태스크 60건" endText="완료 9건" totalAmount={60} currentAmount={9} />
+          <PrograssBar
+            startText={String(sprint.sprintStartDate)}
+            endText={String(sprint.sprintEndDate)}
+            totalAmount={5}
+            currentAmount={3}
+          />
+          <PrograssBar
+            startText={`태스크 ${taskList.length}건`}
+            endText={`완료 ${taskList.filter(({ state }) => state === 'Done').length}건`}
+            totalAmount={60}
+            currentAmount={9}
+          />
         </div>
         <div className="flex gap-2">
           <div className="relative">

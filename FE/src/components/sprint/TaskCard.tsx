@@ -3,13 +3,13 @@ import { Draggable } from 'react-beautiful-dnd';
 interface TaskCardProps {
   id: number;
   title: string;
-  userName?: string;
+  userId?: number;
   point: number;
   storyId: number;
   index: number;
 }
 
-const TaskCard = ({ id, title, userName, point, index }: TaskCardProps) => (
+const TaskCard = ({ id, title, userId, point, index }: TaskCardProps) => (
   <Draggable draggableId={String(id)} index={index}>
     {(provided, snapshop) => (
       <div
@@ -23,7 +23,7 @@ const TaskCard = ({ id, title, userName, point, index }: TaskCardProps) => (
         <p className="font-medium">{title}</p>
         <p className="flex justify-between text-starbucks-green">
           <span className="font-bold">{id}</span>
-          <span>{userName}</span>
+          <span>{userId}</span>
           <span>{point} point</span>
         </p>
       </div>

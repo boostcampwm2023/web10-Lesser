@@ -6,13 +6,13 @@ export type TaskState = 'ToDo' | 'InProgress' | 'Done' | string;
 
 export interface Task {
   id: number;
+  sequencd: number;
   title: string;
   userId: number;
-  userName: string;
   point: number;
   state: TaskState;
   storyId: number;
-  storyNumber: number;
+  storySequence: number;
   storyTitle: string;
   condition: string;
 }
