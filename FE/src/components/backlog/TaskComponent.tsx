@@ -16,7 +16,7 @@ const TaskComponent = (props: ReadBacklogTaskResponseDto) => {
         <span className="w-[6.25rem] truncate">{userId}</span>
         <span className="w-[5rem] truncate">{point}POINT</span>
         <button
-          className="flex items-center font-bold"
+          className="flex items-center font-bold hover:underline"
           onClick={() => {
             open(<TaskModal {...props} close={close} />);
           }}

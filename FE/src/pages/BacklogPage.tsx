@@ -10,7 +10,7 @@ const BacklogPage = () => {
   const { data, isLoading } = useQuery({
     queryKey: ['backlogs', 1],
     queryFn: async () => {
-      const data = await api.get('/backlogs/1');
+      const data = await api.get('/backlogs/2');
       return data.data;
     },
   });
@@ -46,7 +46,7 @@ const BacklogPage = () => {
         placeholder="어떤 기능을 계획할 예정인가요? 예시) 회원 기능"
         color="bg-house-green"
         url="/backlogs/epic"
-        id={1}
+        id={2}
       />
     </main>
   );
