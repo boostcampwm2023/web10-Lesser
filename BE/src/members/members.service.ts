@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import { Member } from './entities/member.entity';
 import { LoginRequestDto } from './dto/login-request.dto';
-import { GithubUser } from './dto/member.dto';
+import { GithubUser } from './dto/github-user.dto';
 import { Tokens } from './dto/tokens.dto';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
 import { GithubEmail } from 'src/common/types/githubResource.type';

@@ -1,11 +1,6 @@
-import { PickType } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-class BaseMemberDto {
-  @IsInt()
-  @IsNotEmpty()
-  id: number;
-
+export class GithubUser {
   @IsString()
   @IsNotEmpty()
   github_id: string;
@@ -22,4 +17,3 @@ class BaseMemberDto {
   @IsNotEmpty()
   image_url: string;
 }
-
