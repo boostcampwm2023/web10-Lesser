@@ -8,7 +8,7 @@ import { api } from '../apis/api';
 import { useState } from 'react';
 
 const ReviewPage = () => {
-  const [sprintId, setSprintId] = useState<number>(0);
+  const [sprintId, setSprintId] = useState<number>(3);
   const { isLoading, error, data } = useQuery({
     queryKey: ['review', sprintId],
     queryFn: () => api.get(`/reviews?project=1&sprint=${sprintId}`).then((res) => res.data),
@@ -29,7 +29,7 @@ const ReviewPage = () => {
           <Routes>
             <Route path="/" element={<ReviewSprint {...data.selectedSprint} />} />
             <Route path="/chart" element={<ReviewChart {...data.selectedSprint} />} />
-            <Route path="/remi" element={<ReviewReminiscing />} />
+            <Route path="/remi" element={<ReviewReminiscing {...data.selectedSprint} />} />
           </Routes>
         </>
       )}
