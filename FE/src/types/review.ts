@@ -18,14 +18,14 @@ export interface Sprint {
 }
 
 export interface SelectedSprint {
-  id?: number;
-  title?: string;
-  goal?: string;
-  startDate?: string;
-  endDate?: string;
-  closedDate?: string;
-  completedCount?: number;
-  incompleteCount?: number;
-  taskList?: Task[];
-  remi?: Remi;
+  id: number;
+  title: string;
+  goal: string;
+  startDate: string;
+  endDate: string;
+  closedDate: string;
+  completedCount: number;
+  incompleteCount: number;
+  taskList: Task[];
+  remi: Remi;
 }
