@@ -1,6 +1,4 @@
 import { Link } from 'react-router-dom';
-import { api } from '../../apis/api';
-import { useEffect, useState } from 'react';
 import { projectElement } from '../../types/project';
 import whiteCross from '../../assets/images/cross.png';
 import ProjectCard from '../../components/project/ProjectCard';
@@ -8,14 +6,7 @@ import useLogout from '../../hooks/pages/useLogout';
 import { useGetMyProjects } from '../../hooks/queries/project';
 
 const ProjectPage = () => {
-  // const [projectList, setProjectList] = useState<Array<projectElement>>([]);
   const handleLogoutButtonClick = useLogout();
-
-  // useEffect(() => {
-  //   api.get('/projects').then((response) => {
-  //     setProjectList(response.data);
-  //   });
-  // }, []);
 
   const { data, isLoading } = useGetMyProjects();
 
