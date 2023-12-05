@@ -28,9 +28,9 @@ const ProjectPage = () => {
         </button>
       </header>
       <ul className="flex flex-wrap gap-x-5 gap-y-4 w-[76rem] min-w-[76rem] mx-auto">
-        {data.map(({ id, name, nextPage, subject, myTaskCount }: projectElement) => (
+        {data.map(({ id, name, nextPage, subject, myTaskCount, userList }: projectElement) => (
           <li key={id} className="list-none">
-            <ProjectCard {...{ name, nextPage, subject, id, myTaskCount }} />
+            <ProjectCard {...{ name, nextPage, subject, id, myTaskCount, userList }} />
           </li>
         ))}
         <Link
