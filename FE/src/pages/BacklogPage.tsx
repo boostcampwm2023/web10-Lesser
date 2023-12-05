@@ -14,6 +14,7 @@ const BacklogPage = () => {
       return data.data;
     },
   });
+
   if (isLoading) return <></>;
 
   return (

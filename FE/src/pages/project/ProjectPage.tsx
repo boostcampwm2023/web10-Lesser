@@ -12,8 +12,6 @@ const ProjectPage = () => {
 
   if (isLoading) return;
 
-  console.log(data);
-
   return (
     <>
       <header className="flex gap-2 justify-center min-w-[76rem] pt-8 mb-6">
