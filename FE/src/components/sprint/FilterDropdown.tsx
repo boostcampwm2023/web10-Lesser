@@ -1,7 +1,7 @@
 import { UserFilter, TaskGroup } from '../../types/sprint';
 
 interface User {
-  id?: number;
+  id?: string;
   name: string;
 }
 
