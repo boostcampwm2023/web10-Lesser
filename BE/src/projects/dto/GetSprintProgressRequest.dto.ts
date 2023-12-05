@@ -20,6 +20,8 @@ export class GetSprintProgressTaskResponseDto extends PickType(baseTaskDto, [
 }
 
 export class GetSprintProgressResponseDto {
+  sprintId: number;
+
   sprintTitle: string;
 
   sprintGoal: string;
