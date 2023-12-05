@@ -11,10 +11,14 @@ class BaseReviewDto {
   content: string;
 }
 
-export class CreateReviewRequestDto extends BaseReviewDto {
+export class CreateReviewRequestDto {
   @IsInt()
   @IsNotEmpty()
   sprintId: number;
+
+  @IsString()
+  @IsNotEmpty()
+  content: string;
 }
 
 export class CreateReviewResponseDto extends PickType(BaseReviewDto, ['id']) {}
