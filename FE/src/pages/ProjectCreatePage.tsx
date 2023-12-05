@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import chevronLeft from '../assets/icons/chevron-left.svg';
 import ProjectProcessText from '../components/project/ProjectProcessText';
 import ProjectCreateForm from '../components/project/ProjectCreateForm';
-import useProjectForm from '../hooks/useProjectForm';
+import useProjectForm from '../hooks/pages/project/useProjectForm';
 
 const ProjectCreatePage = () => {
   const { process, handleNextButtonClick, handleSubmitButtonClick, projectNameRef, projectSubjectRef } =

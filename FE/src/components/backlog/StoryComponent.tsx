@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import useDetail from '../../hooks/useDetail';
+import useDetail from '../../hooks/pages/backlog/useDetail';
 import { useModal } from '../../modal/useModal';
 import ChevronDownIcon from '../../assets/icons/ChevronDownIcon';
 import ChevronRightIcon from '../../assets/icons/ChevronRightIcon';

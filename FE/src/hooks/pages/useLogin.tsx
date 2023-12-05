@@ -1,5 +1,5 @@
 import { NavigateFunction, useNavigate } from 'react-router';
-import { api, setAccessToken } from '../apis/api';
+import { api, setAccessToken } from '../../apis/api';
 import { SetURLSearchParams, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 
@@ -24,7 +24,9 @@ const useLogin = () => {
   const navigate = useNavigate();
 
   const handleLoginButtonClick = (): void => {
-    location.href = `${import.meta.env.VITE_GITHUB_OAUTH_URL}?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID}&scope=user:email%20repo`;
+    location.href = `${import.meta.env.VITE_GITHUB_OAUTH_URL}?client_id=${
+      import.meta.env.VITE_GITHUB_CLIENT_ID
+    }&scope=user:email%20repo`;
   };
 
   useEffect(() => {
