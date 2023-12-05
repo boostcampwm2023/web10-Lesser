@@ -2,8 +2,8 @@ import CheckIcon from '../../assets/icons/CheckIcon';
 import ClosedIcon from '../../assets/icons/ClosedIcon';
 import EditIcon from '../../assets/icons/EditIcon';
 import Trashbin from '../../assets/icons/TrashbinIcon';
-import useToggleButton from '../../hooks/pages/useToggleButton';
-import useUpdateBacklog from '../../hooks/pages/useUpdateBacklog';
+import useToggleButton from '../../hooks/pages/backlog/useToggleButton';
+import useUpdateBacklog from '../../hooks/pages/backlog/useUpdateBacklog';
 import { useModal } from '../../modal/useModal';
 import BacklogDeleteModal from './Modal/BacklogDeleteModal';
 

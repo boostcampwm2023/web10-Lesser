@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import ChevronDownIcon from '../../assets/icons/ChevronDownIcon';
 import ChevronRightIcon from '../../assets/icons/ChevronRightIcon';
-import useDetail from '../../hooks/pages/useDetail';
+import useDetail from '../../hooks/pages/backlog/useDetail';
 import PostButton from './PostButton';
 import BacklogTitle from './BacklogTitle';
 

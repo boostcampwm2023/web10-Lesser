@@ -1,17 +1,17 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '../../apis/api';
+import { api } from '../../../apis/api';
 
-interface BacklogPostBody {
-  parentId: number;
+interface BacklogUpdateBody {
+  id: number;
   title: string;
 }
 
-const usePostBacklog = (url: string, getBody: () => BacklogPostBody, toggleButton: () => void) => {
+const useUpdateBacklog = (url: string, getBody: () => BacklogUpdateBody, toggleButton: () => void) => {
   const queryClient = useQueryClient();
 
   const { mutateAsync } = useMutation({
     mutationFn: async () => {
-      const response = await api.post(url, getBody());
+      const response = await api.put(`/backlogs${url}`, getBody());
       return response;
     },
     onSuccess: () => {
@@ -32,4 +32,4 @@ const usePostBacklog = (url: string, getBody: () => BacklogPostBody, toggleButto
   return { handleClick };
 };
 
-export default usePostBacklog;
+export default useUpdateBacklog;
