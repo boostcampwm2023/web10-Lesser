@@ -7,6 +7,7 @@ import { GithubUser } from './dto/member.dto';
 import { Tokens } from './dto/tokens.dto';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
 import { ConfigService } from '@nestjs/config';
+import { GithubEmail } from 'src/common/types/githubResource.type';
 
 @Injectable()
 export class MembersService {
@@ -131,7 +132,7 @@ export class MembersService {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      const emailList = await response.json();
+      const emailList: GithubEmail[] = await response.json();
       const primaryEmail = emailList.find((email) => email.primary === true);
       return primaryEmail.email;
     } catch (err) {
