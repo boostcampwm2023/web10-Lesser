@@ -1,9 +1,9 @@
 interface BaordHeaderProps {
   boardName: string;
-  taskNumber: number;
+  taskNumber?: number;
   boardDescription: string;
 }
-const BoardHeader = ({ boardName, taskNumber, boardDescription }: BaordHeaderProps) => (
+const BoardHeader = ({ boardName, taskNumber = 0, boardDescription }: BaordHeaderProps) => (
   <div className="w-[18.75rem] px-2.5 mb-2.5">
     <p className="flex justify-between text-2xl font-bold text-house-green">
       <span>{boardName}</span>
