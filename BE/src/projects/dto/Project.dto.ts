@@ -1,5 +1,5 @@
 import { PickType } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 class BaseProjectDto {
   @IsInt()
@@ -13,9 +13,15 @@ class BaseProjectDto {
   @IsString()
   @IsNotEmpty()
   subject: string;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNumber({}, { each: true })
+  @IsNotEmpty()
+  memberList: number[];
 }
 
-export class CreateProjectRequestDto extends PickType(BaseProjectDto, ['name', 'subject']) {}
+export class CreateProjectRequestDto extends PickType(BaseProjectDto, ['name', 'subject', 'memberList']) {}
 export class CreateProjectResponseDto extends PickType(BaseProjectDto, ['id']) {}
 
 export class ReadUserResponseDto {
