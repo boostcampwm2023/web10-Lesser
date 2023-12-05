@@ -6,17 +6,15 @@ import SprintBacklogSetting from '../../components/sprint/SprintBacklogSetting';
 import ProjectProcessText from '../../components/project/ProjectProcessText';
 import { Link } from 'react-router-dom';
 import chevronLeft from '../../assets/icons/chevron-left.svg';
-import { ReadBacklogEpicResponseDto, ReadBacklogTaskResponseDto } from '../../types/backlog';
+import { ReadBacklogTaskResponseDto } from '../../types/backlog';
 
 const SprintCreatePage = () => {
   const [process, setProcess] = useState<0 | 1>(PROCESS1);
-  const [backlog, setBacklog] = useState<ReadBacklogEpicResponseDto[]>([]);
   const [sprintBacklog, setSprintBacklog] = useState<ReadBacklogTaskResponseDto[]>([]);
-  const { isLoading } = useQuery({
-    queryKey: ['backlogs', 1],
+  const { data: backlog, isLoading } = useQuery({
+    queryKey: ['backlogs', 'sprint', 1],
     queryFn: async () => {
       const response = await api.get('/backlogs/1');
-      setBacklog(response.data.epicList);
       return response.data;
     },
   });
@@ -44,7 +42,7 @@ const SprintCreatePage = () => {
           <button onClick={handleNextButtonClick}>다음으로</button>
         </div>
       ) : (
-        <SprintBacklogSetting {...{ backlog, sprintBacklog, setBacklog, setSprintBacklog }} />
+        <SprintBacklogSetting {...{ backlog, sprintBacklog, setSprintBacklog }} />
       )}
     </>
   );
