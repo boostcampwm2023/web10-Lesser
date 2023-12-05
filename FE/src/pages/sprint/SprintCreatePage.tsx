@@ -28,7 +28,7 @@ const SprintCreatePage = () => {
 
   return (
     <>
-      <div className="min-w-[76rem] max-w-[76rem] gap-3 flex justify-between mx-auto pe-[6rem] pt-8">
+      <div className="min-w-[76rem] max-w-[76rem] gap-3 flex justify-between mx-auto pe-[6rem] pt-8 sticky top-0 bg-true-white pb-3">
         <Link to={'/backlog'} className="cursor-pointer flex gap-1 w-[6rem]">
           <img src={chevronLeft} />
           <p className="items-center my-auto text-sm">돌아가기</p>
