@@ -1,8 +1,8 @@
 import CheckIcon from '../../assets/icons/CheckIcon';
 import ClosedIcon from '../../assets/icons/ClosedIcon';
 import PlusIcon from '../../assets/icons/PlusIcon';
-import usePostBacklog from '../../hooks/usePostBacklog';
-import useToggleButton from '../../hooks/useToggleButton';
+import usePostBacklog from '../../hooks/pages/usePostBacklog';
+import useToggleButton from '../../hooks/pages/useToggleButton';
 
 interface PostButtonProps {
   title: string;

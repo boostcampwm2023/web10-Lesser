@@ -1,4 +1,4 @@
-import { Task, TaskState } from '../types/sprint';
+import { Task, TaskState } from '../../types/sprint';
 
 const useKanbanDrag = (setTaskList: React.Dispatch<React.SetStateAction<Task[]>>) => {
   const handleDragStart = (e: React.DragEvent, id: number, storyId: number) => {

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { projectElement } from '../types/project';
 import whiteCross from '../assets/images/cross.png';
 import ProjectCard from '../components/project/ProjectCard';
-import useLogout from '../hooks/useLogout';
+import useLogout from '../hooks/pages/useLogout';
 
 const ProjectPage = () => {
   const [projectList, setProjectList] = useState<Array<projectElement>>([]);

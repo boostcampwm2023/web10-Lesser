@@ -2,7 +2,7 @@ import { NavigationInformation } from '../../types/navigation';
 import NavigationButton from './NavigationButton';
 import lesserLogo from '../../assets/icons/lesserLogo.svg';
 import { Link, useLocation } from 'react-router-dom';
-import useLogout from '../../hooks/useLogout';
+import useLogout from '../../hooks/pages/useLogout';
 
 const navigationInformation: NavigationInformation[] = [
   {

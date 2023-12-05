@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { api } from '../apis/api';
+import { api } from '../../apis/api';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 
 interface projectPostBody {

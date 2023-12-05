@@ -1,7 +1,7 @@
 import GithubLogin from '../assets/icons/GithubLogin';
 import LesserTextLogo from '../assets/icons/LesserTextLogo';
 import loginImage from '../assets/images/login-image.png';
-import useLogin from '../hooks/useLogin';
+import useLogin from '../hooks/pages/useLogin';
 
 const LoginPage = () => {
   const { code, handleLoginButtonClick } = useLogin();

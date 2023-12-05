@@ -1,6 +1,6 @@
 import { NavigateFunction, useNavigate } from 'react-router-dom';
-import { api, setAccessToken } from '../apis/api';
-import { REFRESH_TOKEN } from '../constants/constants';
+import { api, setAccessToken } from '../../apis/api';
+import { REFRESH_TOKEN } from '../../constants/constants';
 
 const logout = (navigate: NavigateFunction) => {
   api.post('/members/logout').then(() => {
