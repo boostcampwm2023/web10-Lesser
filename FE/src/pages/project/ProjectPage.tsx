@@ -1,20 +1,25 @@
 import { Link } from 'react-router-dom';
-import { api } from '../apis/api';
+import { api } from '../../apis/api';
 import { useEffect, useState } from 'react';
-import { projectElement } from '../types/project';
-import whiteCross from '../assets/images/cross.png';
-import ProjectCard from '../components/project/ProjectCard';
-import useLogout from '../hooks/pages/useLogout';
+import { projectElement } from '../../types/project';
+import whiteCross from '../../assets/images/cross.png';
+import ProjectCard from '../../components/project/ProjectCard';
+import useLogout from '../../hooks/pages/useLogout';
+import { useGetMyProjects } from '../../hooks/queries/project';
 
 const ProjectPage = () => {
-  const [projectList, setProjectList] = useState<Array<projectElement>>([]);
+  // const [projectList, setProjectList] = useState<Array<projectElement>>([]);
   const handleLogoutButtonClick = useLogout();
 
-  useEffect(() => {
-    api.get('/projects').then((response) => {
-      setProjectList(response.data);
-    });
-  }, []);
+  // useEffect(() => {
+  //   api.get('/projects').then((response) => {
+  //     setProjectList(response.data);
+  //   });
+  // }, []);
+
+  const { data, isLoading } = useGetMyProjects();
+
+  if (isLoading) return;
 
   return (
     <>
@@ -30,7 +35,7 @@ const ProjectPage = () => {
         </button>
       </header>
       <ul className="flex flex-wrap gap-x-5 gap-y-4 w-[76rem] min-w-[76rem] mx-auto">
-        {projectList.map(({ id, name, nextPage, subject, myTaskCount }: projectElement) => (
+        {data.map(({ id, name, nextPage, subject, myTaskCount }: projectElement) => (
           <li key={id} className="list-none">
             <ProjectCard {...{ name, nextPage, subject, id, myTaskCount }} />
           </li>
