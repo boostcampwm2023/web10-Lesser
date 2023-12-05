@@ -3,7 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './entities/review.entity';
 import { IsNull, Not, Repository } from 'typeorm';
 import { Sprint } from 'src/sprints/entities/sprint.entity';
-import { CreateReviewRequestDto, CreateReviewResponseDto, ReadReviewResponseDto } from './dto/Review.dto';
+import {
+  CreateReviewRequestDto,
+  CreateReviewResponseDto,
+  ReadReviewResponseDto,
+  UpdateReviewRequestDto,
+  UpdateReviewResponseDto,
+} from './dto/Review.dto';
 import { SprintReviewResponseDto } from './dto/SprintReviewResponse.dto';
 import { SprintToTask } from 'src/sprints/entities/sprint-task.entity';
 
@@ -92,5 +98,13 @@ export class ReviewsService {
     const review = await this.reviewRepository.findOne({ where: { id: id } });
     if (!review) throw new NotFoundException('Review not found.');
     return { id: review.id, content: review.content };
+  }
+
+  async updateReview(dto: UpdateReviewRequestDto): Promise<UpdateReviewResponseDto> {
+    const review = await this.reviewRepository.findOne({ where: { id: dto.id } });
+    if (!review) throw new NotFoundException(`Review with id ${dto.id} not found.`);
+    review.content = dto.content;
+    const updatedReview = await this.reviewRepository.save(review);
+    return { id: updatedReview.id, content: updatedReview.content };
   }
 }
