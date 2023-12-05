@@ -16,7 +16,8 @@ const SprintCreatePage = () => {
     queryKey: ['backlogs', 1],
     queryFn: async () => {
       const response = await api.get('/backlogs/1');
-      setBacklog(response.data);
+      setBacklog(response.data.epicList);
+      return response.data;
     },
   });
   const handleNextButtonClick = () => {
