@@ -40,10 +40,10 @@ export class ProjectsService {
     dto: CreateProjectRequestDto,
     memberInfo: memberDecoratorType,
   ): Promise<CreateProjectResponseDto> {
-    const member = await this.memberRepository.findOne({ where: { id: memberInfo.id } });
-    if (!member) throw new InternalServerErrorException();
     const newProject = this.projectRespository.create({ name: dto.name, subject: dto.subject, members: [] });
-    newProject.members.push(member);
+    newProject.members = await Promise.all(
+      dto.memberList.map((member) => this.memberRepository.findOne({ where: { id: member } })),
+    );
     const savedProject = await this.projectRespository.save(newProject);
     const newProjectCounter = this.projectCounterRepository.create({ projectId: newProject.id });
     await this.projectCounterRepository.save(newProjectCounter);
