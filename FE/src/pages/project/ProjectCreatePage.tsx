@@ -1,6 +1,7 @@
-import ProjectCreateForm from '../../components/project/ProjectCreateForm';
 import useProjectForm from '../../hooks/pages/project/useProjectForm';
 import { CreateProcessText, CreateProcessHeader } from '../../components/common/CreateProcess';
+import { PROJECT_URL } from '../../constants/constants';
+import { ProjectCreateForm } from '../../components/project';
 
 const ProjectCreatePage = () => {
   const { process, handleNextButtonClick, handleSubmitButtonClick, projectNameRef, projectSubjectRef } =
@@ -8,10 +9,10 @@ const ProjectCreatePage = () => {
 
   return (
     <>
-      <CreateProcessHeader backLink="/project">
+      <CreateProcessHeader backLink={PROJECT_URL.PROJECT}>
         <CreateProcessText processNum={1} processName="프로젝트 이름" active={process >= 0} />
         <CreateProcessText processNum={2} processName="프로젝트 주제" active={process >= 1} />
-        <CreateProcessText processNum={3} processName="프로젝트 주제" active={process >= 1} />
+        <CreateProcessText processNum={3} processName="멤버 초대하기" active={process >= 2} />
       </CreateProcessHeader>
       {!process ? (
         <ProjectCreateForm

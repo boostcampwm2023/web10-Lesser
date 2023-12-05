@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import { projectElement } from '../../types/project';
 import whiteCross from '../../assets/images/cross.png';
-import ProjectCard from '../../components/project/ProjectCard';
 import useLogout from '../../hooks/pages/useLogout';
 import { useGetMyProjects } from '../../hooks/queries/project';
+import { ProjectCard } from '../../components/project';
 
 const ProjectPage = () => {
   const handleLogoutButtonClick = useLogout();
