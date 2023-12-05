@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Member } from './entities/member.entity';
-import { Repository } from 'typeorm';
 import { LoginRequestDto } from './dto/login-request.dto';
 import { GithubUser } from './dto/member.dto';
 import { Tokens } from './dto/tokens.dto';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
-import { ConfigService } from '@nestjs/config';
 import { GithubEmail } from 'src/common/types/githubResource.type';
 
 @Injectable()
@@ -138,5 +138,11 @@ export class MembersService {
     } catch (err) {
       throw new Error(err.message);
     }
+  }
+
+  async searchMembersByName(username: string) {
+    const members = await this.memberRepository.find({ where: { username: ILike(`%${username}%`) } });
+    if (members.length === 0) throw new NotFoundException(`Member with username '${username}' not found.`);
+    return members;
   }
 }

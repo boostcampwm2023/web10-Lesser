@@ -1,4 +1,4 @@
-import { Body, Controller, Header, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Header, Post, Query, Req } from '@nestjs/common';
 import { MembersService } from './members.service';
 import { LoginRequestDto } from './dto/login-request.dto';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
@@ -36,5 +36,10 @@ export class MembersController {
     this.lesserJwtService.veifryToken(token);
     const tokens = await this.membersService.refresh(token);
     return tokens;
+  }
+
+  @Get('search')
+  async searchMembersByName(@Query('username') username: string) {
+    return this.membersService.searchMembersByName(username);
   }
 }
