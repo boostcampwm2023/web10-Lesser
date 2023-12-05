@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
-import { CreateReviewRequestDto } from './dto/Review.dto';
+import { CreateReviewRequestDto, UpdateReviewRequestDto } from './dto/Review.dto';
 
 @Controller('reviews')
 export class ReviewsController {
@@ -19,5 +19,10 @@ export class ReviewsController {
   @Get('remi')
   readReview(@Query('id') reviewId: number) {
     return this.reviewService.readReview(reviewId);
+  }
+
+  @Put('remi')
+  updateReview(@Body() body: UpdateReviewRequestDto) {
+    return this.reviewService.updateReview(body);
   }
 }
