@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import { Member } from './entities/member.entity';
 import { LoginRequestDto } from './dto/login-request.dto';
+import { MemberSearchResponseDto } from './dto/member.dto';
 import { GithubUser } from './dto/github-user.dto';
 import { Tokens } from './dto/tokens.dto';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
@@ -140,9 +141,14 @@ export class MembersService {
     }
   }
 
-  async searchMembersByName(username: string) {
+  async searchMembersByName(username: string): Promise<MemberSearchResponseDto[]> {
     const members = await this.memberRepository.find({ where: { username: ILike(`%${username}%`) } });
     if (members.length === 0) throw new NotFoundException(`Member with username '${username}' not found.`);
-    return members;
+    const response: MemberSearchResponseDto[] = members.map((member) => ({
+      id: member.id,
+      username: member.username,
+      imageUrl: member.image_url,
+    }));
+    return response;
   }
 }

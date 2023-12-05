@@ -8,7 +8,7 @@ class BaseMemberDto {
 
   @IsString()
   @IsNotEmpty()
-  github_id: string;
+  githubId: string;
 
   @IsString()
   @IsNotEmpty()
@@ -20,6 +20,7 @@ class BaseMemberDto {
 
   @IsString()
   @IsNotEmpty()
-  image_url: string;
+  imageUrl: string;
 }
 
+export class MemberSearchResponseDto extends PickType(BaseMemberDto, ['id', 'username', 'imageUrl']) {}
