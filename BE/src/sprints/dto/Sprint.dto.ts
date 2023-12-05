@@ -42,3 +42,4 @@ export class CreateSprintRequestDto extends PickType(BaseSprintDto, [
   'taskList',
 ]) {}
 export class CreateSprintResponseDto extends PickType(BaseSprintDto, ['id']) {}
+export class CompleteSprintRequestDto extends PickType(BaseSprintDto, ['id']) {}

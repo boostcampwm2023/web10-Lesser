@@ -116,15 +116,18 @@ export class ProjectsService {
     return this.buildSprintProgressResponse(progressSprintData);
   }
 
-  private buildSprintProgressResponse(progressSprintData: Sprint): GetSprintProgressResponseDto {
+  private async buildSprintProgressResponse(progressSprintData: Sprint): Promise<GetSprintProgressResponseDto> {
     const sprintProgressResponse = new GetSprintProgressResponseDto();
+    sprintProgressResponse.sprintId = progressSprintData.id;
     sprintProgressResponse.sprintTitle = progressSprintData.title;
     sprintProgressResponse.sprintGoal = progressSprintData.goal;
     sprintProgressResponse.sprintStartDate = progressSprintData.start_date;
     sprintProgressResponse.sprintEndDate = progressSprintData.end_date;
     sprintProgressResponse.sprintEnd = false;
-    //나중에 end_date가 현재보다 과거일 때 스프린트 삭제로직 추가
     sprintProgressResponse.sprintModal = progressSprintData.end_date < new Date();
+    if (progressSprintData.end_date < new Date()) {
+      await this.sprintRepository.update({ id: progressSprintData.id }, { closed_date: new Date() });
+    }
     sprintProgressResponse.taskList = this.buildSprintProgressTask(progressSprintData.sprintToTasks);
     return sprintProgressResponse;
   }

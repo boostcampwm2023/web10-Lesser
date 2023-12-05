@@ -1,9 +1,9 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Sprint } from './entities/sprint.entity';
 import { Repository } from 'typeorm';
 import { Project } from 'src/projects/entity/project.entity';
-import { CreateSprintRequestDto, CreateSprintResponseDto } from './dto/Sprint.dto';
+import { CompleteSprintRequestDto, CreateSprintRequestDto, CreateSprintResponseDto } from './dto/Sprint.dto';
 import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
 import { Review } from 'src/reviews/entities/review.entity';
 import { Member } from 'src/members/entities/member.entity';
@@ -48,5 +48,12 @@ export class SprintsService {
     await this.sprintToTaskRepository.save(sprintToTasks);
 
     return { id: savedSprint.id };
+  }
+
+  async completeSprint(dto: CompleteSprintRequestDto) {
+    const sprint = await this.sprintRepository.findOne({ where: { id: dto.id } });
+    if (sprint === null) throw new NotFoundException('not found sprint');
+    sprint.closed_date = new Date();
+    await sprint.save();
   }
 }
