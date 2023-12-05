@@ -16,9 +16,9 @@ const ColumnBoard = ({ taskList, state, storyId }: ColumnBoardProps) => (
         {...provided.droppableProps}
         ref={provided.innerRef}
       >
-        {taskList?.map(({ id, title, userId, point, storyId }, index) => (
-          <li key={id}>
-            <TaskCard {...{ title, userId, point, id, storyId, index }} />
+        {taskList?.map((taskData, index) => (
+          <li key={taskData.id}>
+            <TaskCard {...{ ...taskData, index }} />
           </li>
         ))}
         {provided.placeholder}

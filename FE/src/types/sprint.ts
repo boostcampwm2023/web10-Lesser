@@ -1,14 +1,14 @@
 export type TaskGroup = 'all' | 'story';
 
-export type UserFilter = undefined | number;
+export type UserFilter = undefined | string;
 
 export type TaskState = 'ToDo' | 'InProgress' | 'Done' | string;
 
 export interface Task {
   id: number;
-  sequencd: number;
+  sequence: number;
   title: string;
-  userId: number;
+  userId: string;
   point: number;
   state: TaskState;
   storyId: number;
