@@ -8,12 +8,13 @@ interface UseCreateNewProjectProps {
 }
 
 const useCreateNewProject = ({ projectTitle, projectSubject, userList }: UseCreateNewProjectProps) => {
-  const { mutateAsync } = usePostNewProject();
+  const { mutateAsync } = usePostNewProject(userList);
+  const memberList = userList.map((user) => user.userId);
   const handleCreateButtonClick = async () => {
     const body = {
       name: projectTitle,
       subject: projectSubject,
-      memberList: userList.map((user) => user.userId),
+      memberList,
     };
     await mutateAsync(body);
   };

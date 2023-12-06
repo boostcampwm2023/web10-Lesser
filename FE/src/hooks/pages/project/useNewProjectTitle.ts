@@ -12,6 +12,7 @@ const useNewProjectTitle = (setNextProcess: () => void) => {
     }
     setProjectTitle(projectTitleRef.current.value);
     setNextProcess();
+    projectTitleRef.current.value = '';
   };
 
   return { projectTitle, projectTitleRef, handleTitleButtonClick };
