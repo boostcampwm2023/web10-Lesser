@@ -8,7 +8,7 @@ import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
 import { Member } from 'src/members/entities/member.entity';
 import { SprintToTask } from 'src/sprints/entities/sprint-task.entity';
 import { Sprint } from 'src/sprints/entities/sprint.entity';
-import { EntityManager, IsNull, Repository } from 'typeorm';
+import { EntityManager, In, IsNull, Repository } from 'typeorm';
 import {
   GetSprintNotProgressResponseDto,
   GetSprintProgressResponseDto,
@@ -17,6 +17,8 @@ import {
 import {
   CreateProjectRequestDto,
   CreateProjectResponseDto,
+  AddProjectMemberRequestDto,
+  AddProjectMemberResponseDto,
   ReadProjectListResponseDto,
   ReadUserResponseDto,
 } from './dto/Project.dto';
@@ -144,5 +146,26 @@ export class ProjectsService {
       storySequence: sprintToTask.task.story.sequence,
       storyTitle: sprintToTask.task.story.title,
     }));
+  }
+
+  async addProjectMember(dto: AddProjectMemberRequestDto): Promise<AddProjectMemberResponseDto> {
+    const project = await this.projectRespository
+      .createQueryBuilder('project')
+      .innerJoinAndSelect('project.members', 'member')
+      .where('project.id = :projectId', { projectId: dto.id })
+      .getOne();
+    const projectMemberIdList = project.members.map((member) => member.id);
+    const newMemberIdList = dto.memberList.filter((memberId) => !projectMemberIdList.includes(memberId));
+    const newMembers = await this.memberRepository.find({ where: { id: In(newMemberIdList) } });
+    project.members.push(...newMembers);
+    const savedProject = await this.projectRespository.save(project);
+    return {
+      id: savedProject.id,
+      memberList: savedProject.members.map((member) => ({
+        id: member.id,
+        username: member.username,
+        imageUrl: member.image_url,
+      })),
+    };
   }
 }

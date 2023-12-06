@@ -24,3 +24,4 @@ class BaseMemberDto {
 }
 
 export class MemberSearchResponseDto extends PickType(BaseMemberDto, ['id', 'username', 'imageUrl']) {}
+export class ProjectMemberDto extends PickType(BaseMemberDto, ['id', 'username', 'imageUrl']) {}
