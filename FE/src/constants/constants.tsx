@@ -13,3 +13,5 @@ export const API_URL = {
 export const PROJECT_URL = {
   PROJECT: '/project',
 };
+
+export const reviewTabs = ['스프린트 정보', '차트', '회고란'];

@@ -1,15 +1,19 @@
 import { SelectedSprint } from '../../types/review';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useReminiscing from './../../hooks/pages/review/useReminiscing';
 
 const ReviewReminiscing = (sprint: SelectedSprint) => {
   const [editTextarea, setEditTextarea] = useState<boolean>(false);
-  const initialReminiscing = sprint.remi ? sprint.remi.content : '';
-  const [reminiscing, setReminiscing] = useState<string>(initialReminiscing);
+  const initialReminiscing = sprint.reminiscing ? sprint.reminiscing.content : '';
+  const [reminiscing, setReminiscing] = useState<string>('');
   const handleEditButtonClick = () => {
     setEditTextarea(!editTextarea);
     setReminiscing(initialReminiscing);
   };
+
+  useEffect(() => {
+    setReminiscing(initialReminiscing);
+  }, [initialReminiscing]);
 
   const { handleConfirmButtonClick } = useReminiscing(sprint, reminiscing, setEditTextarea);
 

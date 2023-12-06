@@ -15,24 +15,22 @@ const ReviewPage = () => {
     staleTime: 1000 * 60 * 5,
   });
 
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Something is wrong 😢</p>;
+  }
+
   return (
     <>
-      {isLoading && <p>Loading...</p>}
-      {error && <p>Something is wrong 😢</p>}
-      {data && (
-        <>
-          <ReviewHeader
-            sprintList={data.sprintList}
-            currentSprintId={data.selectedSprint.id}
-            setSprintId={setSprintId}
-          />
-          <Routes>
-            <Route path="/" element={<ReviewSprint {...data.selectedSprint} />} />
-            <Route path="/chart" element={<ReviewChart {...data.selectedSprint} />} />
-            <Route path="/remi" element={<ReviewReminiscing {...data.selectedSprint} />} />
-          </Routes>
-        </>
-      )}
+      <ReviewHeader sprintList={data.sprintList} currentSprintId={data.selectedSprint.id} setSprintId={setSprintId} />
+      <Routes>
+        <Route path="/" element={<ReviewSprint {...data.selectedSprint} />} />
+        <Route path="/chart" element={<ReviewChart {...data.selectedSprint} />} />
+        <Route path="/reminiscing" element={<ReviewReminiscing {...data.selectedSprint} />} />
+      </Routes>
     </>
   );
 };

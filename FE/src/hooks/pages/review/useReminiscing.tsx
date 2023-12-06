@@ -11,8 +11,8 @@ const useReminiscing = (
 
   const { mutateAsync } = useMutation({
     mutationFn: async () => {
-      sprint.remi
-        ? await api.put('/reviews/remi', { id: sprint.remi.id, content })
+      sprint.reminiscing
+        ? await api.put('/reviews/remi', { id: sprint.reminiscing.id, content })
         : await api.post('/reviews', { sprintId: sprint.id, content });
     },
     onSuccess: () => {
@@ -27,6 +27,11 @@ const useReminiscing = (
       window.alert('값을 입력해주세요');
       return;
     }
+    if (content.trim() === sprint.reminiscing.content) {
+      setEditTextarea(false);
+      return;
+    }
+
     await mutateAsync();
   };
 

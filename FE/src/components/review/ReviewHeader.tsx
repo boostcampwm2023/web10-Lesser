@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import ChevronDownIcon from './../../assets/icons/ChevronDownIcon';
 import { Link, useParams } from 'react-router-dom';
 import { Sprint } from '../../types/review';
+import { reviewTabs } from '../../constants/constants';
 
 interface ReviewHeaderProps {
   sprintList: Sprint[];
@@ -10,7 +11,6 @@ interface ReviewHeaderProps {
 }
 
 const ReviewHeader = ({ sprintList, currentSprintId, setSprintId }: ReviewHeaderProps) => {
-  const reviewTabs = ['스프린트 정보', '차트', '회고란'];
   const { '*': currentReviewTab } = useParams();
 
   const [sprintListVisibility, setSprintListVisibility] = useState<boolean>(false);
@@ -67,7 +67,7 @@ const ReviewHeader = ({ sprintList, currentSprintId, setSprintId }: ReviewHeader
 
         <ul className="flex gap-3 text-r text-light-gray">
           {reviewTabs.map((tab, index) => {
-            const urlSegment = tab === '차트' ? '/chart' : tab === '회고란' ? '/remi' : '';
+            const urlSegment = tab === '차트' ? '/chart' : tab === '회고란' ? '/reminiscing' : '';
             return (
               <li key={index}>
                 <Link
