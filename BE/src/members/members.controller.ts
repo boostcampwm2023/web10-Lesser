@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Header, Post, Query, Req } from '@nestjs/common';
 import { MembersService } from './members.service';
-import { LoginRequestDto } from './dto/login-request.dto';
+import { LoginRequestDto, LoginResponseDto } from './dto/login.dto';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
 
 interface CustomHeaders {
@@ -15,9 +15,9 @@ export class MembersController {
   ) {}
 
   @Post('login')
-  async login(@Body() body: LoginRequestDto) {
-    const tokens = await this.membersService.githubLogin(body);
-    return tokens;
+  async login(@Body() body: LoginRequestDto): Promise<LoginResponseDto> {
+    const response = await this.membersService.githubLogin(body);
+    return response;
   }
 
   @Post('logout')
