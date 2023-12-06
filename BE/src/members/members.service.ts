@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import { Member } from './entities/member.entity';
-import { LoginRequestDto } from './dto/login-request.dto';
+import { LoginRequestDto, LoginResponseDto } from './dto/login.dto';
 import { MemberSearchResponseDto } from './dto/member.dto';
 import { GithubUser } from './dto/github-user.dto';
 import { Tokens } from './dto/tokens.dto';
@@ -48,11 +48,16 @@ export class MembersService {
 
     this.loggedMembers.set(lesserRefreshToken, { memberId });
 
-    const tokens: Tokens = {
+    const member = await this.memberRepository.findOne({ where: { id: memberId } });
+
+    const response: LoginResponseDto = {
+      id: member.id,
+      username: member.username,
+      imageUrl: member.image_url,
       accessToken: lesserAccessToken,
       refreshToken: lesserRefreshToken,
     };
-    return tokens;
+    return response;
   }
 
   logout(id: number) {
