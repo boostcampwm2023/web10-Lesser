@@ -1,3 +1,5 @@
+import { ReadBacklogTaskResponseDto } from './backlog';
+
 export type TaskGroup = 'all' | 'story';
 
 export type UserFilter = number;
@@ -15,4 +17,10 @@ export interface Task {
   storySequence: number;
   storyTitle: string;
   condition: string;
+}
+
+export interface SprintBacklog extends ReadBacklogTaskResponseDto {
+  epicIndex: number;
+  storyIndex: number;
+  taskIndex: number;
 }
