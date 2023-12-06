@@ -48,7 +48,7 @@ const SprintBacklogSetting = (props: SprintBacklogSettingProps) => {
             id={1}
           />
         </div>
-        <div className="sticky flex gap-3 top-[7.15rem] min-h-[33.75rem] max-h-[33.75rem]">
+        <div className="sticky flex gap-3 top-[4.5rem] min-h-[33.75rem] max-h-[33.75rem]">
           <div className="flex flex-col items-center self-center">
             <RightBracketIcon />
             <p className="mt-2 font-bold text-starbucks-green text-s">DRAG</p>
