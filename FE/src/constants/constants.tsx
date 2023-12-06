@@ -7,11 +7,14 @@ export const PROCESS1 = 0;
 export const PROCESS2 = 1;
 
 export const API_URL = {
+  BACKLOG: '/backlogs',
   PROJECT: '/projects',
+  MEMBER_SEARCH: '/members/search',
 };
 
-export const PROJECT_URL = {
+export const CLIENT_URL = {
   PROJECT: '/project',
+  BACKLOG: '/backlog',
 };
 
 export const reviewTabs = ['스프린트 정보', '차트', '회고란'];
