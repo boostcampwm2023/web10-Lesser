@@ -1,21 +1,28 @@
 import { useRef, useState } from 'react';
 import { ProjectUser } from '../../../types/project';
 import { fetchGetUsername } from '../../../apis/project';
+import { useUserState } from '../../../stores';
 
 const useSearchUsername = () => {
   const usernameInputRef = useRef<HTMLInputElement>(null);
   const [userList, setUserList] = useState<ProjectUser[]>([]);
+  const usernameState = useUserState((state) => state.username);
 
   const handleSearchClick = async () => {
     if (!usernameInputRef.current) return;
 
-    if (!usernameInputRef.current.value) {
+    if (!usernameInputRef.current.value.trim()) {
       window.alert('닉네임을 입력해주세요');
       return;
     }
 
     if (userList.some((user) => user.userName === usernameInputRef.current?.value)) {
-      window.alert('이미 존재하는 닉네임입니다.');
+      window.alert('이미 존재하는 닉네임입니다');
+      return;
+    }
+
+    if (usernameState === usernameInputRef.current.value) {
+      window.alert('자기 자신을 초대할 수 없습니다');
       return;
     }
 

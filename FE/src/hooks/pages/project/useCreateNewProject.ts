@@ -1,3 +1,4 @@
+import { useUserState } from '../../../stores';
 import { ProjectUser } from '../../../types/project';
 import { usePostNewProject } from '../../queries/project';
 
@@ -8,8 +9,10 @@ interface UseCreateNewProjectProps {
 }
 
 const useCreateNewProject = ({ projectTitle, projectSubject, userList }: UseCreateNewProjectProps) => {
-  const { mutateAsync } = usePostNewProject(userList);
-  const memberList = userList.map((user) => user.userId);
+  const userIdState = useUserState((state) => state.id);
+  const usernameState = useUserState((state) => state.username);
+  const { mutateAsync } = usePostNewProject([{ userId: userIdState, userName: usernameState }, ...userList]);
+  const memberList = [userIdState, ...userList.map((user) => user.userId)];
   const handleCreateButtonClick = async () => {
     const body = {
       name: projectTitle,
