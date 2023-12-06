@@ -66,11 +66,12 @@ export class ReviewsService {
       title: sprintTask.task.title,
       point: sprintTask.task.point,
       condition: sprintTask.task.condition,
-      memberId: sprintTask.task.member ? sprintTask.task.member.id : null,
+      sequence: sprintTask.task.sequence,
+      userId: sprintTask.task.member ? sprintTask.task.member.id : null,
       completedAt: sprintTask.completed_at,
     }));
 
-    const remi = await this.reviewRepository
+    const reminiscing = await this.reviewRepository
       .createQueryBuilder('review')
       .leftJoinAndSelect('review.sprint', 'sprint')
       .where('sprint.id = :sprintId', { sprintId: sprintId })
@@ -88,7 +89,7 @@ export class ReviewsService {
         completedCount: completedCount,
         incompleteCount: incompleteCount,
         taskList: taskList,
-        remi: remi ? { id: remi.id, content: remi.content } : null,
+        reminiscing: reminiscing ? { id: reminiscing.id, content: reminiscing.content } : null,
       },
     };
     return response;

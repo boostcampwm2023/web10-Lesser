@@ -15,7 +15,8 @@ class TaskInfo {
   title: string;
   point: number;
   condition: string;
-  memberId: number;
+  userId: number;
+  sequence: number;
   completedAt?: Date;
 }
 
@@ -29,7 +30,7 @@ class SprintInfo {
   completedCount: number;
   incompleteCount: number;
   taskList: TaskInfo[];
-  remi: ReviewInfo
+  reminiscing: ReviewInfo
 }
 
 class ReviewInfo {
