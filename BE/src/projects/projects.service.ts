@@ -99,7 +99,7 @@ export class ProjectsService {
     return projectData.members.map((member) => {
       const readUserResponse = new ReadUserResponseDto();
       readUserResponse.userId = member.id;
-      readUserResponse.userName = member.github_id;
+      readUserResponse.userName = member.username;
       return readUserResponse;
     });
   }
