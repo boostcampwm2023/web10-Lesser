@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../apis/api';
-import SprintBacklogSetting from '../../components/sprint/SprintBacklogSetting';
+import SprintBacklogSetting from '../../components/sprint/sprintCreate/SprintBacklogSetting';
 import { CreateProcessHeader, CreateProcessText } from '../../components/common/CreateProcess';
 import { BACKLOG_URL, PROCESS_NUMBER } from '../../constants/constants';
 import { ReadBacklogTaskResponseDto } from '../../types/backlog';
