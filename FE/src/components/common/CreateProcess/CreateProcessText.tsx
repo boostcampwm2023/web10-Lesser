@@ -1,12 +1,12 @@
-interface ProjectProcessTextProps {
+interface CreateProcessTextProps {
   processNum: number;
   processName: string;
   active: boolean;
 }
 
-const ProjectProcessText = ({ processNum, processName, active }: ProjectProcessTextProps) => {
+const CreateProcessText = ({ processNum, processName, active }: CreateProcessTextProps) => {
   return (
-    <div className="flex gap-2 content-center">
+    <div className="flex gap-2 items-center">
       <div
         className={`${active ? 'bg-starbucks-green' : 'bg-light-gray'} w-6 h-6 rounded-xl flex flex-col justify-center`}
       >
@@ -19,4 +19,4 @@ const ProjectProcessText = ({ processNum, processName, active }: ProjectProcessT
   );
 };
 
-export default ProjectProcessText;
+export default CreateProcessText;
