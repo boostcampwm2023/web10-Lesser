@@ -11,7 +11,7 @@ const usePostNewProject = (userList: ProjectUser[]) => {
   return useMutation({
     mutationFn: fetchPostProject,
     onSuccess: (data) => {
-      const NEXT_URL = `${CLIENT_URL.BACKLOG}/${data}`;
+      const NEXT_URL = CLIENT_URL.BACKLOG(data);
       updateProjectData({ id: data, userList });
       navigate(NEXT_URL);
     },
