@@ -1,5 +1,6 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { SelectedSprint } from '../../types/review';
+import { transformDate } from '../../utils/date';
 interface TaskList {
   completedAt: string;
   condition: string;
@@ -23,20 +24,12 @@ const createChartData = (startDate: string, endDate: string, taskList: TaskList[
       remaining -= 1;
     }
 
-    chartData.push({ date: formatDate(currentDate), ideal: ideal.toFixed(2), remaining });
+    chartData.push({ date: transformDate(currentDate.toString()), ideal: ideal.toFixed(3), remaining });
     currentDate.setDate(currentDate.getDate() + 1);
     ideal -= tasksPerDay;
   }
 
   return chartData;
-};
-
-const formatDate = (date: Date) => {
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
 };
 
 const ReviewChart = (sprint: SelectedSprint) => {

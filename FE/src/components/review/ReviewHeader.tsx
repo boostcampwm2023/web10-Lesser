@@ -6,9 +6,10 @@ import { Sprint } from '../../types/review';
 interface ReviewHeaderProps {
   sprintList: Sprint[];
   currentSprintId: number;
+  setSprintId: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const ReviewHeader = ({ sprintList, currentSprintId }: ReviewHeaderProps) => {
+const ReviewHeader = ({ sprintList, currentSprintId, setSprintId }: ReviewHeaderProps) => {
   const reviewTabs = ['스프린트 정보', '차트', '회고란'];
   const { '*': currentReviewTab } = useParams();
 
@@ -45,7 +46,7 @@ const ReviewHeader = ({ sprintList, currentSprintId }: ReviewHeaderProps) => {
           ref={btnRef}
           onClick={handleSprintListButtonClick}
         >
-          SPRINT 1
+          SPRINT {currentSprintId}
           <ChevronDownIcon color="text-true-white" size={16} />
         </button>
 
@@ -53,8 +54,11 @@ const ReviewHeader = ({ sprintList, currentSprintId }: ReviewHeaderProps) => {
           <ul className="flex flex-col w-[5.75rem] gap-[0.313rem] absolute top-8 p-3 items-center border border-light-gray rounded-md bg-true-white z-10 text-light-gray">
             {Object.values(sprintList).map((sprint) => (
               <li key={sprint.title}>
-                <button className={`${currentSprintId === sprint.sprintId && 'font-bold text-starbucks-green'}`}>
-                  {sprint.title}
+                <button
+                  className={`${currentSprintId === sprint.sprintId && 'font-bold text-starbucks-green'}`}
+                  onClick={() => setSprintId(() => sprint.sprintId)}
+                >
+                  SPRINT {sprint.sprintId}
                 </button>
               </li>
             ))}

@@ -1,9 +1,9 @@
 const transformDate = (date: string) => {
-  const year = new Date(date).getFullYear();
-  const month = new Date(date).getMonth() + 1;
-  const day = new Date(date).getDay();
+  const newDate = new Date(date);
+  const year = newDate.getFullYear();
+  const month = (newDate.getMonth() + 1).toString().padStart(2, '0');
+  const day = newDate.getDate().toString().padStart(2, '0');
 
   return `${year}-${month}-${day}`;
 };
-
 export { transformDate };

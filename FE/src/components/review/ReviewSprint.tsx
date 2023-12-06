@@ -40,40 +40,52 @@ const ReviewSprint = (sprint: SelectedSprint) => {
           <ReviewSprintInfo label="전체 Task" content={`${totalCount} 개`} />
         </div>
       </div>
-      <div className="flex flex-col gap-6 w-full h-[24.313rem] p-6 bg-true-white border border-transparent-green rounded-md text-r text-house-green overflow-x-hidden overflow-y-auto">
+      <div className="flex flex-col gap-6 w-full p-6 bg-true-white border border-transparent-green rounded-md text-r text-house-green">
         <ul>
           <span className="w-[5.625rem] font-bold text-starbucks-green">완료 Task</span>
-          {completedTaskList.map((task) => (
-            <li
-              className="flex w-[57.25rem] justify-between py-[0.563rem] pl-2.5 pr-[0.438rem] border-t border-x last:border-b border-transparent-green font-medium"
-              key={task.id}
-            >
-              <span className="w-[4rem] font-bold">Task {task.id}</span>
-              <span className="w-[33.75rem]">{task.title}</span>
-              <span className="w-[6.25rem]"></span>
-              <span className="w-[5rem]">{task.point} POINT</span>
-              <span className="flex items-center font-bold">
-                상세보기 <ChevronRightIcon size={14} />
-              </span>
+          {completedTaskList.length ? (
+            completedTaskList.map((task) => (
+              <li
+                className="flex w-[57.25rem] justify-between py-[0.563rem] pl-2.5 pr-[0.438rem] border-t border-x last:border-b border-transparent-green font-medium"
+                key={task.id}
+              >
+                <span className="w-[4rem] font-bold">Task {task.id}</span>
+                <span className="w-[33.75rem]">{task.title}</span>
+                <span className="w-[6.25rem]"></span>
+                <span className="w-[5rem]">{task.point} POINT</span>
+                <span className="flex items-center font-bold">
+                  상세보기 <ChevronRightIcon size={14} />
+                </span>
+              </li>
+            ))
+          ) : (
+            <li className="flex w-[57.25rem] justify-center p-7 border border-transparent-green font-bold">
+              완료된 Task가 없습니다.
             </li>
-          ))}
+          )}
         </ul>
         <ul>
           <span className="w-[5.625rem] font-bold text-error-red">미완료 Task</span>
-          {uncompletedTaskList.map((task) => (
-            <li
-              className="flex w-[57.25rem] justify-between py-[0.563rem] pl-2.5 pr-[0.438rem] border-t border-x last:border-b border-transparent-green font-medium"
-              key={task.id}
-            >
-              <span className="w-[4rem] font-bold">Task {task.id}</span>
-              <span className="w-[33.75rem]">{task.title}</span>
-              <span className="w-[6.25rem]"></span>
-              <span className="w-[5rem]">{task.point} POINT</span>
-              <span className="flex items-center font-bold">
-                상세보기 <ChevronRightIcon size={14} />
-              </span>
+          {uncompletedTaskList.length ? (
+            uncompletedTaskList.map((task) => (
+              <li
+                className="flex w-[57.25rem] justify-between py-[0.563rem] pl-2.5 pr-[0.438rem] border-t border-x last:border-b border-transparent-green font-medium"
+                key={task.id}
+              >
+                <span className="w-[4rem] font-bold">Task {task.id}</span>
+                <span className="w-[33.75rem]">{task.title}</span>
+                <span className="w-[6.25rem]"></span>
+                <span className="w-[5rem]">{task.point} POINT</span>
+                <span className="flex items-center font-bold">
+                  상세보기 <ChevronRightIcon size={14} />
+                </span>
+              </li>
+            ))
+          ) : (
+            <li className="flex w-[57.25rem] justify-center p-7 border border-transparent-green font-bold">
+              미완료된 Task가 없습니다.
             </li>
-          ))}
+          )}
         </ul>
       </div>
     </div>

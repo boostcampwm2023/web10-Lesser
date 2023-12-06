@@ -5,11 +5,14 @@ import ReviewReminiscing from '../components/review/ReviewReminiscing';
 import { Route, Routes } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../apis/api';
+import { useState } from 'react';
 
 const ReviewPage = () => {
+  const [sprintId, setSprintId] = useState<number>(3);
   const { isLoading, error, data } = useQuery({
-    queryKey: ['review'],
-    queryFn: () => api.get('/reviews?project=1&sprint=0').then((res) => res.data),
+    queryKey: ['review', sprintId],
+    queryFn: () => api.get(`/reviews?project=1&sprint=${sprintId}`).then((res) => res.data),
+    staleTime: 1000 * 60 * 5,
   });
 
   return (
@@ -18,11 +21,15 @@ const ReviewPage = () => {
       {error && <p>Something is wrong 😢</p>}
       {data && (
         <>
-          <ReviewHeader sprintList={data.sprintList} currentSprintId={data.selectedSprint.id} />
+          <ReviewHeader
+            sprintList={data.sprintList}
+            currentSprintId={data.selectedSprint.id}
+            setSprintId={setSprintId}
+          />
           <Routes>
             <Route path="/" element={<ReviewSprint {...data.selectedSprint} />} />
             <Route path="/chart" element={<ReviewChart {...data.selectedSprint} />} />
-            <Route path="/remi" element={<ReviewReminiscing />} />
+            <Route path="/remi" element={<ReviewReminiscing {...data.selectedSprint} />} />
           </Routes>
         </>
       )}
