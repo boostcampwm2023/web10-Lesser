@@ -5,12 +5,16 @@ import EpicComponent from '../components/backlog/EpicComponent';
 import StoryComponent from '../components/backlog/StoryComponent';
 import TaskComponent from '../components/backlog/TaskComponent';
 import PostButton from '../components/backlog/PostButton';
+import { useParams } from 'react-router-dom';
+import { API_URL } from '../constants/constants';
 
 const BacklogPage = () => {
+  const { id } = useParams();
+  const REQUEST_URL = `${API_URL.BACKLOG}/${id}`;
   const { data, isLoading } = useQuery({
     queryKey: ['backlogs', 1],
     queryFn: async () => {
-      const data = await api.get('/backlogs/2');
+      const data = await api.get(REQUEST_URL);
       return data.data;
     },
   });
@@ -47,7 +51,7 @@ const BacklogPage = () => {
         placeholder="어떤 기능을 계획할 예정인가요? 예시) 회원 기능"
         color="bg-house-green"
         url="/backlogs/epic"
-        id={2}
+        id={Number(id)}
       />
     </main>
   );

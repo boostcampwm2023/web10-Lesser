@@ -20,7 +20,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/project/create" element={<ProjectCreatePage />} />
           <Route element={<MainPage />}>
-            <Route path="/backlog" element={<BacklogPage />} />
+            <Route path="/backlog/:id" element={<BacklogPage />} />
             <Route path="/sprint" element={<SprintPage />} />
             <Route path="/review/sprint/*" element={<ReviewPage />} />
           </Route>

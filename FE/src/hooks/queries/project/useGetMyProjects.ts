@@ -5,7 +5,6 @@ const useGetMyProjects = () =>
   useQuery({
     queryKey: ['myProjects'],
     queryFn: fetchGetMyProjects,
-    refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
 
