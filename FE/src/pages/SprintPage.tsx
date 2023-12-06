@@ -8,9 +8,9 @@ import { Task } from '../types/sprint';
 import { UserFilter, TaskGroup } from '../types/sprint';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { useNavigate } from 'react-router';
-import { api } from '../apis/api';
 import { transformDate } from '../utils/date';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSelectedProjectState } from '../stores';
+import { useGetProgressSprint, usePatchTaskState } from '../hooks/queries/sprint';
 
 interface BoardTaskListObject {
   storyId?: number;
@@ -21,45 +21,23 @@ interface BoardTaskListObject {
   Done: Task[];
 }
 
-interface Sprint {
-  sprintTitle: string;
-  sprintGoal: string;
-  sprintStartDate: string;
-  sprintEndDate: string;
-  sprintEnd: boolean;
-  sprintModal: boolean;
-  taskList: Task[];
-}
-
 type TaskGroupedByStory = Record<number, BoardTaskListObject>;
 
 const SprintPage = () => {
   const [taskGroup, setTaskGroup] = useState<TaskGroup>('all');
-  const [userToFilter, setUserToFilter] = useState<UserFilter>(undefined);
+  const [userToFilter, setUserToFilter] = useState<UserFilter>(-1);
   const [dropdownOpend, setDropdownOpend] = useState<boolean>(false);
   const [boardTaskList, setBoardTaskList] = useState<BoardTaskListObject[]>([]);
-  const { data, isLoading } = useQuery<Sprint>({
-    queryKey: ['sprint'],
-    queryFn: async () => {
-      const response = await api.get('/projects/1/sprints/progress');
-      return response.data;
-    },
-  });
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: async ({ id, state }: { id: number; state: string }) =>
-      await api.patch('/backlogs/task', { id, state }),
-    onSuccess: () => {
-      queryClient.invalidateQueries();
-    },
-  });
+  const { id: projectId, userList } = useSelectedProjectState();
+  const { data, isLoading } = useGetProgressSprint(projectId);
+  const { mutate } = usePatchTaskState();
   const navigate = useNavigate();
+  const userFilterList = useMemo(() => [{ userId: -1, userName: '전체' }, ...userList], [userList]);
 
   useEffect(() => {
     if (data) {
-      const currentTaskList = !userToFilter
-        ? data.taskList
-        : data.taskList.filter(({ userId }) => userId === userToFilter);
+      const currentTaskList =
+        userToFilter === -1 ? data.taskList : data.taskList.filter(({ userId }) => userId === userToFilter);
 
       if (taskGroup === 'all') {
         const ToDo = currentTaskList?.filter(({ state }: Task) => state === 'ToDo');
@@ -91,14 +69,6 @@ const SprintPage = () => {
       setBoardTaskList(Object.values(taskList));
     }
   }, [data, userToFilter, taskGroup]);
-
-  const userList = [
-    { name: '전체' },
-    { id: '1', name: '피카츄' },
-    { id: '2', name: '파이리' },
-    { id: '3', name: '꼬부기' },
-    { id: '4', name: '잠만보' },
-  ];
 
   const handleGroupButtonClick = (taskGroup: TaskGroup): void => {
     setTaskGroup(taskGroup);
@@ -136,9 +106,8 @@ const SprintPage = () => {
   };
 
   const [todoNumber, inProgressNumber, doneNumber] = useMemo(() => {
-    const currentTaskList = !userToFilter
-      ? data?.taskList
-      : data?.taskList.filter(({ userId }) => userId === userToFilter);
+    const currentTaskList =
+      userToFilter === -1 ? data?.taskList : data?.taskList.filter(({ userId }) => userId === userToFilter);
     const todoNumber = currentTaskList?.filter(({ state }) => state === 'ToDo').length;
     const inProgressNumber = currentTaskList?.filter(({ state }) => state === 'InProgress').length;
     const doneNumber = currentTaskList?.filter(({ state }) => state === 'Done').length;
@@ -182,7 +151,7 @@ const SprintPage = () => {
               </button>
               {dropdownOpend && (
                 <FilterDropdown
-                  userList={userList}
+                  userList={userFilterList}
                   userToFilter={userToFilter}
                   taskGroup={taskGroup}
                   onGroupFilterButtonClick={handleGroupButtonClick}
