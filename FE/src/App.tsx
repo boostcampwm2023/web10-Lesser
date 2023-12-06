@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import ProjectPage from './pages/project/ProjectPage';
 import LoginPage from './pages/LoginPage';
 import MainPage from './pages/MainPage';
-import BacklogPage from './pages/BacklogPage';
+import BacklogPage from './pages/backlog/BacklogPage';
 import SprintPage from './pages/SprintPage';
 import ReviewPage from './pages/ReviewPage';
 import ProjectCreatePage from './pages/project/ProjectCreatePage';
