@@ -94,10 +94,10 @@ const SprintPage = () => {
 
   const userList = [
     { name: '전체' },
-    { id: 1, name: '피카츄' },
-    { id: 2, name: '파이리' },
-    { id: 3, name: '꼬부기' },
-    { id: 4, name: '잠만보' },
+    { id: '1', name: '피카츄' },
+    { id: '2', name: '파이리' },
+    { id: '3', name: '꼬부기' },
+    { id: '4', name: '잠만보' },
   ];
 
   const handleGroupButtonClick = (taskGroup: TaskGroup): void => {
