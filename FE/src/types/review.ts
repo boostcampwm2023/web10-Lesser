@@ -2,12 +2,13 @@ interface Task {
   id: number;
   point: number;
   condition: string;
-  memberId: number;
+  userId: string;
   completedAt: string;
   title: string;
+  sequence: number;
 }
 
-interface Remi {
+interface Reminiscing {
   id: number;
   content: string;
 }
@@ -27,5 +28,5 @@ export interface SelectedSprint {
   completedCount: number;
   incompleteCount: number;
   taskList: Task[];
-  remi: Remi;
+  reminiscing: Reminiscing;
 }
