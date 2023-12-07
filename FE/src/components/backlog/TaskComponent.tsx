@@ -16,9 +16,9 @@ const TaskComponent = (props: ReadBacklogTaskResponseDto) => {
           <span className="w-[33.75rem]">{title}</span>
         </div>
         <span className="w-[6.25rem] truncate">{getUsernameByUserid(Number(userId))}</span>
-        <span className="w-[5rem] truncate">{point}POINT</span>
+        <span className="w-[5rem] truncate">{point} POINT</span>
         <button
-          className="flex items-center font-bold hover:underline"
+          className="flex items-center hover:underline hover:font-bold"
           onClick={() => {
             open(<TaskModal {...props} close={close} />);
           }}
