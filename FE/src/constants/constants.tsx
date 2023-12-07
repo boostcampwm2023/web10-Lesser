@@ -15,7 +15,7 @@ export const API_URL = {
 
 export const CLIENT_URL = {
   PROJECT: '/project',
-  BACKLOG: '/backlog',
+  BACKLOG: (id: number | string) => `/backlog/${id}`,
 };
 
 export const reviewTabs = ['스프린트 정보', '차트', '회고란'];

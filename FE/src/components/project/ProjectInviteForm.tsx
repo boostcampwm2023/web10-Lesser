@@ -27,7 +27,7 @@ const ProjectInviteForm = ({ projectTitle, projectSubject }: ProjectInviteFormPr
           검색
         </button>
       </div>
-      <div className="flex flex-wrap w-[31.25rem] mx-auto">
+      <div className="flex flex-wrap w-[31.25rem] gap-1 mx-auto">
         {userList.map((user) => (
           <div
             key={user.userId}
