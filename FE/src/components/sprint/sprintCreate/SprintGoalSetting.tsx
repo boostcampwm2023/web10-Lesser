@@ -1,5 +1,4 @@
-import { SetStateAction, useState } from 'react';
-import CalendarIcon from '../../../assets/icons/CalendarIcon';
+import { SetStateAction } from 'react';
 
 interface SprintGoalSettingProps {
   handleNextButtonClick: () => void;
@@ -16,7 +15,6 @@ const SprintGoalSetting = ({
   setSprintGoal,
   handleNextButtonClick,
 }: SprintGoalSettingProps) => {
-  const [isDateInput, setIsDateInput] = useState<boolean>(false);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (sprintGoal.trim() === '') {
@@ -38,7 +36,7 @@ const SprintGoalSetting = ({
           이번 스프린트는 어떤 것을 만들 것인가요?
         </label>
         <input
-          className="p-3 border-2 rounded-md outline-none border-starbucks-green"
+          className="p-3 border-2 border-starbucks-green outline-house-green rounded-md"
           type="text"
           id="goal"
           placeholder="스프린트 목표"
@@ -46,26 +44,18 @@ const SprintGoalSetting = ({
           onChange={(e) => setSprintGoal(e.target.value)}
         />
         <label className="font-bold text-starbucks-green" htmlFor="date">
-          스프린트 기간은 어떻게 되나요?
+          스프린트 종료일은 어떻게 되나요?
         </label>
-        <div className="flex items-center w-[167px] h-[45px] px-3 border-2 border-starbucks-green outline-house-green rounded-md text-light-gray">
-          <input
-            className="w-full bg-transparent outline-none"
-            type={isDateInput ? 'date' : 'text'}
-            id="date"
-            placeholder="종료일"
-            value={sprintEndDate}
-            onFocus={() => setIsDateInput(true)}
-            onBlur={() => setIsDateInput(false)}
-            onChange={(e) => setSprintEndDate(e.target.value)}
-          />
-          {!isDateInput && (
-            <label htmlFor="date">
-              <CalendarIcon color="text-starbucks-green" />
-            </label>
-          )}
-        </div>
-        <button className="p-3 font-bold rounded-md bg-starbucks-green text-m text-true-white">다음으로</button>
+        <input
+          className={`flex items-center w-[167px] h-[45px] px-3 border-2 border-starbucks-green outline-house-green rounded-md ${
+            sprintEndDate === '' && 'text-light-gray'
+          }`}
+          type="date"
+          id="date"
+          value={sprintEndDate}
+          onChange={(e) => setSprintEndDate(e.target.value)}
+        />
+        <button className="p-3 bg-starbucks-green rounded-md font-bold text-m text-true-white">다음으로</button>
       </form>
     </div>
   );
