@@ -29,7 +29,7 @@ const TaskUpdateModal = ({ close, id, title, userId, point, condition }: TaskMod
       return await api.patch('/backlogs/task', getBody());
     },
     onSuccess: () => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ['backlogs'] });
     },
   });
 
