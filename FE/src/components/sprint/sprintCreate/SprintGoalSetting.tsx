@@ -1,4 +1,5 @@
-import { SetStateAction } from 'react';
+import { ChangeEvent, SetStateAction } from 'react';
+import { transformDate } from '../../../utils/date';
 
 interface SprintGoalSettingProps {
   handleNextButtonClick: () => void;
@@ -28,6 +29,18 @@ const SprintGoalSetting = ({
     handleNextButtonClick();
   };
 
+  const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const today = new Date();
+
+    if (e.target.value > transformDate(today.toString())) {
+      setSprintEndDate(e.target.value);
+    } else {
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      setSprintEndDate(transformDate(tomorrow.toString()));
+    }
+  };
+
   return (
     <div className="flex flex-col w-[500px] mx-auto mt-[140px] items-center">
       <p className="text-xl font-bold mb-14 text-starbucks-green ">스프린트 만들기</p>
@@ -53,7 +66,7 @@ const SprintGoalSetting = ({
           type="date"
           id="date"
           value={sprintEndDate}
-          onChange={(e) => setSprintEndDate(e.target.value)}
+          onChange={handleDateChange}
         />
         <button className="p-3 bg-starbucks-green rounded-md font-bold text-m text-true-white">다음으로</button>
       </form>
