@@ -19,11 +19,11 @@ export class SprintToTask extends BaseEntity {
   @Column({ type: 'timestamp', nullable: true })
   completed_at: Date;
 
-  @ManyToOne(() => Sprint, (sprint) => sprint.id)
+  @ManyToOne(() => Sprint, (sprint) => sprint.id, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'sprintId' })
   sprint: Sprint;
 
-  @ManyToOne(() => Task, (task) => task.id)
+  @ManyToOne(() => Task, (task) => task.id, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'taskId' })
   task: Task;
 
