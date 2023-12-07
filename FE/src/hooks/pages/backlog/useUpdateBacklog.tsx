@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../apis/api';
-import { useSelectedProjectState } from '../../../stores';
 
 interface BacklogUpdateBody {
   id: number;
@@ -9,15 +8,13 @@ interface BacklogUpdateBody {
 
 const useUpdateBacklog = (url: string, getBody: () => BacklogUpdateBody, toggleButton: () => void) => {
   const queryClient = useQueryClient();
-  const projectId = useSelectedProjectState((state) => state.id);
   const { mutateAsync } = useMutation({
     mutationFn: async () => {
       const response = await api.put(`/backlogs${url}`, getBody());
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['backlogs', projectId] });
-      queryClient.invalidateQueries({ queryKey: ['backlogs', projectId, 'sprint'] });
+      queryClient.invalidateQueries({ queryKey: ['backlogs'] });
     },
   });
 

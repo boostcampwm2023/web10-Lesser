@@ -3,7 +3,6 @@ import { useRef } from 'react';
 import { api } from '../../../apis/api';
 import TaskForm from '../taskForm/TaskForm';
 import useTaskManager from '../../../hooks/pages/backlog/useTaskManager';
-import { useSelectedProjectState } from '../../../stores';
 
 interface TaskPostModalProps {
   parentId: number;
@@ -35,15 +34,13 @@ const TaskPostModal = ({ parentId, close }: TaskPostModalProps) => {
       { parentId, userId: taskManagerId } as TaskPostBody,
     );
   };
-  const projectId = useSelectedProjectState((state) => state.id);
   const queryClient = useQueryClient();
   const { mutateAsync } = useMutation({
     mutationFn: async () => {
       return await api.post('/backlogs/task', getBody());
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['backlogs', projectId] });
-      queryClient.invalidateQueries({ queryKey: ['backlogs', projectId, 'sprint'] });
+      queryClient.invalidateQueries({ queryKey: ['backlogs'] });
     },
   });
 

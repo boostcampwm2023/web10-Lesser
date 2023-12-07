@@ -17,8 +17,7 @@ const usePostBacklog = (url: string, getBody: () => BacklogPostBody, toggleButto
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['backlogs', projectId] });
-      queryClient.invalidateQueries({ queryKey: ['backlogs', projectId, 'sprint'] });
+      queryClient.invalidateQueries();
     },
   });
 
