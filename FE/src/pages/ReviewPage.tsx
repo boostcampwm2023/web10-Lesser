@@ -15,6 +15,7 @@ const ReviewPage = () => {
     queryKey: ['review', sprintId],
     queryFn: () => api.get(`/reviews?project=${projectId}&sprint=${sprintId}`).then((res) => res.data),
     staleTime: 1000 * 60 * 5,
+    retry: false,
   });
 
   if (isLoading) {
