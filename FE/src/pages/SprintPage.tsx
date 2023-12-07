@@ -9,7 +9,7 @@ import SprintEndModal from '../components/sprint/modal/SprintEndModal';
 import SprintLandingPage from './sprint/SprintLandingPage';
 import { Task } from '../types/sprint';
 import { UserFilter, TaskGroup } from '../types/sprint';
-import { transformDate } from '../utils/date';
+import { calculateRestDate, transformDate } from '../utils/date';
 import { useSelectedProjectState } from '../stores';
 import { useGetProgressSprint, usePatchTaskState } from '../hooks/queries/sprint';
 import { useModal } from '../modal/useModal';
@@ -32,7 +32,7 @@ const SprintPage = () => {
   const [dropdownOpend, setDropdownOpend] = useState<boolean>(false);
   const [boardTaskList, setBoardTaskList] = useState<BoardTaskListObject[]>([]);
   const { id: projectId, userList } = useSelectedProjectState();
-  const { data, isLoading } = useGetProgressSprint(projectId);
+  const { data, isLoading, isError } = useGetProgressSprint(projectId);
   const { mutate } = usePatchTaskState();
   const endModal = useModal();
   const navigate = useNavigate();
@@ -122,15 +122,33 @@ const SprintPage = () => {
   }, [data, userToFilter]);
 
   if (isLoading) {
-    return <div className="min-w-[60.25rem]">칸반보드 로딩중</div>;
+    return (
+      <div className="flex justify-center items-center min-w-[60.25rem]">
+        <p>칸반보드 로딩중입니다.</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="felx flex-col items-center justify-center min-w-[60.25rem]">
+        <p>오류가 발생했습니다.</p>
+        <p>다시 시도해주세요.</p>
+      </div>
+    );
   }
 
   if (data?.sprintModal) {
     return (
-      <div className="flex flex-col items-center min-w-[60.25rem]">
+      <div className="flex flex-col items-center justify-center min-w-[60.25rem]">
         <p>스프린트가 종료되었습니다.</p>
         <p>회고를 진행하시겠습니까?</p>
-        <button onClick={() => navigate(`/projects/${projectId}/review/sprint`)}>회고 진행하기</button>
+        <button
+          className="p-3 rounded bg-starbucks-green text-true-white"
+          onClick={() => navigate(`/projects/${projectId}/review/sprint`)}
+        >
+          회고 진행하기
+        </button>
       </div>
     );
   }
@@ -151,8 +169,8 @@ const SprintPage = () => {
             <PrograssBar
               startText={transformDate(data.sprintStartDate)}
               endText={transformDate(data.sprintEndDate)}
-              totalAmount={6}
-              currentAmount={4}
+              totalAmount={calculateRestDate(data.sprintStartDate, data.sprintEndDate)}
+              currentAmount={calculateRestDate(data.sprintStartDate, new Date().toString())}
             />
             <PrograssBar
               startText={`태스크 ${data.taskList.length}건`}

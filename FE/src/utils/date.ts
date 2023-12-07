@@ -6,4 +6,8 @@ const transformDate = (date: string) => {
 
   return `${year}-${month}-${day}`;
 };
-export { transformDate };
+
+const calculateRestDate = (startDate: string, endDate: string) =>
+  (Number(new Date(endDate)) - Number(new Date(startDate))) / (24 * 60 * 60 * 1000);
+
+export { transformDate, calculateRestDate };

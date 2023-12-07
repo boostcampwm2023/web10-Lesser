@@ -27,7 +27,7 @@ const TaskCard = (props: TaskCardProps) => {
     <Draggable draggableId={String(id)} index={index}>
       {(provided, snapshop) => (
         <div
-          className={`flex flex-col gap-5 p-3 text-sm border rounded-lg border-transparent-green bg-cool-neutral ${
+          className={`flex flex-col gap-5 p-3 text-sm border rounded-lg border-transparent-green hover:bg-[#EDEDED] bg-cool-neutral ${
             snapshop.isDragging && 'bg-transparent-green'
           }`}
           {...provided.draggableProps}

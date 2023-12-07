@@ -19,7 +19,7 @@ const LoginPage = () => {
           <GithubLogin />
         </button>
       </div>
-      {code && <div className="absolute w-full h-full bg-white/[0.4] "></div>}
+      {code && <div className="absolute w-screen h-screen bg-white/[0.4] "></div>}
     </div>
   );
 };

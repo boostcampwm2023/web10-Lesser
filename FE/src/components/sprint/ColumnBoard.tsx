@@ -12,7 +12,7 @@ const ColumnBoard = ({ taskList, state, storyId }: ColumnBoardProps) => (
   <Droppable droppableId={`${storyId} ${state}`} type={String(storyId)}>
     {(provided) => (
       <ul
-        className="flex flex-col w-[18.75rem] min-h-full gap-3 p-5 border rounded-lg border-transparent-green"
+        className="flex flex-col w-[18.75rem] min-h-full gap-3 p-5 border rounded-lg border-transparent-green bg-true-white"
         {...provided.droppableProps}
         ref={provided.innerRef}
       >
