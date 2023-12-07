@@ -8,18 +8,22 @@ import { ReadBacklogEpicResponseDto } from '../../../types/backlog';
 interface SprintBacklogComponentProps {
   sprintBacklog: SprintBacklog[];
   setSprintBacklog: React.Dispatch<React.SetStateAction<SprintBacklog[]>>;
+  projectId: number;
 }
 
-const SprintBacklogComponent = ({ sprintBacklog, setSprintBacklog }: SprintBacklogComponentProps) => {
+const SprintBacklogComponent = ({ sprintBacklog, setSprintBacklog, projectId }: SprintBacklogComponentProps) => {
   const queryClient = useQueryClient();
   const handleDeleteButtonClick = (task: SprintBacklog, index: number) => {
     const { epicIndex, storyIndex, taskIndex } = task;
 
-    queryClient.setQueryData(['backlogs', 1, 'sprint'], (prevBacklog: { epicList: ReadBacklogEpicResponseDto[] }) => {
-      const newBacklogData = structuredClone(prevBacklog);
-      newBacklogData.epicList[epicIndex].storyList[storyIndex].taskList.splice(taskIndex, 0, { ...task });
-      return newBacklogData;
-    });
+    queryClient.setQueryData(
+      ['backlogs', projectId, 'sprint'],
+      (prevBacklog: { epicList: ReadBacklogEpicResponseDto[] }) => {
+        const newBacklogData = structuredClone(prevBacklog);
+        newBacklogData.epicList[epicIndex].storyList[storyIndex].taskList.splice(taskIndex, 0, { ...task });
+        return newBacklogData;
+      },
+    );
 
     setSprintBacklog((prevSprintBacklog) => {
       const newSprintBacklog = structuredClone(prevSprintBacklog);

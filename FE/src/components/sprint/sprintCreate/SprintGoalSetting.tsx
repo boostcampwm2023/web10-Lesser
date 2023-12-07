@@ -1,13 +1,21 @@
-import { useState } from 'react';
+import { SetStateAction, useState } from 'react';
 import CalendarIcon from '../../../assets/icons/CalendarIcon';
 
 interface SprintGoalSettingProps {
   handleNextButtonClick: () => void;
+  sprintGoal: string;
+  sprintEndDate: string;
+  setSprintGoal: React.Dispatch<SetStateAction<string>>;
+  setSprintEndDate: React.Dispatch<SetStateAction<string>>;
 }
 
-const SprintGoalSetting = ({ handleNextButtonClick }: SprintGoalSettingProps) => {
-  const [sprintGoal, setSprintGoal] = useState<string>('');
-  const [sprintEndDate, setSprintEndDate] = useState<string>('');
+const SprintGoalSetting = ({
+  sprintEndDate,
+  sprintGoal,
+  setSprintEndDate,
+  setSprintGoal,
+  handleNextButtonClick,
+}: SprintGoalSettingProps) => {
   const [isDateInput, setIsDateInput] = useState<boolean>(false);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,13 +32,13 @@ const SprintGoalSetting = ({ handleNextButtonClick }: SprintGoalSettingProps) =>
 
   return (
     <div className="flex flex-col w-[500px] mx-auto mt-[140px] items-center">
-      <p className="mb-14 font-bold text-starbucks-green text-xl ">스프린트 만들기</p>
+      <p className="text-xl font-bold mb-14 text-starbucks-green ">스프린트 만들기</p>
       <form className="flex flex-col w-full gap-6" onSubmit={handleSubmit}>
         <label className="font-bold text-starbucks-green" htmlFor="goal">
           이번 스프린트는 어떤 것을 만들 것인가요?
         </label>
         <input
-          className="p-3 border-2 border-starbucks-green outline-none rounded-md"
+          className="p-3 border-2 rounded-md outline-none border-starbucks-green"
           type="text"
           id="goal"
           placeholder="스프린트 목표"
@@ -42,7 +50,7 @@ const SprintGoalSetting = ({ handleNextButtonClick }: SprintGoalSettingProps) =>
         </label>
         <div className="flex items-center w-[167px] h-[45px] px-3 border-2 border-starbucks-green outline-house-green rounded-md text-light-gray">
           <input
-            className="w-full outline-none bg-transparent"
+            className="w-full bg-transparent outline-none"
             type={isDateInput ? 'date' : 'text'}
             id="date"
             placeholder="종료일"
@@ -57,7 +65,7 @@ const SprintGoalSetting = ({ handleNextButtonClick }: SprintGoalSettingProps) =>
             </label>
           )}
         </div>
-        <button className="p-3 bg-starbucks-green rounded-md font-bold text-m text-true-white">다음으로</button>
+        <button className="p-3 font-bold rounded-md bg-starbucks-green text-m text-true-white">다음으로</button>
       </form>
     </div>
   );

@@ -4,14 +4,21 @@ import { api } from '../../apis/api';
 import SprintBacklogSetting from '../../components/sprint/sprintCreate/SprintBacklogSetting';
 import { CreateProcessHeader, CreateProcessText } from '../../components/common/CreateProcess';
 import { BACKLOG_URL, PROCESS_NUMBER } from '../../constants/constants';
-import { SprintBacklog } from '../../types/sprint';
+import { SprintBacklog, SprintCreateBody } from '../../types/sprint';
 import SprintGoalSetting from './../../components/sprint/sprintCreate/SprintGoalSetting';
+import usePostNewSprint from '../../hooks/queries/sprint/usePostNewSprint';
+import { useSelectedProjectState } from '../../stores';
+import { transformDate } from '../../utils/date';
 
 const SprintCreatePage = () => {
   const [process, setProcess] = useState<number>(PROCESS_NUMBER.PROCESS1);
   const [sprintBacklog, setSprintBacklog] = useState<SprintBacklog[]>([]);
+  const [sprintGoal, setSprintGoal] = useState<string>('');
+  const [sprintEndDate, setSprintEndDate] = useState<string>('');
+  const { id: projectId } = useSelectedProjectState();
+  const { mutateAsync } = usePostNewSprint();
   const { data: backlog, isLoading } = useQuery({
-    queryKey: ['backlogs', 1, 'sprint'],
+    queryKey: ['backlogs', projectId, 'sprint'],
     queryFn: async () => {
       const response = await api.get('/backlogs/1');
       return response.data;
@@ -19,6 +26,19 @@ const SprintCreatePage = () => {
   });
   const handleNextButtonClick = () => {
     setProcess(PROCESS_NUMBER.PROCESS2);
+  };
+
+  const handleCreateButtonClick = () => {
+    const dataBody: SprintCreateBody = {
+      projectId,
+      taskList: sprintBacklog.map(({ id }) => id),
+      startDate: transformDate(new Date().toString()),
+      endDate: sprintEndDate,
+      goal: sprintGoal,
+      title: 'sprint',
+    };
+
+    mutateAsync(dataBody);
   };
 
   if (isLoading) return <div>백로그 데이터 불러오는 중</div>;
@@ -30,9 +50,12 @@ const SprintCreatePage = () => {
         <CreateProcessText processNum={2} processName="태스크 설정" active={process >= 1} />
       </CreateProcessHeader>
       {process === PROCESS_NUMBER.PROCESS1 ? (
-        <SprintGoalSetting handleNextButtonClick={handleNextButtonClick} />
+        <SprintGoalSetting {...{ handleNextButtonClick, setSprintEndDate, setSprintGoal, sprintEndDate, sprintGoal }} />
       ) : (
-        <SprintBacklogSetting {...{ backlog, sprintBacklog, setSprintBacklog }} />
+        <SprintBacklogSetting
+          {...{ backlog, sprintBacklog, setSprintBacklog, projectId }}
+          onCreateButtonClick={handleCreateButtonClick}
+        />
       )}
     </>
   );
