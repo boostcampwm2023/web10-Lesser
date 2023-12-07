@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../apis/api';
-import { useSelectedProjectState } from '../../../stores';
 
 interface BacklogPostBody {
   parentId: number;
@@ -9,7 +8,6 @@ interface BacklogPostBody {
 
 const usePostBacklog = (url: string, getBody: () => BacklogPostBody, toggleButton: () => void) => {
   const queryClient = useQueryClient();
-  const projectId = useSelectedProjectState((state) => state.id);
 
   const { mutateAsync } = useMutation({
     mutationFn: async () => {
