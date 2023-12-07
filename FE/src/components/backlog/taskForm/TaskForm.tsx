@@ -1,6 +1,7 @@
 import useDetail from '../../../hooks/pages/backlog/useDetail';
 import MemberDropdown from '../MemberDropdown';
 import TaskInputLayout from './TaskInputLayout';
+import useTaskUsername from '../../../hooks/pages/backlog/useTaskUsername';
 
 interface TaskFormProps {
   handleSubmit: (e: React.FormEvent) => void;
@@ -18,6 +19,12 @@ interface TaskFormProps {
 
 const TaskForm = ({ handleSubmit, close, setNewTaskManager, formRef, defaultData = null }: TaskFormProps) => {
   const { detail, toggleDetail } = useDetail();
+  const { username, setNewUsername } = useTaskUsername(Number(defaultData?.userId));
+  const handleDropdownClick = ({ currentTarget }: React.MouseEvent<HTMLButtonElement>) => {
+    setNewTaskManager(Number(currentTarget.id));
+    setNewUsername(Number(currentTarget.id));
+    toggleDetail();
+  };
   return (
     <div className="fixed top-0 left-0 bg-black w-screen h-screen bg-opacity-30 flex justify-center items-center">
       <form
@@ -53,7 +60,7 @@ const TaskForm = ({ handleSubmit, close, setNewTaskManager, formRef, defaultData
         <TaskInputLayout title="담당자" description="Task를 수행할 멤버를 선정합니다" htmlFor="userId">
           <div className="relative">
             <div className="w-[9.375rem] py-2 px-2.5 border rounded-sm border-starbucks-green outline-starbucks-green text-s flex">
-              <p className="w-full">{defaultData?.userId ?? ''}</p>
+              <p className="w-full">{username}</p>
               <button
                 type="button"
                 onClick={() => {
@@ -63,7 +70,7 @@ const TaskForm = ({ handleSubmit, close, setNewTaskManager, formRef, defaultData
                 click
               </button>
             </div>
-            {!detail && <MemberDropdown setNewTaskManager={setNewTaskManager} />}
+            {!detail && <MemberDropdown setNewTaskManager={handleDropdownClick} />}
           </div>
         </TaskInputLayout>
         <TaskInputLayout
