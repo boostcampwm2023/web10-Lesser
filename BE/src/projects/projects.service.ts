@@ -66,7 +66,7 @@ export class ProjectsService {
         project.name = projectData.name;
         project.subject = projectData.subject;
         project.nextPage = 'backlogs';
-        project.myTaskCount = await this.getTaskCount(project.id);
+        project.myTaskCount = await this.getTaskCount(project.id, memberInfo);
         project.userList = await this.getUserList(projectData.id);
         return project;
       }),
@@ -74,14 +74,17 @@ export class ProjectsService {
     return projectList;
   }
 
-  private async getTaskCount(projectId: number): Promise<number> {
+  private async getTaskCount(projectId: number, memberInfo: memberDecoratorType): Promise<number> {
     const epicDataList = await this.epicRepository.find({ where: { project: { id: projectId } } });
     const taskDataLists = await Promise.all(
       epicDataList.map(async (epicData) => {
         const storyDataList = await this.storyRepository.find({ where: { epic: { id: epicData.id } } });
         return await Promise.all(
           storyDataList.map(
-            async (storyData) => await this.taskRepository.find({ where: { story: { id: storyData.id } } }),
+            async (storyData) =>
+              await this.taskRepository.find({
+                where: { story: { id: storyData.id }, member: { id: memberInfo.id }, state: 'InProgress' },
+              }),
           ),
         );
       }),
