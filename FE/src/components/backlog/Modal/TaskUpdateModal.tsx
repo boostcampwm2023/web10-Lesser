@@ -5,7 +5,6 @@ import TaskForm from '../taskForm/TaskForm';
 import { TaskModalProps } from './TaskModal';
 import { ReadBacklogTaskResponseDto } from '../../../types/backlog';
 import useTaskManager from '../../../hooks/pages/backlog/useTaskManager';
-import { useSelectedProjectState } from '../../../stores';
 
 const TaskUpdateModal = ({ close, id, title, userId, point, condition }: TaskModalProps) => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -25,14 +24,12 @@ const TaskUpdateModal = ({ close, id, title, userId, point, condition }: TaskMod
     );
   };
   const queryClient = useQueryClient();
-  const projectId = useSelectedProjectState((state) => state.id);
   const { mutateAsync } = useMutation({
     mutationFn: async () => {
       return await api.patch('/backlogs/task', getBody());
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['backlogs', projectId] });
-      queryClient.invalidateQueries({ queryKey: ['backlogs', projectId, 'sprint'] });
+      queryClient.invalidateQueries();
     },
   });
 

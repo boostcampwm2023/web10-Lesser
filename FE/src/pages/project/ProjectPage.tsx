@@ -4,6 +4,7 @@ import whiteCross from '../../assets/images/cross.png';
 import useLogout from '../../hooks/pages/useLogout';
 import { useGetMyProjects } from '../../hooks/queries/project';
 import { ProjectCard } from '../../components/project';
+import { CLIENT_URL } from '../../constants/constants';
 
 const ProjectPage = () => {
   const handleLogoutButtonClick = useLogout();
@@ -32,7 +33,7 @@ const ProjectPage = () => {
           </li>
         ))}
         <Link
-          to={'/project/create'}
+          to={CLIENT_URL.PROJECT_CREATE}
           className="w-[7.5rem] h-[7.5rem] flex flex-col justify-center content-center gap-2 bg-starbucks-green rounded-[0.25rem] cursor-pointer"
         >
           <p className="font-bold text-center text-true-white font-pretendard text-r">새 프로젝트 생성</p>

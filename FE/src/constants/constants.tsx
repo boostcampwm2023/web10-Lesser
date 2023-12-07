@@ -15,6 +15,7 @@ export const API_URL = {
 
 export const CLIENT_URL = {
   PROJECT: '/projects',
+  PROJECT_CREATE: '/projects/create',
   BACKLOG: (id: number | string) => `/projects/${id}/backlog`,
   SPRINT: (id: number | string) => `/projects/${id}/sprint`,
 };
