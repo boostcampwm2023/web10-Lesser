@@ -17,14 +17,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ModalProvider>
         <Routes>
-          <Route path="/project" element={<ProjectPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/project/create" element={<ProjectCreatePage />} />
-          <Route path="/sprint/create" element={<SprintCreatePage />} />
+          <Route path="/projects" element={<ProjectPage />} />
+          <Route path="/projects/create" element={<ProjectCreatePage />} />
+          <Route path="/projects/:id/sprint/create" element={<SprintCreatePage />} />
           <Route element={<MainPage />}>
-            <Route path="/backlog/:id" element={<BacklogPage />} />
-            <Route path="/sprint" element={<SprintPage />} />
-            <Route path="/review/sprint/*" element={<ReviewPage />} />
+            <Route path="/projects/:id/backlog" element={<BacklogPage />} />
+            <Route path="/projects/:id/sprint" element={<SprintPage />} />
+            <Route path="/projects/:id/review" element={<ReviewPage />} />
           </Route>
         </Routes>
       </ModalProvider>
