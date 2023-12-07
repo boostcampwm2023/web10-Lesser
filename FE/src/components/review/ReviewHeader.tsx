@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import ChevronDownIcon from './../../assets/icons/ChevronDownIcon';
 import { Link, useParams } from 'react-router-dom';
-import { Sprint } from '../../types/review';
+import { Data } from '../../types/review';
 import { reviewTabs } from '../../constants/constants';
 
 interface ReviewHeaderProps {
-  sprintList: Sprint[];
-  currentSprintId: number;
+  data: Data;
   setSprintId: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const ReviewHeader = ({ sprintList, currentSprintId, setSprintId }: ReviewHeaderProps) => {
+const ReviewHeader = ({ data, setSprintId }: ReviewHeaderProps) => {
   const { '*': currentReviewTab } = useParams();
+  const { sprintList, selectedSprint } = data ?? {};
 
   const [sprintListVisibility, setSprintListVisibility] = useState<boolean>(false);
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -45,8 +45,9 @@ const ReviewHeader = ({ sprintList, currentSprintId, setSprintId }: ReviewHeader
           className="flex items-center gap-0.5 pl-4 py-[0.313rem] pr-2 rounded-md bg-starbucks-green font-bold text-true-white"
           ref={btnRef}
           onClick={handleSprintListButtonClick}
+          disabled={data === undefined}
         >
-          SPRINT {currentSprintId}
+          SPRINT {data ? selectedSprint.id : ''}
           <ChevronDownIcon color="text-true-white" size={16} />
         </button>
 
@@ -55,7 +56,7 @@ const ReviewHeader = ({ sprintList, currentSprintId, setSprintId }: ReviewHeader
             {Object.values(sprintList).map((sprint) => (
               <li key={sprint.title}>
                 <button
-                  className={`${currentSprintId === sprint.sprintId && 'font-bold text-starbucks-green'}`}
+                  className={`${selectedSprint.id === sprint.sprintId && 'font-bold text-starbucks-green'}`}
                   onClick={() => setSprintId(() => sprint.sprintId)}
                 >
                   SPRINT {sprint.sprintId}
@@ -67,12 +68,12 @@ const ReviewHeader = ({ sprintList, currentSprintId, setSprintId }: ReviewHeader
 
         <ul className="flex gap-3 text-r text-light-gray">
           {reviewTabs.map((tab, index) => {
-            const urlSegment = tab === '차트' ? '/chart' : tab === '회고란' ? '/reminiscing' : '';
+            const urlSegment = tab === '차트' ? 'chart' : tab === '회고란' ? 'write' : 'sprint';
             return (
               <li key={index}>
                 <Link
-                  to={`/review/sprint${urlSegment}`}
-                  className={`${currentReviewTab === urlSegment.substring(1) && 'font-bold text-starbucks-green'}`}
+                  to={`${urlSegment}`}
+                  className={`${currentReviewTab === urlSegment && 'font-bold text-starbucks-green'}`}
                 >
                   {tab}
                 </Link>
