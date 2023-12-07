@@ -1,11 +1,14 @@
+import MemberDropdown from './MemberDropdown';
+
 interface TaskFormProps {
   handleSubmit: (e: React.FormEvent) => void;
+  handleTaskManagerClick: ({ currentTarget }: React.MouseEvent<HTMLButtonElement>) => void;
   close: () => void;
   formRef: React.RefObject<HTMLFormElement>;
   defaultData?: {
     id: number;
     title: string;
-    userId: string | number;
+    userId: string | number | undefined;
     point: number;
     condition: string;
   } | null;
@@ -52,14 +55,13 @@ const TaskForm = ({ handleSubmit, close, formRef, defaultData = null }: TaskForm
               <span className="text-m font-bold pr-2">담당자</span>
               Task를 수행할 멤버를 선정합니다
             </label>
-            <input
-              className="w-[9.375rem] py-2 px-2.5 border rounded-sm border-starbucks-green outline-starbucks-green text-s"
-              type="text"
-              id="userId"
-              name="userId"
-              placeholder="담당자"
-              defaultValue={defaultData?.userId}
-            />
+            <div className="relative">
+              <div className="w-[9.375rem] py-2 px-2.5 border rounded-sm border-starbucks-green outline-starbucks-green text-s flex">
+                <p className="w-full">{defaultData?.userId}</p>
+                <button>click</button>
+              </div>
+              <MemberDropdown />
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             <label htmlFor="point" className="text-s">

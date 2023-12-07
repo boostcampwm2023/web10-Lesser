@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 import { api } from '../../../apis/api';
 import TaskForm from '../TaskForm';
+import useTaskManager from '../../../hooks/pages/backlog/useTaskManager';
 
 interface TaskPostModalProps {
   parentId: number;
@@ -18,6 +19,7 @@ interface TaskPostBody {
 
 const TaskPostModal = ({ parentId, close }: TaskPostModalProps) => {
   const formRef = useRef<HTMLFormElement>(null);
+  const { taskManagerId, handleClickTaskManager } = useTaskManager();
   const getBody = () => {
     if (!formRef.current) return { parentId, title: '', userId: '', point: 0, condition: '' } as TaskPostBody;
     return [...formRef.current.querySelectorAll('input'), formRef.current.querySelector('textarea')].reduce(
@@ -25,11 +27,11 @@ const TaskPostModal = ({ parentId, close }: TaskPostModalProps) => {
         if (!cur) return acc;
         const newData = {
           ...acc,
-          [cur.id]: cur.id === 'point' || cur.id === 'userId' ? Number(cur.value) : cur.value,
+          [cur.id]: cur.id === 'point' ? Number(cur.value) : cur.value,
         };
         return newData;
       },
-      { parentId } as TaskPostBody,
+      { parentId, userId: taskManagerId } as TaskPostBody,
     );
   };
   const queryClient = useQueryClient();
