@@ -3,10 +3,11 @@ import { usePatchSprintEnd } from '../../../hooks/queries/sprint';
 interface SprintEndModalProps {
   id: number;
   close: () => void;
+  projectId: number;
 }
 
-const SprintEndModal = ({ id, close }: SprintEndModalProps) => {
-  const { mutateAsync } = usePatchSprintEnd();
+const SprintEndModal = ({ id, projectId, close }: SprintEndModalProps) => {
+  const { mutateAsync } = usePatchSprintEnd(projectId);
 
   const handleDeleteClick = async () => {
     await mutateAsync(id);

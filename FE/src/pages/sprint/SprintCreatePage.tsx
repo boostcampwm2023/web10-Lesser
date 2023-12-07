@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../../apis/api';
 import SprintBacklogSetting from '../../components/sprint/sprintCreate/SprintBacklogSetting';
 import { CreateProcessHeader, CreateProcessText } from '../../components/common/CreateProcess';
-import { BACKLOG_URL, PROCESS_NUMBER } from '../../constants/constants';
+import { CLIENT_URL, PROCESS_NUMBER } from '../../constants/constants';
 import { SprintBacklog, SprintCreateBody } from '../../types/sprint';
 import SprintGoalSetting from './../../components/sprint/sprintCreate/SprintGoalSetting';
 import usePostNewSprint from '../../hooks/queries/sprint/usePostNewSprint';
@@ -16,7 +16,7 @@ const SprintCreatePage = () => {
   const [sprintGoal, setSprintGoal] = useState<string>('');
   const [sprintEndDate, setSprintEndDate] = useState<string>('');
   const { id: projectId } = useSelectedProjectState();
-  const { mutateAsync } = usePostNewSprint();
+  const { mutateAsync } = usePostNewSprint(projectId);
   const { data: backlog, isLoading } = useQuery({
     queryKey: ['backlogs', projectId, 'sprint'],
     queryFn: async () => {
@@ -45,7 +45,7 @@ const SprintCreatePage = () => {
 
   return (
     <>
-      <CreateProcessHeader backLink={BACKLOG_URL.BACKLOG}>
+      <CreateProcessHeader backLink={CLIENT_URL.PROJECT}>
         <CreateProcessText processNum={1} processName="스프린트 이름" active={process >= 0} />
         <CreateProcessText processNum={2} processName="태스크 설정" active={process >= 1} />
       </CreateProcessHeader>

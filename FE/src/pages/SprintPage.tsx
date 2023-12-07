@@ -1,17 +1,19 @@
 import { useState, useEffect, useMemo } from 'react';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import PrograssBar from '../components/common/ProgressBar/ProgressBar';
 import KanbanBoard from '../components/sprint/KanbanBoard';
 import ColumnBoard from '../components/sprint/ColumnBoard';
 import BoardHeader from '../components/sprint/BoardHeader';
 import FilterDropdown from '../components/sprint/FilterDropdown';
+import SprintEndModal from '../components/sprint/modal/SprintEndModal';
+import SprintLandingPage from './sprint/SprintLandingPage';
 import { Task } from '../types/sprint';
 import { UserFilter, TaskGroup } from '../types/sprint';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { transformDate } from '../utils/date';
 import { useSelectedProjectState } from '../stores';
 import { useGetProgressSprint, usePatchTaskState } from '../hooks/queries/sprint';
 import { useModal } from '../modal/useModal';
-import SprintEndModal from '../components/sprint/modal/SprintEndModal';
+import { useNavigate } from 'react-router-dom';
 
 interface BoardTaskListObject {
   storyId?: number;
@@ -33,6 +35,7 @@ const SprintPage = () => {
   const { data, isLoading } = useGetProgressSprint(projectId);
   const { mutate } = usePatchTaskState();
   const endModal = useModal();
+  const navigate = useNavigate();
   const userFilterList = useMemo(() => [{ userId: -1, userName: '전체' }, ...userList], [userList]);
 
   useEffect(() => {
@@ -104,7 +107,7 @@ const SprintPage = () => {
 
   const handleSprintEndButtonClick = () => {
     if (data) {
-      endModal.open(<SprintEndModal id={data.sprintId} close={endModal.close} />);
+      endModal.open(<SprintEndModal id={data.sprintId} close={endModal.close} projectId={projectId} />);
     }
   };
 
@@ -119,7 +122,7 @@ const SprintPage = () => {
   }, [data, userToFilter]);
 
   if (isLoading) {
-    return <div>칸반보드 로딩중</div>;
+    return <div className="min-w-[60.25rem]">칸반보드 로딩중</div>;
   }
 
   if (data?.sprintModal) {
@@ -127,13 +130,13 @@ const SprintPage = () => {
       <div className="flex flex-col items-center min-w-[60.25rem]">
         <p>스프린트가 종료되었습니다.</p>
         <p>회고를 진행하시겠습니까?</p>
-        <button>회고 진행하기</button>
+        <button onClick={() => navigate(`/projects/${projectId}/review/sprint`)}>회고 진행하기</button>
       </div>
     );
   }
 
   if (data?.sprintEnd) {
-    return <div className="min-w-[60.25rem]">진행 중인 스프린트가 없습니다.</div>;
+    return <SprintLandingPage />;
   }
 
   if (data) {
