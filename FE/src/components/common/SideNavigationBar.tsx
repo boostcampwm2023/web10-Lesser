@@ -7,19 +7,19 @@ import useLogout from '../../hooks/pages/useLogout';
 const navigationInformation: NavigationInformation[] = [
   {
     pageName: '백로그',
-    pageURI: '/backlog',
+    pageURI: (projectId) => `/projects/${projectId}/backlog`,
     description:
       '백로그 페이지 설명. 백로그는 제품백로그와 스프린트 백로그가 있으며 에픽, 스토리, 태스크로 이루어진다.',
   },
   {
     pageName: '스프린트',
-    pageURI: '/sprint',
+    pageURI: (projectId) => `/projects/${projectId}/sprint`,
     description:
       '스프린트 페이지 설명. 스프린트 시작하면 칸반보드를 확인할 수 있고, 드래그 앤 드롭을 이용해 티켓을 옮길 수 있다.',
   },
   {
     pageName: '회고',
-    pageURI: '/review/sprint',
+    pageURI: (projectId) => `/projects/${projectId}/review/sprint`,
     description: '회고하는 페이지 설명. 스프린트 백로그 태스트 상태 분석, 번다운 차트, 회고 글 작성 칸이 있을 예정',
   },
 ];
@@ -42,7 +42,7 @@ const SideNavigationBar = () => {
           </li>
         ))}
       </ul>
-      <Link to={'project'} className="py-3 text-lg font-bold text-true-white">
+      <Link to={'projects'} className="py-3 text-lg font-bold text-true-white">
         내 프로젝트
       </Link>
       <button className="py-3 text-lg font-bold text-true-white" onClick={handleLogoutButtonClick}>

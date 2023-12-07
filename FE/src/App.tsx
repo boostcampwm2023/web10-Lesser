@@ -27,7 +27,7 @@ function App() {
             <Route element={<MainPage />}>
               <Route path="/projects/:id/backlog" element={<BacklogPage />} />
               <Route path="/projects/:id/sprint" element={<SprintPage />} />
-              <Route path="/projects/:id/review" element={<ReviewPage />} />
+              <Route path="/projects/:id/review/*" element={<ReviewPage />} />
             </Route>
           </Route>
         </Routes>
