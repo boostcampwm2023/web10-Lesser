@@ -44,6 +44,22 @@ export class BacklogsService {
     @InjectRepository(ProjectCounter) private projectCounterRepository: Repository<ProjectCounter>,
   ) {}
 
+  async readNotDoneBacklog(projectId): Promise<ReadBacklogResponseDto> {
+    const project = await this.findProject(projectId);
+    const backlog = new ReadBacklogResponseDto();
+    backlog.epicList = await this.findEpics(project.id);
+    backlog.epicList.map((ReadBacklogEpicResponseDto) => {
+      ReadBacklogEpicResponseDto.storyList = ReadBacklogEpicResponseDto.storyList.map((ReadBacklogStoryResponseDto) => {
+        ReadBacklogStoryResponseDto.taskList = ReadBacklogStoryResponseDto.taskList.filter(
+          (ReadBacklogTaskResponseDto) => ReadBacklogTaskResponseDto.state !== 'Done',
+        );
+        return ReadBacklogStoryResponseDto;
+      });
+      return ReadBacklogEpicResponseDto;
+    });
+    return backlog;
+  }
+
   async readBacklog(id: number): Promise<ReadBacklogResponseDto> {
     const project = await this.findProject(id);
     const backlog = new ReadBacklogResponseDto();
