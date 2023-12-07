@@ -9,11 +9,11 @@ import EpicComponent from '../../components/backlog/EpicComponent';
 import StoryComponent from '../../components/backlog/StoryComponent';
 import TaskComponent from '../../components/backlog/TaskComponent';
 import PostButton from '../../components/backlog/PostButton';
-import { useParams } from 'react-router-dom';
 import { API_URL } from '../../constants/constants';
+import { useSelectedProjectState } from '../../stores';
 
 const BacklogPage = () => {
-  const { id } = useParams();
+  const id = useSelectedProjectState((state) => state.id);
   const REQUEST_URL = `${API_URL.BACKLOG}/${id}`;
   const { data, isLoading } = useQuery({
     queryKey: ['backlogs', 1],
