@@ -106,6 +106,7 @@ export class BacklogsService {
 
   async createEpic(dto: CreateBacklogsEpicRequestDto): Promise<CreateBacklogsEpicResponseDto> {
     const project = await this.projectRepository.findOne({ where: { id: dto.parentId } });
+    console.log(project);
     const epicCount = await this.getEpicCount(project.id);
     const newEpic = this.epicRepository.create({ title: dto.title, project: project, sequence: epicCount });
     const savedEpic = await this.epicRepository.save(newEpic);

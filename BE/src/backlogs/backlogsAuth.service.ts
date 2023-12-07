@@ -19,8 +19,8 @@ export class BacklogsAuthService {
     const queryData = await this.projectRepository
       .createQueryBuilder('project')
       .innerJoin('project.members', 'member')
-      .where('project.id = : projectId', { projectId })
-      .andWhere('member.id = : memberId', { memberId: memberInfo.id })
+      .where('project.id = :projectId', { projectId })
+      .andWhere('member.id = :memberId', { memberId: memberInfo.id })
       .getOne();
     if (queryData === null) throw new ForbiddenException();
   }

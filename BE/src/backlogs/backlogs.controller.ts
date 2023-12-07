@@ -47,7 +47,7 @@ export class BacklogsController {
 
   @Get(':id')
   async readBacklog(@Param('id', ParseIntPipe) id, @Member() memberInfo: memberDecoratorType) {
-    // await this.backlogsAuthService.checkProjectAuth(id, memberInfo);
+    await this.backlogsAuthService.checkProjectAuth(id, memberInfo);
     return this.backlogsService.readBacklog(id);
   }
 
@@ -56,7 +56,7 @@ export class BacklogsController {
     @Body() body: CreateBacklogsEpicRequestDto,
     @Member() memberInfo: memberDecoratorType,
   ): Promise<CreateBacklogsEpicResponseDto> {
-    // await this.backlogsAuthService.checkProjectAuth(body.projectId, memberInfo);
+    await this.backlogsAuthService.checkProjectAuth(body.parentId, memberInfo);
     return this.backlogsService.createEpic(body);
   }
 
@@ -65,7 +65,7 @@ export class BacklogsController {
     @Body() body: UpdateBacklogsEpicRequestDto,
     @Member() memberInfo: memberDecoratorType,
   ): Promise<Record<string, never>> {
-    // await this.backlogsAuthService.checkEpicAuth(body.id, memberInfo);
+    await this.backlogsAuthService.checkEpicAuth(body.id, memberInfo);
     await this.backlogsService.updateEpic(body);
     return {};
   }
@@ -75,7 +75,7 @@ export class BacklogsController {
     @Body() body: DeleteBacklogsEpicRequestDto,
     @Member() memberInfo: memberDecoratorType,
   ): Promise<Record<string, never>> {
-    // await this.backlogsAuthService.checkEpicAuth(body.id, memberInfo);
+    await this.backlogsAuthService.checkEpicAuth(body.id, memberInfo);
     await this.backlogsService.deleteEpic(body);
     return {};
   }
@@ -85,7 +85,7 @@ export class BacklogsController {
     @Body() body: CreateBacklogsStoryRequestDto,
     @Member() memberInfo: memberDecoratorType,
   ): Promise<CreateBacklogsStoryResponseDto> {
-    // await this.backlogsAuthService.checkEpicAuth(body.epicId, memberInfo);
+    await this.backlogsAuthService.checkEpicAuth(body.parentId, memberInfo);
     return this.backlogsService.createStory(body);
   }
 
@@ -94,7 +94,7 @@ export class BacklogsController {
     @Body() body: UpdateBacklogsStoryRequestDto,
     @Member() memberInfo: memberDecoratorType,
   ): Promise<Record<string, never>> {
-    // await this.backlogsAuthService.checkStoryAuth(body.id, memberInfo);
+    await this.backlogsAuthService.checkStoryAuth(body.id, memberInfo);
     await this.backlogsService.updateStory(body);
     return {};
   }
@@ -104,7 +104,7 @@ export class BacklogsController {
     @Body() body: DeleteBacklogsStoryRequestDto,
     @Member() memberInfo: memberDecoratorType,
   ): Promise<Record<string, never>> {
-    // await this.backlogsAuthService.checkStoryAuth(body.id, memberInfo);
+    await this.backlogsAuthService.checkStoryAuth(body.id, memberInfo);
     await this.backlogsService.deleteStory(body);
     return {};
   }
@@ -114,7 +114,7 @@ export class BacklogsController {
     @Body() body: CreateBacklogsTaskRequestDto,
     @Member() memberInfo: memberDecoratorType,
   ): Promise<CreateBacklogsTaskResponseDto> {
-    // await this.backlogsAuthService.checkStoryAuth(body.storyId, memberInfo);
+    await this.backlogsAuthService.checkStoryAuth(body.parentId, memberInfo);
     return this.backlogsService.createTask(body);
   }
 
@@ -123,7 +123,7 @@ export class BacklogsController {
     @Body() body: UpdateBacklogsRequestTaskDto,
     @Member() memberInfo: memberDecoratorType,
   ): Promise<Record<string, never>> {
-    // await this.backlogsAuthService.checkTaskAuth(body.id, memberInfo);
+    await this.backlogsAuthService.checkTaskAuth(body.id, memberInfo);
     await this.backlogsService.updateTask(body);
     return {};
   }
@@ -133,7 +133,7 @@ export class BacklogsController {
     @Body() body: DeleteBacklogsTaskRequestDto,
     @Member() memberInfo: memberDecoratorType,
   ): Promise<Record<string, never>> {
-    // await this.backlogsAuthService.checkTaskAuth(body.id, memberInfo);
+    await this.backlogsAuthService.checkTaskAuth(body.id, memberInfo);
     await this.backlogsService.deleteTask(body);
     return {};
   }
