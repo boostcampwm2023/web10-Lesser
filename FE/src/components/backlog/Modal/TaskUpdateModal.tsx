@@ -1,26 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 import { api } from '../../../apis/api';
-import TaskForm from '../TaskForm';
-
-// interface TaskUpdateModalProps {
-//   close: () => void;
-//   defaultData: TaskUpdateBody;
-// }
-
-// interface TaskUpdateBody {
-//   id: number;
-//   title: string;
-//   userId: string | string;
-//   point: number;
-//   condition: string;
-// }
-
+import TaskForm from '../taskForm/TaskForm';
 import { TaskModalProps } from './TaskModal';
 import { ReadBacklogTaskResponseDto } from '../../../types/backlog';
+import useTaskManager from '../../../hooks/pages/backlog/useTaskManager';
 
 const TaskUpdateModal = ({ close, id, title, userId, point, condition }: TaskModalProps) => {
   const formRef = useRef<HTMLFormElement>(null);
+  const { taskManagerId, setNewTaskManager } = useTaskManager(Number(userId));
   const getBody = () => {
     if (!formRef.current) return { id, title, userId, point, condition };
     return [...formRef.current.querySelectorAll('input'), formRef.current.querySelector('textarea')].reduce(
@@ -28,11 +16,11 @@ const TaskUpdateModal = ({ close, id, title, userId, point, condition }: TaskMod
         if (!cur) return acc;
         const newData = {
           ...acc,
-          [cur.id]: cur.id === 'point' || cur.id === 'userId' ? Number(cur.value) : cur.value,
+          [cur.id]: cur.id === 'point' ? Number(cur.value) : cur.value,
         };
         return newData;
       },
-      { id } as ReadBacklogTaskResponseDto,
+      { id, userId: taskManagerId } as ReadBacklogTaskResponseDto,
     );
   };
   const queryClient = useQueryClient();
@@ -56,8 +44,9 @@ const TaskUpdateModal = ({ close, id, title, userId, point, condition }: TaskMod
       <TaskForm
         close={close}
         handleSubmit={handleSubmit}
+        setNewTaskManager={setNewTaskManager}
         formRef={formRef}
-        defaultData={{ id, title, userId, point, condition }}
+        defaultData={{ id, title, userId: taskManagerId, point, condition }}
       />
     </>
   );
