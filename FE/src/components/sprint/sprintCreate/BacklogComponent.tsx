@@ -6,8 +6,8 @@ import {
 } from '../../../types/backlog';
 import EpicComponent from '../../backlog/EpicComponent';
 import StoryComponent from '../../backlog/StoryComponent';
-import TaskComponent from '../../backlog/TaskComponent';
 import PostButton from '../../backlog/PostButton';
+import SprintBacklogTask from './SprintBacklogTask';
 
 interface BacklogComponentProps {
   backlog: { epicList: ReadBacklogEpicResponseDto[] };
@@ -28,7 +28,7 @@ const BacklogComponent = ({ backlog }: BacklogComponentProps) => (
                         <Draggable draggableId={`${task.id}`} index={index} key={`TASK${task.id}`}>
                           {(provided) => (
                             <div {...provided.dragHandleProps} {...provided.draggableProps} ref={provided.innerRef}>
-                              <TaskComponent {...task} />
+                              <SprintBacklogTask {...task} />
                             </div>
                           )}
                         </Draggable>

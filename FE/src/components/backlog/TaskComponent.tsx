@@ -9,9 +9,9 @@ const TaskComponent = (props: ReadBacklogTaskResponseDto) => {
   return (
     <>
       <div className="flex items-center justify-between border-t py-[0.563rem] pl-2.5 pr-[0.438rem] bg-white text-house-green text-r whitespace-nowrap">
-        <div className="flex items-center gap-2.5 w-[66.76%]">
+        <div className="flex items-center gap-2.5">
           <span className="w-16 font-bold">Task{sequence}</span>
-          <span>{title}</span>
+          <span className="w-[33.75rem]">{title}</span>
         </div>
         <span className="w-[6.25rem] truncate">{userId}</span>
         <span className="w-[5rem] truncate">{point}POINT</span>

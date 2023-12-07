@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import sprintLanding from '../../assets/images/sprint-landing.png';
 
 const SprintLandingPage = () => {
@@ -12,6 +13,12 @@ const SprintLandingPage = () => {
       ),
     url(${sprintLanding})`,
   };
+  const navigate = useNavigate();
+
+  const handleSprintCreateClick = () => {
+    navigate('create');
+  };
+
   return (
     <main className="w-[60.25rem]">
       <div className="flex justify-between">
@@ -42,7 +49,10 @@ const SprintLandingPage = () => {
 
         <div className="w-[450px] h-[550px] self-end" style={linearGradientStyle}></div>
       </div>
-      <button className="w-[60.25rem] h-[2.375rem] rounded-md bg-starbucks-green font-bold text-ml text-true-white">
+      <button
+        className="w-[60.25rem] h-[2.375rem] mt-[-2px] rounded-md bg-starbucks-green font-bold text-ml text-true-white"
+        onClick={handleSprintCreateClick}
+      >
         스프린트 생성하기
       </button>
     </main>
