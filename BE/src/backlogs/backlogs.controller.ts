@@ -3,20 +3,24 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Put,
+  Res,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { IsLoginGuard } from 'src/common/auth/IsLogin.guard';
 import { Member } from 'src/common/decorators/memberDecorator';
 import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
 import { BacklogsService } from './backlogs.service';
 import { BacklogsAuthService } from './backlogsAuth.service';
+import { ReadBacklogResponseDto } from './dto/backlog.dto';
 import {
   CreateBacklogsEpicRequestDto,
   CreateBacklogsEpicResponseDto,
@@ -46,9 +50,16 @@ export class BacklogsController {
   ) {}
 
   @Get(':id')
-  async readBacklog(@Param('id', ParseIntPipe) id, @Member() memberInfo: memberDecoratorType) {
+  async readBacklog(
+    @Param('id', ParseIntPipe) id,
+    @Member() memberInfo: memberDecoratorType,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ReadBacklogResponseDto> {
     await this.backlogsAuthService.checkProjectAuth(id, memberInfo);
-    return this.backlogsService.readBacklog(id);
+    const readBacklogData = await this.backlogsService.readBacklog(id);
+    if (readBacklogData.epicList.length === 0) res.status(HttpStatus.NOT_FOUND);
+    else res.status(HttpStatus.OK);
+    return readBacklogData;
   }
 
   @Post('epic')
