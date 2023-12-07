@@ -1,9 +1,9 @@
 import { Draggable, Droppable } from 'react-beautiful-dnd';
-import TaskComponent from '../../backlog/TaskComponent';
 import ClosedIcon from '../../../assets/icons/ClosedIcon';
 import { SprintBacklog } from '../../../types/sprint';
 import { useQueryClient } from '@tanstack/react-query';
 import { ReadBacklogEpicResponseDto } from '../../../types/backlog';
+import SprintBacklogTask from './SprintBacklogTask';
 
 interface SprintBacklogComponentProps {
   sprintBacklog: SprintBacklog[];
@@ -59,7 +59,7 @@ const SprintBacklogComponent = ({ sprintBacklog, setSprintBacklog, projectId }: 
                       ref={provided.innerRef}
                     >
                       <div className="w-full">
-                        <TaskComponent {...task} />
+                        <SprintBacklogTask {...task} />
                       </div>
                       <button className="pr-2" onClick={() => handleDeleteButtonClick(task, index)}>
                         <ClosedIcon color="text-error-red" />
