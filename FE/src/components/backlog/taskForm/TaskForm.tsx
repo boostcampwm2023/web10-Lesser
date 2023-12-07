@@ -3,7 +3,6 @@ import TaskInputLayout from './TaskInputLayout';
 import useTaskUsername from '../../../hooks/pages/backlog/useTaskUsername';
 import ChevronUpIcon from '../../../assets/icons/ChevronUpIcon';
 import ChevronDownIcon from '../../../assets/icons/ChevronDownIcon';
-import { useEffect } from 'react';
 import useDropdownToggle from '../../../hooks/pages/backlog/useDropdownToggle';
 
 interface TaskFormProps {
