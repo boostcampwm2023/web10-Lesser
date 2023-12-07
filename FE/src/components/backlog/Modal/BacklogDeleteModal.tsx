@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../apis/api';
+import { useSelectedProjectState } from '../../../stores';
 
 interface BacklogDeleteModalProps {
   id: number;
@@ -9,13 +10,15 @@ interface BacklogDeleteModalProps {
 
 const BacklogDeleteModal = ({ id, url, close }: BacklogDeleteModalProps) => {
   const queryClient = useQueryClient();
+  const projectId = useSelectedProjectState((state) => state.id);
   const { mutateAsync } = useMutation({
     mutationFn: async () => {
       const response = await api.delete(`/backlogs${url}`, { data: { id: id } });
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['backlogs', 1] });
+      queryClient.invalidateQueries({ queryKey: ['backlogs', projectId] });
+      queryClient.invalidateQueries({ queryKey: ['backlogs', projectId, 'sprint'] });
     },
   });
 
