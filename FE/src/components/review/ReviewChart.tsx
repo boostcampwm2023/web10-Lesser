@@ -5,7 +5,7 @@ interface TaskList {
   completedAt: string;
   condition: string;
   id: number;
-  memberId: number;
+  userId: string;
   point: number;
 }
 
