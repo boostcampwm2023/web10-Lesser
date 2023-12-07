@@ -7,6 +7,13 @@ const setAccessToken = (newAccessToken: string | undefined): void => {
   accessToken = newAccessToken;
 };
 
+const isAccessTokenExisting = () => !!accessToken;
+const isRefreshTokenExisting = () => {
+  const refreshToken = sessionStorage.getItem(REFRESH_TOKEN);
+
+  return !!refreshToken;
+};
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_NEST_API_URL,
   headers: {
@@ -91,4 +98,4 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(requestSucceed, requestFail);
 
-export { api, setAccessToken };
+export { api, setAccessToken, isAccessTokenExisting, isRefreshTokenExisting };

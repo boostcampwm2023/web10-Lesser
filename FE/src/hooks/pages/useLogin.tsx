@@ -17,7 +17,7 @@ const login = async (
       setAccessToken(accessToken);
       sessionStorage.setItem('refreshToken', refreshToken);
       updateUserState({ id: Number(id), username });
-      navigate('/project');
+      navigate('/projects');
     })
     .catch(() => {
       setSearchParams('');
