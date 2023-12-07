@@ -1,9 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import { fetchPostProject } from '../../../apis/project';
 import { useSelectedProjectState } from '../../../stores';
 import { ProjectUser } from '../../../types/project';
 import { useNavigate } from 'react-router-dom';
 import { CLIENT_URL } from '../../../constants/constants';
+import fetchPostProject from '../../../apis/project/fetchPostProject';
 
 const usePostNewProject = (userList: ProjectUser[]) => {
   const updateProjectData = useSelectedProjectState((state) => state.updateProjectData);
