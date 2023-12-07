@@ -119,6 +119,16 @@ const SprintPage = () => {
     return <div>칸반보드 로딩중</div>;
   }
 
+  if (data?.sprintModal) {
+    return (
+      <div className="flex flex-col items-center">
+        <p>스프린트가 종료되었습니다.</p>
+        <p>회고를 진행하시겠습니까?</p>
+        <button>회고 진행하기</button>
+      </div>
+    );
+  }
+
   if (data) {
     return (
       <section className="min-w-[60.25rem]">
