@@ -23,3 +23,5 @@ export const reviewTabs = ['스프린트 정보', '차트', '회고란'];
 export const BACKLOG_URL = {
   BACKLOG: '/backlogs',
 };
+
+export const SPRINT_BACKLOG_DROP_ID = 'sprintBacklog';

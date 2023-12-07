@@ -29,6 +29,11 @@ const SprintCreatePage = () => {
   };
 
   const handleCreateButtonClick = () => {
+    if (!sprintBacklog.length) {
+      alert('스프린트 백로그를 추가해주세요.');
+      return;
+    }
+
     const dataBody: SprintCreateBody = {
       projectId,
       taskList: sprintBacklog.map(({ id }) => id),

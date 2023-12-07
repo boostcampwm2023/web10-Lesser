@@ -5,6 +5,7 @@ import BacklogComponent from './BacklogComponent';
 import SprintBacklogComponent from './SprintBacklogComponent';
 import { useQueryClient } from '@tanstack/react-query';
 import { SprintBacklog } from '../../../types/sprint';
+import { SPRINT_BACKLOG_DROP_ID } from '../../../constants/constants';
 
 interface SprintBacklogSettingProps {
   backlog: { epicList: ReadBacklogEpicResponseDto[] };
@@ -18,10 +19,34 @@ const SprintBacklogSetting = (props: SprintBacklogSettingProps) => {
   const { backlog, sprintBacklog, setSprintBacklog, onCreateButtonClick, projectId } = props;
   const queryClient = useQueryClient();
 
+  const deleteSprintBacklog = (task: SprintBacklog, index: number) => {
+    const { epicIndex, storyIndex, taskIndex } = task;
+
+    queryClient.setQueryData(
+      ['backlogs', projectId, 'sprint'],
+      (prevBacklog: { epicList: ReadBacklogEpicResponseDto[] }) => {
+        const newBacklogData = structuredClone(prevBacklog);
+        newBacklogData.epicList[epicIndex].storyList[storyIndex].taskList.splice(taskIndex, 0, { ...task });
+        return newBacklogData;
+      },
+    );
+
+    setSprintBacklog((prevSprintBacklog) => {
+      const newSprintBacklog = structuredClone(prevSprintBacklog);
+      newSprintBacklog.splice(index, 1);
+      return newSprintBacklog;
+    });
+  };
+
   const onDragEnd = (result: DropResult) => {
-    const { destination, source } = result;
+    const { destination, source, draggableId } = result;
 
     if (!destination) {
+      if (source.droppableId === SPRINT_BACKLOG_DROP_ID) {
+        const task = JSON.parse(draggableId);
+        deleteSprintBacklog(task, source.index);
+      }
+
       return;
     }
 
@@ -78,7 +103,7 @@ const SprintBacklogSetting = (props: SprintBacklogSettingProps) => {
               <p className="font-bold text-starbucks-green text-s">DROP</p>
             </div>
             <div className="flex flex-col gap-3 min-w-[36.25rem] max-w-[36.25rem]">
-              <SprintBacklogComponent {...{ sprintBacklog, setSprintBacklog, projectId }} />
+              <SprintBacklogComponent {...{ sprintBacklog, deleteSprintBacklog }} />
               <button className="p-3 rounded bg-starbucks-green text-true-white" onClick={onCreateButtonClick}>
                 스프린트 생성하기
               </button>

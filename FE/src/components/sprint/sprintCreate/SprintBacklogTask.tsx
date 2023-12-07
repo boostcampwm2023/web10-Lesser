@@ -10,11 +10,11 @@ const SprintBacklogTask = (props: ReadBacklogTaskResponseDto) => {
   return (
     <>
       <div className="flex items-center justify-between border-t py-[0.563rem] pl-2.5 pr-[0.438rem] bg-white text-house-green text-r whitespace-nowrap">
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 w-[80%]">
           <span className="w-16 font-bold">Task{sequence}</span>
-          <span className="w-[18.75rem]">{title}</span>
+          <span>{title}</span>
         </div>
-        <span className="w-[6.25rem] truncate">{userId}</span>
+        <span className="w-[5rem] truncate">{userId}</span>
         <button
           className="flex items-center font-bold hover:underline"
           onClick={() => {
