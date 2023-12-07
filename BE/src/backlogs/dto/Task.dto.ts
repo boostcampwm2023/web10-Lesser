@@ -5,7 +5,7 @@ export class CreateBacklogsTaskRequestDto extends OmitType(baseTaskDto, ['id', '
 export class DeleteBacklogsTaskRequestDto extends PickType(baseTaskDto, ['id']) {}
 export class UpdateBacklogsRequestTaskDto extends IntersectionType(
   PickType(baseTaskDto, ['id']),
-  PartialType(OmitType(baseTaskDto, ['id'])),
+  PartialType(OmitType(baseTaskDto, ['id', 'parentId'])),
 ) {}
 
 export class CreateBacklogsTaskResponseDto extends PickType(baseTaskDto, ['id', 'sequence']) {}
