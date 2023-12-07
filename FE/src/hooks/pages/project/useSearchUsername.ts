@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { ProjectUser } from '../../../types/project';
-import fetchGetUsername from '../../../apis/project/fetchGetUsername';
+import { fetchGetUsername } from '../../../apis/project';
 
 const useSearchUsername = () => {
   const usernameInputRef = useRef<HTMLInputElement>(null);
