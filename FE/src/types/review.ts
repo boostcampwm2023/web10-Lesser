@@ -30,3 +30,8 @@ export interface SelectedSprint {
   taskList: Task[];
   reminiscing: Reminiscing;
 }
+
+export interface Data {
+  sprintList: Sprint[];
+  selectedSprint: SelectedSprint;
+}

@@ -27,7 +27,7 @@ const useReminiscing = (
       window.alert('값을 입력해주세요');
       return;
     }
-    if (content.trim() === sprint.reminiscing.content) {
+    if (sprint.reminiscing && content.trim() === sprint.reminiscing.content) {
       setEditTextarea(false);
       return;
     }

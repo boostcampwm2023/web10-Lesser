@@ -20,7 +20,7 @@ const SprintCreatePage = () => {
   const { data: backlog, isLoading } = useQuery({
     queryKey: ['backlogs', projectId, 'sprint'],
     queryFn: async () => {
-      const response = await api.get('/backlogs/1');
+      const response = await api.get(`/backlogs/${projectId}`);
       return response.data;
     },
   });
