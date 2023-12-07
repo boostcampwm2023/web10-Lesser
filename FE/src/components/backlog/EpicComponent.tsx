@@ -16,7 +16,7 @@ const EpicComponent = ({ title, id, children, sequence }: EpicComponentProps) =>
   const { detail, toggleDetail } = useDetail();
 
   return (
-    <div className="flex flex-col gap-4 py-3 px-3 border border-house-green rounded-md">
+    <div className="flex flex-col gap-4 py-3 px-3 border bg-true-white border-house-green rounded-md">
       <div className="flex gap-1 items-center">
         <button onClick={toggleDetail}>{detail ? <ChevronDownIcon /> : <ChevronRightIcon />}</button>
         <div className="flex gap-2 w-full text-house-green font-bold">
