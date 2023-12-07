@@ -27,9 +27,9 @@ const ReviewPage = () => {
     <>
       <ReviewHeader sprintList={data.sprintList} currentSprintId={data.selectedSprint.id} setSprintId={setSprintId} />
       <Routes>
-        <Route path="/" element={<ReviewSprint {...data.selectedSprint} />} />
+        <Route path="/sprint" element={<ReviewSprint {...data.selectedSprint} />} />
         <Route path="/chart" element={<ReviewChart {...data.selectedSprint} />} />
-        <Route path="/reminiscing" element={<ReviewReminiscing {...data.selectedSprint} />} />
+        <Route path="/write" element={<ReviewReminiscing {...data.selectedSprint} />} />
       </Routes>
     </>
   );
