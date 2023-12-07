@@ -1,3 +1,4 @@
+import useGetUsername from '../../../hooks/pages/backlog/useGetUsername';
 import { useModal } from '../../../modal/useModal';
 import { ReadBacklogTaskResponseDto } from '../../../types/backlog';
 import BacklogDeleteModal from './BacklogDeleteModal';
@@ -9,6 +10,7 @@ export interface TaskModalProps extends ReadBacklogTaskResponseDto {
 
 const TaskModal = (props: TaskModalProps) => {
   const { userId, title, point, condition, id, close } = props;
+  const { getUsernameByUserid } = useGetUsername();
   const updateModal = useModal(false);
   const deleteModal = useModal();
 
@@ -42,7 +44,9 @@ const TaskModal = (props: TaskModalProps) => {
             <span className="text-m font-bold pr-2">담당자</span>
             Task를 수행할 멤버를 선정합니다
           </div>
-          <div className="w-[9.375rem] py-2 px-2.5 border rounded-sm text-s border-starbucks-green">{userId}</div>
+          <div className="w-[9.375rem] py-2 px-2.5 border rounded-sm text-s border-starbucks-green">
+            {getUsernameByUserid(Number(userId))}
+          </div>
         </div>
         <div className="flex flex-col gap-2">
           <span className="text-s">
