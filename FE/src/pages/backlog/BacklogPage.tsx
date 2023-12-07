@@ -9,21 +9,27 @@ import EpicComponent from '../../components/backlog/EpicComponent';
 import StoryComponent from '../../components/backlog/StoryComponent';
 import TaskComponent from '../../components/backlog/TaskComponent';
 import PostButton from '../../components/backlog/PostButton';
-import { useParams } from 'react-router-dom';
 import { API_URL } from '../../constants/constants';
+import { useSelectedProjectState } from '../../stores';
+import BacklogLandingPage from './BacklogLandingPage';
 
 const BacklogPage = () => {
-  const { id } = useParams();
+  const id = useSelectedProjectState((state) => state.id);
   const REQUEST_URL = `${API_URL.BACKLOG}/${id}`;
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['backlogs', 1],
     queryFn: async () => {
       const data = await api.get(REQUEST_URL);
       return data.data;
     },
+    retry: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   });
 
   if (isLoading) return <></>;
+
+  if (isError) return <BacklogLandingPage />;
 
   return (
     <main className="flex flex-col gap-4 min-w-[60.25rem] font-pretendard select-none">

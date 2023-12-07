@@ -4,7 +4,7 @@ import { projectElement } from '../../types/project';
 import { Link } from 'react-router-dom';
 
 const ProjectCard = ({ id, name, subject, nextPage, myTaskCount, userList }: projectElement) => {
-  const NEXT_URL = nextPage === 'backlogs' ? CLIENT_URL.BACKLOG(id) : `/sprint/${id}`;
+  const NEXT_URL = nextPage === 'backlogs' ? CLIENT_URL.BACKLOG(id) : CLIENT_URL.SPRINT(id);
   const updateProjectData = useSelectedProjectState((state) => state.updateProjectData);
   const handleProjectCardClick = () => {
     updateProjectData({ id, userList });

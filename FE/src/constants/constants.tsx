@@ -14,8 +14,9 @@ export const API_URL = {
 };
 
 export const CLIENT_URL = {
-  PROJECT: '/project',
-  BACKLOG: (id: number | string) => `/backlog/${id}`,
+  PROJECT: '/projects',
+  BACKLOG: (id: number | string) => `/projects/${id}/backlog`,
+  SPRINT: (id: number | string) => `/projects/${id}/sprint`,
 };
 
 export const reviewTabs = ['스프린트 정보', '차트', '회고란'];
