@@ -24,3 +24,12 @@ export interface SprintBacklog extends ReadBacklogTaskResponseDto {
   storyIndex: number;
   taskIndex: number;
 }
+
+export interface SprintCreateBody {
+  projectId: number;
+  taskList: number[];
+  goal: string;
+  startDate: string;
+  endDate: string;
+  title: string;
+}

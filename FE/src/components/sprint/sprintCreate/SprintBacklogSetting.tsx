@@ -10,10 +10,12 @@ interface SprintBacklogSettingProps {
   backlog: { epicList: ReadBacklogEpicResponseDto[] };
   sprintBacklog: SprintBacklog[];
   setSprintBacklog: React.Dispatch<React.SetStateAction<SprintBacklog[]>>;
+  onCreateButtonClick: () => void;
+  projectId: number;
 }
 
 const SprintBacklogSetting = (props: SprintBacklogSettingProps) => {
-  const { backlog, sprintBacklog, setSprintBacklog } = props;
+  const { backlog, sprintBacklog, setSprintBacklog, onCreateButtonClick, projectId } = props;
   const queryClient = useQueryClient();
 
   const onDragEnd = (result: DropResult) => {
@@ -43,11 +45,14 @@ const SprintBacklogSetting = (props: SprintBacklogSettingProps) => {
       taskIndex: source.index,
     };
 
-    queryClient.setQueryData(['backlogs', 1, 'sprint'], (prevBacklog: { epicList: ReadBacklogEpicResponseDto[] }) => {
-      const newBacklogData = structuredClone(prevBacklog);
-      newBacklogData.epicList[epicIndex].storyList[storyIndex].taskList.splice(source.index, 1);
-      return newBacklogData;
-    });
+    queryClient.setQueryData(
+      ['backlogs', projectId, 'sprint'],
+      (prevBacklog: { epicList: ReadBacklogEpicResponseDto[] }) => {
+        const newBacklogData = structuredClone(prevBacklog);
+        newBacklogData.epicList[epicIndex].storyList[storyIndex].taskList.splice(source.index, 1);
+        return newBacklogData;
+      },
+    );
 
     setSprintBacklog((prevSprintBacklog) => {
       const newSprintBacklog = structuredClone(prevSprintBacklog);
@@ -73,8 +78,10 @@ const SprintBacklogSetting = (props: SprintBacklogSettingProps) => {
               <p className="font-bold text-starbucks-green text-s">DROP</p>
             </div>
             <div className="flex flex-col gap-3 min-w-[36.25rem] max-w-[36.25rem]">
-              <SprintBacklogComponent sprintBacklog={sprintBacklog} setSprintBacklog={setSprintBacklog} />
-              <button className="p-3 rounded bg-starbucks-green text-true-white">스프린트 생성하기</button>
+              <SprintBacklogComponent {...{ sprintBacklog, setSprintBacklog, projectId }} />
+              <button className="p-3 rounded bg-starbucks-green text-true-white" onClick={onCreateButtonClick}>
+                스프린트 생성하기
+              </button>
             </div>
           </div>
         </DragDropContext>

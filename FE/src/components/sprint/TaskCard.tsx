@@ -1,6 +1,7 @@
 import { Draggable } from 'react-beautiful-dnd';
 import { useModal } from '../../modal/useModal';
 import TaskModal from '../backlog/Modal/TaskModal';
+import { useSelectedProjectState } from '../../stores';
 
 interface TaskCardProps {
   userId: string | number;
@@ -14,11 +15,13 @@ interface TaskCardProps {
 }
 
 const TaskCard = (props: TaskCardProps) => {
-  const { id, title, userId, point, index } = props;
+  const { id, title, userId: taskUserId, point, index } = props;
   const { open, close } = useModal();
   const handleTaskClick = () => {
     open(<TaskModal {...props} close={close} />);
   };
+  const { userList } = useSelectedProjectState();
+  const userName = userList.find(({ userId }) => userId === Number(taskUserId))?.userName;
 
   return (
     <Draggable draggableId={String(id)} index={index}>
@@ -35,7 +38,7 @@ const TaskCard = (props: TaskCardProps) => {
           <p className="font-medium">{title}</p>
           <p className="flex justify-between text-starbucks-green">
             <span className="font-bold">{id}</span>
-            <span>{userId}</span>
+            <span>{userName}</span>
             <span>{point} point</span>
           </p>
         </div>
