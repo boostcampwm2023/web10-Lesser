@@ -7,7 +7,7 @@ const LoginPage = () => {
   const { code, handleLoginButtonClick } = useLogin();
 
   return (
-    <div className="flex h-screen min-w-[95rem]">
+    <div className="flex h-screen min-w-[95rem] w-screen">
       <div className="flex items-center justify-center w-1/2 bg-true-white">
         <img className="w-[38rem] h-[38rem]" src={loginImage} alt="로그인하는 레서" />
       </div>
@@ -15,11 +15,11 @@ const LoginPage = () => {
         <LesserTextLogo width={272} height={72} color="#006241" />
         <p className="mt-5 mb-16 text-2xl font-medium">적고 쉽고 애자일하게 일하자</p>
         <p className="mt-2 mb-3 text-base font-bold">GitHub 로그인</p>
-        <button onClick={handleLoginButtonClick}>
+        <button onClick={handleLoginButtonClick} disabled={code ? true : false}>
           <GithubLogin />
         </button>
       </div>
-      {code && <div className="absolute w-full h-full bg-white/[0.4] "></div>}
+      {code && <div className="absolute w-screen h-screen bg-white/[0.4]"></div>}
     </div>
   );
 };
