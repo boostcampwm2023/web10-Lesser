@@ -14,7 +14,7 @@ import { useGetProgressSprint, usePatchTaskState } from '../hooks/queries/sprint
 
 interface BoardTaskListObject {
   storyId?: number;
-  storyNumber?: number;
+  storySequence?: number;
   storyTitle?: string;
   ToDo: Task[];
   InProgress: Task[];
@@ -190,12 +190,12 @@ const SprintPage = () => {
           </div>
           <ul className="flex flex-col gap-y-1.5">
             {boardTaskList?.map((taskListByStory, index) => {
-              const { storyId, storyNumber, storyTitle } = taskListByStory;
+              const { storyId, storySequence, storyTitle } = taskListByStory;
 
               return (
                 <li key={index}>
                   <DragDropContext onDragEnd={handleDragEnd}>
-                    <KanbanBoard {...{ storyId, storyNumber, storyTitle }}>
+                    <KanbanBoard {...{ storyId, storySequence, storyTitle }}>
                       <ColumnBoard taskList={taskListByStory?.ToDo} state="ToDo" {...{ storyId }} />
                       <ColumnBoard taskList={taskListByStory?.InProgress} state="InProgress" {...{ storyId }} />
                       <ColumnBoard taskList={taskListByStory?.Done} state="Done" {...{ storyId }} />
