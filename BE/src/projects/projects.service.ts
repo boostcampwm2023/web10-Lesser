@@ -65,13 +65,19 @@ export class ProjectsService {
         project.id = projectData.id;
         project.name = projectData.name;
         project.subject = projectData.subject;
-        project.nextPage = 'backlogs';
+        project.nextPage = (await this.hasProgressSprint(project.id)) ? 'sprints' : 'backlogs';
         project.myTaskCount = await this.getTaskCount(project.id, memberInfo);
         project.userList = await this.getUserList(projectData.id);
         return project;
       }),
     );
     return projectList;
+  }
+
+  private async hasProgressSprint(projectId: number) {
+    const sprintData = await this.sprintRepository.findOne({ where: { project_id: projectId, closed_date: IsNull() } });
+    if (sprintData === null) return false;
+    return true;
   }
 
   private async getTaskCount(projectId: number, memberInfo: memberDecoratorType): Promise<number> {
