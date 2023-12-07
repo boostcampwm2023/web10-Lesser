@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 import { api } from '../../../apis/api';
-import TaskForm from '../TaskForm';
+import TaskForm from '../taskForm/TaskForm';
 import { TaskModalProps } from './TaskModal';
 import { ReadBacklogTaskResponseDto } from '../../../types/backlog';
 import useTaskManager from '../../../hooks/pages/backlog/useTaskManager';
 
 const TaskUpdateModal = ({ close, id, title, userId, point, condition }: TaskModalProps) => {
   const formRef = useRef<HTMLFormElement>(null);
-  const { taskManagerId, handleTaskManagerClick } = useTaskManager(Number(userId));
+  const { taskManagerId, setNewTaskManager } = useTaskManager(Number(userId));
   const getBody = () => {
     if (!formRef.current) return { id, title, userId, point, condition };
     return [...formRef.current.querySelectorAll('input'), formRef.current.querySelector('textarea')].reduce(
@@ -44,7 +44,7 @@ const TaskUpdateModal = ({ close, id, title, userId, point, condition }: TaskMod
       <TaskForm
         close={close}
         handleSubmit={handleSubmit}
-        handleTaskManagerClick={handleTaskManagerClick}
+        setNewTaskManager={setNewTaskManager}
         formRef={formRef}
         defaultData={{ id, title, userId: taskManagerId, point, condition }}
       />
