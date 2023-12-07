@@ -11,10 +11,15 @@ const NavigationButton = ({ pageName, description, pageURI, currentURI }: Naviga
   const isSameURL = () => {
     const currentUriList = currentURI.split('/');
     const pageUriList = pageURI(id).split('/');
+
     const currentUriLength = currentUriList.length;
     const pageUriLength = pageUriList.length;
 
     if (currentUriLength === pageUriLength && currentUriList[currentUriLength - 1] === pageUriList[pageUriLength - 1]) {
+      return true;
+    }
+
+    if (currentUriList[currentUriLength - 2] === pageUriList[pageUriLength - 2]) {
       return true;
     }
 
