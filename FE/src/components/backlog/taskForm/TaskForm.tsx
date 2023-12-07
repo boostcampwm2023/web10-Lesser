@@ -21,7 +21,7 @@ interface TaskFormProps {
 }
 
 const TaskForm = ({ handleSubmit, close, setNewTaskManager, formRef, defaultData = null }: TaskFormProps) => {
-  const { detail, toggleDetail, detailRef, handleOutsideClick } = useDropdownToggle();
+  const { detail, toggleDetail, detailRef } = useDropdownToggle();
   const { username, setNewUsername, resetUsername } = useTaskUsername(Number(defaultData?.userId));
   const handleDropdownClick = ({ currentTarget }: React.MouseEvent<HTMLButtonElement>) => {
     setNewTaskManager(Number(currentTarget.id));
@@ -33,13 +33,6 @@ const TaskForm = ({ handleSubmit, close, setNewTaskManager, formRef, defaultData
     resetUsername();
     toggleDetail();
   };
-  useEffect(() => {
-    addEventListener('mousedown', handleOutsideClick);
-
-    return () => {
-      removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
 
   return (
     <div className="fixed top-0 left-0 bg-black w-screen h-screen bg-opacity-30 flex justify-center items-center">

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const useDropdownToggle = () => {
   const [detail, setDetail] = useState<Boolean>(false);
@@ -14,7 +14,15 @@ const useDropdownToggle = () => {
     setDetail((detail) => !detail);
   };
 
-  return { detail, toggleDetail, detailRef, handleOutsideClick };
+  useEffect(() => {
+    addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
+  return { detail, toggleDetail, detailRef };
 };
 
 export default useDropdownToggle;
