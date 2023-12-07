@@ -5,7 +5,7 @@ export interface CompositionComponentProps {
 }
 
 export interface ReadBacklogTaskResponseDto {
-  userId: string;
+  userId: string | number;
   id: number;
   title: string;
   state: string;

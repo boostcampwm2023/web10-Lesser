@@ -3,25 +3,28 @@ import { useRef } from 'react';
 import { api } from '../../../apis/api';
 import TaskForm from '../TaskForm';
 
-interface TaskUpdateModalProps {
-  close: () => void;
-  defaultData: TaskUpdateBody;
-}
+// interface TaskUpdateModalProps {
+//   close: () => void;
+//   defaultData: TaskUpdateBody;
+// }
 
-interface TaskUpdateBody {
-  id: number;
-  title: string;
-  userId: string;
-  point: number;
-  condition: string;
-}
+// interface TaskUpdateBody {
+//   id: number;
+//   title: string;
+//   userId: string | string;
+//   point: number;
+//   condition: string;
+// }
 
-const TaskUpdateModal = ({ close, defaultData }: TaskUpdateModalProps) => {
+import { TaskModalProps } from './TaskModal';
+import { ReadBacklogTaskResponseDto } from '../../../types/backlog';
+
+const TaskUpdateModal = ({ close, id, title, userId, point, condition }: TaskModalProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const getBody = () => {
-    if (!formRef.current) return defaultData as TaskUpdateBody;
+    if (!formRef.current) return { id, title, userId, point, condition };
     return [...formRef.current.querySelectorAll('input'), formRef.current.querySelector('textarea')].reduce(
-      (acc: TaskUpdateBody, cur: HTMLInputElement | HTMLTextAreaElement | null) => {
+      (acc: ReadBacklogTaskResponseDto, cur: HTMLInputElement | HTMLTextAreaElement | null) => {
         if (!cur) return acc;
         const newData = {
           ...acc,
@@ -29,7 +32,7 @@ const TaskUpdateModal = ({ close, defaultData }: TaskUpdateModalProps) => {
         };
         return newData;
       },
-      { id: defaultData.id } as TaskUpdateBody,
+      { id } as ReadBacklogTaskResponseDto,
     );
   };
   const queryClient = useQueryClient();
@@ -50,7 +53,12 @@ const TaskUpdateModal = ({ close, defaultData }: TaskUpdateModalProps) => {
 
   return (
     <>
-      <TaskForm close={close} handleSubmit={handleSubmit} formRef={formRef} defaultData={defaultData} />
+      <TaskForm
+        close={close}
+        handleSubmit={handleSubmit}
+        formRef={formRef}
+        defaultData={{ id, title, userId, point, condition }}
+      />
     </>
   );
 };

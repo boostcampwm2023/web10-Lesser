@@ -5,7 +5,7 @@ interface TaskFormProps {
   defaultData?: {
     id: number;
     title: string;
-    userId: string;
+    userId: string | number;
     point: number;
     condition: string;
   } | null;
@@ -15,11 +15,7 @@ const TaskForm = ({ handleSubmit, close, formRef, defaultData = null }: TaskForm
   return (
     <div className="fixed top-0 left-0 bg-black w-screen h-screen bg-opacity-30 flex justify-center items-center font-pretendard">
       <div className="w-[31.875rem] h-[33.75rem] rounded-md bg-white p-6 text-house-green">
-        <form
-          className="flex flex-col h-full justify-between"
-          onSubmit={handleSubmit}
-          ref={formRef}
-        >
+        <form className="flex flex-col h-full justify-between" onSubmit={handleSubmit} ref={formRef}>
           <p className="text-l font-bold">Task</p>
           <label className="text-s" htmlFor="title">
             <span className="text-m font-bold pr-2">업무 내용</span>
@@ -44,9 +40,9 @@ const TaskForm = ({ handleSubmit, close, formRef, defaultData = null }: TaskForm
               id="condition"
               name="condition"
               placeholder={
-                "예시 조건)\n" +
-                "몇 개의 테스트 코드를 통과해야 합니다\n" +
-                "사전에 작성한 예상 유저 시나리오와 비교하여 동작을 확인합니다"
+                '예시 조건)\n' +
+                '몇 개의 테스트 코드를 통과해야 합니다\n' +
+                '사전에 작성한 예상 유저 시나리오와 비교하여 동작을 확인합니다'
               }
               defaultValue={defaultData?.condition}
             />
