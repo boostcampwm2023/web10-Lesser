@@ -5,13 +5,13 @@ import useTaskUsername from '../../../hooks/pages/backlog/useTaskUsername';
 
 interface TaskFormProps {
   handleSubmit: (e: React.FormEvent) => void;
-  setNewTaskManager: (newId: number) => void;
+  setNewTaskManager: (newId: number | null) => void;
   close: () => void;
   formRef: React.RefObject<HTMLFormElement>;
   defaultData?: {
     id: number;
     title: string;
-    userId: string | number | undefined;
+    userId: string | number | null;
     point: number;
     condition: string;
   } | null;
@@ -19,10 +19,15 @@ interface TaskFormProps {
 
 const TaskForm = ({ handleSubmit, close, setNewTaskManager, formRef, defaultData = null }: TaskFormProps) => {
   const { detail, toggleDetail } = useDetail();
-  const { username, setNewUsername } = useTaskUsername(Number(defaultData?.userId));
+  const { username, setNewUsername, resetUsername } = useTaskUsername(Number(defaultData?.userId));
   const handleDropdownClick = ({ currentTarget }: React.MouseEvent<HTMLButtonElement>) => {
     setNewTaskManager(Number(currentTarget.id));
     setNewUsername(Number(currentTarget.id));
+    toggleDetail();
+  };
+  const handleDropdownResetClick = () => {
+    setNewTaskManager(null);
+    resetUsername();
     toggleDetail();
   };
   return (
@@ -70,7 +75,9 @@ const TaskForm = ({ handleSubmit, close, setNewTaskManager, formRef, defaultData
                 click
               </button>
             </div>
-            {!detail && <MemberDropdown setNewTaskManager={handleDropdownClick} />}
+            {!detail && (
+              <MemberDropdown setNewTaskManager={handleDropdownClick} resetTaskManager={handleDropdownResetClick} />
+            )}
           </div>
         </TaskInputLayout>
         <TaskInputLayout

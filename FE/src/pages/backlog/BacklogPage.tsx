@@ -12,6 +12,7 @@ import PostButton from '../../components/backlog/PostButton';
 import { API_URL } from '../../constants/constants';
 import { useSelectedProjectState } from '../../stores';
 import BacklogLandingPage from './BacklogLandingPage';
+import getStoryPoint from '../../utils/getStoryPoint';
 
 const BacklogPage = () => {
   const projectId = useSelectedProjectState((state) => state.id);
@@ -45,7 +46,13 @@ const BacklogPage = () => {
         <EpicComponent title={epic.title} id={epic.id} sequence={epic.sequence} key={`EPIC${epic.id}`}>
           <>
             {epic.storyList.map((story: ReadBacklogStoryResponseDto) => (
-              <StoryComponent title={story.title} id={story.id} sequence={story.sequence} key={`STORY${story.id}`}>
+              <StoryComponent
+                title={story.title}
+                id={story.id}
+                sequence={story.sequence}
+                key={`STORY${story.id}`}
+                point={getStoryPoint(story.taskList)}
+              >
                 <>
                   {story.taskList.map((task: ReadBacklogTaskResponseDto) => (
                     <TaskComponent {...task} key={`TASK${task.id}`} />

@@ -9,6 +9,7 @@ import StoryComponent from '../../backlog/StoryComponent';
 import PostButton from '../../backlog/PostButton';
 import SprintBacklogTask from './SprintBacklogTask';
 import { useSelectedProjectState } from '../../../stores';
+import getStoryPoint from '../../../utils/getStoryPoint';
 
 interface BacklogComponentProps {
   backlog: { epicList: ReadBacklogEpicResponseDto[] };
@@ -26,7 +27,12 @@ const BacklogComponent = ({ backlog }: BacklogComponentProps) => {
               <Droppable droppableId={`${epicIndex} ${storyIndex}`} key={`STORY${story.id}`} isDropDisabled={true}>
                 {(provided) => (
                   <div {...provided.droppableProps} ref={provided.innerRef}>
-                    <StoryComponent title={story.title} id={story.id} sequence={story.sequence}>
+                    <StoryComponent
+                      title={story.title}
+                      id={story.id}
+                      sequence={story.sequence}
+                      point={getStoryPoint(story.taskList)}
+                    >
                       <>
                         {story.taskList.map((task: ReadBacklogTaskResponseDto, index) => (
                           <Draggable draggableId={`${task.id}`} index={index} key={`TASK${task.id}`}>
