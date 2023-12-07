@@ -3,7 +3,7 @@ import { ReadBacklogTaskResponseDto } from '../../../types/backlog';
 import BacklogDeleteModal from './BacklogDeleteModal';
 import TaskUpdateModal from './TaskUpdateModal';
 
-interface TaskModalProps extends ReadBacklogTaskResponseDto {
+export interface TaskModalProps extends ReadBacklogTaskResponseDto {
   close: () => void;
 }
 
@@ -76,7 +76,7 @@ const TaskModal = (props: TaskModalProps) => {
             type="button"
             className="border-2 rounded-md border-starbucks-green px-4 py-1.5 bg-starbucks-green font-bold text-true-white text-s"
             onClick={() => {
-              updateModal.open(<TaskUpdateModal close={updateModal.close} defaultData={props} />);
+              updateModal.open(<TaskUpdateModal {...{ ...props, close: updateModal.close }} />);
               close();
             }}
           >

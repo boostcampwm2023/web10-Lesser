@@ -11,7 +11,7 @@ interface TaskPostModalProps {
 interface TaskPostBody {
   parentId: number;
   title: string;
-  userId: string;
+  userId: string | number;
   point: number;
   condition: string;
 }

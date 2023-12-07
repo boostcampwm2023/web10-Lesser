@@ -3,7 +3,7 @@ import { useModal } from '../../modal/useModal';
 import TaskModal from '../backlog/Modal/TaskModal';
 
 interface TaskCardProps {
-  userId: string;
+  userId: string | number;
   id: number;
   title: string;
   state: string;
