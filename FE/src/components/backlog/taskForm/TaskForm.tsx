@@ -85,6 +85,7 @@ const TaskForm = ({ handleSubmit, close, setNewTaskManager, formRef, defaultData
               id="point"
               name="point"
               defaultValue={defaultData?.point}
+              min={0}
             />
             <p className="font-bold text-starbucks-green">Point</p>
           </div>
