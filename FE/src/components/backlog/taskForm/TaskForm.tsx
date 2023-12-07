@@ -1,7 +1,10 @@
-import useDetail from '../../../hooks/pages/backlog/useDetail';
 import MemberDropdown from '../MemberDropdown';
 import TaskInputLayout from './TaskInputLayout';
 import useTaskUsername from '../../../hooks/pages/backlog/useTaskUsername';
+import ChevronUpIcon from '../../../assets/icons/ChevronUpIcon';
+import ChevronDownIcon from '../../../assets/icons/ChevronDownIcon';
+import { useEffect } from 'react';
+import useDropdownToggle from '../../../hooks/pages/backlog/useDropdownToggle';
 
 interface TaskFormProps {
   handleSubmit: (e: React.FormEvent) => void;
@@ -18,7 +21,7 @@ interface TaskFormProps {
 }
 
 const TaskForm = ({ handleSubmit, close, setNewTaskManager, formRef, defaultData = null }: TaskFormProps) => {
-  const { detail, toggleDetail } = useDetail();
+  const { detail, toggleDetail, detailRef, handleOutsideClick } = useDropdownToggle();
   const { username, setNewUsername, resetUsername } = useTaskUsername(Number(defaultData?.userId));
   const handleDropdownClick = ({ currentTarget }: React.MouseEvent<HTMLButtonElement>) => {
     setNewTaskManager(Number(currentTarget.id));
@@ -30,6 +33,14 @@ const TaskForm = ({ handleSubmit, close, setNewTaskManager, formRef, defaultData
     resetUsername();
     toggleDetail();
   };
+  useEffect(() => {
+    addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
   return (
     <div className="fixed top-0 left-0 bg-black w-screen h-screen bg-opacity-30 flex justify-center items-center">
       <form
@@ -64,7 +75,7 @@ const TaskForm = ({ handleSubmit, close, setNewTaskManager, formRef, defaultData
         </TaskInputLayout>
         <TaskInputLayout title="담당자" description="Task를 수행할 멤버를 선정합니다" htmlFor="userId">
           <div className="relative">
-            <div className="w-[9.375rem] py-2 px-2.5 border rounded-sm border-starbucks-green outline-starbucks-green text-s flex">
+            <div className="w-[9.375rem] py-2 px-2.5 border rounded-sm border-starbucks-green outline-starbucks-green text-s flex items-center">
               <p className="w-full">{username}</p>
               <button
                 type="button"
@@ -72,11 +83,15 @@ const TaskForm = ({ handleSubmit, close, setNewTaskManager, formRef, defaultData
                   toggleDetail();
                 }}
               >
-                click
+                {detail ? <ChevronUpIcon size={16} /> : <ChevronDownIcon size={16} />}
               </button>
             </div>
-            {!detail && (
-              <MemberDropdown setNewTaskManager={handleDropdownClick} resetTaskManager={handleDropdownResetClick} />
+            {detail && (
+              <MemberDropdown
+                ref={detailRef}
+                setNewTaskManager={handleDropdownClick}
+                resetTaskManager={handleDropdownResetClick}
+              />
             )}
           </div>
         </TaskInputLayout>
@@ -101,15 +116,12 @@ const TaskForm = ({ handleSubmit, close, setNewTaskManager, formRef, defaultData
         <div className="flex justify-end gap-3">
           <button
             type="button"
-            className="border-2 rounded-md border-starbucks-green px-4 py-1.5 font-bold text-starbucks-green text-s"
+            className="border rounded-md border-starbucks-green w-14 py-1.5 font-bold text-starbucks-green text-s"
             onClick={close}
           >
             취소
           </button>
-          <button
-            type="submit"
-            className="border-2 rounded-md border-starbucks-green px-4 py-1.5 bg-starbucks-green font-bold text-true-white text-s"
-          >
+          <button type="submit" className="rounded-md w-14 py-1.5 bg-starbucks-green font-bold text-true-white text-s">
             확인
           </button>
         </div>

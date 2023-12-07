@@ -1,16 +1,20 @@
+import React from 'react';
 import { useSelectedProjectState, useUserState } from '../../stores';
 
-const MemberDropdown = ({
-  setNewTaskManager,
-  resetTaskManager,
-}: {
-  setNewTaskManager: ({ currentTarget }: React.MouseEvent<HTMLButtonElement>) => void;
-  resetTaskManager: () => void;
-}) => {
+const MemberDropdown = React.forwardRef<
+  HTMLDivElement,
+  {
+    setNewTaskManager: ({ currentTarget }: React.MouseEvent<HTMLButtonElement>) => void;
+    resetTaskManager: () => void;
+  }
+>(({ setNewTaskManager, resetTaskManager }, ref) => {
   const clientUserId = useUserState((state) => state.id);
   const userList = useSelectedProjectState((state) => state.userList);
   return (
-    <div className="absolute top-10 left-0 flex flex-col w-fit h-fit gap-0 bg-true-white border border-starbucks-green rounded-sm">
+    <div
+      className="absolute top-10 left-0 flex flex-col w-fit h-fit gap-0 bg-true-white border border-starbucks-green rounded-sm"
+      ref={ref}
+    >
       {userList.map((user) => (
         <button
           type="button"
@@ -32,6 +36,6 @@ const MemberDropdown = ({
       </button>
     </div>
   );
-};
+});
 
 export default MemberDropdown;

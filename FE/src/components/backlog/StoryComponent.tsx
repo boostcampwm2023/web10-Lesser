@@ -23,10 +23,13 @@ const StoryComponent = ({ title, id, children, sequence, point }: StoryComponent
     <div className="border border-transparent-green rounded-md bg-cool-neutral ">
       <div className="flex gap-1 py-2 px-2.5">
         <button onClick={toggleDetail}>{detail ? <ChevronDownIcon /> : <ChevronRightIcon />}</button>
-        <div className="flex w-full gap-2.5 text-house-green font-bold">
-          <p className="flex items-center text-starbucks-green">Story{sequence}</p>
+        <div className="flex w-full gap-2.5 text-house-green font-bold items-center">
+          <p className="text-starbucks-green">Story{sequence}</p>
           <BacklogTitle title={title} id={id} url="/story" />
-          <div>{point}</div>
+          <div className="flex gap-1 text-starbucks-green font-bold">
+            <p>{point}</p>
+            <p>POINT</p>
+          </div>
         </div>
       </div>
       <div className={`${!detail && 'hidden'}`}>
