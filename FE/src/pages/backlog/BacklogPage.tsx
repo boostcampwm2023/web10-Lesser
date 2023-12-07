@@ -16,11 +16,16 @@ import BacklogLandingPage from './BacklogLandingPage';
 const BacklogPage = () => {
   const id = useSelectedProjectState((state) => state.id);
   const REQUEST_URL = `${API_URL.BACKLOG}/${id}`;
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['backlogs', 1],
+  const projectId = useSelectedProjectState((state) => state.id);
+  const { data, isLoading } = useQuery({
+    queryKey: ['backlogs', projectId],
     queryFn: async () => {
-      const data = await api.get(REQUEST_URL);
-      return data.data;
+      try {
+        const data = await api.get(REQUEST_URL);
+        return { status: 200, data: { epicList: data.data.epicList } };
+      } catch {
+        return { status: 404, data: { epicList: [] } };
+      }
     },
     retry: false,
     refetchOnReconnect: false,
@@ -29,7 +34,7 @@ const BacklogPage = () => {
 
   if (isLoading) return <></>;
 
-  if (isError) return <BacklogLandingPage />;
+  if (data?.status !== 200) return <BacklogLandingPage />;
 
   return (
     <main className="flex flex-col gap-4 min-w-[60.25rem] font-pretendard select-none">
@@ -37,7 +42,7 @@ const BacklogPage = () => {
         <span className="font-bold text-l text-house-green">백로그</span>
         <span className="">여러분이 개발해야 할 기능과 제품의 요구 기능을 작성합니다</span>
       </header>
-      {data.epicList.map((epic: ReadBacklogEpicResponseDto) => (
+      {data.data.epicList.map((epic: ReadBacklogEpicResponseDto) => (
         <EpicComponent title={epic.title} id={epic.id} sequence={epic.sequence} key={`EPIC${epic.id}`}>
           <>
             {epic.storyList.map((story: ReadBacklogStoryResponseDto) => (

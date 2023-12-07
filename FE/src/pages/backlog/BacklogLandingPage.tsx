@@ -1,4 +1,6 @@
+import { useQueryClient } from '@tanstack/react-query';
 import backlogLanding from '../../assets/images/backlog-landing.png';
+import { useSelectedProjectState } from '../../stores';
 
 const BacklogLandingPage = () => {
   const linearGradientStyle = {
@@ -11,6 +13,11 @@ const BacklogLandingPage = () => {
         rgba(249, 249, 249, 1) 100%
       ),
     url(${backlogLanding})`,
+  };
+  const projectId = useSelectedProjectState((state) => state.id);
+  const queryClient = useQueryClient();
+  const handleClick = () => {
+    queryClient.setQueryData(['backlogs', projectId], { status: 200, data: { epicList: [] } });
   };
   return (
     <main className="w-[60.25rem]">
@@ -41,7 +48,10 @@ const BacklogLandingPage = () => {
 
         <div className="w-[450px] h-[550px] self-end" style={linearGradientStyle}></div>
       </div>
-      <button className="w-[60.25rem] h-[2.375rem] rounded-md bg-starbucks-green font-bold text-ml text-true-white">
+      <button
+        className="w-[60.25rem] h-[2.375rem] rounded-md bg-starbucks-green font-bold text-ml text-true-white"
+        onClick={handleClick}
+      >
         백로그 생성하기
       </button>
     </main>
