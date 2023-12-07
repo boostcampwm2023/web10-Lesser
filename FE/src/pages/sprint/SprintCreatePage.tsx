@@ -5,6 +5,7 @@ import SprintBacklogSetting from '../../components/sprint/sprintCreate/SprintBac
 import { CreateProcessHeader, CreateProcessText } from '../../components/common/CreateProcess';
 import { BACKLOG_URL, PROCESS_NUMBER } from '../../constants/constants';
 import { SprintBacklog } from '../../types/sprint';
+import SprintGoalSetting from './../../components/sprint/sprintCreate/SprintGoalSetting';
 
 const SprintCreatePage = () => {
   const [process, setProcess] = useState<number>(PROCESS_NUMBER.PROCESS1);
@@ -29,10 +30,7 @@ const SprintCreatePage = () => {
         <CreateProcessText processNum={2} processName="태스크 설정" active={process >= 1} />
       </CreateProcessHeader>
       {process === PROCESS_NUMBER.PROCESS1 ? (
-        <div>
-          스프린트 제목, 기간 입력
-          <button onClick={handleNextButtonClick}>다음으로</button>
-        </div>
+        <SprintGoalSetting handleNextButtonClick={handleNextButtonClick} />
       ) : (
         <SprintBacklogSetting {...{ backlog, sprintBacklog, setSprintBacklog }} />
       )}
