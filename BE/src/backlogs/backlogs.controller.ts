@@ -62,6 +62,16 @@ export class BacklogsController {
     return readBacklogData;
   }
 
+  @Get(':id/notdone')
+  async readNotDoneBacklog(
+    @Param('id', ParseIntPipe) id,
+    @Member() memberInfo: memberDecoratorType,
+  ): Promise<ReadBacklogResponseDto> {
+    await this.backlogsAuthService.checkProjectAuth(id, memberInfo);
+    const readBacklogData = await this.backlogsService.readNotDoneBacklog(id);
+    return readBacklogData;
+  }
+
   @Post('epic')
   async createEpic(
     @Body() body: CreateBacklogsEpicRequestDto,
