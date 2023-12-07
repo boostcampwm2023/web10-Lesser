@@ -1,12 +1,8 @@
+import { ProjectUser } from '../../types/project';
 import { UserFilter, TaskGroup } from '../../types/sprint';
 
-interface User {
-  id?: string;
-  name: string;
-}
-
 interface FilterDropdownProps {
-  userList: User[];
+  userList: ProjectUser[];
   userToFilter: UserFilter;
   taskGroup: TaskGroup;
   onUserFilterButtonClick: (user: UserFilter) => void;
@@ -22,15 +18,15 @@ const FilterDropdown = (props: FilterDropdownProps) => {
   return (
     <ul className="flex flex-col gap-1.5 absolute w-32 p-3 border rounded top-8 border-green-stroke bg-true-white">
       <p className="font-bold text-center ">멤버별 필터</p>
-      {userList.map(({ id, name }) => (
+      {userList.map(({ userId, userName }) => (
         <p
-          key={name}
+          key={userId}
           className={`text-center text-xs hover:cursor-pointer ${
-            id === userToFilter ? activeMenuClass : inactiveMenuClass
+            userId === userToFilter ? activeMenuClass : inactiveMenuClass
           }`}
-          onClick={() => onUserFilterButtonClick(id)}
+          onClick={() => onUserFilterButtonClick(userId)}
         >
-          {name}
+          {userName}
         </p>
       ))}
       <hr className="bg-green-stroke" />

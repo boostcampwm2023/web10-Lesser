@@ -4,11 +4,11 @@ import { api } from '../../apis/api';
 import SprintBacklogSetting from '../../components/sprint/sprintCreate/SprintBacklogSetting';
 import { CreateProcessHeader, CreateProcessText } from '../../components/common/CreateProcess';
 import { BACKLOG_URL, PROCESS_NUMBER } from '../../constants/constants';
-import { ReadBacklogTaskResponseDto } from '../../types/backlog';
+import { SprintBacklog } from '../../types/sprint';
 
 const SprintCreatePage = () => {
   const [process, setProcess] = useState<number>(PROCESS_NUMBER.PROCESS1);
-  const [sprintBacklog, setSprintBacklog] = useState<ReadBacklogTaskResponseDto[]>([]);
+  const [sprintBacklog, setSprintBacklog] = useState<SprintBacklog[]>([]);
   const { data: backlog, isLoading } = useQuery({
     queryKey: ['backlogs', 1, 'sprint'],
     queryFn: async () => {

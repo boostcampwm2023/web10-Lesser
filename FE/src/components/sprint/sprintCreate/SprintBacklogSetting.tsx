@@ -1,14 +1,15 @@
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import RightBracketIcon from '../../../assets/icons/RightBracketIcon';
-import { ReadBacklogEpicResponseDto, ReadBacklogTaskResponseDto } from '../../../types/backlog';
+import { ReadBacklogEpicResponseDto } from '../../../types/backlog';
 import BacklogComponent from './BacklogComponent';
 import SprintBacklogComponent from './SprintBacklogComponent';
 import { useQueryClient } from '@tanstack/react-query';
+import { SprintBacklog } from '../../../types/sprint';
 
 interface SprintBacklogSettingProps {
   backlog: { epicList: ReadBacklogEpicResponseDto[] };
-  sprintBacklog: ReadBacklogTaskResponseDto[];
-  setSprintBacklog: React.Dispatch<React.SetStateAction<ReadBacklogTaskResponseDto[]>>;
+  sprintBacklog: SprintBacklog[];
+  setSprintBacklog: React.Dispatch<React.SetStateAction<SprintBacklog[]>>;
 }
 
 const SprintBacklogSetting = (props: SprintBacklogSettingProps) => {
@@ -35,7 +36,13 @@ const SprintBacklogSetting = (props: SprintBacklogSettingProps) => {
 
     const [epicIndex, storyIndex] = source.droppableId.split(' ').map((id) => Number(id));
 
-    const targetTask = { ...backlog.epicList[epicIndex].storyList[storyIndex].taskList[source.index] };
+    const targetTask: SprintBacklog = {
+      ...backlog.epicList[epicIndex].storyList[storyIndex].taskList[source.index],
+      epicIndex,
+      storyIndex,
+      taskIndex: source.index,
+    };
+
     queryClient.setQueryData(['backlogs', 1, 'sprint'], (prevBacklog: { epicList: ReadBacklogEpicResponseDto[] }) => {
       const newBacklogData = structuredClone(prevBacklog);
       newBacklogData.epicList[epicIndex].storyList[storyIndex].taskList.splice(source.index, 1);
@@ -65,8 +72,8 @@ const SprintBacklogSetting = (props: SprintBacklogSettingProps) => {
               <p className="font-bold text-starbucks-green text-s">&</p>
               <p className="font-bold text-starbucks-green text-s">DROP</p>
             </div>
-            <div className="flex flex-col gap-3 min-w-[36.25rem]">
-              <SprintBacklogComponent sprintBacklog={sprintBacklog} />
+            <div className="flex flex-col gap-3 min-w-[36.25rem] max-w-[36.25rem]">
+              <SprintBacklogComponent sprintBacklog={sprintBacklog} setSprintBacklog={setSprintBacklog} />
               <button className="p-3 rounded bg-starbucks-green text-true-white">스프린트 생성하기</button>
             </div>
           </div>

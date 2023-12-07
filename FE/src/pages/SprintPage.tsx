@@ -7,59 +7,38 @@ import FilterDropdown from '../components/sprint/FilterDropdown';
 import { Task } from '../types/sprint';
 import { UserFilter, TaskGroup } from '../types/sprint';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { useNavigate } from 'react-router';
-import { api } from '../apis/api';
 import { transformDate } from '../utils/date';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSelectedProjectState } from '../stores';
+import { useGetProgressSprint, usePatchTaskState } from '../hooks/queries/sprint';
+import { useModal } from '../modal/useModal';
+import SprintEndModal from '../components/sprint/modal/SprintEndModal';
 
 interface BoardTaskListObject {
   storyId?: number;
-  storyNumber?: number;
+  storySequence?: number;
   storyTitle?: string;
   ToDo: Task[];
   InProgress: Task[];
   Done: Task[];
 }
 
-interface Sprint {
-  sprintTitle: string;
-  sprintGoal: string;
-  sprintStartDate: string;
-  sprintEndDate: string;
-  sprintEnd: boolean;
-  sprintModal: boolean;
-  taskList: Task[];
-}
-
 type TaskGroupedByStory = Record<number, BoardTaskListObject>;
 
 const SprintPage = () => {
   const [taskGroup, setTaskGroup] = useState<TaskGroup>('all');
-  const [userToFilter, setUserToFilter] = useState<UserFilter>(undefined);
+  const [userToFilter, setUserToFilter] = useState<UserFilter>(-1);
   const [dropdownOpend, setDropdownOpend] = useState<boolean>(false);
   const [boardTaskList, setBoardTaskList] = useState<BoardTaskListObject[]>([]);
-  const { data, isLoading } = useQuery<Sprint>({
-    queryKey: ['sprint'],
-    queryFn: async () => {
-      const response = await api.get('/projects/1/sprints/progress');
-      return response.data;
-    },
-  });
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: async ({ id, state }: { id: number; state: string }) =>
-      await api.patch('/backlogs/task', { id, state }),
-    onSuccess: () => {
-      queryClient.invalidateQueries();
-    },
-  });
-  const navigate = useNavigate();
+  const { id: projectId, userList } = useSelectedProjectState();
+  const { data, isLoading } = useGetProgressSprint(projectId);
+  const { mutate } = usePatchTaskState();
+  const endModal = useModal();
+  const userFilterList = useMemo(() => [{ userId: -1, userName: '전체' }, ...userList], [userList]);
 
   useEffect(() => {
     if (data) {
-      const currentTaskList = !userToFilter
-        ? data.taskList
-        : data.taskList.filter(({ userId }) => userId === userToFilter);
+      const currentTaskList =
+        userToFilter === -1 ? data.taskList : data.taskList.filter(({ userId }) => userId === userToFilter);
 
       if (taskGroup === 'all') {
         const ToDo = currentTaskList?.filter(({ state }: Task) => state === 'ToDo');
@@ -91,14 +70,6 @@ const SprintPage = () => {
       setBoardTaskList(Object.values(taskList));
     }
   }, [data, userToFilter, taskGroup]);
-
-  const userList = [
-    { name: '전체' },
-    { id: '1', name: '피카츄' },
-    { id: '2', name: '파이리' },
-    { id: '3', name: '꼬부기' },
-    { id: '4', name: '잠만보' },
-  ];
 
   const handleGroupButtonClick = (taskGroup: TaskGroup): void => {
     setTaskGroup(taskGroup);
@@ -132,13 +103,14 @@ const SprintPage = () => {
   };
 
   const handleSprintEndButtonClick = () => {
-    navigate('/review');
+    if (data) {
+      endModal.open(<SprintEndModal id={data.sprintId} close={endModal.close} />);
+    }
   };
 
   const [todoNumber, inProgressNumber, doneNumber] = useMemo(() => {
-    const currentTaskList = !userToFilter
-      ? data?.taskList
-      : data?.taskList.filter(({ userId }) => userId === userToFilter);
+    const currentTaskList =
+      userToFilter === -1 ? data?.taskList : data?.taskList.filter(({ userId }) => userId === userToFilter);
     const todoNumber = currentTaskList?.filter(({ state }) => state === 'ToDo').length;
     const inProgressNumber = currentTaskList?.filter(({ state }) => state === 'InProgress').length;
     const doneNumber = currentTaskList?.filter(({ state }) => state === 'Done').length;
@@ -148,6 +120,20 @@ const SprintPage = () => {
 
   if (isLoading) {
     return <div>칸반보드 로딩중</div>;
+  }
+
+  if (data?.sprintModal) {
+    return (
+      <div className="flex flex-col items-center min-w-[60.25rem]">
+        <p>스프린트가 종료되었습니다.</p>
+        <p>회고를 진행하시겠습니까?</p>
+        <button>회고 진행하기</button>
+      </div>
+    );
+  }
+
+  if (data?.sprintEnd) {
+    return <div className="min-w-[60.25rem]">진행 중인 스프린트가 없습니다.</div>;
   }
 
   if (data) {
@@ -182,7 +168,7 @@ const SprintPage = () => {
               </button>
               {dropdownOpend && (
                 <FilterDropdown
-                  userList={userList}
+                  userList={userFilterList}
                   userToFilter={userToFilter}
                   taskGroup={taskGroup}
                   onGroupFilterButtonClick={handleGroupButtonClick}
@@ -211,12 +197,12 @@ const SprintPage = () => {
           </div>
           <ul className="flex flex-col gap-y-1.5">
             {boardTaskList?.map((taskListByStory, index) => {
-              const { storyId, storyNumber, storyTitle } = taskListByStory;
+              const { storyId, storySequence, storyTitle } = taskListByStory;
 
               return (
                 <li key={index}>
                   <DragDropContext onDragEnd={handleDragEnd}>
-                    <KanbanBoard {...{ storyId, storyNumber, storyTitle }}>
+                    <KanbanBoard {...{ storyId, storySequence, storyTitle }}>
                       <ColumnBoard taskList={taskListByStory?.ToDo} state="ToDo" {...{ storyId }} />
                       <ColumnBoard taskList={taskListByStory?.InProgress} state="InProgress" {...{ storyId }} />
                       <ColumnBoard taskList={taskListByStory?.Done} state="Done" {...{ storyId }} />
