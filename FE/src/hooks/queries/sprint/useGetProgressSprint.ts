@@ -3,6 +3,7 @@ import { api } from '../../../apis/api';
 import { Task } from '../../../types/sprint';
 
 interface Sprint {
+  sprintId: number;
   sprintTitle: string;
   sprintGoal: string;
   sprintStartDate: string;

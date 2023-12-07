@@ -7,10 +7,11 @@ import FilterDropdown from '../components/sprint/FilterDropdown';
 import { Task } from '../types/sprint';
 import { UserFilter, TaskGroup } from '../types/sprint';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { useNavigate } from 'react-router';
 import { transformDate } from '../utils/date';
 import { useSelectedProjectState } from '../stores';
 import { useGetProgressSprint, usePatchTaskState } from '../hooks/queries/sprint';
+import { useModal } from '../modal/useModal';
+import SprintEndModal from '../components/sprint/modal/SprintEndModal';
 
 interface BoardTaskListObject {
   storyId?: number;
@@ -31,7 +32,7 @@ const SprintPage = () => {
   const { id: projectId, userList } = useSelectedProjectState();
   const { data, isLoading } = useGetProgressSprint(projectId);
   const { mutate } = usePatchTaskState();
-  const navigate = useNavigate();
+  const endModal = useModal();
   const userFilterList = useMemo(() => [{ userId: -1, userName: '전체' }, ...userList], [userList]);
 
   useEffect(() => {
@@ -102,7 +103,9 @@ const SprintPage = () => {
   };
 
   const handleSprintEndButtonClick = () => {
-    navigate('/review');
+    if (data) {
+      endModal.open(<SprintEndModal id={data.sprintId} close={endModal.close} />);
+    }
   };
 
   const [todoNumber, inProgressNumber, doneNumber] = useMemo(() => {
@@ -121,12 +124,16 @@ const SprintPage = () => {
 
   if (data?.sprintModal) {
     return (
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center min-w-[60.25rem]">
         <p>스프린트가 종료되었습니다.</p>
         <p>회고를 진행하시겠습니까?</p>
         <button>회고 진행하기</button>
       </div>
     );
+  }
+
+  if (data?.sprintEnd) {
+    return <div className="min-w-[60.25rem]">진행 중인 스프린트가 없습니다.</div>;
   }
 
   if (data) {
