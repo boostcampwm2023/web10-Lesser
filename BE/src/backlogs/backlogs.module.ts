@@ -10,9 +10,10 @@ import { ProjectCounter } from 'src/projects/entity/projectCounter.entity';
 import { BacklogsController } from './backlogs.controller';
 import { BacklogsService } from './backlogs.service';
 import { BacklogsAuthService } from './backlogsAuth.service';
+import { SprintToTask } from 'src/sprints/entities/sprint-task.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Epic, Story, Task, Project, Member, ProjectCounter]), LesserJwtModule],
+  imports: [TypeOrmModule.forFeature([Epic, Story, Task, Project, Member, ProjectCounter, SprintToTask]), LesserJwtModule],
   controllers: [BacklogsController],
   providers: [BacklogsService, BacklogsAuthService],
 })

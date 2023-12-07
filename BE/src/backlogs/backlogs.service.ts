@@ -32,6 +32,7 @@ import {
   DeleteBacklogsTaskRequestDto,
   UpdateBacklogsRequestTaskDto,
 } from './dto/Task.dto';
+import { SprintToTask } from 'src/sprints/entities/sprint-task.entity';
 
 @Injectable()
 export class BacklogsService {
@@ -42,6 +43,7 @@ export class BacklogsService {
     @InjectRepository(Task) private taskRepository: Repository<Task>,
     @InjectRepository(Member) private memberRepository: Repository<Member>,
     @InjectRepository(ProjectCounter) private projectCounterRepository: Repository<ProjectCounter>,
+    @InjectRepository(SprintToTask) private sprintToTaskRepository: Repository<SprintToTask>,
   ) {}
 
   async readBacklog(id: number): Promise<ReadBacklogResponseDto> {
@@ -177,6 +179,7 @@ export class BacklogsService {
   }
 
   async updateTask(dto: UpdateBacklogsRequestTaskDto): Promise<void> {
+    const task = await this.taskRepository.findOne({ where: { id: dto.id } });
     const updateTaskData: Partial<Task> = {};
     if (dto.id === undefined) throw new BadRequestException('id must required');
     if (Object.keys(dto).length <= 1)
@@ -194,6 +197,17 @@ export class BacklogsService {
         if (key !== 'userId') updateTaskData[key] = dto[key];
       }
     });
+
+    if (task.state !== 'Done' && dto.state === 'Done') {
+      const rows = await this.sprintToTaskRepository.find({ where: { task: { id: dto.id } } });
+      const completeDate = new Date();
+      const updatePromises = rows.map(async (row) => {
+        row.completed_at = completeDate;
+        return this.sprintToTaskRepository.save(row);
+      });
+      await Promise.all(updatePromises);
+    }
+
     const updateResult = await this.taskRepository.update(dto.id, updateTaskData);
     if (updateResult.affected === 0) throw new NotFoundException();
   }
