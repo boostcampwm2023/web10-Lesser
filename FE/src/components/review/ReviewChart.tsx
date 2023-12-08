@@ -19,14 +19,21 @@ const createChartData = (startDate: string, endDate: string, taskList: TaskList[
   const dateCount = (Number(new Date(endDate)) - Number(new Date(startDate))) / (24 * 60 * 60 * 1000);
   const tasksPerDay = taskCount / dateCount;
   const currentDate = new Date(startDate);
-  const completedTask = taskList.filter((task) => task.completedAt);
+  const completedTask = taskList
+    .filter((task) => task.completedAt)
+    .map((task) => {
+      const utcDate = new Date(task.completedAt);
+      utcDate.setHours(utcDate.getHours() + 9);
+
+      const koreaTimeWithoutT = utcDate.toISOString().split('T')[0];
+
+      return new Date(koreaTimeWithoutT).toString();
+    });
   let ideal = taskList.length;
   let remaining = taskList.length;
 
   while (currentDate <= new Date(endDate)) {
-    if (completedTask.some((task) => new Date(task.completedAt.split('T')[0]).toString() === currentDate.toString())) {
-      remaining -= 1;
-    }
+    remaining -= completedTask.filter((task) => task === currentDate.toString()).length;
 
     chartData.push({ date: transformDate(currentDate.toString()), ideal: ideal.toFixed(3), remaining });
     currentDate.setDate(currentDate.getDate() + 1);
