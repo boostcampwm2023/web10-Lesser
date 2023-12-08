@@ -18,7 +18,7 @@ const BacklogTitle = ({ title, id, url }: { title: string; id: number; url: stri
   return (
     <>
       {!postForm ? (
-        <div className="group flex gap-1 hover:underline items-center">
+        <div className="group w-full flex gap-1 hover:underline items-center">
           <button onClick={toggleButton}>{title}</button>
           <div className="hidden group-hover:flex">
             <button onClick={toggleButton}>

@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-const useTaskManager = (initialValue?: number) => {
-  const [taskManagerId, setTaskManagerId] = useState<number | undefined>(initialValue);
+const useTaskManager = (initialValue?: number | null) => {
+  const [taskManagerId, setTaskManagerId] = useState<number | null>(initialValue ?? null);
 
-  useEffect(() => {
-    console.log('changed', taskManagerId);
-  }, [taskManagerId]);
-
-  const setNewTaskManager = (newId: number) => {
+  const setNewTaskManager = (newId: number | null) => {
+    if (!newId) {
+      setTaskManagerId(null);
+      return;
+    }
     setTaskManagerId(newId);
   };
 

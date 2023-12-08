@@ -3,12 +3,15 @@ import useGetUsername from './useGetUsername';
 
 const useTaskUsername = (initialValue: number) => {
   const { getUsernameByUserid } = useGetUsername();
-  const [username, setUsername] = useState<string>(getUsernameByUserid(initialValue));
+  const [username, setUsername] = useState<string>(getUsernameByUserid(initialValue) ?? '미할당');
   const setNewUsername = (id: number) => {
     setUsername(getUsernameByUserid(id));
   };
+  const resetUsername = () => {
+    setUsername('미할당');
+  };
 
-  return { username, setNewUsername };
+  return { username, setNewUsername, resetUsername };
 };
 
 export default useTaskUsername;

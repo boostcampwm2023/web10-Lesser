@@ -12,11 +12,11 @@ import PostButton from '../../components/backlog/PostButton';
 import { API_URL } from '../../constants/constants';
 import { useSelectedProjectState } from '../../stores';
 import BacklogLandingPage from './BacklogLandingPage';
+import getStoryPoint from '../../utils/getStoryPoint';
 
 const BacklogPage = () => {
-  const id = useSelectedProjectState((state) => state.id);
-  const REQUEST_URL = `${API_URL.BACKLOG}/${id}`;
   const projectId = useSelectedProjectState((state) => state.id);
+  const REQUEST_URL = `${API_URL.BACKLOG}/${projectId}`;
   const { data, isLoading } = useQuery({
     queryKey: ['backlogs', projectId],
     queryFn: async () => {
@@ -46,7 +46,13 @@ const BacklogPage = () => {
         <EpicComponent title={epic.title} id={epic.id} sequence={epic.sequence} key={`EPIC${epic.id}`}>
           <>
             {epic.storyList.map((story: ReadBacklogStoryResponseDto) => (
-              <StoryComponent title={story.title} id={story.id} sequence={story.sequence} key={`STORY${story.id}`}>
+              <StoryComponent
+                title={story.title}
+                id={story.id}
+                sequence={story.sequence}
+                key={`STORY${story.id}`}
+                point={getStoryPoint(story.taskList)}
+              >
                 <>
                   {story.taskList.map((task: ReadBacklogTaskResponseDto) => (
                     <TaskComponent {...task} key={`TASK${task.id}`} />
@@ -62,7 +68,7 @@ const BacklogPage = () => {
         placeholder="어떤 기능을 계획할 예정인가요? 예시) 회원 기능"
         color="bg-house-green"
         url="/backlogs/epic"
-        id={Number(id)}
+        id={Number(projectId)}
       />
     </main>
   );
