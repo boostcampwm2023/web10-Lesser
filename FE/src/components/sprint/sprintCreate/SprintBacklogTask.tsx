@@ -1,10 +1,12 @@
 import ChevronRightIcon from '../../../assets/icons/ChevronRightIcon';
+import useGetUsername from '../../../hooks/pages/backlog/useGetUsername';
 import { useModal } from '../../../modal/useModal';
 import { ReadBacklogTaskResponseDto } from '../../../types/backlog';
 import TaskModal from '../../backlog/Modal/TaskModal';
 
 const SprintBacklogTask = (props: ReadBacklogTaskResponseDto) => {
   const { open, close } = useModal();
+  const { getUsernameByUserid } = useGetUsername();
   const { sequence, title, userId } = props;
 
   return (
@@ -14,7 +16,7 @@ const SprintBacklogTask = (props: ReadBacklogTaskResponseDto) => {
           <span className="w-16 font-bold">Task{sequence}</span>
           <span>{title}</span>
         </div>
-        <span className="w-[5rem] truncate">{userId}</span>
+        <span className="w-[5rem] truncate">{getUsernameByUserid(!userId ? undefined : Number(userId))}</span>
         <button
           className="flex items-center font-bold hover:underline"
           onClick={() => {
