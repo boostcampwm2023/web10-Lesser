@@ -147,7 +147,7 @@ export class ProjectsService {
       id: sprintToTask.task.id,
       sequence: sprintToTask.task.sequence,
       title: sprintToTask.task.title,
-      userId: sprintToTask.task.member.id,
+      userId: sprintToTask.task.member ? sprintToTask.task.member.id : null,
       point: sprintToTask.task.point,
       state: sprintToTask.task.state,
       condition: sprintToTask.task.condition,
