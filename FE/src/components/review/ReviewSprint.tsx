@@ -49,7 +49,7 @@ const ReviewSprint = ({ data }: ReviewSprintProps) => {
           <span className="w-[5.625rem] font-bold text-starbucks-green">완료 Task</span>
           <ul className={`${completedTaskList.length ? 'border-x border-b' : 'border'}`}>
             {completedTaskList.length ? (
-              completedTaskList.map((task) => <TaskComponent state={''} {...task} key={`TASK${task.id}`} />)
+              completedTaskList.map((task) => <TaskComponent {...task} key={`TASK${task.id}`} />)
             ) : (
               <li className="flex w-[57.25rem] justify-center p-7 font-bold">완료된 Task가 없습니다.</li>
             )}
@@ -59,7 +59,7 @@ const ReviewSprint = ({ data }: ReviewSprintProps) => {
           <span className="w-[5.625rem] font-bold text-error-red">미완료 Task</span>
           <ul className={`${uncompletedTaskList.length ? 'border-x border-b' : 'border'}`}>
             {uncompletedTaskList.length ? (
-              uncompletedTaskList.map((task) => <TaskComponent state={''} {...task} key={`TASK${task.id}`} />)
+              uncompletedTaskList.map((task) => <TaskComponent {...task} key={`TASK${task.id}`} />)
             ) : (
               <li className="flex w-[57.25rem] justify-center p-7 font-bold">미완료된 Task가 없습니다.</li>
             )}

@@ -11,8 +11,9 @@ import { useSelectedProjectState } from '../stores';
 const ReviewPage = () => {
   const { id: projectId } = useSelectedProjectState();
   const [sprintId, setSprintId] = useState<number>(0);
+  const projctId = useSelectedProjectState((state) => state.id);
   const { isLoading, data } = useQuery({
-    queryKey: ['review', sprintId],
+    queryKey: ['backlogs', projctId, sprintId],
     queryFn: () => api.get(`/reviews?project=${projectId}&sprint=${sprintId}`).then((res) => res.data),
     staleTime: 1000 * 60 * 5,
     retry: false,
