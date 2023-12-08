@@ -19,12 +19,12 @@ const createChartData = (startDate: string, endDate: string, taskList: TaskList[
   const dateCount = (Number(new Date(endDate)) - Number(new Date(startDate))) / (24 * 60 * 60 * 1000);
   const tasksPerDay = taskCount / dateCount;
   const currentDate = new Date(startDate);
-  const completedTask = taskList.filter((task) => task.completedAt.split('T')[0]);
+  const completedTask = taskList.filter((task) => task.completedAt);
   let ideal = taskList.length;
   let remaining = taskList.length;
 
   while (currentDate <= new Date(endDate)) {
-    if (completedTask.some((task) => new Date(task.completedAt).toString() === currentDate.toString())) {
+    if (completedTask.some((task) => new Date(task.completedAt.split('T')[0]).toString() === currentDate.toString())) {
       remaining -= 1;
     }
 
