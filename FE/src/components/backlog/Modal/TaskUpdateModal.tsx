@@ -8,7 +8,7 @@ import useTaskManager from '../../../hooks/pages/backlog/useTaskManager';
 
 const TaskUpdateModal = ({ close, id, title, userId, point, condition }: TaskModalProps) => {
   const formRef = useRef<HTMLFormElement>(null);
-  const { taskManagerId, setNewTaskManager } = useTaskManager(Number(userId));
+  const { taskManagerId, setNewTaskManager } = useTaskManager(!userId ? null : Number(userId));
   const getBody = () => {
     if (!formRef.current) return { id, title, userId, point, condition };
     return [...formRef.current.querySelectorAll('input'), formRef.current.querySelector('textarea')].reduce(
