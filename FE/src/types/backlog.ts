@@ -8,7 +8,6 @@ export interface ReadBacklogTaskResponseDto {
   userId: string | number | null;
   id: number;
   title: string;
-  state: string;
   point: number;
   condition: string;
   sequence: number;
