@@ -33,10 +33,9 @@ const createChartData = (startDate: string, endDate: string, taskList: TaskList[
   let remaining = taskList.length;
 
   while (currentDate <= new Date(endDate)) {
-    remaining -= completedTask.filter((task) => task === currentDate.toString()).length;
-
     chartData.push({ date: transformDate(currentDate.toString()), ideal: ideal.toFixed(3), remaining });
     currentDate.setDate(currentDate.getDate() + 1);
+    remaining -= completedTask.filter((task) => task === currentDate.toString()).length;
     ideal -= tasksPerDay;
   }
 
