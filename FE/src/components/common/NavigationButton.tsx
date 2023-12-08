@@ -9,19 +9,10 @@ interface NavigationButtonProps extends NavigationInformation {
 const NavigationButton = ({ pageName, description, pageURI, currentURI }: NavigationButtonProps) => {
   const { id } = useSelectedProjectState();
   const isSameURL = () => {
-    const currentUriList = currentURI.split('/');
-    const pageUriList = pageURI(id).split('/');
+    const currentUriList = currentURI.split('/').splice(1, 3);
+    const pageUriList = pageURI(id).split('/').splice(1, 3);
 
-    const currentUriLength = currentUriList.length;
-    const pageUriLength = pageUriList.length;
-
-    if (currentUriLength === pageUriLength && currentUriList[currentUriLength - 1] === pageUriList[pageUriLength - 1]) {
-      return true;
-    }
-
-    if (currentUriList[currentUriLength - 2] === pageUriList[pageUriLength - 2]) {
-      return true;
-    }
+    if (JSON.stringify(currentUriList) === JSON.stringify(pageUriList)) return true;
 
     return false;
   };
