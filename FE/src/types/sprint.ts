@@ -1,4 +1,4 @@
-import { ReadBacklogTaskResponseDto } from './backlog';
+import { ReadBacklogEpicResponseDto, ReadBacklogStoryResponseDto, ReadBacklogTaskResponseDto } from './backlog';
 
 export type TaskGroup = 'all' | 'story';
 
@@ -19,7 +19,15 @@ export interface Task {
   condition: string;
 }
 
-export interface SprintBacklog extends ReadBacklogTaskResponseDto {
+export interface SprintBacklogEpic extends ReadBacklogEpicResponseDto {
+  storyList: SprintBacklogStory[];
+}
+
+export interface SprintBacklogStory extends ReadBacklogStoryResponseDto {
+  taskList: SprintBacklogTask[];
+}
+
+export interface SprintBacklogTask extends ReadBacklogTaskResponseDto {
   epicIndex: number;
   storyIndex: number;
   taskIndex: number;

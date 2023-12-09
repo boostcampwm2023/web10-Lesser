@@ -1,12 +1,12 @@
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import ClosedIcon from '../../../assets/icons/ClosedIcon';
-import { SprintBacklog } from '../../../types/sprint';
+import { SprintBacklogTask as SprintBacklogTaskType } from '../../../types/sprint';
 import SprintBacklogTask from './SprintBacklogTask';
 import { SPRINT_BACKLOG_DROP_ID } from '../../../constants/constants';
 
 interface SprintBacklogComponentProps {
-  sprintBacklog: SprintBacklog[];
-  deleteSprintBacklog: (task: SprintBacklog, index: number) => void;
+  sprintBacklog: SprintBacklogTaskType[];
+  deleteSprintBacklog: (task: SprintBacklogTaskType, index: number) => void;
 }
 
 const SprintBacklogComponent = ({ sprintBacklog, deleteSprintBacklog }: SprintBacklogComponentProps) => (
