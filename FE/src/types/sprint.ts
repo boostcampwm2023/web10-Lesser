@@ -33,3 +33,29 @@ export interface SprintCreateBody {
   endDate: string;
   title: string;
 }
+
+export interface BoardTaskObject {
+  storyId?: number;
+  storySequence?: number;
+  storyTitle?: string;
+  ToDo: Task[];
+  InProgress: Task[];
+  Done: Task[];
+}
+
+export type TaskGroupedByStory = Record<number, BoardTaskObject>;
+
+export interface Sprint {
+  sprintId: number;
+  sprintTitle: string;
+  sprintGoal: string;
+  sprintStartDate: string;
+  sprintEndDate: string;
+  sprintEnd: boolean;
+  sprintModal: boolean;
+  taskList: Task[];
+}
+
+export interface ReturnedSprint extends Sprint {
+  boardTask: Record<number, BoardTaskObject>;
+}
