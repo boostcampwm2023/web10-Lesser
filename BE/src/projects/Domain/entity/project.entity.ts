@@ -3,7 +3,7 @@ import { Sprint } from 'src/sprints/entities/sprint.entity';
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 
 @Entity()
-export class Project extends BaseEntity {
+export class Project {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -19,4 +19,16 @@ export class Project extends BaseEntity {
 
   @OneToMany((type) => Sprint, (Sprint) => Sprint.project)
   sprints: Sprint[];
+
+  static createProject(name: string, subject: string): Project {
+    const newProject = new Project();
+    newProject.name = name;
+    newProject.subject = subject;
+    return newProject;
+  }
+
+  addMembers(members: Member[]) {
+    if (!this.members) this.members = [];
+    this.members = this.members.concat(members);
+  }
 }

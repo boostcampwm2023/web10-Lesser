@@ -1,4 +1,4 @@
-import { Project } from 'src/projects/entity/project.entity';
+import { Project } from 'src/projects/Domain/entity/project.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

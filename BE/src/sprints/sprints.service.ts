@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 import { InjectRepository } from '@nestjs/typeorm';
 import { Sprint } from './entities/sprint.entity';
 import { Repository } from 'typeorm';
-import { Project } from 'src/projects/entity/project.entity';
+import { Project } from 'src/projects/Domain/entity/project.entity';
 import { CompleteSprintRequestDto, CreateSprintRequestDto, CreateSprintResponseDto } from './dto/Sprint.dto';
 import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
 import { Review } from 'src/reviews/entities/review.entity';

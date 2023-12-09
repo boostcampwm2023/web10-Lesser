@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { IsLoginGuard } from 'src/common/auth/IsLogin.guard';
 import { Member } from 'src/common/decorators/memberDecorator';
 import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
@@ -9,18 +9,22 @@ import {
   AddProjectMemberRequestDto,
   ReadProjectListResponseDto,
 } from './dto/Project.dto';
-import { ProjectsService } from './projects.service';
+import { ProjectsService } from '../Domain/Service/projects.service';
+import { ProjectNotFoundError } from '../Domain/Error/ProjectError';
 
 @UseGuards(IsLoginGuard)
 @Controller('projects')
 export class ProjectsController {
   constructor(private readonly projectsSevice: ProjectsService) {}
   @Post()
-  createproject(
-    @Member() memberInfo: memberDecoratorType,
-    @Body() body: CreateProjectRequestDto,
-  ): Promise<CreateProjectResponseDto> {
-    return this.projectsSevice.createProject(body, memberInfo);
+  async createproject(@Body() body: CreateProjectRequestDto): Promise<CreateProjectResponseDto> {
+    try {
+      const newProjectId = await this.projectsSevice.createProject(body.name, body.subject, body.memberList);
+      return { id: newProjectId };
+    } catch (err) {
+      if (err instanceof ProjectNotFoundError) throw new NotFoundException();
+      throw err;
+    }
   }
 
   @Get()

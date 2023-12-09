@@ -8,7 +8,7 @@ import { Sprint } from 'src/sprints/entities/sprint.entity';
 import { Task } from 'src/backlogs/entities/task.entity';
 import { SprintToTask } from 'src/sprints/entities/sprint-task.entity';
 import { Member } from 'src/members/entities/member.entity';
-import { Project } from 'src/projects/entity/project.entity';
+import { Project } from 'src/projects/Domain/entity/project.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Review, Project, Sprint, Member, Task, SprintToTask]), LesserJwtModule],
