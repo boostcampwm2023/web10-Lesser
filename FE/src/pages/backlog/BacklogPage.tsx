@@ -35,6 +35,7 @@ const BacklogPage = () => {
   if (isLoading) return <></>;
 
   if (data?.status !== 200) return <BacklogLandingPage />;
+  console.log(data.data.epicList);
 
   return (
     <main className="flex flex-col gap-4 min-w-[60.25rem] font-pretendard select-none">

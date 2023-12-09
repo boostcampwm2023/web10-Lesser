@@ -11,6 +11,7 @@ export interface ReadBacklogTaskResponseDto {
   point: number;
   condition: string;
   sequence: number;
+  state: 'Todo' | 'InProgress' | 'Done';
 }
 
 export interface ReadBacklogStoryResponseDto {

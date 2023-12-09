@@ -12,7 +12,7 @@ interface StoryComponentProps {
   id: number;
   children: ReactElement;
   sequence: number;
-  point: number;
+  point: { TOTAL: number; REMAIN: number };
 }
 
 const StoryComponent = ({ title, id, children, sequence, point }: StoryComponentProps) => {
@@ -27,7 +27,10 @@ const StoryComponent = ({ title, id, children, sequence, point }: StoryComponent
           <p className="text-starbucks-green">Story{sequence}</p>
           <BacklogTitle title={title} id={id} url="/story" />
           <div className="flex gap-1 text-starbucks-green font-bold">
-            <p>{point}</p>
+            <p>{point.REMAIN}</p>
+            {/* <p>POINT</p> */}
+            <p>/</p>
+            <p>{point.TOTAL}</p>
             <p>POINT</p>
           </div>
         </div>
