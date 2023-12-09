@@ -1,9 +1,7 @@
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import RightBracketIcon from '../../../assets/icons/RightBracketIcon';
-import { ReadBacklogEpicResponseDto } from '../../../types/backlog';
 import BacklogComponent from './BacklogComponent';
 import SprintBacklogComponent from './SprintBacklogComponent';
-import { useQueryClient } from '@tanstack/react-query';
 import { SprintBacklogTask, SprintBacklogEpic } from '../../../types/sprint';
 import { SPRINT_BACKLOG_DROP_ID } from '../../../constants/constants';
 

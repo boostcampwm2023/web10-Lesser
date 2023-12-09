@@ -6,7 +6,7 @@ import { SPRINT_BACKLOG_DROP_ID } from '../../../constants/constants';
 
 interface SprintBacklogComponentProps {
   sprintBacklog: SprintBacklogTaskType[];
-  deleteSprintBacklog: (task: SprintBacklogTaskType, index: number) => void;
+  deleteSprintBacklog: (index: number) => void;
 }
 
 const SprintBacklogComponent = ({ sprintBacklog, deleteSprintBacklog }: SprintBacklogComponentProps) => (
@@ -36,7 +36,7 @@ const SprintBacklogComponent = ({ sprintBacklog, deleteSprintBacklog }: SprintBa
                     <div className="w-full">
                       <SprintBacklogTask {...task} />
                     </div>
-                    <button className="pr-2" onClick={() => deleteSprintBacklog(task, index)}>
+                    <button className="pr-2" onClick={() => deleteSprintBacklog(index)}>
                       <ClosedIcon color="text-error-red" />
                     </button>
                   </div>
