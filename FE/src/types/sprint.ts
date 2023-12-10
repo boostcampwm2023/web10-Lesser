@@ -1,4 +1,4 @@
-import { ReadBacklogTaskResponseDto } from './backlog';
+import { ReadBacklogEpicResponseDto, ReadBacklogStoryResponseDto, ReadBacklogTaskResponseDto } from './backlog';
 
 export type TaskGroup = 'all' | 'story';
 
@@ -19,7 +19,15 @@ export interface Task {
   condition: string;
 }
 
-export interface SprintBacklog extends ReadBacklogTaskResponseDto {
+export interface SprintBacklogEpic extends ReadBacklogEpicResponseDto {
+  storyList: SprintBacklogStory[];
+}
+
+export interface SprintBacklogStory extends ReadBacklogStoryResponseDto {
+  taskList: SprintBacklogTask[];
+}
+
+export interface SprintBacklogTask extends ReadBacklogTaskResponseDto {
   epicIndex: number;
   storyIndex: number;
   taskIndex: number;
@@ -32,4 +40,30 @@ export interface SprintCreateBody {
   startDate: string;
   endDate: string;
   title: string;
+}
+
+export interface BoardTaskObject {
+  storyId?: number;
+  storySequence?: number;
+  storyTitle?: string;
+  ToDo: Task[];
+  InProgress: Task[];
+  Done: Task[];
+}
+
+export type TaskGroupedByStory = Record<number, BoardTaskObject>;
+
+export interface Sprint {
+  sprintId: number;
+  sprintTitle: string;
+  sprintGoal: string;
+  sprintStartDate: string;
+  sprintEndDate: string;
+  sprintEnd: boolean;
+  sprintModal: boolean;
+  taskList: Task[];
+}
+
+export interface ReturnedSprint extends Sprint {
+  boardTask: Record<number, BoardTaskObject>;
 }

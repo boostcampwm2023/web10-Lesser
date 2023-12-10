@@ -1,29 +1,60 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../apis/api';
 import SprintBacklogSetting from '../../components/sprint/sprintCreate/SprintBacklogSetting';
 import { CreateProcessHeader, CreateProcessText } from '../../components/common/CreateProcess';
 import { PROCESS_NUMBER } from '../../constants/constants';
-import { SprintBacklog, SprintCreateBody } from '../../types/sprint';
+import { SprintBacklogTask, SprintCreateBody } from '../../types/sprint';
 import SprintGoalSetting from './../../components/sprint/sprintCreate/SprintGoalSetting';
 import usePostNewSprint from '../../hooks/queries/sprint/usePostNewSprint';
 import { useSelectedProjectState } from '../../stores';
 import { transformDate } from '../../utils/date';
+import { ReadBacklogEpicResponseDto } from '../../types/backlog';
 
 const SprintCreatePage = () => {
   const [process, setProcess] = useState<number>(PROCESS_NUMBER.PROCESS1);
-  const [sprintBacklog, setSprintBacklog] = useState<SprintBacklog[]>([]);
+  const [sprintBacklog, setSprintBacklog] = useState<SprintBacklogTask[]>([]);
   const [sprintGoal, setSprintGoal] = useState<string>('');
   const [sprintEndDate, setSprintEndDate] = useState<string>('');
   const { id: projectId } = useSelectedProjectState();
   const { mutateAsync } = usePostNewSprint(projectId);
-  const { data: backlog, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['backlogs', projectId, 'sprint'],
     queryFn: async () => {
-      const response = await api.get(`/backlogs/${projectId}/notdone`);
-      return response.data;
+      const { data } = await api.get(`/backlogs/${projectId}/notdone`);
+      data.epicList.forEach((epic: { storyList: { taskList: SprintBacklogTask[] }[] }) => {
+        epic.storyList.forEach((story) => {
+          story.taskList = story.taskList.map((task, index) => {
+            task.taskIndex = index;
+            return task;
+          });
+        });
+      });
+      return data;
     },
   });
+
+  const backlog = useMemo(() => {
+    const newData = structuredClone(data);
+
+    if (!sprintBacklog.length) {
+      return newData;
+    }
+
+    sprintBacklog.forEach((sprintBacklogItem: SprintBacklogTask) => {
+      const { epicIndex, storyIndex, taskIndex } = sprintBacklogItem;
+      newData.epicList[epicIndex].storyList[storyIndex].taskList[taskIndex] = undefined;
+    });
+
+    newData.epicList.forEach((epic: ReadBacklogEpicResponseDto) => {
+      epic.storyList.forEach((story) => {
+        story.taskList = story.taskList.filter((task) => !!task);
+      });
+    });
+
+    return newData;
+  }, [data, sprintBacklog]);
+
   const handleNextButtonClick = () => {
     setProcess(PROCESS_NUMBER.PROCESS2);
   };

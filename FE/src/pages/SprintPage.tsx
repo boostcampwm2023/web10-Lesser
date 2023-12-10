@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import PrograssBar from '../components/common/ProgressBar/ProgressBar';
 import KanbanBoard from '../components/sprint/KanbanBoard';
@@ -7,79 +7,44 @@ import BoardHeader from '../components/sprint/BoardHeader';
 import FilterDropdown from '../components/sprint/FilterDropdown';
 import SprintEndModal from '../components/sprint/modal/SprintEndModal';
 import SprintLandingPage from './sprint/SprintLandingPage';
-import { Task } from '../types/sprint';
+import { ReturnedSprint, Task } from '../types/sprint';
 import { UserFilter, TaskGroup } from '../types/sprint';
 import { calculateRestDate, transformDate } from '../utils/date';
 import { useSelectedProjectState } from '../stores';
 import { useGetProgressSprint, usePatchTaskState } from '../hooks/queries/sprint';
 import { useModal } from '../modal/useModal';
 import { useNavigate } from 'react-router-dom';
-
-interface BoardTaskListObject {
-  storyId?: number;
-  storySequence?: number;
-  storyTitle?: string;
-  ToDo: Task[];
-  InProgress: Task[];
-  Done: Task[];
-}
-
-type TaskGroupedByStory = Record<number, BoardTaskListObject>;
+import { useQueryClient } from '@tanstack/react-query';
+import structureTaskList from '../utils/structureTaskList';
 
 const SprintPage = () => {
   const [taskGroup, setTaskGroup] = useState<TaskGroup>('all');
   const [userToFilter, setUserToFilter] = useState<UserFilter>(-1);
   const [dropdownOpend, setDropdownOpend] = useState<boolean>(false);
-  const [boardTaskList, setBoardTaskList] = useState<BoardTaskListObject[]>([]);
   const { id: projectId, userList } = useSelectedProjectState();
   const { data, isLoading, isError } = useGetProgressSprint(projectId);
-  const { mutate } = usePatchTaskState();
+  const { mutateAsync } = usePatchTaskState();
   const endModal = useModal();
   const navigate = useNavigate();
   const userFilterList = useMemo(() => [{ userId: -1, userName: '전체' }, ...userList], [userList]);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (data) {
-      const currentTaskList =
-        userToFilter === -1 ? data.taskList : data.taskList.filter(({ userId }) => userId === userToFilter);
+  const handleGroupButtonClick = (user: UserFilter, taskGroup: TaskGroup): void => {
+    queryClient.setQueryData(['sprint'], (prevSprintData: ReturnedSprint) => {
+      const boardTaskList = structureTaskList(prevSprintData.taskList, user, taskGroup);
+      return { ...prevSprintData, boardTaskList };
+    });
 
-      if (taskGroup === 'all') {
-        const ToDo = currentTaskList?.filter(({ state }: Task) => state === 'ToDo');
-        const InProgress = currentTaskList?.filter(({ state }: Task) => state === 'InProgress');
-        const Done = currentTaskList?.filter(({ state }: Task) => state === 'Done');
-        const newBoardTaskLists = { ToDo, InProgress, Done };
-        setBoardTaskList([newBoardTaskLists]);
-
-        return;
-      }
-
-      const taskList = currentTaskList?.reduce((acc: TaskGroupedByStory, current: Task) => {
-        const { storyId, storySequence, storyTitle } = current;
-        acc[storyId] = acc[storyId] ?? {
-          storySequence,
-          storyId,
-          storyTitle,
-          ToDo: [],
-          InProgress: [],
-          Done: [],
-        };
-
-        const taskState = current.state;
-        acc[storyId][taskState as 'ToDo' | 'InProgress' | 'Done'].push(current);
-
-        return acc;
-      }, {});
-
-      setBoardTaskList(Object.values(taskList));
-    }
-  }, [data, userToFilter, taskGroup]);
-
-  const handleGroupButtonClick = (taskGroup: TaskGroup): void => {
     setTaskGroup(taskGroup);
     setDropdownOpend(false);
   };
 
-  const handleUserFilterButtonClick = (user: UserFilter): void => {
+  const handleUserFilterButtonClick = (user: UserFilter, taskGroup: TaskGroup): void => {
+    queryClient.setQueryData(['sprint'], (prevSprintData: ReturnedSprint) => {
+      const boardTaskList = structureTaskList(prevSprintData.taskList, user, taskGroup);
+      return { ...prevSprintData, boardTaskList };
+    });
+
     setUserToFilter(user);
     setDropdownOpend(false);
   };
@@ -90,7 +55,7 @@ const SprintPage = () => {
 
   const handleDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result;
-    const [sourceStoryId] = source.droppableId.split(' ');
+    const [sourceStoryId, sourceState] = source.droppableId.split(' ');
 
     if (!destination) {
       return;
@@ -102,7 +67,25 @@ const SprintPage = () => {
       return;
     }
 
-    mutate({ id: Number(draggableId), state });
+    queryClient.setQueryData(['sprint'], (prevSprintData: ReturnedSprint) => {
+      const taskList = structuredClone(prevSprintData.taskList);
+      const targetTask = taskList.find(({ id }) => id === Number(draggableId));
+      if (targetTask) {
+        targetTask.state = state;
+      }
+
+      const boardTask = structuredClone(prevSprintData.boardTask);
+      boardTask[Number(sourceStoryId)][sourceState as 'ToDo' | 'InProgress' | 'Done'].splice(source.index, 1);
+      boardTask[Number(destinationStoryId)][state as 'ToDo' | 'InProgress' | 'Done'].splice(
+        destination.index,
+        0,
+        targetTask as Task,
+      );
+
+      return { ...prevSprintData, taskList, boardTask };
+    });
+
+    mutateAsync({ id: Number(draggableId), state });
   };
 
   const handleSprintEndButtonClick = () => {
@@ -217,7 +200,7 @@ const SprintPage = () => {
             <BoardHeader boardName="완료" boardDescription="스프린트 중 완료된 모든 업무" taskNumber={doneNumber} />
           </div>
           <ul className="flex flex-col gap-y-1.5">
-            {boardTaskList?.map((taskListByStory, index) => {
+            {Object.values(data.boardTask).map((taskListByStory, index) => {
               const { storyId, storySequence, storyTitle } = taskListByStory;
 
               return (

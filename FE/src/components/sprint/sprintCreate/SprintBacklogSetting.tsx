@@ -1,36 +1,22 @@
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import RightBracketIcon from '../../../assets/icons/RightBracketIcon';
-import { ReadBacklogEpicResponseDto } from '../../../types/backlog';
 import BacklogComponent from './BacklogComponent';
 import SprintBacklogComponent from './SprintBacklogComponent';
-import { useQueryClient } from '@tanstack/react-query';
-import { SprintBacklog } from '../../../types/sprint';
+import { SprintBacklogTask, SprintBacklogEpic } from '../../../types/sprint';
 import { SPRINT_BACKLOG_DROP_ID } from '../../../constants/constants';
 
 interface SprintBacklogSettingProps {
-  backlog: { epicList: ReadBacklogEpicResponseDto[] };
-  sprintBacklog: SprintBacklog[];
-  setSprintBacklog: React.Dispatch<React.SetStateAction<SprintBacklog[]>>;
+  backlog: { epicList: SprintBacklogEpic[] };
+  sprintBacklog: SprintBacklogTask[];
+  setSprintBacklog: React.Dispatch<React.SetStateAction<SprintBacklogTask[]>>;
   onCreateButtonClick: () => void;
   projectId: number;
 }
 
 const SprintBacklogSetting = (props: SprintBacklogSettingProps) => {
-  const { backlog, sprintBacklog, setSprintBacklog, onCreateButtonClick, projectId } = props;
-  const queryClient = useQueryClient();
+  const { backlog, sprintBacklog, setSprintBacklog, onCreateButtonClick } = props;
 
-  const deleteSprintBacklog = (task: SprintBacklog, index: number) => {
-    const { epicIndex, storyIndex, taskIndex } = task;
-
-    queryClient.setQueryData(
-      ['backlogs', projectId, 'sprint'],
-      (prevBacklog: { epicList: ReadBacklogEpicResponseDto[] }) => {
-        const newBacklogData = structuredClone(prevBacklog);
-        newBacklogData.epicList[epicIndex].storyList[storyIndex].taskList.splice(taskIndex, 0, { ...task });
-        return newBacklogData;
-      },
-    );
-
+  const deleteSprintBacklog = (index: number) => {
     setSprintBacklog((prevSprintBacklog) => {
       const newSprintBacklog = structuredClone(prevSprintBacklog);
       newSprintBacklog.splice(index, 1);
@@ -39,12 +25,11 @@ const SprintBacklogSetting = (props: SprintBacklogSettingProps) => {
   };
 
   const onDragEnd = (result: DropResult) => {
-    const { destination, source, draggableId } = result;
+    const { destination, source } = result;
 
     if (!destination) {
       if (source.droppableId === SPRINT_BACKLOG_DROP_ID) {
-        const task = JSON.parse(draggableId);
-        deleteSprintBacklog(task, source.index);
+        deleteSprintBacklog(source.index);
       }
 
       return;
@@ -63,21 +48,11 @@ const SprintBacklogSetting = (props: SprintBacklogSettingProps) => {
 
     const [epicIndex, storyIndex] = source.droppableId.split(' ').map((id) => Number(id));
 
-    const targetTask: SprintBacklog = {
+    const targetTask: SprintBacklogTask = {
       ...backlog.epicList[epicIndex].storyList[storyIndex].taskList[source.index],
       epicIndex,
       storyIndex,
-      taskIndex: source.index,
     };
-
-    queryClient.setQueryData(
-      ['backlogs', projectId, 'sprint'],
-      (prevBacklog: { epicList: ReadBacklogEpicResponseDto[] }) => {
-        const newBacklogData = structuredClone(prevBacklog);
-        newBacklogData.epicList[epicIndex].storyList[storyIndex].taskList.splice(source.index, 1);
-        return newBacklogData;
-      },
-    );
 
     setSprintBacklog((prevSprintBacklog) => {
       const newSprintBacklog = structuredClone(prevSprintBacklog);
