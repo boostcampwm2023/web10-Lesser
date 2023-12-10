@@ -128,7 +128,7 @@ const SprintPage = () => {
         <p>회고를 진행하시겠습니까?</p>
         <button
           className="p-3 rounded bg-starbucks-green text-true-white"
-          onClick={() => navigate(`/projects/${projectId}/review/sprint`)}
+          onClick={() => navigate(`/projects/${projectId}/review`)}
         >
           회고 진행하기
         </button>
