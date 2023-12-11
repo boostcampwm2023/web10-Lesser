@@ -43,7 +43,7 @@ export class MembersService {
 
     const [lesserAccessToken, lesserRefreshToken] = await Promise.all([
       this.lesserJwtService.getAccessToken(memberId),
-      this.lesserJwtService.getRefreshToken(),
+      this.lesserJwtService.getRefreshToken(memberId),
     ]);
 
     this.loggedMembers.set(lesserRefreshToken, { memberId });
@@ -74,7 +74,7 @@ export class MembersService {
     this.loggedMembers.delete(refreshToken);
     const [newAccesToken, newRefreshToken] = await Promise.all([
       this.lesserJwtService.getAccessToken(memberId),
-      this.lesserJwtService.getRefreshToken(),
+      this.lesserJwtService.getRefreshToken(memberId),
     ]);
     this.loggedMembers.set(newRefreshToken, { memberId });
     const tokens: Tokens = {
