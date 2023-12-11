@@ -41,6 +41,7 @@ const TaskPostModal = ({ parentId, close }: TaskPostModalProps) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['backlogs'] });
+      queryClient.invalidateQueries({ queryKey: ['sprint'] });
     },
   });
 

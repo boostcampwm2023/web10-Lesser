@@ -16,6 +16,7 @@ const BacklogDeleteModal = ({ id, url, close }: BacklogDeleteModalProps) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['backlogs'] });
+      queryClient.invalidateQueries({ queryKey: ['sprint'] });
     },
   });
 

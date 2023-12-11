@@ -15,6 +15,7 @@ const useUpdateBacklog = (url: string, getBody: () => BacklogUpdateBody, toggleB
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['backlogs'] });
+      queryClient.invalidateQueries({ queryKey: ['sprint'] });
     },
   });
 
