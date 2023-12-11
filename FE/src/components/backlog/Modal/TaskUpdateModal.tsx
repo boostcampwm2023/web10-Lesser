@@ -30,6 +30,7 @@ const TaskUpdateModal = ({ close, id, title, userId, point, condition }: TaskMod
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['backlogs'] });
+      queryClient.invalidateQueries({ queryKey: ['sprint'] });
     },
   });
 
