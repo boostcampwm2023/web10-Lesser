@@ -1,8 +1,10 @@
-import { ProjectUser } from '../../types/project';
 import { UserFilter, TaskGroup } from '../../types/sprint';
 
 interface FilterDropdownProps {
-  userList: ProjectUser[];
+  userList: {
+    userId: number | null;
+    userName: string;
+  }[];
   userToFilter: UserFilter;
   taskGroup: TaskGroup;
   onUserFilterButtonClick: (user: UserFilter, group: TaskGroup) => void;

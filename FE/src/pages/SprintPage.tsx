@@ -26,7 +26,10 @@ const SprintPage = () => {
   const { mutateAsync } = usePatchTaskState();
   const endModal = useModal();
   const navigate = useNavigate();
-  const userFilterList = useMemo(() => [{ userId: -1, userName: '전체' }, ...userList], [userList]);
+  const userFilterList = useMemo(
+    () => [{ userId: -1, userName: '전체' }, ...userList, { userId: null, userName: '미할당' }],
+    [userList],
+  );
   const queryClient = useQueryClient();
 
   const handleGroupButtonClick = (user: UserFilter, taskGroup: TaskGroup): void => {
