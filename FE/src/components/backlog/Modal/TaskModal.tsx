@@ -1,5 +1,5 @@
-import useGetUsername from '../../../hooks/pages/backlog/useGetUsername';
 import { useModal } from '../../../modal/useModal';
+import { useSelectedProjectState } from '../../../stores';
 import { ReadBacklogTaskResponseDto } from '../../../types/backlog';
 import TaskModalItemLayout from '../TaskModalItemLayout';
 import BacklogDeleteModal from './BacklogDeleteModal';
@@ -11,7 +11,7 @@ export interface TaskModalProps extends ReadBacklogTaskResponseDto {
 
 const TaskModal = (props: TaskModalProps) => {
   const { userId, title, point, condition, id, close } = props;
-  const { getUsernameByUserid } = useGetUsername();
+  const getUserNameById = useSelectedProjectState((state) => state.getUserNameById);
   const updateModal = useModal(false);
   const deleteModal = useModal();
 
@@ -36,7 +36,7 @@ const TaskModal = (props: TaskModalProps) => {
         </TaskModalItemLayout>
         <TaskModalItemLayout title="담당자" description="Task를 수행할 멤버를 선정합니다">
           <p className="w-[9.375rem] py-2 px-2.5 border rounded-sm text-s font-bold border-transperant-green bg-cool-neutral">
-            {getUsernameByUserid(Number(userId))}
+            {getUserNameById(Number(userId))}
           </p>
         </TaskModalItemLayout>
         <TaskModalItemLayout title="Task Point" description="Task를 완료하기 위해 소요되는 시간을 예상합니다">

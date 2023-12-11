@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import useGetUsername from './useGetUsername';
+import { useSelectedProjectState } from '../../../stores';
 
 const useTaskUsername = (initialValue: number) => {
-  const { getUsernameByUserid } = useGetUsername();
-  const [username, setUsername] = useState<string>(getUsernameByUserid(initialValue) ?? '미할당');
+  const getUserNameById = useSelectedProjectState((state) => state.getUserNameById);
+  const [username, setUsername] = useState<string>(getUserNameById(initialValue) ?? '미할당');
   const setNewUsername = (id: number) => {
-    setUsername(getUsernameByUserid(id));
+    setUsername(getUserNameById(id));
   };
   const resetUsername = () => {
     setUsername('미할당');
