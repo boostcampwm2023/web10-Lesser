@@ -31,8 +31,8 @@ const SprintPage = () => {
 
   const handleGroupButtonClick = (user: UserFilter, taskGroup: TaskGroup): void => {
     queryClient.setQueryData(['sprint'], (prevSprintData: ReturnedSprint) => {
-      const boardTaskList = structureTaskList(prevSprintData.taskList, user, taskGroup);
-      return { ...prevSprintData, boardTaskList };
+      const boardTask = structureTaskList(prevSprintData.taskList, user, taskGroup);
+      return { ...prevSprintData, boardTask };
     });
 
     setTaskGroup(taskGroup);
@@ -41,8 +41,8 @@ const SprintPage = () => {
 
   const handleUserFilterButtonClick = (user: UserFilter, taskGroup: TaskGroup): void => {
     queryClient.setQueryData(['sprint'], (prevSprintData: ReturnedSprint) => {
-      const boardTaskList = structureTaskList(prevSprintData.taskList, user, taskGroup);
-      return { ...prevSprintData, boardTaskList };
+      const boardTask = structureTaskList(prevSprintData.taskList, user, taskGroup);
+      return { ...prevSprintData, boardTask };
     });
 
     setUserToFilter(user);

@@ -20,8 +20,7 @@ const TaskCard = (props: TaskCardProps) => {
   const handleTaskClick = () => {
     open(<TaskModal {...props} close={close} />);
   };
-  const { userList } = useSelectedProjectState();
-  const userName = userList.find(({ userId }) => userId === Number(taskUserId))?.userName;
+  const getUserNameById = useSelectedProjectState((state) => state.getUserNameById);
 
   return (
     <Draggable draggableId={String(id)} index={index}>
@@ -38,7 +37,7 @@ const TaskCard = (props: TaskCardProps) => {
           <p className="font-medium">{title}</p>
           <p className="flex justify-between text-starbucks-green">
             <span className="font-bold">{id}</span>
-            <span>{userName}</span>
+            <span>{getUserNameById(Number(taskUserId))}</span>
             <span>{point} point</span>
           </p>
         </div>
