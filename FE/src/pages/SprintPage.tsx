@@ -30,7 +30,7 @@ const SprintPage = () => {
   const queryClient = useQueryClient();
 
   const handleGroupButtonClick = (user: UserFilter, taskGroup: TaskGroup): void => {
-    queryClient.setQueryData(['sprint'], (prevSprintData: ReturnedSprint) => {
+    queryClient.setQueryData(['backlogs', 'canvan'], (prevSprintData: ReturnedSprint) => {
       const boardTaskList = structureTaskList(prevSprintData.taskList, user, taskGroup);
       return { ...prevSprintData, boardTaskList };
     });
@@ -40,7 +40,7 @@ const SprintPage = () => {
   };
 
   const handleUserFilterButtonClick = (user: UserFilter, taskGroup: TaskGroup): void => {
-    queryClient.setQueryData(['sprint'], (prevSprintData: ReturnedSprint) => {
+    queryClient.setQueryData(['backlogs', 'canvan'], (prevSprintData: ReturnedSprint) => {
       const boardTaskList = structureTaskList(prevSprintData.taskList, user, taskGroup);
       return { ...prevSprintData, boardTaskList };
     });
@@ -67,7 +67,7 @@ const SprintPage = () => {
       return;
     }
 
-    queryClient.setQueryData(['sprint'], (prevSprintData: ReturnedSprint) => {
+    queryClient.setQueryData(['backlogs', 'canvan'], (prevSprintData: ReturnedSprint) => {
       const taskList = structuredClone(prevSprintData.taskList);
       const targetTask = taskList.find(({ id }) => id === Number(draggableId));
       if (targetTask) {
