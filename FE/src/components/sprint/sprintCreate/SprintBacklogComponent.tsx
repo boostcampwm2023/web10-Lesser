@@ -13,7 +13,7 @@ const SprintBacklogComponent = ({ sprintBacklog, deleteSprintBacklog }: SprintBa
   <Droppable droppableId={SPRINT_BACKLOG_DROP_ID}>
     {(provided) => (
       <div
-        className="h-[31.75rem] border rounded-md bg-cool-neutral border-house-green flex flex-col items-center p-7 overflow-y-scroll overflow-x-hidden"
+        className="h-[31.75rem] border rounded-md bg-cool-neutral border-house-green flex flex-col items-center p-7 overflow-y-auto overflow-x-hidden"
         {...provided.droppableProps}
         ref={provided.innerRef}
       >
