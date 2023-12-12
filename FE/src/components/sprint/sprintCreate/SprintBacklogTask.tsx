@@ -14,7 +14,7 @@ const SprintBacklogTask = (props: ReadBacklogTaskResponseDto) => {
       <div className="flex items-center justify-between border-t py-[0.563rem] pl-2.5 pr-[0.438rem] bg-white text-house-green text-r whitespace-nowrap">
         <div className="flex items-center gap-2.5 w-[80%]">
           <span className="w-16 font-bold">Task{sequence}</span>
-          <span>{title}</span>
+          <span className="max-w-[16rem] truncate">{title}</span>
         </div>
         <span className="w-[5rem] truncate">{getUserNameById(!userId ? undefined : Number(userId))}</span>
         <button
