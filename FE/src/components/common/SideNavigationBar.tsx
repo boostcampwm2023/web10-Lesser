@@ -30,10 +30,10 @@ const SideNavigationBar = () => {
 
   return (
     <nav className="flex flex-col items-center px-6 py-8 top-[32px] rounded-lg w-52 bg-house-green gap-2.5 mr-10 min-w-[13.125rem] min-h-[calc(100vh-64px)] max-h-[calc(100vh-64px)] sticky">
-      <div className="mb-5">
+      <Link to={'/projects'} className="mb-5">
         <img src={lesserLogo} alt="로고" />
         <p className="text-xs font-medium text-center text-true-white">적고 쉽고 애자일하게 일하자</p>
-      </div>
+      </Link>
       <hr className="w-full h-px bg-true-white" />
       <ul>
         {navigationInformation.map(({ pageName, description, pageURI }) => (
