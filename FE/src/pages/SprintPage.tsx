@@ -16,13 +16,13 @@ import { useModal } from '../modal/useModal';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import structureTaskList from '../utils/structureTaskList';
+import useFilterState from '../stores/useFilterState';
 
 const SprintPage = () => {
-  const [taskGroup, setTaskGroup] = useState<TaskGroup>('all');
-  const [userToFilter, setUserToFilter] = useState<UserFilter>(-1);
+  const { userToFilter, taskGroup, changeTaskGroup, changeUserToFilter } = useFilterState();
   const [dropdownOpend, setDropdownOpend] = useState<boolean>(false);
   const { id: projectId, userList } = useSelectedProjectState();
-  const { data, isLoading, isError } = useGetProgressSprint(projectId);
+  const { data, isLoading, isError } = useGetProgressSprint({ projectId, userToFilter, taskGroup });
   const { mutateAsync } = usePatchTaskState();
   const endModal = useModal();
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ const SprintPage = () => {
       return { ...prevSprintData, boardTask };
     });
 
-    setTaskGroup(taskGroup);
+    changeTaskGroup(taskGroup);
     setDropdownOpend(false);
   };
 
@@ -48,7 +48,7 @@ const SprintPage = () => {
       return { ...prevSprintData, boardTask };
     });
 
-    setUserToFilter(user);
+    changeUserToFilter(user);
     setDropdownOpend(false);
   };
 
