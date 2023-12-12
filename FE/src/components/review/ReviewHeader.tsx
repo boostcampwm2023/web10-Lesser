@@ -54,7 +54,7 @@ const ReviewHeader = ({ data, setSprintId }: ReviewHeaderProps) => {
         {sprintListVisibility && (
           <ul className="flex flex-col w-[5.75rem] gap-[0.313rem] absolute top-8 p-3 items-center border border-light-gray rounded-md bg-true-white z-10 text-light-gray">
             {Object.values(sprintList).map((sprint) => (
-              <li key={sprint.title}>
+              <li key={sprint.sprintId}>
                 <button
                   className={`${selectedSprint.id === sprint.sprintId && 'font-bold text-starbucks-green'}`}
                   onClick={() => setSprintId(() => sprint.sprintId)}
@@ -68,7 +68,7 @@ const ReviewHeader = ({ data, setSprintId }: ReviewHeaderProps) => {
 
         <ul className="flex gap-3 text-r text-light-gray">
           {reviewTabs.map((tab, index) => {
-            const urlSegment = tab === '차트' ? 'chart' : tab === '회고란' ? 'write' : 'sprint';
+            const urlSegment = tab === '차트' ? 'chart' : tab === '회고란' ? 'write' : '';
             return (
               <li key={index}>
                 <Link

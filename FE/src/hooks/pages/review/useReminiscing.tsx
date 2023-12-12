@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../apis/api';
 import { SelectedSprint } from '../../../types/review';
+import { useSelectedProjectState } from '../../../stores';
 
 const useReminiscing = (
   sprint: SelectedSprint,
@@ -8,6 +9,7 @@ const useReminiscing = (
   setEditTextarea: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   const queryClient = useQueryClient();
+  const { id: projectId } = useSelectedProjectState();
 
   const { mutateAsync } = useMutation({
     mutationFn: async () => {
@@ -16,7 +18,7 @@ const useReminiscing = (
         : await api.post('/reviews', { sprintId: sprint.id, content });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['review', sprint.id] });
+      queryClient.invalidateQueries({ queryKey: ['backlogs', projectId, sprint.id] });
       setEditTextarea(false);
     },
   });

@@ -19,7 +19,7 @@ const navigationInformation: NavigationInformation[] = [
   },
   {
     pageName: '회고',
-    pageURI: (projectId) => `/projects/${projectId}/review/sprint`,
+    pageURI: (projectId) => `/projects/${projectId}/review`,
     description: '회고하는 페이지 설명. 스프린트 백로그 태스트 상태 분석, 번다운 차트, 회고 글 작성 칸이 있을 예정',
   },
 ];

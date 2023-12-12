@@ -8,7 +8,7 @@ const usePatchSprintEnd = (projectId: number) => {
   return useMutation({
     mutationFn: async (id: number) => await fetchPatchSprintEnd(id),
     onSuccess: () => {
-      navigate(`/projects/${projectId}/review/sprint`);
+      navigate(`/projects/${projectId}/review`);
     },
   });
 };

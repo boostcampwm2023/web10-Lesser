@@ -31,7 +31,7 @@ const ReviewPage = () => {
     <>
       <ReviewHeader data={data} setSprintId={setSprintId} />
       <Routes>
-        <Route path="/sprint" element={<ReviewSprint data={data} />} />
+        <Route path="/" element={<ReviewSprint data={data} />} />
         <Route path="/chart" element={<ReviewChart data={data} />} />
         <Route path="/write" element={<ReviewReminiscing data={data} />} />
       </Routes>
