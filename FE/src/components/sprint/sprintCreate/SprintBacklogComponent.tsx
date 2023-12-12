@@ -13,7 +13,7 @@ const SprintBacklogComponent = ({ sprintBacklog, deleteSprintBacklog }: SprintBa
   <Droppable droppableId={SPRINT_BACKLOG_DROP_ID}>
     {(provided) => (
       <div
-        className="h-[31.75rem] border rounded-md bg-cool-neutral border-house-green flex flex-col items-center p-7"
+        className="h-[31.75rem] border rounded-md bg-cool-neutral border-house-green flex flex-col items-center p-7 overflow-y-auto overflow-x-hidden"
         {...provided.droppableProps}
         ref={provided.innerRef}
       >
@@ -28,7 +28,7 @@ const SprintBacklogComponent = ({ sprintBacklog, deleteSprintBacklog }: SprintBa
               <Draggable draggableId={JSON.stringify(task)} index={index} key={task.id}>
                 {(provided) => (
                   <div
-                    className="flex items-center justify-between"
+                    className="flex items-center justify-between bg-true-white"
                     {...provided.dragHandleProps}
                     {...provided.draggableProps}
                     ref={provided.innerRef}

@@ -16,17 +16,20 @@ import { useModal } from '../modal/useModal';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import structureTaskList from '../utils/structureTaskList';
+import useFilterState from '../stores/useFilterState';
 
 const SprintPage = () => {
-  const [taskGroup, setTaskGroup] = useState<TaskGroup>('all');
-  const [userToFilter, setUserToFilter] = useState<UserFilter>(-1);
+  const { userToFilter, taskGroup, changeTaskGroup, changeUserToFilter } = useFilterState();
   const [dropdownOpend, setDropdownOpend] = useState<boolean>(false);
-  const { id: projectId, userList } = useSelectedProjectState();
-  const { data, isLoading, isError } = useGetProgressSprint(projectId);
+  const { id: projectId, userList, getUserNameById } = useSelectedProjectState();
+  const { data, isLoading, isError } = useGetProgressSprint({ projectId, userToFilter, taskGroup });
   const { mutateAsync } = usePatchTaskState();
   const endModal = useModal();
   const navigate = useNavigate();
-  const userFilterList = useMemo(() => [{ userId: -1, userName: '전체' }, ...userList], [userList]);
+  const userFilterList = useMemo(
+    () => [{ userId: -1, userName: '전체' }, ...userList, { userId: null, userName: '미할당' }],
+    [userList],
+  );
   const queryClient = useQueryClient();
 
   const handleGroupButtonClick = (user: UserFilter, taskGroup: TaskGroup): void => {
@@ -35,7 +38,7 @@ const SprintPage = () => {
       return { ...prevSprintData, boardTask };
     });
 
-    setTaskGroup(taskGroup);
+    changeTaskGroup(taskGroup);
     setDropdownOpend(false);
   };
 
@@ -45,7 +48,7 @@ const SprintPage = () => {
       return { ...prevSprintData, boardTask };
     });
 
-    setUserToFilter(user);
+    changeUserToFilter(user);
     setDropdownOpend(false);
   };
 
@@ -168,7 +171,7 @@ const SprintPage = () => {
                 onClick={handleFilterButtonClick}
                 className="bg-starbucks-green text-true-white rounded py-1.5 px-4 font-bold text-xs"
               >
-                필터
+                {userToFilter === -1 ? '필터' : getUserNameById(userToFilter)}
               </button>
               {dropdownOpend && (
                 <FilterDropdown
