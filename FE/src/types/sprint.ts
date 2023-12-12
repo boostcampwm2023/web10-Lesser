@@ -2,7 +2,7 @@ import { ReadBacklogEpicResponseDto, ReadBacklogStoryResponseDto, ReadBacklogTas
 
 export type TaskGroup = 'all' | 'story';
 
-export type UserFilter = number | null;
+export type UserFilter = number | undefined;
 
 export type TaskState = 'ToDo' | 'InProgress' | 'Done' | string;
 

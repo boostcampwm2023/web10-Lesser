@@ -21,7 +21,7 @@ import useFilterState from '../stores/useFilterState';
 const SprintPage = () => {
   const { userToFilter, taskGroup, changeTaskGroup, changeUserToFilter } = useFilterState();
   const [dropdownOpend, setDropdownOpend] = useState<boolean>(false);
-  const { id: projectId, userList } = useSelectedProjectState();
+  const { id: projectId, userList, getUserNameById } = useSelectedProjectState();
   const { data, isLoading, isError } = useGetProgressSprint({ projectId, userToFilter, taskGroup });
   const { mutateAsync } = usePatchTaskState();
   const endModal = useModal();
@@ -171,7 +171,7 @@ const SprintPage = () => {
                 onClick={handleFilterButtonClick}
                 className="bg-starbucks-green text-true-white rounded py-1.5 px-4 font-bold text-xs"
               >
-                필터
+                {userToFilter === -1 ? '필터' : getUserNameById(userToFilter)}
               </button>
               {dropdownOpend && (
                 <FilterDropdown
