@@ -8,6 +8,7 @@ import { Tokens } from '../../controller/dto/tokens.dto';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
 import { GithubOauthService } from 'src/github-api/oauth.service';
 import { GithubResourceService } from 'src/github-api/resource.service';
+import { GithubUser } from 'src/github-api/dto/github.dto';
 
 @Injectable()
 export class MembersService {
@@ -29,17 +30,8 @@ export class MembersService {
     const { github_id } = githubUser;
 
     const findMember = await this.memberRepository.findOne({ where: { github_id } });
-    let memberId = findMember ? findMember.id : null; // user 정보 없으면 회원가입
-    if (!findMember) {
-      const newMember = this.memberRepository.create({
-        github_id: githubUser.github_id,
-        username: githubUser.username,
-        email: githubUser.email,
-        image_url: githubUser.image_url,
-      });
-      const savedMember = await this.memberRepository.save(newMember);
-      memberId = savedMember.id;
-    }
+    const loginMember = findMember ? findMember : await this.signup(githubUser);
+    const memberId = loginMember.id;
 
     const [lesserAccessToken, lesserRefreshToken] = await Promise.all([
       this.lesserJwtService.getAccessToken(memberId),
@@ -58,6 +50,17 @@ export class MembersService {
       refreshToken: lesserRefreshToken,
     };
     return response;
+  }
+
+  async signup(githubUser: GithubUser): Promise<Member> {
+    const newMember = this.memberRepository.create({
+      github_id: githubUser.github_id,
+      username: githubUser.username,
+      email: githubUser.email,
+      image_url: githubUser.image_url,
+    });
+    const savedMember = await this.memberRepository.save(newMember);
+    return savedMember;
   }
 
   logout(id: number) {
