@@ -15,7 +15,7 @@ interface TaskCardProps {
 }
 
 const TaskCard = (props: TaskCardProps) => {
-  const { id, title, userId: taskUserId, point, index } = props;
+  const { id, title, userId: taskUserId, point, index, sequence } = props;
   const { open, close } = useModal();
   const handleTaskClick = () => {
     open(<TaskModal {...props} close={close} />);
@@ -36,7 +36,7 @@ const TaskCard = (props: TaskCardProps) => {
         >
           <p className="font-medium">{title}</p>
           <p className="flex justify-between text-starbucks-green">
-            <span className="font-bold">{id}</span>
+            <span className="font-bold">Task-{sequence}</span>
             <span>{getUserNameById(Number(taskUserId))}</span>
             <span>{point} point</span>
           </p>
