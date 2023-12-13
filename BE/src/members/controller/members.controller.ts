@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Header, Post, Query, Req } from '@nestjs/common';
-import { MembersService } from './members.service';
+import { MembersService } from '../domain/service/members.service';
 import { LoginRequestDto, LoginResponseDto } from './dto/login.dto';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
 

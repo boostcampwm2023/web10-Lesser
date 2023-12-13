@@ -1,4 +1,4 @@
-import { Member } from '../entities/member.entity';
+import { Member } from '../domain/entity/member.entity';
 
 export interface IMemberRepository {
   findIn(memberList: number[]): Promise<Member[]>;

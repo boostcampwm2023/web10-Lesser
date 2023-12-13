@@ -1,29 +1,29 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
-import { Member } from './entities/member.entity';
-import { LoginRequestDto, LoginResponseDto } from './dto/login.dto';
-import { MemberSearchResponseDto } from './dto/member.dto';
-import { GithubUser } from './dto/github-user.dto';
-import { Tokens } from './dto/tokens.dto';
+import { Member } from '../entity/member.entity';
+import { LoginRequestDto, LoginResponseDto } from '../../controller/dto/login.dto';
+import { MemberSearchResponseDto } from '../../controller/dto/member.dto';
+import { Tokens } from '../../controller/dto/tokens.dto';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
-import { GithubEmail } from 'src/common/types/githubResource.type';
+import { GithubOauthService } from 'src/github-api/oauth.service';
+import { GithubResourceService } from 'src/github-api/resource.service';
 
 @Injectable()
 export class MembersService {
   constructor(
     @InjectRepository(Member) private memberRepository: Repository<Member>,
+    private githubOauthService: GithubOauthService,
+    private githubResourceService: GithubResourceService,
     private lesserJwtService: LesserJwtService,
-    private configService: ConfigService,
   ) {}
   private loggedMembers = new Map();
 
   async githubLogin(dto: LoginRequestDto) {
-    const githubAccessToken = await this.getGithubAccessToken(dto.code);
+    const githubAccessToken = await this.githubOauthService.getGithubAccessToken(dto.code);
     const [githubUser, githubEmail] = await Promise.all([
-      this.fetchGithubUser(githubAccessToken),
-      this.fetchGithubEmail(githubAccessToken),
+      this.githubResourceService.fetchGithubUser(githubAccessToken),
+      this.githubResourceService.fetchGithubEmail(githubAccessToken),
     ]);
     githubUser.email = githubEmail;
     const { github_id } = githubUser;
@@ -82,68 +82,6 @@ export class MembersService {
       refreshToken: newRefreshToken,
     };
     return tokens;
-  }
-
-  async getGithubAccessToken(code: string) {
-    const body = {
-      client_id: this.configService.get('GITHUB_CLIENT_ID'),
-      client_secret: this.configService.get('GITHUB_CLIENT_SECRET'),
-      code: code,
-    };
-    try {
-      const response = await fetch('https://github.com/login/oauth/access_token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-      const oauthData = await response.json();
-      const accessToken = oauthData.access_token;
-      return accessToken;
-    } catch (err) {
-      throw new Error(err.message);
-    }
-  }
-
-  async fetchGithubUser(accessToken: string): Promise<GithubUser> {
-    try {
-      const response = await fetch('https://api.github.com/user', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const data = await response.json();
-      const githubUser: GithubUser = {
-        github_id: data.id,
-        username: data.login,
-        email: data.email,
-        image_url: data.avatar_url,
-      };
-      return githubUser;
-    } catch (err) {
-      throw new Error(err.message);
-    }
-  }
-
-  async fetchGithubEmail(accessToken: string): Promise<string> {
-    try {
-      const response = await fetch('https://api.github.com/user/emails', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const emailList: GithubEmail[] = await response.json();
-      const primaryEmail = emailList.find((email) => email.primary === true);
-      return primaryEmail.email;
-    } catch (err) {
-      throw new Error(err.message);
-    }
   }
 
   async searchMembersByName(username: string): Promise<MemberSearchResponseDto[]> {

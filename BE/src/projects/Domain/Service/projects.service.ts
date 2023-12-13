@@ -24,7 +24,7 @@ import { Project } from '../entity/project.entity';
 import { ProjectCounter } from '../entity/projectCounter.entity';
 import { ProjectNotFoundError } from '../Error/ProjectError';
 import { IProjectRepository } from '../IRepository/Project.Repository';
-import { IMemberRepository } from 'src/members/Repository/Imember.repository';
+import { IMemberRepository } from 'src/members/repository/Imember.repository';
 import { Transactional } from 'typeorm-transactional';
 import { IProjectCounterRepository } from '../IRepository/IProjectCounter.Repository';
 

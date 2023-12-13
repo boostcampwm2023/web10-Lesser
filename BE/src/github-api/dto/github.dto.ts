@@ -17,3 +17,8 @@ export class GithubUser {
   @IsNotEmpty()
   image_url: string;
 }
+
+export interface GithubEmail {
+  primary: boolean;
+  email: string;
+}
