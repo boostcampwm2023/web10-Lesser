@@ -98,14 +98,12 @@ const SprintPage = () => {
   };
 
   const [todoNumber, inProgressNumber, doneNumber] = useMemo(() => {
-    const currentTaskList =
-      userToFilter === -1 ? data?.taskList : data?.taskList.filter(({ userId }) => userId === userToFilter);
-    const todoNumber = currentTaskList?.filter(({ state }) => state === 'ToDo').length;
-    const inProgressNumber = currentTaskList?.filter(({ state }) => state === 'InProgress').length;
-    const doneNumber = currentTaskList?.filter(({ state }) => state === 'Done').length;
+    const todoNumber = data?.taskList.filter(({ state }) => state === 'ToDo').length;
+    const inProgressNumber = data?.taskList.filter(({ state }) => state === 'InProgress').length;
+    const doneNumber = data?.taskList.filter(({ state }) => state === 'Done').length;
 
     return [todoNumber, inProgressNumber, doneNumber];
-  }, [data, userToFilter]);
+  }, [data]);
 
   if (isLoading) {
     return (
@@ -171,7 +169,7 @@ const SprintPage = () => {
                 onClick={handleFilterButtonClick}
                 className="bg-starbucks-green text-true-white rounded py-1.5 px-4 font-bold text-xs"
               >
-                {userToFilter === -1 ? '필터' : getUserNameById(userToFilter)}
+                {userToFilter === -1 ? '필터' : userToFilter === null ? '미할당' : getUserNameById(userToFilter)}
               </button>
               {dropdownOpend && (
                 <FilterDropdown
