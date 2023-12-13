@@ -8,19 +8,19 @@ const navigationInformation: NavigationInformation[] = [
   {
     pageName: '백로그',
     pageURI: (projectId) => `/projects/${projectId}/backlog`,
-    description:
-      '백로그 페이지 설명. 백로그는 제품백로그와 스프린트 백로그가 있으며 에픽, 스토리, 태스크로 이루어진다.',
+    description: '프로젝트에 포함되어야 하는 기능의 우선순위 목록을 에픽, 스토리, 태스크 단위로 나누어 설정할 수 있다.',
   },
   {
     pageName: '스프린트',
     pageURI: (projectId) => `/projects/${projectId}/sprint`,
     description:
-      '스프린트 페이지 설명. 스프린트 시작하면 칸반보드를 확인할 수 있고, 드래그 앤 드롭을 이용해 티켓을 옮길 수 있다.',
+      '기능들을 구현하는 작업의 단위로, 목표와 기간을 설정할 수 있고 드래그 앤 드롭을 이용해 업무를 관리할 수 있다.',
   },
   {
     pageName: '회고',
     pageURI: (projectId) => `/projects/${projectId}/review`,
-    description: '회고하는 페이지 설명. 스프린트 백로그 태스트 상태 분석, 번다운 차트, 회고 글 작성 칸이 있을 예정',
+    description:
+      '완료된 스프린트의 성과를 확인하고 번다운 차트를 통해 분석할 수 있다. 또한 회고란을 통해 개선점을 도출할 수 있다.',
   },
 ];
 
