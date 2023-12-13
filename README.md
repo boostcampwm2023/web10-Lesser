@@ -3,25 +3,35 @@
 ![image](https://github.com/choyoungwoo9/problem_solve/assets/66576231/c0e71a57-384f-4b5f-b5ab-2724e0e465ed)
 `애자일한 프로젝트 관리 툴 Lesser`
 
-## Lesser 기획 배경
+## Lesser의 기술적 고민
+* 공통
+	* 애자일 프로세스
+* FE
+	* 서버에서 받아오는 데이터와 화면에 보여주는 데이터의 정합성 문제 해결하기
+	* 드래그 앤 드랍
+* BE
+	* 요구사항의 변경에 유연하게 대응할 수 있는 계층형 아키텍처 적용하기
 
-Jira를 사용하려했지만, 너무 어려웠던 경험 있으신가요?
 
-적어도 저희 팀은 있었습니다. 에픽은 무엇이고, 태스크는 또 뭔가요.
+## Lesser 기술스택
+### [자세히 보기](https://plastic-toad-cb0.notion.site/a14212c2a49b40a78f7dd799a30c3d30?pvs=4)
+* 공통
+	* 협업도구 : Notion, Slack
+	* 이슈관리도구 : Jira
+* FE
+	* 언어 : TypeScript
+	* 라이브러리 : React
+* BE
+	* 언어 : TypeScript
+	* 프레임워크 : NestJS
+	* DB : MySQL
 
-지라는 뛰어난 만큼 확실히 어렵습니다.
-
-지라만큼 뛰어나지는 않지만 쉬우면서, 기능이 적고, 애자일한 것 어디 없을까 ?
+## Lesser 시스템 아키텍처
+![image](https://github.com/boostcampwm2023/web10-Lesser/assets/66576231/ea7d5242-d1c9-4e6c-b766-2950a1501e9f)
 
 ## Lesser의 목적
 
 소규모의 팀이 간단한 프로젝트를 시작할 때 쉽게 사용하기 적절한 이슈관리 서비스입니다.
-
-## Lesser의 대상 사용자
-
-1. 애자일하게 프로젝트의 일정을 관리해보고싶은 사용자
-2. 작은 규모의 프로젝트를 부담없이 도전하고 싶은 초보 개발자
-3. 대학교 팀 프로젝트
 
 ## Lesser의 주요기능
 
