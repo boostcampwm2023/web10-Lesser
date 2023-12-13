@@ -30,7 +30,7 @@ export class MembersController {
   }
 
   @Post('refresh')
-  async generateAccessToken(@Req() request: Request & { headers: CustomHeaders }) {
+  async refreshTokens(@Req() request: Request & { headers: CustomHeaders }) {
     const { authorization } = request.headers;
     const token = authorization.split('Bearer ')[1];
     this.lesserJwtService.veifryToken(token);

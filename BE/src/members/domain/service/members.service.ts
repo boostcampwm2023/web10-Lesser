@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import { Member } from '../entity/member.entity';
@@ -61,8 +61,8 @@ export class MembersService {
   }
 
   logout(id: number) {
-    for (let [refreshToken, memberId] of this.loggedMembers.entries()) {
-      if (memberId === id) {
+    for (let [refreshToken, loggedMember] of this.loggedMembers.entries()) {
+      if (loggedMember.memberId === id) {
         this.loggedMembers.delete(refreshToken);
         break;
       }
@@ -70,7 +70,10 @@ export class MembersService {
   }
 
   async refresh(refreshToken: string) {
-    const memberId = this.loggedMembers.get(refreshToken).memberId;
+    const loggedMember = this.loggedMembers.get(refreshToken);
+    if (!loggedMember) throw new ForbiddenException('Invalid refresh token.');
+
+    const { memberId } = loggedMember;
     this.loggedMembers.delete(refreshToken);
     const [newAccesToken, newRefreshToken] = await Promise.all([
       this.lesserJwtService.getAccessToken(memberId),
