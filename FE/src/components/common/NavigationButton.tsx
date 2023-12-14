@@ -21,7 +21,7 @@ const NavigationButton = ({ pageName, description, pageURI, currentURI }: Naviga
     <Link
       to={pageURI(id)}
       className={`flex flex-col items-center gap-2.5 ${
-        isSameURL() ? 'bg-true-white py-3 px-5 rounded-lg h-40' : 'py-3'
+        isSameURL() ? 'bg-true-white py-3 px-5 rounded-lg h-40 break-keep' : 'py-3'
       }`}
     >
       <p className={`text-lg font-bold ${isSameURL() ? 'text-house-green' : 'text-true-white'}`}>{pageName}</p>
