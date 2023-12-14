@@ -98,9 +98,9 @@ const SprintPage = () => {
   };
 
   const [todoNumber, inProgressNumber, doneNumber] = useMemo(() => {
-    const todoNumber = data?.taskList.filter(({ state }) => state === 'ToDo').length;
-    const inProgressNumber = data?.taskList.filter(({ state }) => state === 'InProgress').length;
-    const doneNumber = data?.taskList.filter(({ state }) => state === 'Done').length;
+    const todoNumber = data?.taskList?.filter(({ state }) => state === 'ToDo').length;
+    const inProgressNumber = data?.taskList?.filter(({ state }) => state === 'InProgress').length;
+    const doneNumber = data?.taskList?.filter(({ state }) => state === 'Done').length;
 
     return [todoNumber, inProgressNumber, doneNumber];
   }, [data]);
