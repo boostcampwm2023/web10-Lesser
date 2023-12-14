@@ -34,4 +34,13 @@ export class Member extends BaseEntity {
 
   @ManyToMany(() => Project, (Project) => Project.members)
   projects: Project[];
+
+  static createMember(githubId: string, username: string, email: string, imageUrl: string) {
+    const newMember = new Member();
+    newMember.github_id = githubId;
+    newMember.username = username;
+    newMember.email = email;
+    newMember.image_url = imageUrl;
+    return newMember;
+  }
 }

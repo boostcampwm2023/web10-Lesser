@@ -1,19 +1,18 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
-import { Member } from '../entity/member.entity';
-import { LoginRequestDto, LoginResponseDto } from '../../controller/dto/login.dto';
-import { MemberSearchResponseDto } from '../../controller/dto/member.dto';
-import { Tokens } from '../../controller/dto/tokens.dto';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
 import { GithubOauthService } from 'src/github-api/oauth.service';
 import { GithubResourceService } from 'src/github-api/resource.service';
 import { GithubUser } from 'src/github-api/dto/github.dto';
+import { Member } from '../entity/member.entity';
+import { LoginRequestDto, LoginResponseDto } from '../dto/login.dto';
+import { MemberSearchListDto } from '../dto/member.dto';
+import { Tokens } from '../dto/tokens.dto';
+import { IMemberRepository } from 'src/members/interface/Imember.repository';
 
 @Injectable()
 export class MembersService {
   constructor(
-    @InjectRepository(Member) private memberRepository: Repository<Member>,
+    @Inject('MemberRepo') private memberRepo: IMemberRepository,
     private githubOauthService: GithubOauthService,
     private githubResourceService: GithubResourceService,
     private lesserJwtService: LesserJwtService,
@@ -29,7 +28,7 @@ export class MembersService {
     githubUser.setEmail(githubEmail);
     const { github_id } = githubUser;
 
-    const findMember = await this.memberRepository.findOne({ where: { github_id } });
+    const findMember = await this.memberRepo.findByGithubId(github_id);
     const loginMember = findMember ? findMember : await this.signup(githubUser);
     const memberId = loginMember.id;
 
@@ -40,12 +39,10 @@ export class MembersService {
 
     this.loggedMembers.set(lesserRefreshToken, { memberId });
 
-    const member = await this.memberRepository.findOne({ where: { id: memberId } });
-
     const response: LoginResponseDto = {
-      id: member.id,
-      username: member.username,
-      imageUrl: member.image_url,
+      id: loginMember.id,
+      username: loginMember.username,
+      imageUrl: loginMember.image_url,
       accessToken: lesserAccessToken,
       refreshToken: lesserRefreshToken,
     };
@@ -53,13 +50,9 @@ export class MembersService {
   }
 
   async signup(githubUser: GithubUser): Promise<Member> {
-    const newMember = this.memberRepository.create({
-      github_id: githubUser.github_id,
-      username: githubUser.username,
-      email: githubUser.email,
-      image_url: githubUser.image_url,
-    });
-    const savedMember = await this.memberRepository.save(newMember);
+    const { github_id, username, email, image_url } = githubUser;
+    const newMember = Member.createMember(github_id, username, email, image_url);
+    const savedMember = await this.memberRepo.save(newMember);
     return savedMember;
   }
 
@@ -90,10 +83,10 @@ export class MembersService {
     return tokens;
   }
 
-  async searchMembersByName(username: string): Promise<MemberSearchResponseDto[]> {
-    const members = await this.memberRepository.find({ where: { username: ILike(`%${username}%`) } });
+  async searchMembersByName(username: string): Promise<MemberSearchListDto[]> {
+    const members = await this.memberRepo.searchByUsername(username);
     if (members.length === 0) throw new NotFoundException(`Member with username '${username}' not found.`);
-    const response: MemberSearchResponseDto[] = members.map((member) => ({
+    const response: MemberSearchListDto[] = members.map((member) => ({
       id: member.id,
       username: member.username,
       imageUrl: member.image_url,
