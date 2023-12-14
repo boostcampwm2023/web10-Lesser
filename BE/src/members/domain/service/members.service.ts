@@ -26,7 +26,7 @@ export class MembersService {
       this.githubResourceService.fetchGithubUser(githubAccessToken),
       this.githubResourceService.fetchGithubEmail(githubAccessToken),
     ]);
-    githubUser.email = githubEmail;
+    githubUser.setEmail(githubEmail);
     const { github_id } = githubUser;
 
     const findMember = await this.memberRepository.findOne({ where: { github_id } });

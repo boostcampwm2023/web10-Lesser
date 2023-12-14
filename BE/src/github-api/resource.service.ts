@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { GithubUser, GithubEmail } from './dto/github.dto';
 
 @Injectable()
 export class GithubResourceService {
-  constructor(private readonly configService: ConfigService) {}
-
   async fetchGithubUser(accessToken: string): Promise<GithubUser> {
     try {
       const response = await fetch('https://api.github.com/user', {
@@ -16,12 +13,7 @@ export class GithubResourceService {
         },
       });
       const data = await response.json();
-      const githubUser: GithubUser = {
-        github_id: data.id,
-        username: data.login,
-        email: data.email,
-        image_url: data.avatar_url,
-      };
+      const githubUser = GithubUser.of(data.id, data.login, data.email, data.avatar_url);
       return githubUser;
     } catch (err) {
       throw new Error(err.message);
