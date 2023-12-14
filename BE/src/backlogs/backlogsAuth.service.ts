@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
-import { Project } from 'src/projects/entity/project.entity';
+import { Project } from 'src/projects/Domain/entity/project.entity';
 import { Repository } from 'typeorm';
 import { Epic } from './entities/epic.entity';
 import { Story } from './entities/story.entity';

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { SprintsService } from './sprints.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Project } from 'src/projects/entity/project.entity';
+import { Project } from 'src/projects/Domain/entity/project.entity';
 import { LesserJwtModule } from 'src/common/lesser-jwt/lesser-jwt.module';
 import { SprintsController } from './sprints.controller';
 import { Sprint } from './entities/sprint.entity';

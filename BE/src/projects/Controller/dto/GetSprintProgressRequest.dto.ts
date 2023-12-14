@@ -1,6 +1,4 @@
 import { PickType } from '@nestjs/swagger';
-import { IsBoolean, IsInt, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-
 import { baseTaskDto } from 'src/backlogs/dto/baseType.dto';
 
 export class GetSprintProgressTaskResponseDto extends PickType(baseTaskDto, [
