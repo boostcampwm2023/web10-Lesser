@@ -1,99 +1,54 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import PrograssBar from '../components/common/ProgressBar/ProgressBar';
 import KanbanBoard from '../components/sprint/KanbanBoard';
+import ColumnBoard from '../components/sprint/ColumnBoard';
 import BoardHeader from '../components/sprint/BoardHeader';
 import FilterDropdown from '../components/sprint/FilterDropdown';
-import { Task } from '../types/sprint';
+import SprintEndModal from '../components/sprint/modal/SprintEndModal';
+import SprintLandingPage from './sprint/SprintLandingPage';
+import { ReturnedSprint, Task } from '../types/sprint';
 import { UserFilter, TaskGroup } from '../types/sprint';
-
-interface Data {
-  taskList: Task[];
-}
-
-type TaskGroupedByStory = Record<string, Task[]>;
-
-const data: Data = {
-  taskList: [
-    {
-      storyTitle: '유저는 로그인할 수 있다.',
-      id: 2,
-      title: '로그인 DB저장',
-      userName: '승민',
-      point: 3,
-      state: 'ToDo',
-    },
-    {
-      storyTitle: '유저는 에픽을 생성할 수 있다.',
-      id: 3,
-      title: 'API작성하기',
-      userName: '수린',
-      point: 5,
-      state: 'ToDo',
-    },
-    {
-      storyTitle: '유저는 로그인할 수 있다.',
-      id: 4,
-      title: '회원가입 기능 구현',
-      userName: '승민',
-      point: 4,
-      state: 'InProgress',
-    },
-    {
-      storyTitle: '유저는 칸반보드를 조회할 수 있다.',
-      id: 5,
-      title: 'UI 디자인',
-      userName: '용현',
-      point: 2,
-      state: 'Done',
-    },
-  ],
-};
+import { calculateRestDate, transformDate } from '../utils/date';
+import { useSelectedProjectState } from '../stores';
+import { useGetProgressSprint, usePatchTaskState } from '../hooks/queries/sprint';
+import { useModal } from '../modal/useModal';
+import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import structureTaskList from '../utils/structureTaskList';
+import useFilterState from '../stores/useFilterState';
 
 const SprintPage = () => {
-  const [taskGroup, setTaskGroup] = useState<TaskGroup>('all');
-  const [userToFilter, setUserToFilter] = useState<UserFilter>('전체');
+  const { userToFilter, taskGroup, changeTaskGroup, changeUserToFilter } = useFilterState();
   const [dropdownOpend, setDropdownOpend] = useState<boolean>(false);
-  const [taskList, setTaskList] = useState<Task[]>(data.taskList);
+  const { id: projectId, userList, getUserNameById } = useSelectedProjectState();
+  const { data, isLoading, isError } = useGetProgressSprint({ projectId, userToFilter, taskGroup });
+  const { mutateAsync } = usePatchTaskState();
+  const endModal = useModal();
+  const navigate = useNavigate();
+  const userFilterList = useMemo(
+    () => [{ userId: -1, userName: '전체' }, ...userList, { userId: null, userName: '미할당' }],
+    [userList],
+  );
+  const queryClient = useQueryClient();
 
-  const todoList = taskList.filter(({ state }) => state === 'ToDo');
-  const inProgressList = taskList.filter(({ state }) => state === 'InProgress');
-  const doneList = taskList.filter(({ state }) => state === 'Done');
+  const handleGroupButtonClick = (user: UserFilter, taskGroup: TaskGroup): void => {
+    queryClient.setQueryData(['sprint'], (prevSprintData: ReturnedSprint) => {
+      const boardTask = structureTaskList(prevSprintData.taskList, user, taskGroup);
+      return { ...prevSprintData, boardTask };
+    });
 
-  // storyTitle을 기준으로 데이터를 나누기
-  const tasksByStory: TaskGroupedByStory = taskList.reduce((result: TaskGroupedByStory, current: Task) => {
-    const storyTitle = current.storyTitle;
-    result[storyTitle] = result[storyTitle] ?? [];
-    result[storyTitle].push(current);
-    return result;
-  }, {});
-
-  const storyKanbanBoards = Object.entries(tasksByStory).map(([storyTitle, taskList]) => {
-    const todoList = taskList.filter(({ state }) => state === 'ToDo');
-    const inProgressList = taskList.filter(({ state }) => state === 'InProgress');
-    const doneList = taskList.filter(({ state }) => state === 'Done');
-    return (
-      <li key={storyTitle}>
-        <KanbanBoard
-          storyTitle={storyTitle}
-          storyId="LES-12"
-          todoList={todoList}
-          inProgressList={inProgressList}
-          doneList={doneList}
-        />
-      </li>
-    );
-  });
-
-  const handleGroupButtonClick = (taskGroup: TaskGroup): void => {
-    setTaskGroup(taskGroup);
+    changeTaskGroup(taskGroup);
     setDropdownOpend(false);
   };
 
-  const handleUserFilterButtonClick = (user: UserFilter): void => {
-    user === '전체'
-      ? setTaskList([...data.taskList])
-      : setTaskList([...data.taskList.filter(({ userName }) => user === userName)]);
-    setUserToFilter(user);
+  const handleUserFilterButtonClick = (user: UserFilter, taskGroup: TaskGroup): void => {
+    queryClient.setQueryData(['sprint'], (prevSprintData: ReturnedSprint) => {
+      const boardTask = structureTaskList(prevSprintData.taskList, user, taskGroup);
+      return { ...prevSprintData, boardTask };
+    });
+
+    changeUserToFilter(user);
     setDropdownOpend(false);
   };
 
@@ -101,63 +56,171 @@ const SprintPage = () => {
     setDropdownOpend((prevValue) => !prevValue);
   };
 
-  return (
-    <section className="min-w-[60.25rem]">
-      <div className="flex mb-2.5">
-        <h1 className="mr-2 text-2xl font-bold text-starbucks-green">스프린트 1</h1>
-        <span className="self-end text-xs h-fit">백로그와 칸반보드가 보이는 이슈관리 프로토 타입을 만들자</span>
+  const handleDragEnd = (result: DropResult) => {
+    const { destination, source, draggableId } = result;
+    const [sourceStoryId, sourceState] = source.droppableId.split(' ');
+
+    if (!destination) {
+      return;
+    }
+
+    const [destinationStoryId, state] = destination.droppableId.split(' ');
+
+    if (sourceStoryId !== destinationStoryId) {
+      return;
+    }
+
+    queryClient.setQueryData(['sprint'], (prevSprintData: ReturnedSprint) => {
+      const taskList = structuredClone(prevSprintData.taskList);
+      const targetTask = taskList.find(({ id }) => id === Number(draggableId));
+      if (targetTask) {
+        targetTask.state = state;
+      }
+
+      const boardTask = structuredClone(prevSprintData.boardTask);
+      boardTask[Number(sourceStoryId)][sourceState as 'ToDo' | 'InProgress' | 'Done'].splice(source.index, 1);
+      boardTask[Number(destinationStoryId)][state as 'ToDo' | 'InProgress' | 'Done'].splice(
+        destination.index,
+        0,
+        targetTask as Task,
+      );
+
+      return { ...prevSprintData, taskList, boardTask };
+    });
+
+    mutateAsync({ id: Number(draggableId), state });
+  };
+
+  const handleSprintEndButtonClick = () => {
+    if (data) {
+      endModal.open(<SprintEndModal id={data.sprintId} close={endModal.close} projectId={projectId} />);
+    }
+  };
+
+  const [todoNumber, inProgressNumber, doneNumber] = useMemo(() => {
+    const todoNumber = data?.taskList?.filter(({ state }) => state === 'ToDo').length;
+    const inProgressNumber = data?.taskList?.filter(({ state }) => state === 'InProgress').length;
+    const doneNumber = data?.taskList?.filter(({ state }) => state === 'Done').length;
+
+    return [todoNumber, inProgressNumber, doneNumber];
+  }, [data]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-w-[60.25rem]">
+        <p>칸반보드 로딩중입니다.</p>
       </div>
-      <div className="flex justify-between mb-4">
-        <div className="flex gap-x-8">
-          <PrograssBar startText="23.11.14" endText="23.11.17" totalAmount={5} currentAmount={3} />
-          <PrograssBar startText="태스크 60건" endText="완료 9건" totalAmount={60} currentAmount={9} />
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="felx flex-col items-center justify-center min-w-[60.25rem]">
+        <p>오류가 발생했습니다.</p>
+        <p>다시 시도해주세요.</p>
+      </div>
+    );
+  }
+
+  if (data?.sprintModal) {
+    return (
+      <div className="flex flex-col items-center justify-center min-w-[60.25rem]">
+        <p>스프린트가 종료되었습니다.</p>
+        <p>회고를 진행하시겠습니까?</p>
+        <button
+          className="p-3 rounded bg-starbucks-green text-true-white"
+          onClick={() => navigate(`/projects/${projectId}/review`)}
+        >
+          회고 진행하기
+        </button>
+      </div>
+    );
+  }
+
+  if (data?.sprintEnd) {
+    return <SprintLandingPage />;
+  }
+
+  if (data) {
+    return (
+      <section className="min-w-[60.25rem]">
+        <div className="flex mb-2.5">
+          <h1 className="mr-2 text-2xl font-bold text-starbucks-green">{data.sprintTitle}</h1>
+          <span className="self-end text-xs h-fit">{data.sprintGoal}</span>
         </div>
-        <div className="flex gap-2">
-          <div className="relative">
-            <button
-              onClick={handleFilterButtonClick}
-              className="bg-starbucks-green text-true-white rounded py-1.5 px-4 font-bold text-xs"
-            >
-              필터
-            </button>
-            {dropdownOpend && (
-              <FilterDropdown
-                userList={[{ name: '전체' }, { id: 4, name: '수린' }, { id: 2, name: '용현' }, { id: 1, name: '승민' }]}
-                userToFilter={userToFilter}
-                taskGroup={taskGroup}
-                onClickGroupFilterButton={handleGroupButtonClick}
-                onClickUserFilterButton={handleUserFilterButtonClick}
-              />
-            )}
+        <div className="flex justify-between mb-4">
+          <div className="flex gap-x-8">
+            <PrograssBar
+              startText={transformDate(data.sprintStartDate)}
+              endText={transformDate(data.sprintEndDate)}
+              totalAmount={calculateRestDate(data.sprintStartDate, data.sprintEndDate)}
+              currentAmount={calculateRestDate(data.sprintStartDate, new Date().toString())}
+            />
+            <PrograssBar
+              startText={`태스크 ${data.taskList.length}건`}
+              endText={`완료 ${doneNumber ? doneNumber : 0}건`}
+              totalAmount={data.taskList.length}
+              currentAmount={doneNumber ? doneNumber : 0}
+            />
           </div>
-          <button className="bg-starbucks-green text-true-white rounded py-1.5 px-4 font-bold text-xs">
-            스프린트 완료
-          </button>
+          <div className="flex gap-2">
+            <div className="relative">
+              <button
+                onClick={handleFilterButtonClick}
+                className="bg-starbucks-green text-true-white rounded py-1.5 px-4 font-bold text-xs"
+              >
+                {userToFilter === -1 ? '필터' : userToFilter === null ? '미할당' : getUserNameById(userToFilter)}
+              </button>
+              {dropdownOpend && (
+                <FilterDropdown
+                  userList={userFilterList}
+                  userToFilter={userToFilter}
+                  taskGroup={taskGroup}
+                  onGroupFilterButtonClick={handleGroupButtonClick}
+                  onUserFilterButtonClick={handleUserFilterButtonClick}
+                />
+              )}
+            </div>
+            <button
+              className="bg-starbucks-green text-true-white rounded py-1.5 px-4 font-bold text-xs"
+              onClick={handleSprintEndButtonClick}
+            >
+              스프린트 완료
+            </button>
+          </div>
         </div>
-      </div>
-      <hr className="mb-2.5 bg-green-stroke border" />
-      <div>
-        <div className="flex justify-between gap-8">
-          <BoardHeader
-            boardName="할 일"
-            boardDescription="스프린트 내 아직 진행되지 않은 업무"
-            taskNumber={todoList.length}
-          />
-          <BoardHeader boardName="진행 중" boardDescription="현재 진행 중인 업무" taskNumber={inProgressList.length} />
-          <BoardHeader boardName="완료" boardDescription="스프린트 중 완료된 모든 업무" taskNumber={doneList.length} />
+        <hr className="mb-2.5 bg-green-stroke border" />
+        <div>
+          <div className="flex justify-between gap-8">
+            <BoardHeader
+              boardName="할 일"
+              boardDescription="스프린트 내 아직 진행되지 않은 업무"
+              taskNumber={todoNumber}
+            />
+            <BoardHeader boardName="진행 중" boardDescription="현재 진행 중인 업무" taskNumber={inProgressNumber} />
+            <BoardHeader boardName="완료" boardDescription="스프린트 중 완료된 모든 업무" taskNumber={doneNumber} />
+          </div>
+          <ul className="flex flex-col gap-y-1.5">
+            {Object.values(data.boardTask).map((taskListByStory, index) => {
+              const { storyId, storySequence, storyTitle } = taskListByStory;
+
+              return (
+                <li key={index}>
+                  <DragDropContext onDragEnd={handleDragEnd}>
+                    <KanbanBoard {...{ storyId, storySequence, storyTitle }}>
+                      <ColumnBoard taskList={taskListByStory?.ToDo} state="ToDo" {...{ storyId }} />
+                      <ColumnBoard taskList={taskListByStory?.InProgress} state="InProgress" {...{ storyId }} />
+                      <ColumnBoard taskList={taskListByStory?.Done} state="Done" {...{ storyId }} />
+                    </KanbanBoard>
+                  </DragDropContext>
+                </li>
+              );
+            })}
+          </ul>
         </div>
-        <ul className="flex flex-col gap-y-1.5">
-          {taskGroup === 'all' ? (
-            <li>
-              <KanbanBoard todoList={todoList} inProgressList={inProgressList} doneList={doneList} />
-            </li>
-          ) : (
-            storyKanbanBoards
-          )}
-        </ul>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  }
 };
 
 export default SprintPage;

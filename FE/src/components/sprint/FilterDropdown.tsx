@@ -1,20 +1,18 @@
 import { UserFilter, TaskGroup } from '../../types/sprint';
 
-interface User {
-  id?: number;
-  name: string;
-}
-
 interface FilterDropdownProps {
-  userList: User[];
+  userList: {
+    userId: number | null;
+    userName: string;
+  }[];
   userToFilter: UserFilter;
   taskGroup: TaskGroup;
-  onClickUserFilterButton: (user: UserFilter) => void;
-  onClickGroupFilterButton: (group: TaskGroup) => void;
+  onUserFilterButtonClick: (user: UserFilter, group: TaskGroup) => void;
+  onGroupFilterButtonClick: (user: UserFilter, group: TaskGroup) => void;
 }
 
 const FilterDropdown = (props: FilterDropdownProps) => {
-  const { userToFilter, taskGroup, userList, onClickGroupFilterButton, onClickUserFilterButton } = props;
+  const { userToFilter, taskGroup, userList, onGroupFilterButtonClick, onUserFilterButtonClick } = props;
 
   const activeMenuClass = 'text-starbucks-green font-medium';
   const inactiveMenuClass = 'text-green-stroke';
@@ -22,15 +20,15 @@ const FilterDropdown = (props: FilterDropdownProps) => {
   return (
     <ul className="flex flex-col gap-1.5 absolute w-32 p-3 border rounded top-8 border-green-stroke bg-true-white">
       <p className="font-bold text-center ">멤버별 필터</p>
-      {userList.map(({ id, name }) => (
+      {userList.map(({ userId, userName }) => (
         <p
-          key={id}
+          key={userId}
           className={`text-center text-xs hover:cursor-pointer ${
-            name === userToFilter ? activeMenuClass : inactiveMenuClass
+            userId === userToFilter ? activeMenuClass : inactiveMenuClass
           }`}
-          onClick={() => onClickUserFilterButton(name)}
+          onClick={() => onUserFilterButtonClick(userId, taskGroup)}
         >
-          {name}
+          {userName}
         </p>
       ))}
       <hr className="bg-green-stroke" />
@@ -39,7 +37,7 @@ const FilterDropdown = (props: FilterDropdownProps) => {
         className={`text-center text-xs hover:cursor-pointer ${
           taskGroup === 'all' ? activeMenuClass : inactiveMenuClass
         }`}
-        onClick={() => onClickGroupFilterButton('all')}
+        onClick={() => onGroupFilterButtonClick(userToFilter, 'all')}
       >
         전체 태스크
       </p>
@@ -47,7 +45,7 @@ const FilterDropdown = (props: FilterDropdownProps) => {
         className={`text-center text-xs hover:cursor-pointer ${
           taskGroup === 'story' ? activeMenuClass : inactiveMenuClass
         }`}
-        onClick={() => onClickGroupFilterButton('story')}
+        onClick={() => onGroupFilterButtonClick(userToFilter, 'story')}
       >
         스토리 그룹
       </p>

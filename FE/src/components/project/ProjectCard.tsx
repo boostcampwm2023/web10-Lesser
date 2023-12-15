@@ -1,11 +1,18 @@
-import { projectCardElement } from '../../types/project';
+import { CLIENT_URL } from '../../constants/constants';
+import { useSelectedProjectState } from '../../stores';
+import { projectElement } from '../../types/project';
 import { Link } from 'react-router-dom';
 
-const ProjectCard = ({ id, name, subject, nextPage, myTaskCount }: projectCardElement) => {
-  const nextRef = nextPage === 'backlogs' ? '/sprint' : `/sprint/${id}`;
+const ProjectCard = ({ id, name, subject, nextPage, myTaskCount, userList }: projectElement) => {
+  const NEXT_URL = nextPage === 'backlogs' ? CLIENT_URL.BACKLOG(id) : CLIENT_URL.SPRINT(id);
+  const updateProjectData = useSelectedProjectState((state) => state.updateProjectData);
+  const handleProjectCardClick = () => {
+    updateProjectData({ id, userList });
+  };
   return (
     <Link
-      to={nextRef}
+      to={NEXT_URL}
+      onClick={handleProjectCardClick}
       className="w-[11.25rem] h-[7.5rem] bg-true-white px-3 pt-3 pb-6 border rounded-[0.25rem] border-transparent-green flex flex-col justify-between"
     >
       <div className="flex flex-col gap-1">

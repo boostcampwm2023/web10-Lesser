@@ -1,21 +1,31 @@
-export interface TaskData {
-  id?: number;
-  title: string;
-  state: 'ToDo';
-  point: number;
-  condition: string;
-  userName: string;
-  userId: number;
+import { ReactElement } from 'react';
+
+export interface CompositionComponentProps {
+  children: ReactElement;
 }
 
-export interface BacklogState {
-  epicList: {
-    id: number;
-    title: string;
-    storyList: {
-      id: number;
-      title: string;
-      taskList: TaskData[];
-    }[];
-  }[];
+export interface ReadBacklogTaskResponseDto {
+  userId: string | number | null;
+  id: number;
+  title: string;
+  point: number;
+  condition: string;
+  sequence: number;
+  state: 'Todo' | 'InProgress' | 'Done' | string;
 }
+
+export interface ReadBacklogStoryResponseDto {
+  taskList: Array<ReadBacklogTaskResponseDto>;
+  id: number;
+  title: string;
+  sequence: number;
+}
+
+export interface ReadBacklogEpicResponseDto {
+  storyList: Array<ReadBacklogStoryResponseDto>;
+  id: number;
+  title: string;
+  sequence: number;
+}
+
+export type ModalChildElement = (props: { isOpen: boolean; close: () => void }) => JSX.Element;

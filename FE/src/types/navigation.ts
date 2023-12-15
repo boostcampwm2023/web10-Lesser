@@ -1,5 +1,5 @@
 export interface NavigationInformation {
   pageName: string;
   description?: string;
-  pageURI: string;
+  pageURI: (projectId: number) => string;
 }

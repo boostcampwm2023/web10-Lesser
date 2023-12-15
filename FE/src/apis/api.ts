@@ -1,11 +1,17 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-
-const REFRESH_TOKEN = 'refreshToken';
+import { REFRESH_TOKEN } from '../constants/constants';
 
 let accessToken: string | undefined;
 
-const setAccessToken = (newAccessToken: string): void => {
+const setAccessToken = (newAccessToken: string | undefined): void => {
   accessToken = newAccessToken;
+};
+
+const isAccessTokenExisting = () => !!accessToken;
+const isRefreshTokenExisting = () => {
+  const refreshToken = sessionStorage.getItem(REFRESH_TOKEN);
+
+  return !!refreshToken;
 };
 
 const api = axios.create({
@@ -19,17 +25,20 @@ const requestSucceed = (response: AxiosResponse): AxiosResponse => response;
 
 const requestFail = async (error: AxiosError) => {
   const refreshToken = sessionStorage.getItem(REFRESH_TOKEN);
-  const newError = refreshFail(error);
 
   // refreshToken이 없으면 다시 로그인
   if (!refreshToken) {
-    return Promise.reject(newError);
+    error.status = 401;
+    error.message = '';
+
+    return Promise.reject(error);
   }
 
   // 액세스 토큰 만료 지남
   if (error.response?.status === 401 && (error.message === 'expired token' || refreshToken)) {
+    accessToken = undefined;
+
     try {
-      accessToken = undefined;
       const response = await api.post(
         '/members/refresh',
         {},
@@ -42,13 +51,21 @@ const requestFail = async (error: AxiosError) => {
 
       return await refreshSucceed(response, error.config);
     } catch {
-      return Promise.reject(newError);
+      error.status = 401;
+      error.message = '';
+      sessionStorage.removeItem(REFRESH_TOKEN);
+
+      return Promise.reject(error);
     }
   }
 
   if (error.status === 401) {
     accessToken = undefined;
-    return Promise.reject(newError);
+    sessionStorage.removeItem(REFRESH_TOKEN);
+    error.status = 401;
+    error.message = '';
+
+    return Promise.reject(error);
   }
 
   return Promise.reject(error);
@@ -70,15 +87,6 @@ const refreshSucceed = async (response: AxiosResponse, config: InternalAxiosRequ
   }
 };
 
-const refreshFail = (error: AxiosError) => {
-  const newError = error;
-  sessionStorage.removeItem(REFRESH_TOKEN);
-  newError.status = 401;
-  newError.message = '';
-
-  return newError;
-};
-
 api.interceptors.request.use((config) => {
   if (accessToken) {
     config.withCredentials = true;
@@ -90,4 +98,4 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(requestSucceed, requestFail);
 
-export { api, setAccessToken };
+export { api, setAccessToken, isAccessTokenExisting, isRefreshTokenExisting };
