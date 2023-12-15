@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Member } from './entities/member.entity';
-import { Repository } from 'typeorm';
-import { LoginRequestDto } from './dto/login-request.dto';
-import { GithubUser } from './dto/member.dto';
+import { LoginRequestDto, LoginResponseDto } from './dto/login.dto';
+import { MemberSearchResponseDto } from './dto/member.dto';
+import { GithubUser } from './dto/github-user.dto';
 import { Tokens } from './dto/tokens.dto';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
-import { ConfigService } from '@nestjs/config';
+import { GithubEmail } from 'src/common/types/githubResource.type';
 
 @Injectable()
 export class MembersService {
@@ -41,16 +43,21 @@ export class MembersService {
 
     const [lesserAccessToken, lesserRefreshToken] = await Promise.all([
       this.lesserJwtService.getAccessToken(memberId),
-      this.lesserJwtService.getRefreshToken(),
+      this.lesserJwtService.getRefreshToken(memberId),
     ]);
 
     this.loggedMembers.set(lesserRefreshToken, { memberId });
 
-    const tokens: Tokens = {
+    const member = await this.memberRepository.findOne({ where: { id: memberId } });
+
+    const response: LoginResponseDto = {
+      id: member.id,
+      username: member.username,
+      imageUrl: member.image_url,
       accessToken: lesserAccessToken,
       refreshToken: lesserRefreshToken,
     };
-    return tokens;
+    return response;
   }
 
   logout(id: number) {
@@ -67,7 +74,7 @@ export class MembersService {
     this.loggedMembers.delete(refreshToken);
     const [newAccesToken, newRefreshToken] = await Promise.all([
       this.lesserJwtService.getAccessToken(memberId),
-      this.lesserJwtService.getRefreshToken(),
+      this.lesserJwtService.getRefreshToken(memberId),
     ]);
     this.loggedMembers.set(newRefreshToken, { memberId });
     const tokens: Tokens = {
@@ -131,11 +138,22 @@ export class MembersService {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      const emailList = await response.json();
+      const emailList: GithubEmail[] = await response.json();
       const primaryEmail = emailList.find((email) => email.primary === true);
       return primaryEmail.email;
     } catch (err) {
       throw new Error(err.message);
     }
+  }
+
+  async searchMembersByName(username: string): Promise<MemberSearchResponseDto[]> {
+    const members = await this.memberRepository.find({ where: { username: ILike(`%${username}%`) } });
+    if (members.length === 0) throw new NotFoundException(`Member with username '${username}' not found.`);
+    const response: MemberSearchResponseDto[] = members.map((member) => ({
+      id: member.id,
+      username: member.username,
+      imageUrl: member.image_url,
+    }));
+    return response;
   }
 }

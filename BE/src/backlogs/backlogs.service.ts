@@ -1,9 +1,12 @@
-import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Epic } from 'src/backlogs/entities/epic.entity';
 import { Story } from 'src/backlogs/entities/story.entity';
 import { Task } from 'src/backlogs/entities/task.entity';
-import { Project } from 'src/projects/entity/project.entity';
+import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
+import { Member } from 'src/members/entities/member.entity';
+import { Project } from 'src/projects/Domain/entity/project.entity';
+import { ProjectCounter } from 'src/projects/Domain/entity/projectCounter.entity';
 import { Repository } from 'typeorm';
 import {
   ReadBacklogTaskResponseDto,
@@ -29,6 +32,7 @@ import {
   DeleteBacklogsTaskRequestDto,
   UpdateBacklogsRequestTaskDto,
 } from './dto/Task.dto';
+import { SprintToTask } from 'src/sprints/entities/sprint-task.entity';
 
 @Injectable()
 export class BacklogsService {
@@ -37,7 +41,26 @@ export class BacklogsService {
     @InjectRepository(Epic) private epicRepository: Repository<Epic>,
     @InjectRepository(Story) private storyRepository: Repository<Story>,
     @InjectRepository(Task) private taskRepository: Repository<Task>,
+    @InjectRepository(Member) private memberRepository: Repository<Member>,
+    @InjectRepository(ProjectCounter) private projectCounterRepository: Repository<ProjectCounter>,
+    @InjectRepository(SprintToTask) private sprintToTaskRepository: Repository<SprintToTask>,
   ) {}
+
+  async readNotDoneBacklog(projectId): Promise<ReadBacklogResponseDto> {
+    const project = await this.findProject(projectId);
+    const backlog = new ReadBacklogResponseDto();
+    backlog.epicList = await this.findEpics(project.id);
+    backlog.epicList.map((ReadBacklogEpicResponseDto) => {
+      ReadBacklogEpicResponseDto.storyList = ReadBacklogEpicResponseDto.storyList.map((ReadBacklogStoryResponseDto) => {
+        ReadBacklogStoryResponseDto.taskList = ReadBacklogStoryResponseDto.taskList.filter(
+          (ReadBacklogTaskResponseDto) => ReadBacklogTaskResponseDto.state !== 'Done',
+        );
+        return ReadBacklogStoryResponseDto;
+      });
+      return ReadBacklogEpicResponseDto;
+    });
+    return backlog;
+  }
 
   async readBacklog(id: number): Promise<ReadBacklogResponseDto> {
     const project = await this.findProject(id);
@@ -47,7 +70,7 @@ export class BacklogsService {
   }
 
   private async findProject(id: number): Promise<Project> {
-    const project = await this.projectRepository.findOne({ where: { id } });
+    const project = await this.projectRepository.findOne({ where: { id }, relations: ['members'] });
     if (project === null) {
       throw new NotFoundException(`Project with ID ${id} not found`);
     }
@@ -63,6 +86,7 @@ export class BacklogsService {
     const epic = new ReadBacklogEpicResponseDto();
     epic.id = epicData.id;
     epic.title = epicData.title;
+    epic.sequence = epicData.sequence;
     epic.storyList = await this.findStories(epic.id);
     return epic;
   }
@@ -76,12 +100,13 @@ export class BacklogsService {
     const story = new ReadBacklogStoryResponseDto();
     story.id = storyData.id;
     story.title = storyData.title;
+    story.sequence = storyData.sequence;
     story.taskList = await this.findTasks(story.id);
     return story;
   }
 
   private async findTasks(storyId: number): Promise<ReadBacklogTaskResponseDto[]> {
-    const taskDataList = await this.taskRepository.find({ where: { story: { id: storyId } } });
+    const taskDataList = await this.taskRepository.find({ where: { story: { id: storyId } }, relations: ['member'] });
     return taskDataList.map((taskData) => this.buildTask(taskData));
   }
 
@@ -92,36 +117,69 @@ export class BacklogsService {
     task.state = taskData.state;
     task.condition = taskData.condition;
     task.title = taskData.title;
-    task.userName = null; //추후 유저로직 추가
+    task.sequence = taskData.sequence;
+    task.userId = taskData.member === null ? null : taskData.member.id;
     return task;
   }
 
   async createEpic(dto: CreateBacklogsEpicRequestDto): Promise<CreateBacklogsEpicResponseDto> {
-    const project = await this.projectRepository.findOne({ where: { id: dto.projectId } });
-    const newEpic = this.epicRepository.create({ title: dto.title, project: project });
+    const project = await this.projectRepository.findOne({ where: { id: dto.parentId } });
+    console.log(project);
+    const epicCount = await this.getEpicCount(project.id);
+    const newEpic = this.epicRepository.create({ title: dto.title, project: project, sequence: epicCount });
     const savedEpic = await this.epicRepository.save(newEpic);
-    return { id: savedEpic.id };
+    return { id: savedEpic.id, sequence: epicCount };
+  }
+
+  private async getEpicCount(projectId: number) {
+    const projectCounter = await this.projectCounterRepository.findOne({ where: { projectId } });
+    projectCounter.epicCount++;
+    await projectCounter.save();
+    return projectCounter.epicCount;
   }
 
   async createStory(dto: CreateBacklogsStoryRequestDto): Promise<CreateBacklogsStoryResponseDto> {
-    const epic = await this.epicRepository.findOne({ where: { id: dto.epicId } });
-    const newStory = this.storyRepository.create({ title: dto.title, epic });
+    const epic = await this.epicRepository.findOne({ where: { id: dto.parentId }, relations: ['project'] });
+    const storyCount = await this.getStoryCount(epic.project.id);
+    const newStory = this.storyRepository.create({ title: dto.title, epic, sequence: storyCount });
     const savedStory = await this.storyRepository.save(newStory);
-    return { id: savedStory.id };
+    return { id: savedStory.id, sequence: storyCount };
+  }
+
+  private async getStoryCount(projectId: number) {
+    const projectCounter = await this.projectCounterRepository.findOne({ where: { projectId } });
+    projectCounter.storyCount++;
+    await projectCounter.save();
+    return projectCounter.storyCount;
   }
 
   async createTask(dto: CreateBacklogsTaskRequestDto): Promise<CreateBacklogsTaskResponseDto> {
-    const story = await this.storyRepository.findOne({ where: { id: dto.storyId } });
+    const story = await this.storyRepository.findOne({ where: { id: dto.parentId }, relations: ['epic'] });
+    const epic = await this.epicRepository.findOne({ where: { id: story.epic.id }, relations: ['project'] });
+    const taskCount = await this.getTaskCount(epic.project.id);
     const newTask = this.taskRepository.create({
       title: dto.title,
-      state: dto.state,
+      state: 'ToDo',
       point: dto.point,
       condition: dto.condition,
+      sequence: taskCount,
       story,
     });
-    if (dto.userId !== undefined) newTask.userId = dto.userId;
+    if (dto.userId !== null) {
+      const member = await this.memberRepository.findOne({ where: { id: dto.userId } });
+      if (member === null) throw new NotFoundException();
+      newTask.member = member;
+    } else newTask.member = null;
     const savedTask = await this.taskRepository.save(newTask);
-    return { id: savedTask.id };
+
+    return { id: savedTask.id, sequence: taskCount };
+  }
+
+  private async getTaskCount(projectId: number) {
+    const projectCounter = await this.projectCounterRepository.findOne({ where: { projectId } });
+    projectCounter.taskCount++;
+    await projectCounter.save();
+    return projectCounter.taskCount;
   }
 
   async updateEpic(dto: UpdateBacklogsEpicRequestDto): Promise<void> {
@@ -137,18 +195,37 @@ export class BacklogsService {
   }
 
   async updateTask(dto: UpdateBacklogsRequestTaskDto): Promise<void> {
+    const task = await this.taskRepository.findOne({ where: { id: dto.id } });
     const updateTaskData: Partial<Task> = {};
-    if ((await this.taskRepository.findOne({ where: { id: dto.id } })) === null)
-      throw new NotFoundException(`Task with ID ${dto.id} not found`);
+    if (dto.id === undefined) throw new BadRequestException('id must required');
     if (Object.keys(dto).length <= 1)
       throw new BadRequestException('No update data provided. Please specify the fields to be updated.');
 
-    Object.keys(dto).forEach((key) => {
+    if (dto.userId === null) updateTaskData.member = null;
+    else if (dto.userId !== undefined) {
+      const member = await this.memberRepository.findOne({ where: { id: dto.userId } });
+      if (member === null) throw new NotFoundException();
+      updateTaskData.member = member;
+    }
+
+    Object.keys(dto).forEach(async (key) => {
       if (dto[key] !== undefined) {
-        updateTaskData[key] = dto[key];
+        if (key !== 'userId') updateTaskData[key] = dto[key];
       }
     });
-    await this.taskRepository.update(dto.id, updateTaskData);
+
+    if (task.state !== 'Done' && dto.state === 'Done') {
+      const rows = await this.sprintToTaskRepository.find({ where: { task: { id: dto.id } } });
+      const completeDate = new Date();
+      const updatePromises = rows.map(async (row) => {
+        row.completed_at = completeDate;
+        return this.sprintToTaskRepository.save(row);
+      });
+      await Promise.all(updatePromises);
+    }
+
+    const updateResult = await this.taskRepository.update(dto.id, updateTaskData);
+    if (updateResult.affected === 0) throw new NotFoundException();
   }
 
   async deleteEpic(dto: DeleteBacklogsEpicRequestDto): Promise<void> {

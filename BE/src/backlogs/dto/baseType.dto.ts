@@ -1,4 +1,5 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString, Validate, ValidateIf } from 'class-validator';
+import { IsNullOrIntAndNotEmpty } from 'src/common/decorators/IsNullOrIntDecorator';
 
 export class baseEpicDto {
   @IsInt()
@@ -7,11 +8,13 @@ export class baseEpicDto {
 
   @IsInt()
   @IsNotEmpty()
-  projectId: number;
+  parentId: number;
 
   @IsString()
   @IsNotEmpty()
   title: string;
+
+  sequence: number;
 }
 
 export class baseStoryDto {
@@ -21,11 +24,13 @@ export class baseStoryDto {
 
   @IsInt()
   @IsNotEmpty()
-  epicId: number;
+  parentId: number;
 
   @IsString()
   @IsNotEmpty()
   title: string;
+
+  sequence: number;
 }
 
 export class baseTaskDto {
@@ -35,15 +40,14 @@ export class baseTaskDto {
 
   @IsInt()
   @IsNotEmpty()
-  storyId: number;
+  parentId: number;
 
   @IsString()
   @IsNotEmpty()
   title: string;
 
-  @IsInt()
-  @IsOptional()
-  userId?: number;
+  @Validate(IsNullOrIntAndNotEmpty)
+  userId: number | null;
 
   @IsString()
   @IsNotEmpty()
@@ -56,4 +60,6 @@ export class baseTaskDto {
   @IsString()
   @IsNotEmpty()
   condition: string;
+
+  sequence: number;
 }

@@ -1,4 +1,5 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Project } from 'src/projects/Domain/entity/project.entity';
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
 
 @Entity()
 export class Member extends BaseEntity {
@@ -16,4 +17,7 @@ export class Member extends BaseEntity {
 
   @Column()
   image_url: string;
+
+  @ManyToMany(() => Project, (Project) => Project.members)
+  projects: Project[];
 }

@@ -18,8 +18,8 @@ export class LesserJwtService {
     return this.jwtService.signAsync(payload, options);
   }
 
-  getRefreshToken() {
-    const payload = {};
+  getRefreshToken(userId: number) {
+    const payload = { sub: userId };
     const options = { expiresIn: REFRESH_TOKEN_EXPIRATION };
     return this.jwtService.signAsync(payload, options);
   }

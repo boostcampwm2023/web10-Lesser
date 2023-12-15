@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SprintsController } from './sprints/sprints.controller';
 import { MembersController } from './members/members.controller';
-import { ProjectsController } from './projects/projects.controller';
+import { ProjectsController } from './projects/Controller/projects.controller';
 import { ReviewsController } from './reviews/reviews.controller';
 import { BacklogsModule } from './backlogs/backlogs.module';
 import { MembersModule } from './members/members.module';
@@ -14,6 +14,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LesserJwtModule } from './common/lesser-jwt/lesser-jwt.module';
 import { AuthModule } from './common/auth/auth.module';
+import { addTransactionalDataSource } from 'typeorm-transactional';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
@@ -30,9 +32,15 @@ import { AuthModule } from './common/auth/auth.module';
         username: ConfigService.get('DATABASE_USER'),
         password: ConfigService.get('DATABASE_PASSWORD'),
         database: ConfigService.get('DATABASE_NAME'),
-        entities: [`${__dirname}/**/*.entity{.ts,.js}`],
+        entities: [`${__dirname}/**/*.entity{.ts,.js}`, `${__dirname}/**/**/*.entity{.ts,.js}`],
         synchronize: ConfigService.get('LESSER_ENVIRONMENT') === 'deploy' ? false : true,
       }),
+      async dataSourceFactory(options) {
+        if (!options) {
+          throw new Error('Invalid options passed');
+        }
+        return addTransactionalDataSource(new DataSource(options));
+      },
     }),
     BacklogsModule,
     MembersModule,
@@ -42,7 +50,7 @@ import { AuthModule } from './common/auth/auth.module';
     LesserJwtModule,
     AuthModule,
   ],
-  controllers: [AppController, SprintsController, ReviewsController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
