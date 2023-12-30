@@ -6,7 +6,7 @@ import { LesserJwtModule } from 'src/common/lesser-jwt/lesser-jwt.module';
 import { SprintsController } from './sprints.controller';
 import { Sprint } from './entities/sprint.entity';
 import { Review } from 'src/reviews/entities/review.entity';
-import { Member } from 'src/members/entities/member.entity';
+import { Member } from 'src/members/domain/entity/member.entity';
 import { SprintToTask } from './entities/sprint-task.entity';
 import { Task } from 'src/backlogs/entities/task.entity';
 

@@ -4,7 +4,7 @@ import { Epic } from 'src/backlogs/entities/epic.entity';
 import { Story } from 'src/backlogs/entities/story.entity';
 import { Task } from 'src/backlogs/entities/task.entity';
 import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
-import { Member } from 'src/members/entities/member.entity';
+import { Member } from 'src/members/domain/entity/member.entity';
 import { Project } from 'src/projects/Domain/entity/project.entity';
 import { ProjectCounter } from 'src/projects/Domain/entity/projectCounter.entity';
 import { Repository } from 'typeorm';

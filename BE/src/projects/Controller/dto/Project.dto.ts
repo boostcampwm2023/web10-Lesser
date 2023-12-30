@@ -1,6 +1,6 @@
 import { PickType } from '@nestjs/swagger';
 import { ArrayNotEmpty, IsArray, IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { ProjectMemberDto } from 'src/members/dto/member.dto';
+import { ProjectMemberDto } from 'src/members/controller/dto/member.dto';
 
 class BaseProjectDto {
   @IsInt()

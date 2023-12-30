@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Header, Post, Query, Req } from '@nestjs/common';
-import { MembersService } from './members.service';
+import { MembersService } from '../domain/service/members.service';
 import { LoginRequestDto, LoginResponseDto } from './dto/login.dto';
 import { LesserJwtService } from 'src/common/lesser-jwt/lesser-jwt.service';
 
@@ -30,7 +30,7 @@ export class MembersController {
   }
 
   @Post('refresh')
-  async generateAccessToken(@Req() request: Request & { headers: CustomHeaders }) {
+  async refreshTokens(@Req() request: Request & { headers: CustomHeaders }) {
     const { authorization } = request.headers;
     const token = authorization.split('Bearer ')[1];
     this.lesserJwtService.veifryToken(token);

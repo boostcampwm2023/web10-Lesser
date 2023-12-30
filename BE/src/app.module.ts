@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SprintsController } from './sprints/sprints.controller';
-import { MembersController } from './members/members.controller';
+import { MembersController } from './members/controller/members.controller';
 import { ProjectsController } from './projects/Controller/projects.controller';
 import { ReviewsController } from './reviews/reviews.controller';
 import { BacklogsModule } from './backlogs/backlogs.module';
@@ -16,6 +16,7 @@ import { LesserJwtModule } from './common/lesser-jwt/lesser-jwt.module';
 import { AuthModule } from './common/auth/auth.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
+import { GithubApiModule } from './github-api/github-api.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { DataSource } from 'typeorm';
     SprintsModule,
     LesserJwtModule,
     AuthModule,
+    GithubApiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

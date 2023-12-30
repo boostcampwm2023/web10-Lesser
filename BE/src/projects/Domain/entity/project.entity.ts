@@ -1,4 +1,4 @@
-import { Member } from 'src/members/entities/member.entity';
+import { Member } from 'src/members/domain/entity/member.entity';
 import { Sprint } from 'src/sprints/entities/sprint.entity';
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 
