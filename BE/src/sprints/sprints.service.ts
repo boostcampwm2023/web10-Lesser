@@ -6,7 +6,7 @@ import { Project } from 'src/projects/Domain/entity/project.entity';
 import { CompleteSprintRequestDto, CreateSprintRequestDto, CreateSprintResponseDto } from './dto/Sprint.dto';
 import { memberDecoratorType } from 'src/common/types/memberDecorator.type';
 import { Review } from 'src/reviews/entities/review.entity';
-import { Member } from 'src/members/entities/member.entity';
+import { Member } from 'src/members/domain/entity/member.entity';
 import { Task } from 'src/backlogs/entities/task.entity';
 import { SprintToTask } from './entities/sprint-task.entity';
 
