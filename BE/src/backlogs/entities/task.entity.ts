@@ -1,4 +1,4 @@
-import { Member } from 'src/members/entities/member.entity';
+import { Member } from 'src/members/domain/entity/member.entity';
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany } from 'typeorm';
 import { Story } from './story.entity';
 import { SprintToTask } from 'src/sprints/entities/sprint-task.entity';
