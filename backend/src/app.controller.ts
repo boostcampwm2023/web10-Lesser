@@ -17,7 +17,7 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get()
+  @Get('member')
   getMember() {
 	return this.memberRepository.find();
   }
