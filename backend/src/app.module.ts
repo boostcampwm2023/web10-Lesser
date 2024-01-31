@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Member } from './member.entity';
 
 @Module({
   imports: [
@@ -15,10 +16,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: ConfigService.get('DATABASE_USER'),
         password: ConfigService.get('DATABASE_PASSWORD'),
         database: ConfigService.get('DATABASE_NAME'),
-        entities: [],
+        entities: [Member],
         synchronize: true,
       }),
     }),
+	TypeOrmModule.forFeature([Member]),
     ConfigModule.forRoot({
       envFilePath: '.env',
 	  isGlobal: true,
