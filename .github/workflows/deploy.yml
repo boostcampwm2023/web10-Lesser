@@ -12,7 +12,7 @@ on:
 
 jobs:
   dev_deploy:
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -25,4 +25,4 @@ jobs:
       env:
         SSH_DEVELOPER_PASSWORD: ${{ secrets.SSH_DEVELOPER_PASSWORD }}
       run: |
-        sshpass -p $SSH_DEVELOPER_PASSWORD ssh -o "StrictHostKeyChecking=no" developer@lesser-project.site "cd /home/developer/web10-Lesser && git pull && docker compose build --no-cache && docker compose up -d"
+        sshpass -p $SSH_DEVELOPER_PASSWORD ssh -o "StrictHostKeyChecking=no" developer@lesser-project.site "cd /home/developer/web10-Lesser && git pull && docker compose up -d"
