@@ -1,0 +1,27 @@
+name: DevServer Deploy
+
+run-name: ${{ github.actor }} is deploying dev server
+
+on:
+  pull_request:
+    types:
+     - closed
+    branches:
+      - dev
+
+jobs:
+  dev_deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install sshpass
+      run: sudo apt-get install -y sshpass
+
+    - name: SSH and Deploy
+      env:
+        SSH_DEVELOPER_PASSWORD: ${{ secrets.SSH_DEVELOPER_PASSWORD }}
+      run: |
+        sshpass -p $SSH_DEVELOPER_PASSWORD ssh -o "StrictHostKeyChecking=no" developer@lesser-project.site "cd /developer/web10-Lesser && git pull && docker compose build --no-cache && docker compose up -d"
