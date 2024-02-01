@@ -2,7 +2,7 @@ name: Github Actions Backend Test
 
 run-name: ${{ github.actor }} is building Backend
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
