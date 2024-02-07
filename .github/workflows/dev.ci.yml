@@ -1,0 +1,48 @@
+name: Dev Server Backend/Frontend CI
+
+run-name: ${{ github.actor }} is building DevServer
+
+on: 
+  push:
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Filter Backend/Frontend
+        uses: dorny/paths-filter@v2.11.1
+        id: changes
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+            frontend:
+              - 'frontend/**'
+
+      - name: install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: DevServer Backend CI
+        if: steps.changes.outputs.backend == 'true'
+        run: |
+          cd ./backend
+          npm install
+          npm run build
+          npm run test
+          cd ..
+      
+      - name: DevServer Frontend CI
+        if: steps.changes.outputs.frontend == 'true'
+        run: |
+          cd ./frontend-vite
+          npm install
+          npm run build
+          cd ..
