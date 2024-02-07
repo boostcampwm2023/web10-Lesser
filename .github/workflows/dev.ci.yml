@@ -40,9 +40,9 @@ jobs:
           cd ..
       
       - name: DevServer Frontend CI
-        if: steps.changes.outputs.frontend == 'true'
+        if: steps.changes.outputs.frontend == 'true' && always()
         run: |
-          cd ./frontend-vite
+          cd ./frontend
           npm install
           npm run build
           cd ..
