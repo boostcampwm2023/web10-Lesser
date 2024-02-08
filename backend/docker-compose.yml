@@ -2,12 +2,12 @@ version: '3'
 services:
 
   dev-backend:
+    image: dev-backend:latest
     build:
-      context: ./
+      context: .
     networks:
       - lesser-net
   
 networks:
   lesser-net:
     external: true
-    driver: bridge
