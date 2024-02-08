@@ -3,11 +3,11 @@ FROM node:20.9.0-alpine as builder
 
 WORKDIR /usr/src/app
 
-COPY package.json /usr/src/app/package.json
+COPY package* .
 
 RUN npm install
 
-COPY . /usr/src/app
+COPY . .
 
 RUN npm run build
 
