@@ -25,4 +25,5 @@ services:
 
 networks:
   lesser-net:
+    external: true
     driver: bridge
