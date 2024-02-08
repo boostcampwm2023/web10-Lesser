@@ -39,7 +39,7 @@ jobs:
       run: |
         sshpass -p $SSH_DEVELOPER_PASSWORD ssh -o "StrictHostKeyChecking=no" developer@lesser-project.site "cd /home/developer/web10-Lesser/backend && git pull && docker compose up -d --build"
 
-- name: DevServer frontend CD
+    - name: DevServer frontend CD
       env:
         SSH_DEVELOPER_PASSWORD: ${{ secrets.SSH_DEVELOPER_PASSWORD }}
       run: |
