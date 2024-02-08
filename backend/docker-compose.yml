@@ -1,0 +1,12 @@
+version: '3'
+services:
+
+  dev-backend:
+    build:
+      context: ./
+    networks:
+      - lesser-net
+  
+networks:
+  lesser-net:
+    driver: bridge

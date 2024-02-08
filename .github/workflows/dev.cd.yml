@@ -1,0 +1,50 @@
+name: Dev Server Backend/Frontend CD
+
+run-name: ${{ github.actor }} is deploying DevServer
+
+on: 
+  pull_request:
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+    types:
+     - closed
+    branches:
+      - dev
+
+jobs:
+  dev_deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Filter Backend/Frontend
+      uses: dorny/paths-filter@v2.11.1
+      id: changes
+      with:
+        filters: |
+          backend:
+            - 'backend/**'
+          frontend:
+            - 'frontend/**'
+
+    - name: Install sshpass
+      run: sudo apt-get install -y sshpass
+
+    - name: DevServer Backend CD
+      env:
+        SSH_DEVELOPER_PASSWORD: ${{ secrets.SSH_DEVELOPER_PASSWORD }}
+      run: |
+        sshpass -p $SSH_DEVELOPER_PASSWORD 
+        ssh -o "StrictHostKeyChecking=no" developer@lesser-project.site 
+        "cd /home/developer/web10-Lesser/backend && git pull && docker compose up -d --build"
+
+- name: DevServer frontend CD
+      env:
+        SSH_DEVELOPER_PASSWORD: ${{ secrets.SSH_DEVELOPER_PASSWORD }}
+      run: |
+        sshpass -p $SSH_DEVELOPER_PASSWORD 
+        ssh -o "StrictHostKeyChecking=no" developer@lesser-project.site 
+        "cd /home/developer/web10-Lesser/frontend && git pull && docker compose up -d --build"
