@@ -1,5 +1,5 @@
 # 1. Builder Stage
-FROM node:20.9.0 as builder
+FROM node:20.9.0-alpine as builder
 
 RUN mkdir /usr/src/app
 
