@@ -4,7 +4,7 @@ run-name: ${{ github.actor }} is deploying Production Server
 
 on:
   release:
-    types: [created]
+    types: [released]
 
 jobs:
   get-release-notes:
