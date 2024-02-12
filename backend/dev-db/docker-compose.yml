@@ -2,6 +2,8 @@ version: '3'
 
 services:
   mysql:
+    env_file:
+      - .env
     image: mysql:latest
     volumes:
       - mysql_data:/var/lib/mysql
