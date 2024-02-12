@@ -5,7 +5,7 @@ run-name: ${{ github.actor }} is deploying Production Server
 on:
   workflow_dispatch:
   release:
-    types: [published]
+    types: [created]
 
 jobs:
   get-release-notes:
