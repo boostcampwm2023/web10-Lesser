@@ -1,0 +1,51 @@
+version: “3”
+
+services:
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - lesser-net
+  
+  backend:
+    build:
+      context: ./backend
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=3306
+      - DATABASE_USER=${DEV_MYSQL_USER}
+      - DATABASE_PASSWORD=${DEV_MYSQL_PASSWORD}
+      - DATABASE_NAME=${DEV_MYSQL_DATABASE}
+    depends_on:
+      - db
+    networks:
+      - lesser-net
+  
+  frontend:
+    build:
+      context: ./frontend
+    networks:
+      - lesser-net
+
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DEV_MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DEV_MYSQL_DATABASE}
+      - MYSQL_USER=${DEV_MYSQL_USER}
+      - MYSQL_PASSWORD=${DEV_MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - lesser-net
+
+networks:
+  lesser-net: {}
+
+volumes:
+  mysql_data: {}
