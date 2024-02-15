@@ -15,8 +15,8 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello Lesser-dev"', () => {
-      expect(appController.getHello()).toBe('Hello Lesser-dev');
+    it('should return "Hello Lesser-dev 2"', () => {
+      expect(appController.getHello()).toBe('Hello Lesser-dev 2');
     });
   });
 });
