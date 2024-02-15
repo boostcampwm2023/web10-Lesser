@@ -40,10 +40,10 @@ jobs:
         DEV_MYSQL_PASSWORD: ${{ secrets.DEV_MYSQL_PASSWORD }}
         DEV_MYSQL_DATABASE: ${{ secrets.DEV_MYSQL_DATABASE }}
       run: |
-        sshpass -p $SSH_DEV_DEVELOPER_PASSWORD ssh -o "StrictHostKeyChecking=no" developer@dev.lesser-project.site "cd /home/developer/web10-Lesser && git pull && docker compose up -d --build backend"
+        sshpass -p $SSH_DEV_DEVELOPER_PASSWORD ssh -o "StrictHostKeyChecking=no" developer@dev.lesser-project.site "cd /home/developer/web10-Lesser && git pull && docker compose -f docker-compose.dev.yml up -d --build backend"
 
     - name: DevServer frontend CD
       env:
         SSH_DEV_DEVELOPER_PASSWORD: ${{ secrets.SSH_DEV_DEVELOPER_PASSWORD }}
       run: |
-        sshpass -p $SSH_DEV_DEVELOPER_PASSWORD ssh -o "StrictHostKeyChecking=no" developer@dev.lesser-project.site "cd /home/developer/web10-Lesser && git pull && docker compose up -d --build frontend"
+        sshpass -p $SSH_DEV_DEVELOPER_PASSWORD ssh -o "StrictHostKeyChecking=no" developer@dev.lesser-project.site "cd /home/developer/web10-Lesser && git pull && docker compose -f docker-compose.dev.yml up -d --build frontend"
