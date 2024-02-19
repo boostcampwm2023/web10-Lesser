@@ -5,7 +5,7 @@ import { AuthService } from '../service/auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Get('github/authorization-server')
-  getGithubAuthServerUrl(): string {
-    return this.authService.getGithubAuthUrl();
+  getGithubAuthServerUrl() {
+    return { authUrl: this.authService.getGithubAuthUrl() };
   }
 }

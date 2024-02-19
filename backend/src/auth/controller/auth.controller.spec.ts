@@ -26,7 +26,7 @@ describe('Controller getGithubAuthServerUrl Unit Test', () => {
   it('should return data from the service', async () => {
     const controllerResponse = controller.getGithubAuthServerUrl();
     const serviceResponse = authService.getGithubAuthUrl();
-    expect(controllerResponse).toEqual(serviceResponse);
+    expect(controllerResponse.authUrl).toEqual(serviceResponse);
     expect(authService.getGithubAuthUrl).toHaveBeenCalled();
   });
 });
