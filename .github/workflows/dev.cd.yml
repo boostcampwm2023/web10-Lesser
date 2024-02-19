@@ -3,6 +3,7 @@ name: Dev Server Backend/Frontend CD
 run-name: ${{ github.actor }} is deploying DevServer
 
 on: 
+  workflow_dispatch:
   pull_request:
     paths:
       - 'backend/**'
@@ -37,11 +38,21 @@ jobs:
       if: steps.changes.outputs.backend == 'true'
       env:
         SSH_DEV_DEVELOPER_PASSWORD: ${{ secrets.SSH_DEV_DEVELOPER_PASSWORD }}
+        DEV_GITHUB_CLIENT_ID: ${{ secrets.DEV_GITHUB_CLIENT_ID }}
+        DEV_GITHUB_CLIENT_SECRETS: ${{ secrets.DEV_GITHUB_CLIENT_SECRETS }}
         DEV_MYSQL_USER: ${{ secrets.DEV_MYSQL_USER }}
         DEV_MYSQL_PASSWORD: ${{ secrets.DEV_MYSQL_PASSWORD }}
         DEV_MYSQL_DATABASE: ${{ secrets.DEV_MYSQL_DATABASE }}
       run: |
-        sshpass -p $SSH_DEV_DEVELOPER_PASSWORD ssh -o "StrictHostKeyChecking=no" developer@dev.lesser-project.site "cd /home/developer/web10-Lesser && git pull && DEV_MYSQL_USER=$DEV_MYSQL_USER DEV_MYSQL_PASSWORD=$DEV_MYSQL_PASSWORD DEV_MYSQL_DATABASE=$DEV_MYSQL_DATABASE docker compose -f docker-compose.dev.yml up -d --build backend"
+        sshpass -p $SSH_DEV_DEVELOPER_PASSWORD \
+        ssh -o "StrictHostKeyChecking=no" developer@dev.lesser-project.site \
+        "cd /home/developer/web10-Lesser && git pull && \
+        GITHUB_CLIENT_ID=$DEV_GITHUB_CLIENT_ID \
+        GITHUB_CLIENT_SECRETS=$DEV_GITHUB_CLIENT_SECRETS \
+        DEV_MYSQL_USER=$DEV_MYSQL_USER \
+        DEV_MYSQL_PASSWORD=$DEV_MYSQL_PASSWORD \
+        DEV_MYSQL_DATABASE=$DEV_MYSQL_DATABASE \
+        docker compose -f docker-compose.dev.yml up -d --build backend"
 
     - name: DevServer frontend CD
       if: steps.changes.outputs.frontend == 'true' && always()

@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { Member } from './member.entity';
+import { AuthModule } from './auth/auth.module';
+import { LesserConfigModule } from './lesser-config/lesser-config.module';
 
 @Module({
   imports: [
@@ -21,10 +23,8 @@ import { Member } from './member.entity';
       }),
     }),
     TypeOrmModule.forFeature([Member]),
-    ConfigModule.forRoot({
-      envFilePath: '.env',
-      isGlobal: true,
-    }),
+    AuthModule,
+    LesserConfigModule,
   ],
   controllers: [AppController],
   providers: [AppService],
