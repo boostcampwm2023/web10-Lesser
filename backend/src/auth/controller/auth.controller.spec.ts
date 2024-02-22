@@ -16,6 +16,7 @@ describe('Auth Controller Unit Test', () => {
           useValue: {
             getGithubAuthUrl: jest.fn(),
             getAccessToken: jest.fn(),
+            getGithubUser: jest.fn(),
           },
         },
       ],
@@ -41,8 +42,22 @@ describe('Auth Controller Unit Test', () => {
     it('should return 401 response when getAccessToken throws an error', async () => {
       jest
         .spyOn(authService, 'getAccessToken')
-        .mockRejectedValue(new Error('Authentication failed'));
+        .mockRejectedValue(new Error('Cannot retrieve access token'));
+      try {
+        await controller.githubAuthentication({ authCode: 'authCode' });
+      } catch (error) {
+        expect(error).toBeInstanceOf(UnauthorizedException);
+        expect(error.response).toEqual({
+          statusCode: 401,
+          message: 'Unauthorized',
+        });
+      }
+    });
 
+    it('should return 401 response when getGithubUser throws an error', async () => {
+      jest
+        .spyOn(authService, 'getGithubUser')
+        .mockRejectedValue(new Error('Cannot retrieve github user'));
       try {
         await controller.githubAuthentication({ authCode: 'authCode' });
       } catch (error) {

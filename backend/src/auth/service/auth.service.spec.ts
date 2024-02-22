@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { GithubApiService } from 'src/github-api/github-api.service';
+import { GithubUserDto } from './dto/github-user.dto';
 
 describe('Auth Service Unit Test', () => {
   let authService: AuthService;
@@ -16,6 +17,7 @@ describe('Auth Service Unit Test', () => {
           provide: GithubApiService,
           useValue: {
             fetchAccessToken: jest.fn(),
+            fetchGithubUser: jest.fn(),
           },
         },
         {
@@ -53,15 +55,49 @@ describe('Auth Service Unit Test', () => {
       expect(githubApiService.fetchAccessToken).toHaveBeenCalled();
     });
 
-    it('should return Error', async () => {
+    it('should return Error when given invalid authorization code', async () => {
       jest
         .spyOn(githubApiService, 'fetchAccessToken')
-        .mockRejectedValue(new Error('Invalid authorization code'));
-
+        .mockResolvedValue({ access_token: undefined });
       try {
         await authService.getAccessToken('auth code');
       } catch (error) {
-        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toEqual('Cannot retrieve access token');
+      }
+    });
+
+    it('should return Error when failed to access GitHub API', async () => {
+      jest
+        .spyOn(githubApiService, 'fetchAccessToken')
+        .mockRejectedValue(new Error());
+      try {
+        await authService.getAccessToken('auth code');
+      } catch (error) {
+        expect(error.message).toEqual('Cannot retrieve access token');
+      }
+    });
+  });
+
+  describe('Get GitHub User', () => {
+    it('should return github user', async () => {
+      jest.spyOn(githubApiService, 'fetchGithubUser').mockResolvedValue({
+        id: 'github_id',
+        login: 'username',
+        avatar_url: 'image_url',
+      });
+      const githubUser = await authService.getGithubUser('access token');
+      expect(githubUser).toBeInstanceOf(GithubUserDto);
+      expect(githubApiService.fetchGithubUser).toHaveBeenCalled();
+    });
+
+    it('should return Error when failed to access GitHub API', async () => {
+      jest
+        .spyOn(githubApiService, 'fetchGithubUser')
+        .mockRejectedValue(new Error());
+      try {
+        await authService.getGithubUser('access token');
+      } catch (error) {
+        expect(error.message).toEqual('Cannot retrieve github user');
       }
     });
   });

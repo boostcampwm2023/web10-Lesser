@@ -20,4 +20,15 @@ export class GithubApiService {
     );
     return await response.json();
   }
+
+  async fetchGithubUser(accessToken: string) {
+    const response = await fetch('https://api.github.com/user', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return await response.json();
+  }
 }

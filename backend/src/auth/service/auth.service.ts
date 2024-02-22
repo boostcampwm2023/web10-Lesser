@@ -5,6 +5,7 @@ import {
   GITHUB_CLIENT_ID,
   GITHUB_CLIENT_SECRETS,
 } from 'src/lesser-config/constants';
+import { GithubUserDto } from './dto/github-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,13 +21,29 @@ export class AuthService {
   }
 
   async getAccessToken(authCode: string) {
-    const body = {
-      client_id: this.configService.get(GITHUB_CLIENT_ID),
-      client_secret: this.configService.get(GITHUB_CLIENT_SECRETS),
-      code: authCode,
-    };
-    const { access_token } = await this.githubApiService.fetchAccessToken(body);
-    if (!access_token) throw new Error('Invalid authorization code');
-    return access_token;
+    try {
+      const body = {
+        client_id: this.configService.get(GITHUB_CLIENT_ID),
+        client_secret: this.configService.get(GITHUB_CLIENT_SECRETS),
+        code: authCode,
+      };
+      const { access_token } =
+        await this.githubApiService.fetchAccessToken(body);
+      if (!access_token) throw new Error('Invalid authorization code');
+      return access_token;
+    } catch (err) {
+      throw new Error('Cannot retrieve access token');
+    }
+  }
+
+  async getGithubUser(accessToken: string) {
+    try {
+      const { id, login, avatar_url } =
+        await this.githubApiService.fetchGithubUser(accessToken);
+      const githubUser = GithubUserDto.of(id, login, avatar_url);
+      return githubUser;
+    } catch (err) {
+      throw new Error('Cannot retrieve github user');
+    }
   }
 }
