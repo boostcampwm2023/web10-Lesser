@@ -23,7 +23,11 @@ export class AuthController {
       const githubUser: GithubUserDto =
         await this.authService.getGithubUser(accessToken);
 
-      // Todo: if github user is not member, store user infomation in temp user table and return tempIdToken
+      // Todo: check if github user is member
+
+      // Done: if github user is not member, store user infomation in temp user table and return tempIdToken
+      const tempIdToken = await this.authService.getTempIdToken(githubUser);
+      return { tempIdToken };
 
       // Todo: if github user is member, login
     } catch (err) {

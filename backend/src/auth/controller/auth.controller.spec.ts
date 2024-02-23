@@ -1,7 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from '../service/auth.service';
-import { UnauthorizedException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 describe('Auth Controller Unit Test', () => {
   let controller: AuthController;
@@ -17,6 +20,7 @@ describe('Auth Controller Unit Test', () => {
             getGithubAuthUrl: jest.fn(),
             getAccessToken: jest.fn(),
             getGithubUser: jest.fn(),
+            getTempIdToken: jest.fn(),
           },
         },
       ],
@@ -65,6 +69,21 @@ describe('Auth Controller Unit Test', () => {
         expect(error.response).toEqual({
           statusCode: 401,
           message: 'Unauthorized',
+        });
+      }
+    });
+
+    it('should return 500 response when getTempIdToken throws an error', async () => {
+      jest
+        .spyOn(authService, 'getTempIdToken')
+        .mockRejectedValue(new Error());
+      try {
+        await controller.githubAuthentication({ authCode: 'authCode' });
+      } catch (error) {
+        expect(error).toBeInstanceOf(InternalServerErrorException);
+        expect(error.response).toEqual({
+          statusCode: 500,
+          message: 'Internal Server Error',
         });
       }
     });
