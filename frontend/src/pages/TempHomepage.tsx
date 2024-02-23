@@ -9,13 +9,17 @@ const TempHomepage = () => {
   });
   return (
     <div>
-      <h1>임시 페이지</h1>
+      <h1 className="text-xl">임시 페이지</h1>
       <ul>
         <li>
-          <Link to={"/login"}>Log in</Link>
+          <Link to={"/login"} className="hover:underline">
+            Log in
+          </Link>
         </li>
         <li>
-          <Link to={"/signup"}>Sign up</Link>
+          <Link to={"/signup"} className="hover:underline">
+            Sign up
+          </Link>
         </li>
       </ul>
     </div>
