@@ -9,6 +9,7 @@ import {
   DATABASE_USER,
   DATABASE_PASSWORD,
   DATABASE_NAME,
+  JWT_SECRET,
 } from './constants';
 
 describe('Lesser Config Unit Test', () => {
@@ -32,6 +33,7 @@ describe('Lesser Config Unit Test', () => {
         expect(configService.get(DATABASE_USER)).toBeDefined();
         expect(configService.get(DATABASE_PASSWORD)).toBeDefined();
         expect(configService.get(DATABASE_NAME)).toBeDefined();
+        expect(configService.get(JWT_SECRET)).toBeDefined();
       }
     });
   });

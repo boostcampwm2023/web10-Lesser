@@ -14,6 +14,7 @@ import {
   DATABASE_PASSWORD,
   DATABASE_NAME,
 } from './lesser-config/constants';
+import { LesserJwtModule } from './lesser-jwt/lesser-jwt.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import {
     AuthModule,
     LesserConfigModule,
     GithubApiModule,
+    LesserJwtModule,
   ],
   controllers: [AppController],
   providers: [AppService],
