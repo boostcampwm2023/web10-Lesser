@@ -16,5 +16,6 @@ import { JWT_SECRET } from 'src/lesser-config/constants';
     }),
   ],
   providers: [LesserJwtService],
+  exports: [LesserJwtService]
 })
 export class LesserJwtModule {}

@@ -22,10 +22,10 @@ describe('LesserJwtService', () => {
 
   describe('Get temp id token', () => {
     it('should return valid jwt', async () => {
-      const key = 1;
-      const tempIdToken = await lesserJwtService.createTempIdToken(key);
+      const sub = { uuid: 'uuid' };
+      const tempIdToken = await lesserJwtService.createTempIdToken(sub);
       const payload = jwtService.verify(tempIdToken);
-      expect(payload.sub).toEqual(key);
+      expect(payload.sub).toEqual(sub);
     });
   });
 

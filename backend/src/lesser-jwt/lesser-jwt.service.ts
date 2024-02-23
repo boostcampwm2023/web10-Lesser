@@ -4,8 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class LesserJwtService {
   constructor(private readonly jwtService: JwtService) {}
-  createTempIdToken(key: Number): Promise<string> {
-    const payload = { sub: key };
+  createTempIdToken(sub: object): Promise<string> {
+    const payload = { sub };
     const options = { expiresIn: '30m' };
     return this.jwtService.signAsync(payload, options);
   }
