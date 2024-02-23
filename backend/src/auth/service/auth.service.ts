@@ -6,12 +6,18 @@ import {
   GITHUB_CLIENT_SECRETS,
 } from 'src/lesser-config/constants';
 import { GithubUserDto } from './dto/github-user.dto';
+import { TempMemberRepository } from '../repository/tempMember.repository';
+import { TempMember } from '../entity/tempMember.entity';
+import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly configService: ConfigService,
     private readonly githubApiService: GithubApiService,
+    private readonly tempMemberRepository: TempMemberRepository,
+    private readonly lesserJwtService: LesserJwtService,
   ) {}
   private readonly ENV_GITHUB_CLIENT_ID =
     this.configService.get(GITHUB_CLIENT_ID);
@@ -45,5 +51,26 @@ export class AuthService {
     } catch (err) {
       throw new Error('Cannot retrieve github user');
     }
+  }
+
+  async getTempIdToken(githubUser: GithubUserDto) {
+    const { githubId, username, imageUrl } = githubUser;
+    const uuid = uuidv4();
+    const [tempMember, tempIdToken] = await Promise.all([
+      this.tempMemberRepository.findByGithubId(githubId),
+      this.lesserJwtService.createTempIdToken({ uuid }),
+    ]);
+
+    if (tempMember)
+      await this.tempMemberRepository.updateTempIdToken(
+        tempMember.uuid,
+        tempIdToken,
+      );
+    else
+      await this.tempMemberRepository.save(
+        TempMember.of(uuid, tempIdToken, githubId, username, imageUrl),
+      );
+
+    return tempIdToken;
   }
 }
