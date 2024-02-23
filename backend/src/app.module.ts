@@ -15,6 +15,7 @@ import {
   DATABASE_NAME,
 } from './lesser-config/constants';
 import { LesserJwtModule } from './lesser-jwt/lesser-jwt.module';
+import { TempMember } from './auth/entity/tempMember.entity';
 
 @Module({
   imports: [
@@ -27,11 +28,10 @@ import { LesserJwtModule } from './lesser-jwt/lesser-jwt.module';
         username: ConfigService.get(DATABASE_USER),
         password: ConfigService.get(DATABASE_PASSWORD),
         database: ConfigService.get(DATABASE_NAME),
-        entities: [Member],
+        entities: [Member, TempMember],
         synchronize: ConfigService.get('NODE_ENV') == 'PROD' ? false : true,
       }),
     }),
-    TypeOrmModule.forFeature([Member]),
     AuthModule,
     LesserConfigModule,
     GithubApiModule,
