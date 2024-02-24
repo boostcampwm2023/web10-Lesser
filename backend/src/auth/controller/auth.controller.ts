@@ -7,7 +7,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
-import { GithubUserDto } from '../service/dto/github-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -19,17 +18,12 @@ export class AuthController {
   @Post('github/authentication')
   async githubAuthentication(@Body() body: { authCode: string }) {
     try {
-      const accessToken = await this.authService.getAccessToken(body.authCode);
-      const githubUser: GithubUserDto =
-        await this.authService.getGithubUser(accessToken);
-
-      // Todo: check if github user is member
-
-      // Done: if github user is not member, store user infomation in temp user table and return tempIdToken
-      const tempIdToken = await this.authService.getTempIdToken(githubUser);
-      return { tempIdToken };
-
-      // Todo: if github user is member, login
+      const result = await this.authService.githubAuthentication(body.authCode);
+      if ('tempIdToken' in result) {
+        return { tempIdToken: result.tempIdToken };
+      } else {
+        // Todo: return access token, refresh token (login)
+      }
     } catch (err) {
       if (
         err.message === 'Cannot retrieve access token' ||

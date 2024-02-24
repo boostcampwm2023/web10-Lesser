@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TempMember } from './entity/tempMember.entity';
 import { LesserJwtModule } from 'src/lesser-jwt/lesser-jwt.module';
 import { TempMemberRepository } from './repository/tempMember.repository';
+import { MemberModule } from 'src/member/member.module';
 
 @Module({
   imports: [

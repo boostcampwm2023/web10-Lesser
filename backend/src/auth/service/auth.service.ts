@@ -10,6 +10,7 @@ import { TempMemberRepository } from '../repository/tempMember.repository';
 import { TempMember } from '../entity/tempMember.entity';
 import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { v4 as uuidv4 } from 'uuid';
+import { MemberService } from 'src/member/service/member.service';
 
 @Injectable()
 export class AuthService {
@@ -18,12 +19,29 @@ export class AuthService {
     private readonly githubApiService: GithubApiService,
     private readonly tempMemberRepository: TempMemberRepository,
     private readonly lesserJwtService: LesserJwtService,
+    private readonly memberService: MemberService,
   ) {}
   private readonly ENV_GITHUB_CLIENT_ID =
     this.configService.get(GITHUB_CLIENT_ID);
 
   getGithubAuthUrl(): string {
     return `https://github.com/login/oauth/authorize?client_id=${this.ENV_GITHUB_CLIENT_ID}&scope=`;
+  }
+
+  async githubAuthentication(
+    authCode: string,
+  ): Promise<
+    { tempIdToken: string } | { accessToken: string; refreshToken: string }
+  > {
+    const accessToken = await this.getAccessToken(authCode);
+    const githubUser = await this.getGithubUser(accessToken);
+    const member = await this.memberService.findByGithubId(githubUser.githubId);
+    if (member) {
+      // Todo: login
+    } else {
+      const tempIdToken = await this.getTempIdToken(githubUser);
+      return { tempIdToken };
+    }
   }
 
   async getAccessToken(authCode: string) {

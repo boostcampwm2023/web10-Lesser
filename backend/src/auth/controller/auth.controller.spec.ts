@@ -18,9 +18,7 @@ describe('Auth Controller Unit Test', () => {
           provide: AuthService,
           useValue: {
             getGithubAuthUrl: jest.fn(),
-            getAccessToken: jest.fn(),
-            getGithubUser: jest.fn(),
-            getTempIdToken: jest.fn(),
+            githubAuthentication: jest.fn(),
           },
         },
       ],
@@ -35,18 +33,21 @@ describe('Auth Controller Unit Test', () => {
       jest
         .spyOn(authService, 'getGithubAuthUrl')
         .mockReturnValue('github auth url');
+
       const controllerResponse = controller.getGithubAuthServerUrl();
       const serviceResponse = authService.getGithubAuthUrl();
+
       expect(controllerResponse.authUrl).toEqual(serviceResponse);
       expect(authService.getGithubAuthUrl).toHaveBeenCalled();
     });
   });
 
   describe('Github Authentication', () => {
-    it('should return 401 response when getAccessToken throws an error', async () => {
+    it('should return 401 response when githubAuthentication service throws "Cannot retrieve access token"', async () => {
       jest
-        .spyOn(authService, 'getAccessToken')
+        .spyOn(authService, 'githubAuthentication')
         .mockRejectedValue(new Error('Cannot retrieve access token'));
+
       try {
         await controller.githubAuthentication({ authCode: 'authCode' });
       } catch (error) {
@@ -58,10 +59,11 @@ describe('Auth Controller Unit Test', () => {
       }
     });
 
-    it('should return 401 response when getGithubUser throws an error', async () => {
+    it('should return 401 response when githubAuthentication service throws "Cannot retrieve github user"', async () => {
       jest
-        .spyOn(authService, 'getGithubUser')
+        .spyOn(authService, 'githubAuthentication')
         .mockRejectedValue(new Error('Cannot retrieve github user'));
+
       try {
         await controller.githubAuthentication({ authCode: 'authCode' });
       } catch (error) {
@@ -73,10 +75,11 @@ describe('Auth Controller Unit Test', () => {
       }
     });
 
-    it('should return 500 response when getTempIdToken throws an error', async () => {
+    it('should return 500 response when githubAuthentication service throws unknown error', async () => {
       jest
-        .spyOn(authService, 'getTempIdToken')
+        .spyOn(authService, 'githubAuthentication')
         .mockRejectedValue(new Error());
+
       try {
         await controller.githubAuthentication({ authCode: 'authCode' });
       } catch (error) {

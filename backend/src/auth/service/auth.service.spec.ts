@@ -6,6 +6,7 @@ import { GithubUserDto } from './dto/github-user.dto';
 import { TempMemberRepository } from '../repository/tempMember.repository';
 import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { TempMember } from '../entity/tempMember.entity';
+import { MemberService } from 'src/member/service/member.service';
 
 describe('Auth Service Unit Test', () => {
   let authService: AuthService;
@@ -13,6 +14,7 @@ describe('Auth Service Unit Test', () => {
   let githubApiService: GithubApiService;
   let tempMemberRepository: TempMemberRepository;
   let lesserJwtService: LesserJwtService;
+  let memberService: MemberService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,6 +47,12 @@ describe('Auth Service Unit Test', () => {
             createTempIdToken: jest.fn(),
           },
         },
+        {
+          provide: MemberService,
+          useValue: {
+            findByGithubId: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -54,6 +62,7 @@ describe('Auth Service Unit Test', () => {
     tempMemberRepository =
       module.get<TempMemberRepository>(TempMemberRepository);
     lesserJwtService = module.get<LesserJwtService>(LesserJwtService);
+    memberService = module.get<MemberService>(MemberService);
   });
 
   describe('Get Github Auth Url', () => {
@@ -170,6 +179,31 @@ describe('Auth Service Unit Test', () => {
       expect(tempMemberRepository.findByGithubId).toHaveBeenCalled();
       expect(tempMemberRepository.updateTempIdToken).toHaveBeenCalled();
       expect(tempMemberRepository.save).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Github Authentication', () => {
+    it('should return tempId token when github user is not member', async () => {
+      jest
+        .spyOn(authService, 'getAccessToken')
+        .mockResolvedValue('access token');
+      jest
+        .spyOn(authService, 'getGithubUser')
+        .mockResolvedValue(GithubUserDto.of('id', 'login', 'avatar_url'));
+      jest.spyOn(memberService, 'findByGithubId').mockResolvedValue(null);
+      jest
+        .spyOn(authService, 'getTempIdToken')
+        .mockResolvedValue('tempIdToken');
+
+      const result = await authService.githubAuthentication('auth code');
+
+      expect(authService.getAccessToken).toHaveBeenCalled();
+      expect(authService.getGithubUser).toHaveBeenCalled();
+      expect(memberService.findByGithubId).toHaveBeenCalled();
+      expect(result).toHaveProperty('tempIdToken');
+      expect((result as { tempIdToken: string }).tempIdToken).toEqual(
+        'tempIdToken',
+      );
     });
   });
 });
