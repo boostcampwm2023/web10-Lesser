@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { Member } from './member.entity';
 import { AuthModule } from './auth/auth.module';
 import { LesserConfigModule } from './lesser-config/lesser-config.module';
 import { GithubApiModule } from './github-api/github-api.module';
@@ -16,6 +15,8 @@ import {
 } from './lesser-config/constants';
 import { LesserJwtModule } from './lesser-jwt/lesser-jwt.module';
 import { TempMember } from './auth/entity/tempMember.entity';
+import { MemberModule } from './member/member.module';
+import { Member } from './member/entity/member.entity';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { TempMember } from './auth/entity/tempMember.entity';
     LesserConfigModule,
     GithubApiModule,
     LesserJwtModule,
+    MemberModule,
   ],
   controllers: [AppController],
   providers: [AppService],
