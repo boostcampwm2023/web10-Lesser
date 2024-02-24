@@ -13,6 +13,7 @@ import { MemberModule } from 'src/member/member.module';
     GithubApiModule,
     TypeOrmModule.forFeature([TempMember]),
     LesserJwtModule,
+    MemberModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, TempMemberRepository],
