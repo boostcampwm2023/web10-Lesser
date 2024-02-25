@@ -26,6 +26,9 @@ export default {
         xs: "18px",
         xxs: "14px",
       },
+      boxShadow: {
+        box: "8px 8px 25px 0px #00000051",
+      },
     },
   },
   plugins: [],

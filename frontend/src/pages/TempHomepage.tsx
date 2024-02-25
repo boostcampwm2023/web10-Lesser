@@ -9,7 +9,9 @@ const TempHomepage = () => {
   });
   return (
     <div>
-      <h1 className="text-xl">임시 페이지</h1>
+      <div className="shadow-box bg-white mb-[40px]">
+        <h1 className="text-xl">임시 페이지</h1>
+      </div>
       <ul>
         <li>
           <Link to={"/login"} className="hover:underline">
