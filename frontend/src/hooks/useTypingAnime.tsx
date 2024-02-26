@@ -24,18 +24,18 @@ const TypingTextComponent = ({
 
     const elapsedTime = timeStamp - lastTimeStamp.current;
 
-    if (elapsedTime > frame) {
+    if (elapsedTime >= frame) {
       lastTimeStamp.current = timeStamp;
-      setTypingText((state) => {
-        const newState = state + text[textIndex.current];
+
+      setTypingText(() => {
+        const newState = text.slice(0, textIndex.current) + "⏐";
         textIndex.current += 1;
         return newState;
       });
     }
 
-    if (textIndex.current >= text.length - 1) {
+    if (textIndex.current >= text.length) {
       setAnimeFinished();
-      console.log("finish!");
       return;
     }
     requestAnimationFrame(animationCallback);
