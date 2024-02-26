@@ -6,7 +6,7 @@
   font-family: "pretendard";
   font-style: normal;
   font-weight: normal;
-  src: url("./assets/fonts/PretendardVariable.woff2") format("woff2");
+  src: url("./assets/fonts/PretendardVariable.woff2") format("font-woff2");
 }
 
 html,
