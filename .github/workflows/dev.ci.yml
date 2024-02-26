@@ -36,7 +36,7 @@ jobs:
           cd ./backend
           npm install
           npm run build
-          npm run test
+          NODE_ENV=CI npm run test
           cd ..
       
       - name: DevServer Frontend CI

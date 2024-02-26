@@ -3,20 +3,46 @@ name: Production Server Backend/Frontend CD
 run-name: ${{ github.actor }} is deploying Production Server
 
 on:
+  workflow_dispatch:
   release:
     types: [published]
-
 jobs:
-  get-release-notes:
+  prod_deploy_by_release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.release.tag_name }}
-
       - name: Get Release Notes
         run: |
-          echo "Release Tag: ${{ github.event.release.tag_name }}"
-          echo "Release Name: ${{ github.event.release.name }}"
-          echo "Release Notes: ${{ github.event.release.body }}"
+          echo “Release Tag: ${{ github.event.release.tag_name }}”
+          echo “Release Name: ${{ github.event.release.name }}”
+
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
+      - name: ProdServer CD
+        env:
+          SSH_DEVELOPER_PASSWORD: ${{secrets.PROD_SSH_DEVELOPER_PASSWORD}}
+          GITHUB_CLIENT_ID: ${{ secrets.PROD_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRETS: ${{ secrets.PROD_GITHUB_CLIENT_SECRETS }}
+          DATABASE_HOST: ${{secrets.PROD_DATABASE_HOST}}
+          DATABASE_PORT: ${{secrets.PROD_DATABASE_PORT}}
+          DATABASE_USER: ${{ secrets.PROD_DATABASE_USER }}
+          DATABASE_PASSWORD: ${{ secrets.PROD_DATABASE_PASSWORD }}
+          DATABASE_NAME: ${{ secrets.PROD_DATABASE_NAME }}
+          JWT_SECRET: ${{ secrets.PROD_JWT_SECRET }}
+        run: |
+          sshpass -p $SSH_DEVELOPER_PASSWORD \
+          ssh -o "StrictHostKeyChecking=no" developer@lesser-project.site \
+          "cd /home/developer/web10-Lesser && git fetch --all && git checkout ${{github.event.release.tag_name}} && \
+          GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID \
+          GITHUB_CLIENT_SECRETS=$GITHUB_CLIENT_SECRETS \
+          DATABASE_HOST=$DATABASE_HOST \
+          DATABASE_PORT=$DATABASE_PORT \
+          DATABASE_USER=$DATABASE_USER \
+          DATABASE_PASSWORD=$DATABASE_PASSWORD \
+          DATABASE_NAME=$DATABASE_NAME \
+          JWT_SECRET=$JWT_SECRET \
+          docker compose -f docker-compose.yml up -d --build"

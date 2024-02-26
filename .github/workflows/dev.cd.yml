@@ -43,6 +43,7 @@ jobs:
         DEV_MYSQL_USER: ${{ secrets.DEV_MYSQL_USER }}
         DEV_MYSQL_PASSWORD: ${{ secrets.DEV_MYSQL_PASSWORD }}
         DEV_MYSQL_DATABASE: ${{ secrets.DEV_MYSQL_DATABASE }}
+        JWT_SECRET: ${{ secrets.DEV_JWT_SECRET }}
       run: |
         sshpass -p $SSH_DEV_DEVELOPER_PASSWORD \
         ssh -o "StrictHostKeyChecking=no" developer@dev.lesser-project.site \
@@ -52,6 +53,7 @@ jobs:
         DEV_MYSQL_USER=$DEV_MYSQL_USER \
         DEV_MYSQL_PASSWORD=$DEV_MYSQL_PASSWORD \
         DEV_MYSQL_DATABASE=$DEV_MYSQL_DATABASE \
+        JWT_SECRET=$JWT_SECRET \
         docker compose -f docker-compose.dev.yml up -d --build backend"
 
     - name: DevServer frontend CD
