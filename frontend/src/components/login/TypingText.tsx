@@ -17,13 +17,14 @@ const TypingText = ({ text, frame }: { text: string; frame: number }) => {
   // }, [text]);
 
   const animationCallback = () => {
+    console.log("animation callback start!");
     setTypingText((state) => {
       const newState = state + text[textIndex.current];
       textIndex.current += 1;
       return newState;
     });
 
-    if (textIndex.current >= text.length) return;
+    if (textIndex.current >= text.length - 1) return;
     requestAnimationFrame(animationCallback);
   };
 
