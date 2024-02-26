@@ -27,7 +27,8 @@ export class AuthController {
       const result = await this.authService.githubAuthentication(body.authCode);
       if ('tempIdToken' in result) {
         const responseBody = { tempIdToken: result.tempIdToken };
-        return response.status(204).send(responseBody);
+		console.log(responseBody);
+        return response.status(209).send(responseBody);
       } else {
         const responseBody = { accessToken: result.accessToken };
         return response
