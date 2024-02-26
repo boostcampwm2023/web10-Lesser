@@ -158,7 +158,6 @@ describe('Auth Service Unit Test', () => {
 
       const githubUserDto = GithubUserDto.of('id', 'username', 'imageUrl');
       const tempIdToken = await authService.saveTempMember(githubUserDto);
-
       expect(tempIdToken).toEqual(token);
       expect(tempMemberRepository.findByGithubId).toHaveBeenCalled();
       expect(tempMemberRepository.save).toHaveBeenCalled();

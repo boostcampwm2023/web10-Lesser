@@ -18,7 +18,6 @@ export class AuthController {
   getGithubAuthServerUrl() {
     return { authUrl: this.authService.getGithubAuthUrl() };
   }
-
   @Post('github/authentication')
   async githubAuthentication(
     @Body() body: { authCode: string },

@@ -97,7 +97,6 @@ describe('Auth Controller Unit Test', () => {
         },
       );
     });
-
     it('should return 401 response when githubAuthentication service throws "Cannot retrieve access token"', async () => {
       jest
         .spyOn(authService, 'githubAuthentication')
