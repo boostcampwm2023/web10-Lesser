@@ -27,7 +27,6 @@ export class AuthController {
       const result = await this.authService.githubAuthentication(body.authCode);
       if ('tempIdToken' in result) {
         const responseBody = { tempIdToken: result.tempIdToken };
-		console.log(responseBody);
         return response.status(209).send(responseBody);
       } else {
         const responseBody = { accessToken: result.accessToken };
@@ -46,9 +45,9 @@ export class AuthController {
         err.message === 'Cannot retrieve access token' ||
         err.message === 'Cannot retrieve github user'
       ) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException(err.message);
       }
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException(err.message);
     }
   }
 }
