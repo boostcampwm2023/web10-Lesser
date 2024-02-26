@@ -37,9 +37,13 @@ export class AuthService {
     const githubUser = await this.getGithubUser(accessToken);
     const member = await this.memberService.findByGithubId(githubUser.githubId);
     if (member) {
-      // Todo: login
+      const [accessToken, refreshToken] = await Promise.all([
+        this.lesserJwtService.createAccessToken(member.id),
+        this.lesserJwtService.createRefreshToken(member.id),
+      ]);
+      return { accessToken, refreshToken };
     } else {
-      const tempIdToken = await this.getTempIdToken(githubUser);
+      const tempIdToken = await this.saveTempMember(githubUser);
       return { tempIdToken };
     }
   }
@@ -71,12 +75,12 @@ export class AuthService {
     }
   }
 
-  async getTempIdToken(githubUser: GithubUserDto) {
+  async saveTempMember(githubUser: GithubUserDto): Promise<string> {
     const { githubId, username, imageUrl } = githubUser;
-    const uuid = uuidv4();
+    const uuid: string = uuidv4();
     const [tempMember, tempIdToken] = await Promise.all([
       this.tempMemberRepository.findByGithubId(githubId),
-      this.lesserJwtService.createTempIdToken({ uuid }),
+      this.lesserJwtService.createTempIdToken(uuid),
     ]);
 
     if (tempMember)
