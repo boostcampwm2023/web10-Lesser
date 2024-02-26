@@ -6,7 +6,7 @@ interface useDropdownParams {
 }
 
 interface DropdownProps {
-  buttonClassName: string;
+  buttonClassName?: string;
   containerClassName?: string;
   itemClassName?: string;
 }
@@ -17,9 +17,9 @@ const useDropdown = ({ placeholder, options }: useDropdownParams) => {
   const dropdownRef = useRef<HTMLButtonElement>(null);
 
   const Dropdown = ({
-    buttonClassName,
-    containerClassName,
-    itemClassName,
+    buttonClassName = "",
+    containerClassName = "",
+    itemClassName = "",
   }: DropdownProps) => (
     <div className="relative">
       <button
@@ -51,6 +51,7 @@ const useDropdown = ({ placeholder, options }: useDropdownParams) => {
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
+    setOpen(false);
   };
 
   const handleOutsideClick = ({ target }: MouseEvent) => {
