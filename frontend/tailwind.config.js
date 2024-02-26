@@ -13,6 +13,7 @@ export default {
         "text-gray": "#9E9E9E",
         "text-black": "#1A1414",
         "error-red": "#E25667",
+        "white-transparent": "rgba(255, 255, 255, 0.29)",
       },
       fontFamily: {
         pretendard: ["pretendard"],
