@@ -1,13 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 
-const TypingText = ({
+const TypingTextComponent = ({
   text,
   frame,
-  startTime = 0,
+  setAnimeFinished,
+  animeFinishFlag,
+  flag = true,
 }: {
   text: string;
   frame: number;
-  startTime?: number;
+  setAnimeFinished: () => void;
+  animeFinishFlag: boolean;
+  flag?: boolean;
 }) => {
   const [typingText, setTypingText] = useState<string>("");
   const textIndex = useRef<number>(0);
@@ -29,32 +33,40 @@ const TypingText = ({
       });
     }
 
-    if (textIndex.current >= text.length - 1) return;
+    if (textIndex.current >= text.length - 1) {
+      setAnimeFinished();
+      console.log("finish!");
+      return;
+    }
     requestAnimationFrame(animationCallback);
-  };
-  const delayingAnimationCallback = (timeStamp: number) => {
-    if (lastTimeStamp.current === null) {
-      lastTimeStamp.current = timeStamp;
-    }
-
-    const elapsedTime = timeStamp - lastTimeStamp.current;
-
-    if (elapsedTime >= startTime) {
-      lastTimeStamp.current = null;
-      requestAnimationFrame(animationCallback);
-    } else {
-      requestAnimationFrame(delayingAnimationCallback);
-    }
   };
 
   useEffect(() => {
-    let animeId = requestAnimationFrame(delayingAnimationCallback);
+    let animeId: number;
+    if (animeFinishFlag) {
+      setTypingText(text);
+    } else if (flag) {
+      animeId = requestAnimationFrame(animationCallback);
+    }
 
     return () => {
       cancelAnimationFrame(animeId);
     };
-  }, [text]);
+  }, [flag]);
   return <p>{typingText}</p>;
 };
 
-export default TypingText;
+const useTypingAnime = (text: string, frame: number, flag?: boolean) => {
+  const [animeFinishFlag, setFlageState] = useState<boolean>(false);
+  const setAnimeFinished = () => {
+    setFlageState(true);
+  };
+
+  const TypingTextDiv = () => {
+    return TypingTextComponent({ text, frame, setAnimeFinished, animeFinishFlag, flag });
+  };
+
+  return { animeFinishFlag, TypingTextDiv };
+};
+
+export default useTypingAnime;

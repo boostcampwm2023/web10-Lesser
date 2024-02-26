@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { TypingText } from "../components/login";
+import React from "react";
+import { AnimationTestComponent } from "../components/login";
 
 const TempHomepage = () => {
+  console.log("실행중");
   useEffect(() => {
     fetch("/test").then(async (response) => {
       console.log(await response.json());
@@ -29,11 +31,10 @@ const TempHomepage = () => {
         <p className="text-xl font-bold">Typing 애니메이션 테스트</p>
         <p>애니메이션 문구 : abcdefg</p>
         <p>테스트 결과 :</p>
-        <TypingText text="abcdefg" frame={100} startTime={0} />
-        <TypingText text="abcdefg" frame={100} startTime={700} />
+        <AnimationTestComponent />
       </div>
     </div>
   );
 };
 
-export default TempHomepage;
+export default React.memo(TempHomepage);
