@@ -33,7 +33,8 @@ jobs:
           DATABASE_PASSWORD: ${{ secrets.PROD_DATABASE_PASSWORD }}
           DATABASE_NAME: ${{ secrets.PROD_DATABASE_NAME }}
           JWT_SECRET: ${{ secrets.PROD_JWT_SECRET }}
-        run: sshpass -p $SSH_DEVELOPER_PASSWORD \
+        run: |
+          sshpass -p $SSH_DEVELOPER_PASSWORD \
           ssh -o "StrictHostKeyChecking=no" developer@lesser-project.site \
           "cd /home/developer/web10-Lesser && git fetch --all && git checkout ${{github.event.release.tag_name}} \
           GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID \
