@@ -7,6 +7,7 @@ import { TempMemberRepository } from '../repository/tempMember.repository';
 import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { TempMember } from '../entity/tempMember.entity';
 import { MemberService } from 'src/member/service/member.service';
+import { Member } from 'src/member/entity/member.entity';
 
 describe('Auth Service Unit Test', () => {
   let authService: AuthService;
@@ -45,6 +46,8 @@ describe('Auth Service Unit Test', () => {
           provide: LesserJwtService,
           useValue: {
             createTempIdToken: jest.fn(),
+            createAccessToken: jest.fn(),
+            createRefreshToken: jest.fn(),
           },
         },
         {
@@ -154,8 +157,7 @@ describe('Auth Service Unit Test', () => {
         .mockResolvedValue(null);
 
       const githubUserDto = GithubUserDto.of('id', 'username', 'imageUrl');
-      const tempIdToken = await authService.getTempIdToken(githubUserDto);
-
+      const tempIdToken = await authService.saveTempMember(githubUserDto);
       expect(tempIdToken).toEqual(token);
       expect(tempMemberRepository.findByGithubId).toHaveBeenCalled();
       expect(tempMemberRepository.save).toHaveBeenCalled();
@@ -173,7 +175,7 @@ describe('Auth Service Unit Test', () => {
         );
 
       const githubUserDto = GithubUserDto.of('1', 'username', 'imageUrl');
-      const tempIdToken = await authService.getTempIdToken(githubUserDto);
+      const tempIdToken = await authService.saveTempMember(githubUserDto);
 
       expect(tempIdToken).toEqual(token);
       expect(tempMemberRepository.findByGithubId).toHaveBeenCalled();
@@ -192,7 +194,7 @@ describe('Auth Service Unit Test', () => {
         .mockResolvedValue(GithubUserDto.of('id', 'login', 'avatar_url'));
       jest.spyOn(memberService, 'findByGithubId').mockResolvedValue(null);
       jest
-        .spyOn(authService, 'getTempIdToken')
+        .spyOn(authService, 'saveTempMember')
         .mockResolvedValue('tempIdToken');
 
       const result = await authService.githubAuthentication('auth code');
@@ -204,6 +206,50 @@ describe('Auth Service Unit Test', () => {
       expect((result as { tempIdToken: string }).tempIdToken).toEqual(
         'tempIdToken',
       );
+    });
+    it('should return access token and refresh token when github user is member', async () => {
+      const lesserAccessToken = 'lesser access token';
+      const lesserRefreshToken = 'lesser refresh token';
+      const githubUserDto = GithubUserDto.of('1', 'username', 'image_url');
+      const member = Member.of(
+        githubUserDto.githubId,
+        githubUserDto.username,
+        githubUserDto.username,
+      );
+      const authCode = 'auth code';
+      const accessToken = 'access token';
+      member.id = 1;
+      jest.spyOn(authService, 'getAccessToken').mockResolvedValue(accessToken);
+      jest.spyOn(authService, 'getGithubUser').mockResolvedValue(githubUserDto);
+      jest.spyOn(memberService, 'findByGithubId').mockResolvedValue(member);
+      jest
+        .spyOn(lesserJwtService, 'createAccessToken')
+        .mockResolvedValue(lesserAccessToken);
+      jest
+        .spyOn(lesserJwtService, 'createRefreshToken')
+        .mockResolvedValue(lesserRefreshToken);
+
+      const result = await authService.githubAuthentication(authCode);
+
+      expect(authService.getAccessToken).toHaveBeenCalledWith(authCode);
+      expect(authService.getGithubUser).toHaveBeenCalledWith(accessToken);
+      expect(memberService.findByGithubId).toHaveBeenCalledWith(
+        githubUserDto.githubId,
+      );
+      expect(lesserJwtService.createAccessToken).toHaveBeenCalledWith(
+        member.id,
+      );
+      expect(lesserJwtService.createRefreshToken).toHaveBeenCalledWith(
+        member.id,
+      );
+      expect(result).toHaveProperty('accessToken');
+      expect(result).toHaveProperty('refreshToken');
+      expect(
+        (result as { accessToken: string; refreshToken: string }).accessToken,
+      ).toEqual(lesserAccessToken);
+      expect(
+        (result as { accessToken: string; refreshToken: string }).refreshToken,
+      ).toEqual(lesserRefreshToken);
     });
   });
 });

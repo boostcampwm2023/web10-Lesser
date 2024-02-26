@@ -20,35 +20,73 @@ describe('LesserJwtService', () => {
     jwtService = module.get<JwtService>(JwtService);
   });
 
-  describe('Get temp id token', () => {
+  describe('Create temp id token', () => {
     it('should return valid jwt', async () => {
-      const sub = { uuid: 'uuid' };
-      const tempIdToken = await lesserJwtService.createTempIdToken(sub);
+      const uuid = 'uuid';
+      const tempIdToken = await lesserJwtService.createTempIdToken(uuid);
       const payload = jwtService.verify(tempIdToken);
-      expect(payload.sub).toEqual(sub);
+      expect(payload.sub.uuid).toEqual(uuid);
+      expect(payload.tokenType).toEqual('tempId');
+    });
+  });
+
+  describe('Create access token', () => {
+    it('should return valid jwt', async () => {
+      const id = 1;
+      const accessToken = await lesserJwtService.createAccessToken(id);
+      const payload = jwtService.verify(accessToken);
+      expect(payload.sub.id).toEqual(id);
+      expect(payload.tokenType).toEqual('access');
+    });
+  });
+
+  describe('Create refresh token', () => {
+    it('should return valid jwt', async () => {
+      const id = 1;
+      const refreshToken = await lesserJwtService.createRefreshToken(id);
+      const payload = jwtService.verify(refreshToken);
+      expect(payload.sub.id).toEqual(id);
+      expect(payload.tokenType).toEqual('refresh');
     });
   });
 
   describe('Get jwt payload', () => {
     it('should return payload', async () => {
-      const key = 1;
-      const token = jwtService.sign({ sub: key });
-      const payload = await lesserJwtService.getPayload(token);
-      expect(payload.sub).toEqual(key);
+      const sub = { uuid: '' };
+      const tokenType = 'access';
+      const token = jwtService.sign({ sub, tokenType });
+      const payload = await lesserJwtService.getPayload(token, tokenType);
+      expect(payload.sub).toEqual(sub);
     });
 
     it('should throw error when given invalid token', async () => {
       const token = 'invalid token';
       await expect(
-        async () => await lesserJwtService.getPayload(token),
+        async () => await lesserJwtService.getPayload(token, 'access'),
       ).rejects.toThrow();
     });
 
     it('should throw error when given expired token', async () => {
       const token = jwtService.sign({ sub: 1 }, { expiresIn: '-1' });
       await expect(
-        async () => await lesserJwtService.getPayload(token),
+        async () => await lesserJwtService.getPayload(token, 'access'),
       ).rejects.toThrow();
+    });
+
+    it('should throw error when token type miss-match', async () => {
+      const sub = { uuid: '' };
+      const tokenTypes = ['access', 'refresh', 'tempId'];
+      for (const tokenType of tokenTypes) {
+        const invalidType = tokenTypes.find((type) => type !== tokenType);
+        const token = jwtService.sign({ sub, tokenType });
+        expect(
+          async () =>
+            await lesserJwtService.getPayload(
+              token,
+              invalidType as 'access' | 'refresh' | 'tempId',
+            ),
+        ).rejects.toThrow();
+      }
     });
   });
 });
