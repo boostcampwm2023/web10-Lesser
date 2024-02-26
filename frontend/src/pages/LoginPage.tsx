@@ -31,7 +31,9 @@ const LoginPage = () => {
   const { TOP: verticalTop, LEFT: verticalLeft } = VERTICAL_SCRIPT_POS;
   return (
     <main className="flex justify-center items-center h-[100vh]">
-      <section className="flex flex-col relative ps-[102px] shadow-box min-h-[700px] min-w-[758px] justify-center">
+      <section
+        className={`flex flex-col relative ps-[102px] shadow-box min-h-[${LOGIN_LENGTH.HEIGHT}px] min-w-[${LOGIN_LENGTH.WIDTH}px] justify-center`}
+      >
         <HorizonScriptBar top={horizonTop} left={horizonLeft} />
         <HorizonScriptBar top={-1 * horizonTop} left={horizonLeft} />
         <HorizonScriptBar top={horizonTop} left={-1 * horizonLeft} />
