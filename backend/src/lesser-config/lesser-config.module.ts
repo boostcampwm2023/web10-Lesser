@@ -9,6 +9,4 @@ import { ConfigModule } from '@nestjs/config';
     }),
   ],
 })
-export class LesserConfigModule {
-    GITHUB_CLIENT_ID: 'GITHUB_CLIENT_ID'
-}
+export class LesserConfigModule {}

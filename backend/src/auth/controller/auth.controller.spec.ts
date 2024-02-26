@@ -1,8 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from '../service/auth.service';
+import {
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 
-describe('Controller getGithubAuthServerUrl Unit Test', () => {
+describe('Auth Controller Unit Test', () => {
   let controller: AuthController;
   let authService: AuthService;
 
@@ -13,7 +17,8 @@ describe('Controller getGithubAuthServerUrl Unit Test', () => {
         {
           provide: AuthService,
           useValue: {
-            getGithubAuthUrl: jest.fn().mockResolvedValue('github auth url'),
+            getGithubAuthUrl: jest.fn(),
+            githubAuthentication: jest.fn(),
           },
         },
       ],
@@ -23,10 +28,67 @@ describe('Controller getGithubAuthServerUrl Unit Test', () => {
     authService = module.get<AuthService>(AuthService);
   });
 
-  it('should return data from the service', async () => {
-    const controllerResponse = controller.getGithubAuthServerUrl();
-    const serviceResponse = authService.getGithubAuthUrl();
-    expect(controllerResponse.authUrl).toEqual(serviceResponse);
-    expect(authService.getGithubAuthUrl).toHaveBeenCalled();
+  describe('Get Github Auth Server Url', () => {
+    it('should return data from the service', async () => {
+      jest
+        .spyOn(authService, 'getGithubAuthUrl')
+        .mockReturnValue('github auth url');
+
+      const controllerResponse = controller.getGithubAuthServerUrl();
+      const serviceResponse = authService.getGithubAuthUrl();
+
+      expect(controllerResponse.authUrl).toEqual(serviceResponse);
+      expect(authService.getGithubAuthUrl).toHaveBeenCalled();
+    });
+  });
+
+  describe('Github Authentication', () => {
+    it('should return 401 response when githubAuthentication service throws "Cannot retrieve access token"', async () => {
+      jest
+        .spyOn(authService, 'githubAuthentication')
+        .mockRejectedValue(new Error('Cannot retrieve access token'));
+
+      try {
+        await controller.githubAuthentication({ authCode: 'authCode' });
+      } catch (error) {
+        expect(error).toBeInstanceOf(UnauthorizedException);
+        expect(error.response).toEqual({
+          statusCode: 401,
+          message: 'Unauthorized',
+        });
+      }
+    });
+
+    it('should return 401 response when githubAuthentication service throws "Cannot retrieve github user"', async () => {
+      jest
+        .spyOn(authService, 'githubAuthentication')
+        .mockRejectedValue(new Error('Cannot retrieve github user'));
+
+      try {
+        await controller.githubAuthentication({ authCode: 'authCode' });
+      } catch (error) {
+        expect(error).toBeInstanceOf(UnauthorizedException);
+        expect(error.response).toEqual({
+          statusCode: 401,
+          message: 'Unauthorized',
+        });
+      }
+    });
+
+    it('should return 500 response when githubAuthentication service throws unknown error', async () => {
+      jest
+        .spyOn(authService, 'githubAuthentication')
+        .mockRejectedValue(new Error());
+
+      try {
+        await controller.githubAuthentication({ authCode: 'authCode' });
+      } catch (error) {
+        expect(error).toBeInstanceOf(InternalServerErrorException);
+        expect(error.response).toEqual({
+          statusCode: 500,
+          message: 'Internal Server Error',
+        });
+      }
+    });
   });
 });
