@@ -6,7 +6,9 @@ interface useDropdownParams {
 }
 
 interface DropdownProps {
-  onOptionClick: (option: string) => void;
+  buttonClassName: string;
+  containerClassName?: string;
+  itemClassName?: string;
 }
 
 const useDropdown = ({ placeholder, options }: useDropdownParams) => {
@@ -14,31 +16,41 @@ const useDropdown = ({ placeholder, options }: useDropdownParams) => {
   const [open, setOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLButtonElement>(null);
 
-  const Dropdown = ({ onOptionClick }: DropdownProps) => {
-    return (
-      <div className="relative">
-        <button ref={dropdownRef} onClick={handleButtonClick}>
-          {selectedOption || placeholder}
-        </button>
-        {open && (
-          <ul className="absolute">
-            {options.map((option, index) => (
-              <li
-                key={index}
-                onClick={() => onOptionClick(option)}
-                className="hover:cursor-pointer"
-              >
-                {option}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    );
-  };
+  const Dropdown = ({
+    buttonClassName,
+    containerClassName,
+    itemClassName,
+  }: DropdownProps) => (
+    <div className="relative">
+      <button
+        ref={dropdownRef}
+        onClick={handleButtonClick}
+        className={buttonClassName}
+      >
+        {selectedOption || placeholder}
+      </button>
+      {open && (
+        <ul className={`${containerClassName} absolute`}>
+          {options.map((option, index) => (
+            <li
+              key={index}
+              onMouseDown={() => handleOptionClick(option)}
+              className={`${itemClassName} hover:cursor-pointer`}
+            >
+              {option}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 
   const handleButtonClick = () => {
     setOpen((prevState) => !prevState);
+  };
+
+  const handleOptionClick = (option: string) => {
+    setSelectedOption(option);
   };
 
   const handleOutsideClick = ({ target }: MouseEvent) => {
@@ -49,15 +61,15 @@ const useDropdown = ({ placeholder, options }: useDropdownParams) => {
 
   useEffect(() => {
     if (open) {
-      window.addEventListener("click", handleOutsideClick);
+      window.addEventListener("mousedown", handleOutsideClick);
     }
 
     return () => {
-      window.removeEventListener("click", handleOutsideClick);
+      window.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [open]);
 
-  return { Dropdown, selectedOption, setSelectedOption };
+  return { Dropdown, selectedOption };
 };
 
 export default useDropdown;
