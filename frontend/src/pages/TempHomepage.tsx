@@ -29,7 +29,8 @@ const TempHomepage = () => {
         <p className="text-xl font-bold">Typing 애니메이션 테스트</p>
         <p>애니메이션 문구 : abcdefg</p>
         <p>테스트 결과 :</p>
-        <TypingText text="abcdefg" frame={100} />
+        <TypingText text="abcdefg" frame={100} startTime={0} />
+        <TypingText text="abcdefg" frame={100} startTime={700} />
       </div>
     </div>
   );
