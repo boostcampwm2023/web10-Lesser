@@ -1,5 +1,6 @@
 import LESSER_LOGO from "../assets/Logo.svg";
 import GITHUB_LOGO from "../assets/github-mark-white.svg";
+import { TypingAnimeComponent } from "../components/login";
 import { LOGIN_LENGTH, VERTICAL_SCRIPT_POS, HORIZON_SCRIPT_POS } from "../constants/login";
 
 const VerticalScriptBar = ({ top, left }: { top: number; left: number }) => {
@@ -43,12 +44,7 @@ const LoginPage = () => {
         <VerticalScriptBar top={verticalTop} left={-1 * verticalLeft} />
         <VerticalScriptBar top={-1 * verticalTop} left={-1 * verticalLeft} />
         <img src={LESSER_LOGO} alt="LESSER_LOGO" width="481px" className="mb-[54px]" />
-        <div className="flex flex-col text-m font-semibold space-y-4 text-dark-gray gap-6">
-          <p>프로젝트를 관리하는 방법</p>
-          <p>애자일하게 일하는 방법</p>
-          <p>어려울 필요가 있을까요?</p>
-          <p>프로젝트 관리를 더욱 쉽고 애자일하게</p>
-        </div>
+        <TypingAnimeComponent />
       </section>
       <section className="flex-col ps-[60px] w-[486px] space-y-11">
         <div className="text-black text-xxl font-bold">
