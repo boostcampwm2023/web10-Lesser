@@ -45,9 +45,9 @@ export class AuthController {
         err.message === 'Cannot retrieve access token' ||
         err.message === 'Cannot retrieve github user'
       ) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException(err.message);
       }
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException(err.message);
     }
   }
 }
