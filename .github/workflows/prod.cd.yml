@@ -18,7 +18,6 @@ jobs:
         run: |
           echo “Release Tag: ${{ github.event.release.tag_name }}”
           echo “Release Name: ${{ github.event.release.name }}”
-          echo “Release Notes: ${{ github.event.release.body }}”
 
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
