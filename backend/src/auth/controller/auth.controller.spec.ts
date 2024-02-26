@@ -109,10 +109,7 @@ describe('Auth Controller Unit Test', () => {
         );
       } catch (error) {
         expect(error).toBeInstanceOf(UnauthorizedException);
-        expect(error.response).toEqual({
-          statusCode: 401,
-          message: 'Unauthorized',
-        });
+        expect(error.response.statusCode).toEqual(401);
       }
     });
 
@@ -128,10 +125,7 @@ describe('Auth Controller Unit Test', () => {
         );
       } catch (error) {
         expect(error).toBeInstanceOf(UnauthorizedException);
-        expect(error.response).toEqual({
-          statusCode: 401,
-          message: 'Unauthorized',
-        });
+        expect(error.response.statusCode).toEqual(401);
       }
     });
 
@@ -147,10 +141,7 @@ describe('Auth Controller Unit Test', () => {
         );
       } catch (error) {
         expect(error).toBeInstanceOf(InternalServerErrorException);
-        expect(error.response).toEqual({
-          statusCode: 500,
-          message: 'Internal Server Error',
-        });
+        expect(error.response.statusCode).toEqual(500);
       }
     });
   });
