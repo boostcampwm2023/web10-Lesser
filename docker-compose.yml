@@ -23,6 +23,7 @@ services:
       - DATABASE_NAME=${DATABASE_NAME}
       - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
       - GITHUB_CLIENT_SECRETS=${GITHUB_CLIENT_SECRETS}
+      - JWT_SECRET=${JWT_SECRET}
     networks:
       - lesser-net
   
