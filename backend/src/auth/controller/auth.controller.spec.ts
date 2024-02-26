@@ -64,7 +64,7 @@ describe('Auth Controller Unit Test', () => {
       expect(mockResponse.send).toHaveBeenCalledWith({
         tempIdToken: 'tempIdToken',
       });
-      expect(mockResponse.status).toHaveBeenCalledWith(204);
+      expect(mockResponse.status).toHaveBeenCalledWith(209);
       expect(authService.githubAuthentication).toHaveBeenCalled();
     });
 
