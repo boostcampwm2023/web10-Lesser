@@ -1,0 +1,37 @@
+name: Dev Server manual deploy
+
+run-name: ${{ github.actor }} is manually deploying DevServer
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  dev_deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install sshpass
+      run: sudo apt-get install -y sshpass
+
+    - name: DevServer Deploy
+      env:
+        SSH_DEV_DEVELOPER_PASSWORD: ${{ secrets.SSH_DEV_DEVELOPER_PASSWORD }}
+        DEV_GITHUB_CLIENT_ID: ${{ secrets.DEV_GITHUB_CLIENT_ID }}
+        DEV_GITHUB_CLIENT_SECRETS: ${{ secrets.DEV_GITHUB_CLIENT_SECRETS }}
+        DEV_MYSQL_USER: ${{ secrets.DEV_MYSQL_USER }}
+        DEV_MYSQL_PASSWORD: ${{ secrets.DEV_MYSQL_PASSWORD }}
+        DEV_MYSQL_DATABASE: ${{ secrets.DEV_MYSQL_DATABASE }}
+        JWT_SECRET: ${{ secrets.DEV_JWT_SECRET }}
+      run: |
+        sshpass -p $SSH_DEV_DEVELOPER_PASSWORD \
+        ssh -o "StrictHostKeyChecking=no" developer@dev.lesser-project.site \
+        "cd /home/developer/web10-Lesser && git pull && \
+        GITHUB_CLIENT_ID=$DEV_GITHUB_CLIENT_ID \
+        GITHUB_CLIENT_SECRETS=$DEV_GITHUB_CLIENT_SECRETS \
+        DEV_MYSQL_USER=$DEV_MYSQL_USER \
+        DEV_MYSQL_PASSWORD=$DEV_MYSQL_PASSWORD \
+        DEV_MYSQL_DATABASE=$DEV_MYSQL_DATABASE \
+        JWT_SECRET=$JWT_SECRET \
+        docker compose -f docker-compose.dev.yml up -d --build"
