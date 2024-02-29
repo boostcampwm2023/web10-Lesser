@@ -9,3 +9,5 @@ const GithubLoginButton = () => {
     </div>
   );
 };
+
+export default GithubLoginButton;
