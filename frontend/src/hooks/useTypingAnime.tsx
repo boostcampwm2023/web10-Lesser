@@ -43,15 +43,19 @@ const TypingTextComponent = ({
 
   useEffect(() => {
     let animeId: number;
-    if (animeFinishFlag) {
-      setTypingText(text);
-    } else if (animeStartFlag) {
-      animeId = requestAnimationFrame(animationCallback);
-    }
 
-    return () => {
+    const unmountCallback = () => {
       cancelAnimationFrame(animeId);
     };
+
+    if (animeFinishFlag) {
+      setTypingText(text);
+      return unmountCallback;
+    }
+
+    if (animeStartFlag) {
+      animeId = requestAnimationFrame(animationCallback);
+    }
   }, [animeStartFlag]);
   return <p>{typingText}</p>;
 };
