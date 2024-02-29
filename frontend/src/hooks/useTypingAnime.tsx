@@ -5,13 +5,13 @@ const TypingTextComponent = ({
   frame,
   setAnimeFinished,
   animeFinishFlag,
-  flag = true,
+  animeStartFlag = true,
 }: {
   text: string;
   frame: number;
   setAnimeFinished: () => void;
   animeFinishFlag: boolean;
-  flag?: boolean;
+  animeStartFlag?: boolean;
 }) => {
   const [typingText, setTypingText] = useState<string>("");
   const textIndex = useRef<number>(0);
@@ -45,25 +45,25 @@ const TypingTextComponent = ({
     let animeId: number;
     if (animeFinishFlag) {
       setTypingText(text);
-    } else if (flag) {
+    } else if (animeStartFlag) {
       animeId = requestAnimationFrame(animationCallback);
     }
 
     return () => {
       cancelAnimationFrame(animeId);
     };
-  }, [flag]);
+  }, [animeStartFlag]);
   return <p>{typingText}</p>;
 };
 
-const useTypingAnime = (text: string, frame: number, flag?: boolean) => {
+const useTypingAnime = (text: string, frame: number, animeStartFlag?: boolean) => {
   const [animeFinishFlag, setAnimeFinishFlag] = useState<boolean>(false);
   const setAnimeFinished = () => {
     setAnimeFinishFlag(true);
   };
 
   const TypingTextDiv = () => {
-    return TypingTextComponent({ text, frame, setAnimeFinished, animeFinishFlag, flag });
+    return TypingTextComponent({ text, frame, setAnimeFinished, animeFinishFlag, animeStartFlag });
   };
 
   return { animeFinishFlag, TypingTextDiv };
