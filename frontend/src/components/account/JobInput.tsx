@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import useDropdown from "../../common/dropdown/useDropdown";
 import { JOB_INPUT_INFO, SIGNUP_STEP } from "../../constants/account";
+import NextStepButton from "./NextStepButton";
 
 interface JobInputProps {
   setCurrentStep: React.Dispatch<
@@ -32,7 +33,7 @@ const JobInput = ({ setCurrentStep, jobRef }: JobInputProps) => {
           저의 주요 직무는
         </span>
         <Dropdown
-          buttonClassName={`w-[14.25rem] h-[3.25rem] rounded-xl bg-middle-green text-white text-2xl ${
+          buttonClassName={`w-[14.25rem] h-[3.25rem] rounded-xl bg-middle-green text-white text-m shadow-box ${
             selectedOption && "font-bold"
           }`}
           containerClassName="w-[14.25rem] h-[18.5rem] overflow-y-auto shadow-box"
@@ -40,13 +41,9 @@ const JobInput = ({ setCurrentStep, jobRef }: JobInputProps) => {
         />
         <span className="text-3xl font-semibold text-dark-gray">입니다</span>
       </div>
-      <button
-        type="button"
-        onClick={handleNextButtonClick}
-        className="text-[#68790E] font-bold text-3xl self-end"
-      >
+      <NextStepButton onNextButtonClick={handleNextButtonClick}>
         Next
-      </button>
+      </NextStepButton>
     </div>
   );
 };

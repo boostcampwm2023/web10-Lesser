@@ -1,5 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import { SIGNUP_STEP } from "../../constants/account";
+import NextStepButton from "./NextStepButton";
 
 interface NicknameInputProps {
   setCurrentStep: React.Dispatch<
@@ -56,13 +57,9 @@ const NicknameInput = ({ setCurrentStep, nicknameRef }: NicknameInputProps) => {
           <span className="text-3xl font-semibold text-dark-gray">입니다</span>
         </div>
       </div>
-      <button
-        type="button"
-        onClick={handleNextButtonClick}
-        className="text-[#68790E] font-bold text-3xl self-end"
-      >
+      <NextStepButton onNextButtonClick={handleNextButtonClick}>
         Next
-      </button>
+      </NextStepButton>
     </div>
   );
 };

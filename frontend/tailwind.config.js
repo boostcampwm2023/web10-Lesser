@@ -30,6 +30,9 @@ export default {
       boxShadow: {
         box: "8px 8px 25px 0px #00000051",
       },
+      dropShadow: {
+        box: "8px 8px 25px 0px #00000051",
+      },
     },
   },
   plugins: [],

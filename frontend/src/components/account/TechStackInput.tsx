@@ -3,12 +3,17 @@ import { useModal } from "../../common/modal/useModal";
 import TechStackModal from "./TechStackModal";
 import closed from "../../assets/icons/closed.svg";
 import plus from "../../assets/icons/plus.svg";
+import NextStepButton from "./NextStepButton";
 
 interface TechStackInputProps {
   techRef: React.MutableRefObject<string[]>;
+  onSignupButtonClick: () => void;
 }
 
-const TechStackInput = ({ techRef }: TechStackInputProps) => {
+const TechStackInput = ({
+  techRef,
+  onSignupButtonClick,
+}: TechStackInputProps) => {
   const { open, close } = useModal();
   const [techStackList, setTechStackList] = useState<string[]>([]);
 
@@ -41,7 +46,7 @@ const TechStackInput = ({ techRef }: TechStackInputProps) => {
           ))}
         </div>
         <button
-          className="w-[11.25rem] h-[3.25rem] bg-middle-green rounded-xl text-2xl text-white mb-3 flex items-center justify-center"
+          className="w-[11.25rem] h-[3.25rem] bg-middle-green rounded-xl text-m text-white mb-3 flex items-center shadow-box pl-3 pr-9"
           type="button"
           onClick={() =>
             open(<TechStackModal {...{ techRef, close, setTechStackList }} />)
@@ -52,12 +57,9 @@ const TechStackInput = ({ techRef }: TechStackInputProps) => {
         </button>
         <p className="text-3xl font-semibold text-dark-gray">입니다</p>
       </div>
-      <button
-        type="button"
-        className="text-[#68790E] font-bold text-3xl self-end"
-      >
+      <NextStepButton onNextButtonClick={onSignupButtonClick}>
         가입하기
-      </button>
+      </NextStepButton>
     </div>
   );
 };
