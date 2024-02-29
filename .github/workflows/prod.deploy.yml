@@ -1,23 +1,25 @@
-name: Production Server Backend/Frontend CD
-
-run-name: ${{ github.actor }} is deploying Production Server
+name: Production Server manual deploy
 
 on:
   workflow_dispatch:
-  release:
-    types: [published]
+    inputs:
+      release_tag:
+        description: 'Release tag to deploy'
+        required: true
+
 jobs:
-  prod_deploy_by_release:
+  prod_deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ github.event.inputs.release_tag }}
+
       - name: Get Release Notes
         run: |
-          echo "Release Tag: ${{ github.event.release.tag_name }}"
-          echo "Release Name: ${{ github.event.release.name }}"
+          echo "Release Tag: ${{ github.event.inputs.release_tag }}"
+          echo "Release Name: $(git tag -l --format='%(contents)' ${{ github.event.inputs.release_tag }})"
 
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
@@ -36,7 +38,7 @@ jobs:
         run: |
           sshpass -p $SSH_DEVELOPER_PASSWORD \
           ssh -o "StrictHostKeyChecking=no" developer@lesser-project.site \
-          "cd /home/developer/web10-Lesser && git fetch --all && git checkout ${{github.event.release.tag_name}} && \
+          "cd /home/developer/web10-Lesser && git fetch --all && git checkout ${{ github.event.inputs.release_tag }} && \
           GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID \
           GITHUB_CLIENT_SECRETS=$GITHUB_CLIENT_SECRETS \
           DATABASE_HOST=$DATABASE_HOST \
