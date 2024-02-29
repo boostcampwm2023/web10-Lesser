@@ -33,8 +33,8 @@ export class AuthService {
   ): Promise<
     { tempIdToken: string } | { accessToken: string; refreshToken: string }
   > {
-    const accessToken = await this.getAccessToken(authCode);
-    const githubUser = await this.getGithubUser(accessToken);
+    const githubAccessToken = await this.getAccessToken(authCode);
+    const githubUser = await this.getGithubUser(githubAccessToken);
     const member = await this.memberService.findByGithubId(githubUser.githubId);
     if (member) {
       const [accessToken, refreshToken] = await Promise.all([
