@@ -1,7 +1,8 @@
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { LoginPage, TempHomepage } from "./pages";
+import { LoginPage, TempHomepage, SignupPage } from "./pages";
+import { ModalProvider } from "./common/modal/ModalProvider.tsx";
 
 const router = createBrowserRouter([
   {
@@ -14,7 +15,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/signup",
-    element: <div>Signup</div>,
+    element: <SignupPage />,
   },
 ]);
 
@@ -29,5 +30,9 @@ async function enableMocking() {
 }
 
 enableMocking().then(() => {
-  ReactDOM.createRoot(document.getElementById("root")!).render(<RouterProvider router={router} />);
+  ReactDOM.createRoot(document.getElementById("root")!).render(
+    <ModalProvider>
+      <RouterProvider router={router} />
+    </ModalProvider>
+  );
 });

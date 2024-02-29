@@ -2927,7 +2927,6 @@ fastq@^1.6.0:
   version "1.17.0"
   resolved "https://registry.npmjs.org/fastq/-/fastq-1.17.0.tgz"
   integrity sha512-zGygtijUMT7jnk3h26kUms3BkSDp4IfIKjmnqI2tvx6nuBfiF1UqOxbnLfzdv+apBy+53oaImsKtMw/xYbW+1w==
-  dependencies:
     reusify "^1.0.4"
 
 fb-watchman@^2.0.0:
