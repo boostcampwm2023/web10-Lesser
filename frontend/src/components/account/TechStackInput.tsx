@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useModal } from "../../common/modal/useModal";
 import TechStackModal from "./TechStackModal";
-import closed from "../../assets/icons/closed.svg";
 import plus from "../../assets/icons/plus.svg";
 import NextStepButton from "./NextStepButton";
+import CategoryButton from "../common/CategoryButton";
 
 interface TechStackInputProps {
   techRef: React.MutableRefObject<string[]>;
@@ -17,7 +17,7 @@ const TechStackInput = ({
   const { open, close } = useModal();
   const [techStackList, setTechStackList] = useState<string[]>([]);
 
-  const handleClosedButtonClick = (techStack: string) => {
+  const handleCloseButtonClick = (techStack: string) => {
     const newTechStackList = [...techStackList];
     const targetIndex = newTechStackList.indexOf(techStack);
     newTechStackList.splice(targetIndex, 1);
@@ -33,16 +33,10 @@ const TechStackInput = ({
         </p>
         <div className="flex flex-wrap gap-3 mb-3">
           {techStackList.map((techStack) => (
-            <div className="w-[12.25rem] h-[3.25rem] bg-light-green rounded-xl text-white text-2xl font-bold flex items-center py-2 pl-9 pr-3">
-              {techStack}
-              <button
-                type="button"
-                onClick={() => handleClosedButtonClick(techStack)}
-                className="ml-auto"
-              >
-                <img src={closed} alt="close" />
-              </button>
-            </div>
+            <CategoryButton
+              category={techStack}
+              onCloseButtonClick={handleCloseButtonClick}
+            />
           ))}
         </div>
         <button
