@@ -34,7 +34,7 @@ const TypingTextComponent = ({
       });
     }
 
-    if (textIndex.current >= text.length) {
+    if (textIndex.current >= text.length + 1) {
       setAnimeFinished();
       return;
     }
@@ -57,9 +57,9 @@ const TypingTextComponent = ({
 };
 
 const useTypingAnime = (text: string, frame: number, flag?: boolean) => {
-  const [animeFinishFlag, setFlageState] = useState<boolean>(false);
+  const [animeFinishFlag, setAnimeFinishFlag] = useState<boolean>(false);
   const setAnimeFinished = () => {
-    setFlageState(true);
+    setAnimeFinishFlag(true);
   };
 
   const TypingTextDiv = () => {
