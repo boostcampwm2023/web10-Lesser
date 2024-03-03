@@ -13,4 +13,8 @@ export class MemberRepository {
   findByGithubId(githubId: number): Promise<Member> {
     return this.memberRepository.findOneBy({ github_id: githubId });
   }
+
+  create(member: Member): Promise<Member> {
+    return this.memberRepository.save(member);
+  }
 }
