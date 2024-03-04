@@ -1,5 +1,4 @@
 import LESSER_LOGO from "../assets/Logo.svg";
-import GITHUB_LOGO from "../assets/github-mark-white.svg";
 import { GithubLoginButton, TypingAnimeComponent } from "../components/login";
 import { LOGIN_LENGTH, VERTICAL_SCRIPT_POS, HORIZON_SCRIPT_POS } from "../constants/login";
 

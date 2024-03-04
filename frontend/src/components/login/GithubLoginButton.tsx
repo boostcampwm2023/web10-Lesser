@@ -1,4 +1,4 @@
-import { getLoginURL } from "../../apis/api/getLoginURL";
+import { getLoginURL } from "../../apis/api/loginAPI";
 import GITHUB_LOGO from "../../assets/github-mark-white.svg";
 
 const GithubLoginButton = () => {
