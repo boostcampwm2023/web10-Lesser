@@ -2,7 +2,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { LoginPage, TempHomepage, SignupPage } from "./pages";
-import { ModalProvider } from "./common/modal/ModalProvider.tsx";
+import { ModalProvider } from "./hooks/common/modal/ModalProvider.tsx";
 
 const router = createBrowserRouter([
   {
