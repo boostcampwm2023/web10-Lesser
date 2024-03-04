@@ -1,21 +1,22 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { LoginPage, SignupPage, AuthPage, TempHomepage } from "./pages";
+import { ROUTER_URL } from "./constants/path";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: ROUTER_URL.TEMP,
     element: <TempHomepage />,
   },
   {
-    path: "/login",
+    path: ROUTER_URL.LOGIN,
     element: <LoginPage />,
   },
   {
-    path: "/signup",
+    path: ROUTER_URL.SIGNUP,
     element: <SignupPage />,
   },
   {
-    path: "/auth/github/callback",
+    path: ROUTER_URL.AUTH,
     element: <AuthPage />,
   },
 ]);
