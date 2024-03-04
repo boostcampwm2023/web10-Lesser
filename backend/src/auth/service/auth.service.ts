@@ -76,23 +76,66 @@ export class AuthService {
   }
 
   async saveTempMember(githubUser: GithubUserDto): Promise<string> {
-    const { githubId, username, imageUrl } = githubUser;
-    const uuid: string = uuidv4();
-    const [tempMember, tempIdToken] = await Promise.all([
-      this.tempMemberRepository.findByGithubId(githubId),
-      this.lesserJwtService.createTempIdToken(uuid),
-    ]);
+    const { githubId, githubUsername, githubImageUrl } = githubUser;
+    const tempMember = await this.tempMemberRepository.findByGithubId(githubId);
 
-    if (tempMember)
+    if (tempMember) {
+      const updatedTempIdToken = await this.lesserJwtService.createTempIdToken(
+        tempMember.uuid,
+      );
       await this.tempMemberRepository.updateTempIdToken(
         tempMember.uuid,
-        tempIdToken,
+        updatedTempIdToken,
       );
-    else
+      return updatedTempIdToken;
+    } else {
+      const uuid: string = uuidv4();
+      const tempIdToken = await this.lesserJwtService.createTempIdToken(uuid);
       await this.tempMemberRepository.save(
-        TempMember.of(uuid, tempIdToken, githubId, username, imageUrl),
+        TempMember.of(
+          uuid,
+          tempIdToken,
+          githubId,
+          githubUsername,
+          githubImageUrl,
+        ),
       );
+      return tempIdToken;
+    }
+  }
 
-    return tempIdToken;
+  async githubSignup(
+    tempIdToken: string,
+    username: string,
+    position: string,
+    techStack: object,
+  ) {
+    const tempMember = await this.getTempMember(tempIdToken);
+    const memberId = await this.memberService.save(
+      tempMember.github_id,
+      tempMember.username,
+      tempMember.image_url,
+      username,
+      position,
+      techStack,
+    );
+    const [accessToken, refreshToken] = await Promise.all([
+      this.lesserJwtService.createAccessToken(memberId),
+      this.lesserJwtService.createRefreshToken(memberId),
+    ]);
+    return { accessToken, refreshToken };
+  }
+
+  async getTempMember(tempIdToken: string): Promise<TempMember> {
+    const payload = await this.lesserJwtService.getPayload(
+      tempIdToken,
+      'tempId',
+    );
+    const tempMember = await this.tempMemberRepository.findByUuid(
+      payload.sub.uuid,
+    );
+    if (tempMember.temp_id_token !== tempIdToken)
+      throw new Error('tempIdToken does not match');
+    return tempMember;
   }
 }
