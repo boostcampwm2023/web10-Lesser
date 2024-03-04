@@ -1,5 +1,5 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { LoginPage, SignupPage, TempHomepage } from "./pages";
+import { LoginPage, SignupPage, AuthPage, TempHomepage } from "./pages";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +13,10 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignupPage />,
+  },
+  {
+    path: "/auth/github/callback",
+    element: <AuthPage />,
   },
 ]);
 
