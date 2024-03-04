@@ -20,6 +20,7 @@ describe('Auth Controller Unit Test', () => {
           useValue: {
             getGithubAuthUrl: jest.fn(),
             githubAuthentication: jest.fn(),
+            githubSignup: jest.fn(),
           },
         },
       ],
@@ -143,6 +144,107 @@ describe('Auth Controller Unit Test', () => {
         expect(error).toBeInstanceOf(InternalServerErrorException);
         expect(error.response.statusCode).toEqual(500);
       }
+    });
+  });
+
+  describe('Github Signup', () => {
+    const mockResponse = {
+      cookie: jest.fn().mockReturnThis(),
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn().mockReturnThis(),
+    } as unknown as Response;
+    const mockBody = {
+      username: 'username',
+      position: 'position',
+      techStack: ['javascript', 'typescript'],
+    };
+
+    interface CustomHeaders {
+      authorization: string;
+    }
+
+    it('should throw UnauthorizedException if authorization header is missing', () => {
+      const mockRequest = {
+        headers: {},
+      } as Request & { headers: CustomHeaders };
+
+      expect(
+        async () =>
+          await controller.githubSignup(mockRequest, mockBody, mockResponse),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should throw UnauthorizedException if authorization header format is invalid', () => {
+      const mockRequest = {
+        headers: {
+          authorization: 'InvalidFormat',
+        },
+      } as Request & { headers: CustomHeaders };
+
+      expect(
+        async () =>
+          await controller.githubSignup(mockRequest, mockBody, mockResponse),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should pass if authorization header is in Bearer format', async () => {
+      const mockRequest = {
+        headers: {
+          authorization: 'Bearer validToken',
+        },
+      } as Request & { headers: CustomHeaders };
+      jest.spyOn(authService, 'githubSignup').mockResolvedValue({
+        accessToken: 'access token',
+        refreshToken: 'refresh token',
+      });
+
+      await controller.githubSignup(mockRequest, mockBody, mockResponse);
+
+      expect(authService.githubSignup).toHaveBeenCalled();
+      expect(mockResponse.status).toHaveBeenCalledWith(201);
+      expect(mockResponse.send).toHaveBeenCalledWith({
+        accessToken: 'access token',
+      });
+      expect(mockResponse.cookie).toHaveBeenCalledWith(
+        'refreshToken',
+        'refresh token',
+        {
+          httpOnly: true,
+          secure: false,
+          path: '/',
+          sameSite: 'strict',
+        },
+      );
+    });
+
+    it('should throw 401 error when githubSignup service throws "Failed to verify token"', async () => {
+      const mockRequest = {
+        headers: {
+          authorization: 'Bearer expiredToken',
+        },
+      } as Request & { headers: CustomHeaders };
+      jest
+        .spyOn(authService, 'githubSignup')
+        .mockRejectedValue(new Error('Failed to verify token'));
+
+      expect(
+        async () =>
+          await controller.githubSignup(mockRequest, mockBody, mockResponse),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should return 500 response when githubSignup service throws unknown error', async () => {
+      const mockRequest = {
+        headers: {
+          authorization: 'Bearer validToken',
+        },
+      } as Request & { headers: CustomHeaders };
+      jest.spyOn(authService, 'githubSignup').mockRejectedValue(new Error());
+
+      expect(
+        async () =>
+          await controller.githubSignup(mockRequest, mockBody, mockResponse),
+      ).rejects.toThrow(InternalServerErrorException);
     });
   });
 });
