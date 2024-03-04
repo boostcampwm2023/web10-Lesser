@@ -86,7 +86,10 @@ export class AuthController {
         .cookie('refreshToken', refreshToken, this.cookieOptions)
         .send(responseBody);
     } catch (err) {
-      if (err.message === 'Failed to verify token') {
+      if (
+        err.message === 'Failed to verify token' ||
+        err.message === 'tempIdToken does not match'
+      ) {
         throw new UnauthorizedException(err.message);
       }
       throw new InternalServerErrorException(err.message);
