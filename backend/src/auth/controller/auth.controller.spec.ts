@@ -233,6 +233,22 @@ describe('Auth Controller Unit Test', () => {
       ).rejects.toThrow(UnauthorizedException);
     });
 
+    it('should throw 401 error when githubSignup service throws "tempIdToken does not match"', async () => {
+      const mockRequest = {
+        headers: {
+          authorization: 'Bearer expiredToken',
+        },
+      } as Request & { headers: CustomHeaders };
+      jest
+        .spyOn(authService, 'githubSignup')
+        .mockRejectedValue(new Error('tempIdToken does not match'));
+
+      expect(
+        async () =>
+          await controller.githubSignup(mockRequest, mockBody, mockResponse),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
     it('should return 500 response when githubSignup service throws unknown error', async () => {
       const mockRequest = {
         headers: {
