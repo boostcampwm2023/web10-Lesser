@@ -1,6 +1,6 @@
 import LESSER_LOGO from "../assets/Logo.svg";
-import { GithubLoginButton, TypingAnimeComponent } from "../components/login";
-import { LOGIN_LENGTH, VERTICAL_SCRIPT_POS, HORIZON_SCRIPT_POS } from "../constants/login";
+import { GithubLoginButton, TypingAnimeComponent } from "../../components/login";
+import { LOGIN_LENGTH, VERTICAL_SCRIPT_POS, HORIZON_SCRIPT_POS } from "../../constants/login";
 
 const VerticalScriptBar = ({ top, left }: { top: number; left: number }) => {
   return (
