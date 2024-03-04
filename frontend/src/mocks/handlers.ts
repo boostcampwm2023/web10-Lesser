@@ -7,9 +7,14 @@ export const handlers = [
     request;
     return res(ctx.json(["This", "is", "test"]));
   }),
-  rest.get(LOGIN.GITHIB_URL.URL, (requ, res, ctx) => {
-    const request = requ;
+  rest.get(LOGIN.GITHUB_URL.URL, (req, res, ctx) => {
+    const request = req;
     request;
-    return res(ctx.json(LOGIN.GITHIB_URL.RESPONSE));
+    return res(ctx.json(LOGIN.GITHUB_URL.RESPONSE));
+  }),
+  rest.post(LOGIN.GITHUB_CODE.URL, (req, res, ctx) => {
+    const request = req;
+    request;
+    return res(ctx.status(LOGIN.GITHUB_CODE.STATUS), ctx.json(LOGIN.GITHUB_CODE.RESPONSE));
   }),
 ];
