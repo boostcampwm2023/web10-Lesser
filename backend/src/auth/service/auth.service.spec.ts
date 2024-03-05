@@ -8,6 +8,8 @@ import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { TempMember } from '../entity/tempMember.entity';
 import { MemberService } from 'src/member/service/member.service';
 import { Member } from 'src/member/entity/member.entity';
+import { LoginMemberRepository } from '../repository/loginMember.repository';
+import { LoginMember } from '../entity/loginMember.entity';
 
 describe('Auth Service Unit Test', () => {
   let authService: AuthService;
@@ -16,6 +18,7 @@ describe('Auth Service Unit Test', () => {
   let tempMemberRepository: TempMemberRepository;
   let lesserJwtService: LesserJwtService;
   let memberService: MemberService;
+  let loginMemberRepository: LoginMemberRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -44,6 +47,14 @@ describe('Auth Service Unit Test', () => {
           },
         },
         {
+          provide: LoginMemberRepository,
+          useValue: {
+            save: jest.fn(),
+            findByMemberId: jest.fn(),
+            deleteByMemberId: jest.fn(),
+          },
+        },
+        {
           provide: LesserJwtService,
           useValue: {
             createTempIdToken: jest.fn(),
@@ -69,6 +80,9 @@ describe('Auth Service Unit Test', () => {
       module.get<TempMemberRepository>(TempMemberRepository);
     lesserJwtService = module.get<LesserJwtService>(LesserJwtService);
     memberService = module.get<MemberService>(MemberService);
+    loginMemberRepository = module.get<LoginMemberRepository>(
+      LoginMemberRepository,
+    );
   });
 
   describe('Get Github Auth Url', () => {
@@ -264,6 +278,9 @@ describe('Auth Service Unit Test', () => {
       expect(
         (result as { accessToken: string; refreshToken: string }).refreshToken,
       ).toEqual(lesserRefreshToken);
+      expect(loginMemberRepository.save).toHaveBeenCalledWith(
+        LoginMember.of(member.id, lesserRefreshToken),
+      );
     });
   });
 
@@ -352,6 +369,48 @@ describe('Auth Service Unit Test', () => {
       );
       expect(lesserJwtService.createAccessToken).toHaveBeenCalledWith(memberId);
       expect(lesserJwtService.createRefreshToken).toHaveBeenCalledWith(
+        memberId,
+      );
+      expect(loginMemberRepository.save).toHaveBeenCalledWith(
+        LoginMember.of(memberId, lesserRefreshToken),
+      );
+    });
+  });
+
+  describe('Logout', () => {
+    const accessToken = 'accessToken';
+    const memberId = 1;
+    it('should remove loginMember refresh token', async () => {
+      jest
+        .spyOn(lesserJwtService, 'getPayload')
+        .mockResolvedValue({ sub: { id: memberId }, tokenType: 'access' });
+      jest
+        .spyOn(loginMemberRepository, 'deleteByMemberId')
+        .mockResolvedValue(1);
+
+      await authService.logout(accessToken);
+
+      expect(lesserJwtService.getPayload).toHaveBeenCalledWith(
+        accessToken,
+        'access',
+      );
+      expect(loginMemberRepository.deleteByMemberId).toHaveBeenCalledWith(
+        memberId,
+      );
+    });
+
+    it('should throw Error when member id is not found in loginMember', async () => {
+      jest
+        .spyOn(lesserJwtService, 'getPayload')
+        .mockResolvedValue({ sub: { id: memberId }, tokenType: 'access' });
+      jest
+        .spyOn(loginMemberRepository, 'deleteByMemberId')
+        .mockResolvedValue(0);
+
+      await expect(
+        async () => await authService.logout(accessToken),
+      ).rejects.toThrow('Not a logged in member');
+      expect(loginMemberRepository.deleteByMemberId).toHaveBeenCalledWith(
         memberId,
       );
     });

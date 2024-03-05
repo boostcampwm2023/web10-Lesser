@@ -11,6 +11,8 @@ import { TempMember } from '../entity/tempMember.entity';
 import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { v4 as uuidv4 } from 'uuid';
 import { MemberService } from 'src/member/service/member.service';
+import { LoginMemberRepository } from '../repository/loginMember.repository';
+import { LoginMember } from '../entity/loginMember.entity';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +22,7 @@ export class AuthService {
     private readonly tempMemberRepository: TempMemberRepository,
     private readonly lesserJwtService: LesserJwtService,
     private readonly memberService: MemberService,
+    private readonly loginMemberRepository: LoginMemberRepository,
   ) {}
   private readonly ENV_GITHUB_CLIENT_ID =
     this.configService.get(GITHUB_CLIENT_ID);
@@ -41,6 +44,9 @@ export class AuthService {
         this.lesserJwtService.createAccessToken(member.id),
         this.lesserJwtService.createRefreshToken(member.id),
       ]);
+      await this.loginMemberRepository.save(
+        LoginMember.of(member.id, refreshToken),
+      );
       return { accessToken, refreshToken };
     } else {
       const tempIdToken = await this.saveTempMember(githubUser);
@@ -123,6 +129,9 @@ export class AuthService {
       this.lesserJwtService.createAccessToken(memberId),
       this.lesserJwtService.createRefreshToken(memberId),
     ]);
+    await this.loginMemberRepository.save(
+      LoginMember.of(memberId, refreshToken),
+    );
     return { accessToken, refreshToken };
   }
 
@@ -137,5 +146,16 @@ export class AuthService {
     if (tempMember.temp_id_token !== tempIdToken)
       throw new Error('tempIdToken does not match');
     return tempMember;
+  }
+
+  async logout(accessToken: string) {
+    const { sub } = await this.lesserJwtService.getPayload(
+      accessToken,
+      'access',
+    );
+    const memberId = sub.id;
+    const deletedCount: number =
+      await this.loginMemberRepository.deleteByMemberId(memberId);
+    if (deletedCount === 0) throw new Error('Not a logged in member');
   }
 }
