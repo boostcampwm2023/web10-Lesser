@@ -1,7 +1,7 @@
 import { ScriptBar, TypingAnimeComponent } from ".";
 import LESSER_LOGO from "../../assets/Logo.svg";
 
-const LoginPageCard = () => {
+const LoginCardSection = () => {
   return (
     <section
       className={`flex flex-col relative ps-[102px] shadow-box min-h-[700px] min-w-[758px] justify-center`}
@@ -13,4 +13,4 @@ const LoginPageCard = () => {
   );
 };
 
-export default LoginPageCard;
+export default LoginCardSection;
