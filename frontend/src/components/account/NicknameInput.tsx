@@ -3,20 +3,23 @@ import { SIGNUP_STEP } from "../../constants/account";
 import NextStepButton from "./NextStepButton";
 
 interface NicknameInputProps {
+  currentStep: { NUMBER: number; NAME: string };
   setCurrentStep: React.Dispatch<
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;
   nicknameRef: React.MutableRefObject<string>;
 }
 
-const NicknameInput = ({ setCurrentStep, nicknameRef }: NicknameInputProps) => {
+const NicknameInput = ({
+  currentStep,
+  setCurrentStep,
+  nicknameRef,
+}: NicknameInputProps) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [validated] = useState<boolean | null>(null);
 
   const handleNextButtonClick = () => {
     setCurrentStep(SIGNUP_STEP.STEP2);
-    const jobElement = document.getElementById("job");
-    jobElement?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
 
   const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
@@ -25,7 +28,11 @@ const NicknameInput = ({ setCurrentStep, nicknameRef }: NicknameInputProps) => {
   };
 
   return (
-    <div id="nickname" className="h-[100%] flex items-center">
+    <div
+      className={`flex h-[100%] ${
+        currentStep === SIGNUP_STEP.STEP1 ? "items-center" : "items-end"
+      }`}
+    >
       <div className="w-[80%]">
         <label
           className="text-3xl font-semibold text-dark-gray"
@@ -34,7 +41,7 @@ const NicknameInput = ({ setCurrentStep, nicknameRef }: NicknameInputProps) => {
           LESSER에서 사용할 제 이름은
         </label>
         <br />
-        <div className="flex">
+        <div id="nickname-input-box" className="flex">
           <div className="inline">
             <input
               type="text"
@@ -57,9 +64,11 @@ const NicknameInput = ({ setCurrentStep, nicknameRef }: NicknameInputProps) => {
           <span className="text-3xl font-semibold text-dark-gray">입니다</span>
         </div>
       </div>
-      <NextStepButton onNextButtonClick={handleNextButtonClick}>
-        Next
-      </NextStepButton>
+      {currentStep === SIGNUP_STEP.STEP1 && (
+        <NextStepButton onNextButtonClick={handleNextButtonClick}>
+          Next
+        </NextStepButton>
+      )}
     </div>
   );
 };

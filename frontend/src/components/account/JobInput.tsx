@@ -4,13 +4,14 @@ import { JOB_INPUT_INFO, SIGNUP_STEP } from "../../constants/account";
 import NextStepButton from "./NextStepButton";
 
 interface JobInputProps {
+  currentStep: { NUMBER: number; NAME: string };
   setCurrentStep: React.Dispatch<
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;
   jobRef: React.MutableRefObject<string | null>;
 }
 
-const JobInput = ({ setCurrentStep, jobRef }: JobInputProps) => {
+const JobInput = ({ currentStep, setCurrentStep, jobRef }: JobInputProps) => {
   const { Dropdown, selectedOption } = useDropdown({
     placeholder: JOB_INPUT_INFO.PLACEHOLDER,
     options: JOB_INPUT_INFO.OPTIONS,
@@ -18,8 +19,6 @@ const JobInput = ({ setCurrentStep, jobRef }: JobInputProps) => {
 
   const handleNextButtonClick = () => {
     setCurrentStep(SIGNUP_STEP.STEP3);
-    const techElement = document.getElementById("tech");
-    techElement?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
 
   useEffect(() => {
@@ -27,8 +26,12 @@ const JobInput = ({ setCurrentStep, jobRef }: JobInputProps) => {
   }, [selectedOption]);
 
   return (
-    <div id="job" className="h-[100%] flex items-center">
-      <div className="w-[80%] flex gap-4 items-center">
+    <div
+      className={`flex h-[90%] ${
+        currentStep !== SIGNUP_STEP.STEP3 ? "items-center" : "items-end"
+      }`}
+    >
+      <div id="job-input-box" className="w-[80%] flex gap-4 items-center">
         <span className="text-3xl font-semibold text-dark-gray">
           저의 주요 직무는
         </span>
@@ -41,9 +44,11 @@ const JobInput = ({ setCurrentStep, jobRef }: JobInputProps) => {
         />
         <span className="text-3xl font-semibold text-dark-gray">입니다</span>
       </div>
-      <NextStepButton onNextButtonClick={handleNextButtonClick}>
-        Next
-      </NextStepButton>
+      {currentStep === SIGNUP_STEP.STEP2 && (
+        <NextStepButton onNextButtonClick={handleNextButtonClick}>
+          Next
+        </NextStepButton>
+      )}
     </div>
   );
 };

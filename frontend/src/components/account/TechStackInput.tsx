@@ -6,6 +6,10 @@ import NextStepButton from "./NextStepButton";
 import CategoryButton from "../common/CategoryButton";
 
 interface TechStackInputProps {
+  currentStep: { NUMBER: number; NAME: string };
+  setCurrentStep: React.Dispatch<
+    React.SetStateAction<{ NUMBER: number; NAME: string }>
+  >;
   techRef: React.MutableRefObject<string[]>;
   onSignupButtonClick: () => void;
 }
@@ -26,7 +30,7 @@ const TechStackInput = ({
   };
 
   return (
-    <div id="tech" className="h-[100%] flex items-center">
+    <div id="signup" className="h-[90%] flex items-center">
       <div className="w-[80%]">
         <p className="mb-3 text-3xl font-semibold text-dark-gray">
           저의 주요 기술 스택은
