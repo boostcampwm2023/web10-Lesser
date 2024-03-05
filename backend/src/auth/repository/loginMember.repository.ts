@@ -7,7 +7,7 @@ import { LoginMember } from '../entity/loginMember.entity';
 @Injectable()
 export class LoginMemberRepository {
   constructor(
-    @InjectRepository(TempMember)
+    @InjectRepository(LoginMember)
     private readonly loginMemberRepository: Repository<LoginMember>,
   ) {}
 
