@@ -21,7 +21,7 @@ export class AuthController {
   private cookieOptions: CookieOptions = {
     httpOnly: true,
     secure: false, // HTTPS 적용시 true로 변경
-    path: '/',
+    path: '/auth/',
     sameSite: 'strict',
   };
 
@@ -94,5 +94,36 @@ export class AuthController {
       }
       throw new InternalServerErrorException(err.message);
     }
+  }
+
+  @Post('logout')
+  async logout(
+    @Req() request: Request & { headers: CustomHeaders },
+    @Res() response: Response,
+  ) {
+    const authHeader = request.headers.authorization;
+    if (!authHeader) {
+      throw new UnauthorizedException('Authorization header is missing');
+    }
+    const [bearer, accessToken] = authHeader.split(' ');
+    if (bearer !== 'Bearer' || !accessToken) {
+      throw new UnauthorizedException('Invalid authorization header format');
+    }
+
+    try {
+      await this.authService.logout(accessToken);
+    } catch (err) {
+      if (
+        err.message === 'Not a logged in member' ||
+        err.message === 'Failed to verify token'
+      ) {
+        throw new UnauthorizedException(err.message);
+      }
+      throw new InternalServerErrorException(err.message);
+    }
+    return response
+      .clearCookie('refreshToken', this.cookieOptions)
+      .status(200)
+      .send();
   }
 }
