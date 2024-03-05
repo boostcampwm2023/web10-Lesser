@@ -21,6 +21,7 @@ describe('Auth Controller Unit Test', () => {
             getGithubAuthUrl: jest.fn(),
             githubAuthentication: jest.fn(),
             githubSignup: jest.fn(),
+            logout: jest.fn(),
           },
         },
       ],
@@ -93,7 +94,7 @@ describe('Auth Controller Unit Test', () => {
         {
           httpOnly: true,
           secure: false,
-          path: '/',
+          path: '/auth/',
           sameSite: 'strict',
         },
       );
@@ -211,7 +212,7 @@ describe('Auth Controller Unit Test', () => {
         {
           httpOnly: true,
           secure: false,
-          path: '/',
+          path: '/auth/',
           sameSite: 'strict',
         },
       );
@@ -260,6 +261,83 @@ describe('Auth Controller Unit Test', () => {
       expect(
         async () =>
           await controller.githubSignup(mockRequest, mockBody, mockResponse),
+      ).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
+  describe('Logout', () => {
+    interface CustomHeaders {
+      authorization: string;
+    }
+    const mockResponse = {
+      clearCookie: jest.fn().mockReturnThis(),
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn().mockReturnThis(),
+    } as unknown as Response;
+    it('should return 200', async () => {
+      const accessToken = 'accessToken';
+      const mockRequest = {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      } as Request & { headers: CustomHeaders };
+
+      await controller.logout(mockRequest, mockResponse);
+
+      expect(authService.logout).toHaveBeenCalledWith(accessToken);
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('refreshToken', {
+        httpOnly: true,
+        secure: false,
+        path: '/auth/',
+        sameSite: 'strict',
+      });
+      expect(mockResponse.status).toHaveBeenCalledWith(200);
+      expect(mockResponse.send).toHaveBeenCalled();
+    });
+
+    it('should throw 401 error when logout service throws "Not a logged in member', async () => {
+      const accessToken = 'accessToken';
+      const mockRequest = {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      } as Request & { headers: CustomHeaders };
+      jest
+        .spyOn(authService, 'logout')
+        .mockRejectedValue(new Error('Not a logged in member'));
+
+      expect(
+        async () => await controller.logout(mockRequest, mockResponse),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should throw 401 error when logout service throws "Failed to verify token', async () => {
+      const accessToken = 'accessToken';
+      const mockRequest = {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      } as Request & { headers: CustomHeaders };
+      jest
+        .spyOn(authService, 'logout')
+        .mockRejectedValue(new Error('Failed to verify token'));
+
+      expect(
+        async () => await controller.logout(mockRequest, mockResponse),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should throw 500 error when logout service throws unknown error', async () => {
+      const accessToken = 'accessToken';
+      const mockRequest = {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      } as Request & { headers: CustomHeaders };
+      jest.spyOn(authService, 'logout').mockRejectedValue(new Error());
+
+      expect(
+        async () => await controller.logout(mockRequest, mockResponse),
       ).rejects.toThrow(InternalServerErrorException);
     });
   });
