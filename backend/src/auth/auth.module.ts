@@ -7,15 +7,17 @@ import { TempMember } from './entity/tempMember.entity';
 import { LesserJwtModule } from 'src/lesser-jwt/lesser-jwt.module';
 import { TempMemberRepository } from './repository/tempMember.repository';
 import { MemberModule } from 'src/member/member.module';
+import { LoginMember } from './entity/loginMember.entity';
+import { LoginMemberRepository } from './repository/loginMember.repository';
 
 @Module({
   imports: [
     GithubApiModule,
-    TypeOrmModule.forFeature([TempMember]),
+    TypeOrmModule.forFeature([TempMember, LoginMember]),
     LesserJwtModule,
     MemberModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, TempMemberRepository],
+  providers: [AuthService, TempMemberRepository, LoginMemberRepository],
 })
 export class AuthModule {}
