@@ -52,6 +52,7 @@ describe('Auth Service Unit Test', () => {
             save: jest.fn(),
             findByMemberId: jest.fn(),
             deleteByMemberId: jest.fn(),
+            updateRefreshToken: jest.fn(),
           },
         },
         {
@@ -413,6 +414,61 @@ describe('Auth Service Unit Test', () => {
       expect(loginMemberRepository.deleteByMemberId).toHaveBeenCalledWith(
         memberId,
       );
+    });
+  });
+
+  describe('Refresh AccessToken And RefreshToken', () => {
+    const oldRefreshToken = 'oldRefreshToken';
+    const newRefreshToken = 'newRefreshToken';
+    const memberId = 1;
+
+    it('should return AccessToken And RefreshToken', async () => {
+      jest.spyOn(lesserJwtService, 'getPayload').mockResolvedValue({
+        sub: { id: memberId },
+        tokenType: 'refresh',
+      });
+      jest
+        .spyOn(loginMemberRepository, 'updateRefreshToken')
+        .mockResolvedValue(1);
+      jest
+        .spyOn(lesserJwtService, 'createRefreshToken')
+        .mockResolvedValue(newRefreshToken);
+
+      const { refreshToken } =
+        await authService.refreshAccessTokenAndRefreshToken(oldRefreshToken);
+
+      expect(lesserJwtService.getPayload).toHaveBeenCalledWith(
+        oldRefreshToken,
+        'refresh',
+      );
+      expect(loginMemberRepository.updateRefreshToken).toHaveBeenCalledWith(
+        memberId,
+        oldRefreshToken,
+        newRefreshToken,
+      );
+      expect(lesserJwtService.createAccessToken).toHaveBeenCalledWith(memberId);
+      expect(lesserJwtService.createRefreshToken).toHaveBeenCalledWith(
+        memberId,
+      );
+      expect(refreshToken).toBe(newRefreshToken);
+    });
+
+    it('should throw error when No matching refresh token', async () => {
+      jest.spyOn(lesserJwtService, 'getPayload').mockResolvedValue({
+        sub: { id: memberId },
+        tokenType: 'refresh',
+      });
+      jest
+        .spyOn(loginMemberRepository, 'updateRefreshToken')
+        .mockResolvedValue(0);
+      jest
+        .spyOn(lesserJwtService, 'createRefreshToken')
+        .mockResolvedValue(newRefreshToken);
+
+      expect(
+        async () =>
+          await authService.refreshAccessTokenAndRefreshToken(oldRefreshToken),
+      ).rejects.toThrow('No matching refresh token');
     });
   });
 });
