@@ -19,6 +19,10 @@ export class TempMemberRepository {
     return this.tempMemberRepository.findOneBy({ github_id: githubId });
   }
 
+  findByUuid(uuid: string): Promise<TempMember> {
+    return this.tempMemberRepository.findOneBy({ uuid });
+  }
+
   async updateTempIdToken(uuid: string, tempIdToken: string): Promise<void> {
     this.tempMemberRepository.update(uuid, { temp_id_token: tempIdToken });
   }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -17,6 +17,8 @@ import { LesserJwtModule } from './lesser-jwt/lesser-jwt.module';
 import { TempMember } from './auth/entity/tempMember.entity';
 import { MemberModule } from './member/member.module';
 import { Member } from './member/entity/member.entity';
+import { LoginMember } from './auth/entity/loginMember.entity';
+import * as cookieParser from 'cookie-parser';
 
 @Module({
   imports: [
@@ -29,7 +31,7 @@ import { Member } from './member/entity/member.entity';
         username: ConfigService.get(DATABASE_USER),
         password: ConfigService.get(DATABASE_PASSWORD),
         database: ConfigService.get(DATABASE_NAME),
-        entities: [Member, TempMember],
+        entities: [Member, TempMember, LoginMember],
         synchronize: ConfigService.get('NODE_ENV') == 'PROD' ? false : true,
       }),
     }),
@@ -42,4 +44,8 @@ import { Member } from './member/entity/member.entity';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(cookieParser()).forRoutes('*');
+  }
+}

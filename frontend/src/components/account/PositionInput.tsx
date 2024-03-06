@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useDropdown from "../../common/dropdown/useDropdown";
+import useDropdown from "../../hooks/common/dropdown/useDropdown";
 import NextStepButton from "./NextStepButton";
 import { JOB_INPUT_INFO, SIGNUP_STEP } from "../../constants/account";
 

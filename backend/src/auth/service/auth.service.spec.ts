@@ -8,6 +8,8 @@ import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { TempMember } from '../entity/tempMember.entity';
 import { MemberService } from 'src/member/service/member.service';
 import { Member } from 'src/member/entity/member.entity';
+import { LoginMemberRepository } from '../repository/loginMember.repository';
+import { LoginMember } from '../entity/loginMember.entity';
 
 describe('Auth Service Unit Test', () => {
   let authService: AuthService;
@@ -16,6 +18,7 @@ describe('Auth Service Unit Test', () => {
   let tempMemberRepository: TempMemberRepository;
   let lesserJwtService: LesserJwtService;
   let memberService: MemberService;
+  let loginMemberRepository: LoginMemberRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,6 +43,16 @@ describe('Auth Service Unit Test', () => {
             save: jest.fn(),
             findByGithubId: jest.fn(),
             updateTempIdToken: jest.fn(),
+            findByUuid: jest.fn(),
+          },
+        },
+        {
+          provide: LoginMemberRepository,
+          useValue: {
+            save: jest.fn(),
+            findByMemberId: jest.fn(),
+            deleteByMemberId: jest.fn(),
+            updateRefreshToken: jest.fn(),
           },
         },
         {
@@ -48,12 +61,14 @@ describe('Auth Service Unit Test', () => {
             createTempIdToken: jest.fn(),
             createAccessToken: jest.fn(),
             createRefreshToken: jest.fn(),
+            getPayload: jest.fn(),
           },
         },
         {
           provide: MemberService,
           useValue: {
             findByGithubId: jest.fn(),
+            save: jest.fn(),
           },
         },
       ],
@@ -66,6 +81,9 @@ describe('Auth Service Unit Test', () => {
       module.get<TempMemberRepository>(TempMemberRepository);
     lesserJwtService = module.get<LesserJwtService>(LesserJwtService);
     memberService = module.get<MemberService>(MemberService);
+    loginMemberRepository = module.get<LoginMemberRepository>(
+      LoginMemberRepository,
+    );
   });
 
   describe('Get Github Auth Url', () => {
@@ -145,7 +163,7 @@ describe('Auth Service Unit Test', () => {
     });
   });
 
-  describe('Get TempIdToken', () => {
+  describe('Save tempMember and get tempIdToken', () => {
     const token = 'token';
 
     it('should save new temp member and return temp Id token', async () => {
@@ -165,21 +183,30 @@ describe('Auth Service Unit Test', () => {
     });
 
     it('should update temp member and return temp Id token', async () => {
+      const updatedTempIdToken = 'updated temp id token';
+      const tempMember = TempMember.of(
+        'uuid',
+        'oldToken',
+        1,
+        'username',
+        'imageUrl',
+      );
       jest
         .spyOn(lesserJwtService, 'createTempIdToken')
-        .mockResolvedValue(token);
+        .mockResolvedValue(updatedTempIdToken);
       jest
         .spyOn(tempMemberRepository, 'findByGithubId')
-        .mockResolvedValue(
-          TempMember.of('uuid', 'oldToken', 1, 'username', 'imageUrl'),
-        );
+        .mockResolvedValue(tempMember);
 
       const githubUserDto = GithubUserDto.of('1', 'username', 'imageUrl');
       const tempIdToken = await authService.saveTempMember(githubUserDto);
 
-      expect(tempIdToken).toEqual(token);
+      expect(tempIdToken).toEqual(updatedTempIdToken);
       expect(tempMemberRepository.findByGithubId).toHaveBeenCalled();
-      expect(tempMemberRepository.updateTempIdToken).toHaveBeenCalled();
+      expect(tempMemberRepository.updateTempIdToken).toHaveBeenCalledWith(
+        tempMember.uuid,
+        updatedTempIdToken,
+      );
       expect(tempMemberRepository.save).not.toHaveBeenCalled();
     });
   });
@@ -213,12 +240,14 @@ describe('Auth Service Unit Test', () => {
       const githubUserDto = GithubUserDto.of('1', 'username', 'image_url');
       const member = Member.of(
         githubUserDto.githubId,
-        githubUserDto.username,
-        githubUserDto.username,
+        githubUserDto.githubUsername,
+        githubUserDto.githubImageUrl,
+        'username',
+        'position',
+        { stacks: ['javascript', 'typescript'] },
       );
       const authCode = 'auth code';
       const accessToken = 'access token';
-      member.id = 1;
       jest.spyOn(authService, 'getAccessToken').mockResolvedValue(accessToken);
       jest.spyOn(authService, 'getGithubUser').mockResolvedValue(githubUserDto);
       jest.spyOn(memberService, 'findByGithubId').mockResolvedValue(member);
@@ -250,6 +279,196 @@ describe('Auth Service Unit Test', () => {
       expect(
         (result as { accessToken: string; refreshToken: string }).refreshToken,
       ).toEqual(lesserRefreshToken);
+      expect(loginMemberRepository.save).toHaveBeenCalledWith(
+        LoginMember.of(member.id, lesserRefreshToken),
+      );
+    });
+  });
+
+  describe('Get TempMember', () => {
+    const tempIdToken = 'tempIdToken';
+    const uuid = 'uuid';
+    const tempId = 'tempId';
+    const payload = { sub: { uuid }, tokenType: tempId };
+
+    it('should return temp member', async () => {
+      jest.spyOn(lesserJwtService, 'getPayload').mockResolvedValue(payload);
+      jest
+        .spyOn(tempMemberRepository, 'findByUuid')
+        .mockResolvedValue(
+          TempMember.of(uuid, tempIdToken, 0, 'username', 'image_url'),
+        );
+
+      const tempMember = await authService.getTempMember(tempIdToken);
+
+      expect(lesserJwtService.getPayload).toHaveBeenCalledWith(
+        tempIdToken,
+        tempId,
+      );
+      expect(tempMemberRepository.findByUuid).toHaveBeenCalledWith(uuid);
+      expect(tempMember.uuid).toEqual(uuid);
+      expect(tempIdToken).toEqual(tempMember.temp_id_token);
+    });
+
+    it('should Throw Error when tempIdToken does not match', async () => {
+      const notMatchToken = 'notMatchToken';
+      jest.spyOn(lesserJwtService, 'getPayload').mockResolvedValue(payload);
+      jest
+        .spyOn(tempMemberRepository, 'findByUuid')
+        .mockResolvedValue(
+          TempMember.of(uuid, notMatchToken, 0, 'username', 'image_url'),
+        );
+
+      expect(
+        async () => await authService.getTempMember(tempIdToken),
+      ).rejects.toThrow('tempIdToken does not match');
+    });
+  });
+
+  describe('Github signup', () => {
+    const tempIdToken = 'tempIdToken';
+    const uuid = 'uuid';
+    const tempMember = TempMember.of(
+      uuid,
+      tempIdToken,
+      0,
+      'username',
+      'image_url',
+    );
+    const username = 'username';
+    const position = 'position';
+    const techStack = { stacks: ['javascript', 'typescript'] };
+    const memberId = 1;
+    const lesserAccessToken = 'lesserAccessToken';
+    const lesserRefreshToken = 'lesserRefreshToken';
+
+    it('should return access token and refresh token', async () => {
+      jest.spyOn(authService, 'getTempMember').mockResolvedValue(tempMember);
+      jest.spyOn(memberService, 'save').mockResolvedValue(memberId);
+      jest
+        .spyOn(lesserJwtService, 'createAccessToken')
+        .mockResolvedValue(lesserAccessToken);
+      jest
+        .spyOn(lesserJwtService, 'createRefreshToken')
+        .mockResolvedValue(lesserRefreshToken);
+
+      await authService.githubSignup(
+        tempIdToken,
+        username,
+        position,
+        techStack,
+      );
+
+      expect(authService.getTempMember).toHaveBeenCalledWith(tempIdToken);
+      expect(memberService.save).toHaveBeenCalledWith(
+        tempMember.github_id,
+        tempMember.username,
+        tempMember.image_url,
+        username,
+        position,
+        techStack,
+      );
+      expect(lesserJwtService.createAccessToken).toHaveBeenCalledWith(memberId);
+      expect(lesserJwtService.createRefreshToken).toHaveBeenCalledWith(
+        memberId,
+      );
+      expect(loginMemberRepository.save).toHaveBeenCalledWith(
+        LoginMember.of(memberId, lesserRefreshToken),
+      );
+    });
+  });
+
+  describe('Logout', () => {
+    const accessToken = 'accessToken';
+    const memberId = 1;
+    it('should remove loginMember refresh token', async () => {
+      jest
+        .spyOn(lesserJwtService, 'getPayload')
+        .mockResolvedValue({ sub: { id: memberId }, tokenType: 'access' });
+      jest
+        .spyOn(loginMemberRepository, 'deleteByMemberId')
+        .mockResolvedValue(1);
+
+      await authService.logout(accessToken);
+
+      expect(lesserJwtService.getPayload).toHaveBeenCalledWith(
+        accessToken,
+        'access',
+      );
+      expect(loginMemberRepository.deleteByMemberId).toHaveBeenCalledWith(
+        memberId,
+      );
+    });
+
+    it('should throw Error when member id is not found in loginMember', async () => {
+      jest
+        .spyOn(lesserJwtService, 'getPayload')
+        .mockResolvedValue({ sub: { id: memberId }, tokenType: 'access' });
+      jest
+        .spyOn(loginMemberRepository, 'deleteByMemberId')
+        .mockResolvedValue(0);
+
+      await expect(
+        async () => await authService.logout(accessToken),
+      ).rejects.toThrow('Not a logged in member');
+      expect(loginMemberRepository.deleteByMemberId).toHaveBeenCalledWith(
+        memberId,
+      );
+    });
+  });
+
+  describe('Refresh AccessToken And RefreshToken', () => {
+    const oldRefreshToken = 'oldRefreshToken';
+    const newRefreshToken = 'newRefreshToken';
+    const memberId = 1;
+
+    it('should return AccessToken And RefreshToken', async () => {
+      jest.spyOn(lesserJwtService, 'getPayload').mockResolvedValue({
+        sub: { id: memberId },
+        tokenType: 'refresh',
+      });
+      jest
+        .spyOn(loginMemberRepository, 'updateRefreshToken')
+        .mockResolvedValue(1);
+      jest
+        .spyOn(lesserJwtService, 'createRefreshToken')
+        .mockResolvedValue(newRefreshToken);
+
+      const { refreshToken } =
+        await authService.refreshAccessTokenAndRefreshToken(oldRefreshToken);
+
+      expect(lesserJwtService.getPayload).toHaveBeenCalledWith(
+        oldRefreshToken,
+        'refresh',
+      );
+      expect(loginMemberRepository.updateRefreshToken).toHaveBeenCalledWith(
+        memberId,
+        oldRefreshToken,
+        newRefreshToken,
+      );
+      expect(lesserJwtService.createAccessToken).toHaveBeenCalledWith(memberId);
+      expect(lesserJwtService.createRefreshToken).toHaveBeenCalledWith(
+        memberId,
+      );
+      expect(refreshToken).toBe(newRefreshToken);
+    });
+
+    it('should throw error when No matching refresh token', async () => {
+      jest.spyOn(lesserJwtService, 'getPayload').mockResolvedValue({
+        sub: { id: memberId },
+        tokenType: 'refresh',
+      });
+      jest
+        .spyOn(loginMemberRepository, 'updateRefreshToken')
+        .mockResolvedValue(0);
+      jest
+        .spyOn(lesserJwtService, 'createRefreshToken')
+        .mockResolvedValue(newRefreshToken);
+
+      expect(
+        async () =>
+          await authService.refreshAccessTokenAndRefreshToken(oldRefreshToken),
+      ).rejects.toThrow('No matching refresh token');
     });
   });
 });

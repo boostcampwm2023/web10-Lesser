@@ -17,10 +17,19 @@ export class Member extends BaseEntity {
   github_id: number;
 
   @Column()
+  github_username: string;
+
+  @Column()
+  github_image_url: string;
+
+  @Column()
   username: string;
 
   @Column()
-  image_url: string;
+  position: string;
+
+  @Column('json')
+  tech_stack: object;
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
@@ -30,13 +39,19 @@ export class Member extends BaseEntity {
 
   static of(
     githubId: number,
+    githubUsername: string,
+    githubImageUrl: string,
     username: string,
-    image_url: string,
+    position: string,
+    techStack: object,
   ) {
     const newMember = new Member();
     newMember.github_id = githubId;
+    newMember.github_username = githubUsername;
+    newMember.github_image_url = githubImageUrl;
     newMember.username = username;
-    newMember.image_url = image_url;
+    newMember.position = position;
+    newMember.tech_stack = techStack;
     return newMember;
   }
 }

@@ -1,13 +1,13 @@
 export class GithubUserDto {
   githubId: number;
-  username: string;
-  imageUrl: string;
+  githubUsername: string;
+  githubImageUrl: string;
 
   public static of(githubId: string, username: string, imageUrl: string) {
     const newGithubUser = new GithubUserDto();
     newGithubUser.githubId = +githubId;
-    newGithubUser.username = username;
-    newGithubUser.imageUrl = imageUrl;
+    newGithubUser.githubUsername = username;
+    newGithubUser.githubImageUrl = imageUrl;
     return newGithubUser;
   }
 }

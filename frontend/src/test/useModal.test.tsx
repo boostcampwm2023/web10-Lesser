@@ -3,8 +3,8 @@
  */
 
 import { fireEvent, render, screen } from "@testing-library/react";
-import { ModalProvider } from "../common/modal/ModalProvider";
-import { useModal } from "../common/modal/useModal";
+import { ModalProvider } from "../hooks/common/modal/ModalProvider";
+import { useModal } from "../hooks/common/modal/useModal";
 
 const TestComponent = () => {
   const { open, close } = useModal();
