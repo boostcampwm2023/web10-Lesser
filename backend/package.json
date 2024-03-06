@@ -27,6 +27,7 @@
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "^10.0.1",
+    "cookie-parser": "^1.4.6",
     "mysql2": "^3.9.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
