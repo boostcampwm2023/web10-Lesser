@@ -5,7 +5,7 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 
 describe('Auth Controller Unit Test', () => {
   let controller: AuthController;
@@ -22,6 +22,7 @@ describe('Auth Controller Unit Test', () => {
             githubAuthentication: jest.fn(),
             githubSignup: jest.fn(),
             logout: jest.fn(),
+            refreshAccessTokenAndRefreshToken: jest.fn(),
           },
         },
       ],
@@ -338,6 +339,83 @@ describe('Auth Controller Unit Test', () => {
 
       expect(
         async () => await controller.logout(mockRequest, mockResponse),
+      ).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
+  describe('Refresh', () => {
+    const mockResponse = {
+      send: jest.fn().mockReturnThis(),
+      status: jest.fn().mockReturnThis(),
+      cookie: jest.fn().mockReturnThis(),
+    } as unknown as Response;
+
+    it('should return 201', async () => {
+      const requestRefreshToken = 'refreshToken';
+      const newAccessToken = 'newAccessToken';
+      const newRefreshToken = 'newRefreshToken';
+      const mockRequest = {
+        cookies: {
+          refreshToken: requestRefreshToken,
+        },
+      } as Request;
+      jest
+        .spyOn(authService, 'refreshAccessTokenAndRefreshToken')
+        .mockResolvedValue({
+          accessToken: newAccessToken,
+          refreshToken: newRefreshToken,
+        });
+
+      await controller.refresh(mockRequest, mockResponse);
+
+      expect(
+        authService.refreshAccessTokenAndRefreshToken,
+      ).toHaveBeenCalledWith(requestRefreshToken);
+      expect(mockResponse.status).toHaveBeenCalledWith(201);
+      expect(mockResponse.send).toHaveBeenCalledWith({
+        accessToken: newAccessToken,
+      });
+      expect(mockResponse.cookie).toHaveBeenCalledWith(
+        'refreshToken',
+        newRefreshToken,
+        {
+          httpOnly: true,
+          secure: false,
+          path: '/auth/',
+          sameSite: 'strict',
+        },
+      );
+    });
+
+    it('should throw 401 error when refresh service throws "No matching refresh token"', async () => {
+      const requestRefreshToken = 'refreshToken';
+      const mockRequest = {
+        cookies: {
+          refreshToken: requestRefreshToken,
+        },
+      } as Request;
+      jest
+        .spyOn(authService, 'refreshAccessTokenAndRefreshToken')
+        .mockRejectedValue(new Error('No matching refresh token'));
+
+      expect(
+        async () => await controller.refresh(mockRequest, mockResponse),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should throw 500 error when refresh service throws unknown error', async () => {
+      const requestRefreshToken = 'refreshToken';
+      const mockRequest = {
+        cookies: {
+          refreshToken: requestRefreshToken,
+        },
+      } as Request;
+      jest
+        .spyOn(authService, 'refreshAccessTokenAndRefreshToken')
+        .mockRejectedValue(new Error());
+
+      expect(
+        async () => await controller.refresh(mockRequest, mockResponse),
       ).rejects.toThrow(InternalServerErrorException);
     });
   });
