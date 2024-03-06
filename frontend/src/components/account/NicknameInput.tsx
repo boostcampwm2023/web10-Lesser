@@ -1,9 +1,9 @@
 import { ChangeEvent, useState } from "react";
-import { SIGNUP_STEP } from "../../constants/account";
 import NextStepButton from "./NextStepButton";
+import { SIGNUP_STEP } from "../../constants/account";
 
 interface NicknameInputProps {
-  currentStep: { NUMBER: number; NAME: string };
+  currentStepNumber: number;
   setCurrentStep: React.Dispatch<
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;
@@ -11,7 +11,7 @@ interface NicknameInputProps {
 }
 
 const NicknameInput = ({
-  currentStep,
+  currentStepNumber,
   setCurrentStep,
   nicknameRef,
 }: NicknameInputProps) => {
@@ -30,7 +30,9 @@ const NicknameInput = ({
   return (
     <div
       className={`flex h-[100%] ${
-        currentStep === SIGNUP_STEP.STEP1 ? "items-center" : "items-end"
+        currentStepNumber === SIGNUP_STEP.STEP1.NUMBER
+          ? "items-center"
+          : "items-end"
       }`}
     >
       <div className="w-[80%]">
@@ -64,7 +66,7 @@ const NicknameInput = ({
           <span className="text-3xl font-semibold text-dark-gray">입니다</span>
         </div>
       </div>
-      {currentStep === SIGNUP_STEP.STEP1 && (
+      {currentStepNumber === SIGNUP_STEP.STEP1.NUMBER && (
         <NextStepButton onNextButtonClick={handleNextButtonClick}>
           Next
         </NextStepButton>

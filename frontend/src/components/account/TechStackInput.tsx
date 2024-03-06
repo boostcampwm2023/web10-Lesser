@@ -6,7 +6,6 @@ import NextStepButton from "./NextStepButton";
 import CategoryButton from "../common/CategoryButton";
 
 interface TechStackInputProps {
-  currentStep: { NUMBER: number; NAME: string };
   setCurrentStep: React.Dispatch<
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;

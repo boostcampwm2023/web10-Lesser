@@ -1,17 +1,21 @@
 import { useEffect } from "react";
 import useDropdown from "../../common/dropdown/useDropdown";
-import { JOB_INPUT_INFO, SIGNUP_STEP } from "../../constants/account";
 import NextStepButton from "./NextStepButton";
+import { JOB_INPUT_INFO, SIGNUP_STEP } from "../../constants/account";
 
 interface JobInputProps {
-  currentStep: { NUMBER: number; NAME: string };
+  currentStepNumber: number;
   setCurrentStep: React.Dispatch<
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;
   jobRef: React.MutableRefObject<string | null>;
 }
 
-const JobInput = ({ currentStep, setCurrentStep, jobRef }: JobInputProps) => {
+const PositionInput = ({
+  currentStepNumber,
+  setCurrentStep,
+  jobRef,
+}: JobInputProps) => {
   const { Dropdown, selectedOption } = useDropdown({
     placeholder: JOB_INPUT_INFO.PLACEHOLDER,
     options: JOB_INPUT_INFO.OPTIONS,
@@ -28,7 +32,9 @@ const JobInput = ({ currentStep, setCurrentStep, jobRef }: JobInputProps) => {
   return (
     <div
       className={`flex h-[90%] ${
-        currentStep !== SIGNUP_STEP.STEP3 ? "items-center" : "items-end"
+        currentStepNumber !== SIGNUP_STEP.STEP3.NUMBER
+          ? "items-center"
+          : "items-end"
       }`}
     >
       <div id="job-input-box" className="w-[80%] flex gap-4 items-center">
@@ -44,7 +50,7 @@ const JobInput = ({ currentStep, setCurrentStep, jobRef }: JobInputProps) => {
         />
         <span className="text-3xl font-semibold text-dark-gray">입니다</span>
       </div>
-      {currentStep === SIGNUP_STEP.STEP2 && (
+      {currentStepNumber === SIGNUP_STEP.STEP2.NUMBER && (
         <NextStepButton onNextButtonClick={handleNextButtonClick}>
           Next
         </NextStepButton>
@@ -53,4 +59,4 @@ const JobInput = ({ currentStep, setCurrentStep, jobRef }: JobInputProps) => {
   );
 };
 
-export default JobInput;
+export default PositionInput;
