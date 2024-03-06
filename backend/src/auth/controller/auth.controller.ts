@@ -144,7 +144,10 @@ export class AuthController {
         .cookie('refreshToken', refreshToken, this.cookieOptions)
         .send({ accessToken });
     } catch (err) {
-      if (err.message === 'No matching refresh token') {
+      if (
+        err.message === 'No matching refresh token' ||
+        err.message === 'Failed to verify token'
+      ) {
         throw new UnauthorizedException(err.message);
       }
       throw new InternalServerErrorException(err.message);

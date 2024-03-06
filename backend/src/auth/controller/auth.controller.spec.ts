@@ -403,6 +403,22 @@ describe('Auth Controller Unit Test', () => {
       ).rejects.toThrow(UnauthorizedException);
     });
 
+	it('should throw 401 error when refresh service throws "Failed to verify token"', async () => {
+		const requestRefreshToken = 'refreshToken';
+		const mockRequest = {
+		  cookies: {
+			refreshToken: requestRefreshToken,
+		  },
+		} as Request;
+		jest
+		  .spyOn(authService, 'refreshAccessTokenAndRefreshToken')
+		  .mockRejectedValue(new Error('Failed to verify token'));
+  
+		expect(
+		  async () => await controller.refresh(mockRequest, mockResponse),
+		).rejects.toThrow(UnauthorizedException);
+	  });
+
     it('should throw 500 error when refresh service throws unknown error', async () => {
       const requestRefreshToken = 'refreshToken';
       const mockRequest = {
