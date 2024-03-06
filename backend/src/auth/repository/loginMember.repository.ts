@@ -26,4 +26,16 @@ export class LoginMemberRepository {
     });
     return affected;
   }
+
+  async updateRefreshToken(
+    memberId: number,
+    refreshToken: string,
+    newRefreshToken: string,
+  ) {
+    const { affected } = await this.loginMemberRepository.update(
+      { member_id: memberId, refresh_token: refreshToken },
+      { refresh_token: newRefreshToken },
+    );
+    return affected;
+  }
 }
