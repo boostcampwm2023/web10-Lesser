@@ -21,7 +21,7 @@ export class AuthController {
   private cookieOptions: CookieOptions = {
     httpOnly: true,
     secure: false, // HTTPS 적용시 true로 변경
-    path: '/auth/',
+    path: '/api/auth/',
     sameSite: 'strict',
   };
 
