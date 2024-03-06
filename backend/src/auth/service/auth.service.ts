@@ -158,4 +158,23 @@ export class AuthService {
       await this.loginMemberRepository.deleteByMemberId(memberId);
     if (deletedCount === 0) throw new Error('Not a logged in member');
   }
+
+  async refreshAccessTokenAndRefreshToken(refreshToken: string) {
+    const { sub } = await this.lesserJwtService.getPayload(
+      refreshToken,
+      'refresh',
+    );
+    const memberId = sub.id;
+    const newRefreshToken =
+      await this.lesserJwtService.createRefreshToken(memberId);
+    const updatedCount = await this.loginMemberRepository.updateRefreshToken(
+      memberId,
+      refreshToken,
+      newRefreshToken,
+    );
+    if (updatedCount === 0) throw new Error('No matching refresh token');
+    const newAccessToken =
+      await this.lesserJwtService.createAccessToken(memberId);
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+  }
 }
