@@ -1,5 +1,4 @@
 import { rest } from "msw";
-import { LOGIN } from "./responses";
 
 export const handlers = [
   rest.get("http://localhost:5173/test", (req, res, ctx) => {
