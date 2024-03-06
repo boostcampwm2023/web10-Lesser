@@ -9,7 +9,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
-import { CookieOptions, Response } from 'express';
+import { CookieOptions, Response, Request } from 'express';
 
 interface CustomHeaders {
   authorization: string;
@@ -125,5 +125,29 @@ export class AuthController {
       .clearCookie('refreshToken', this.cookieOptions)
       .status(200)
       .send();
+  }
+
+  @Post('/refresh')
+  async refresh(@Req() request: Request, @Res() response: Response) {
+    const requestRefreshToken = request.cookies['refreshToken'];
+    if (!requestRefreshToken) {
+      throw new UnauthorizedException('Refresh Token is missing');
+    }
+
+    try {
+      const { accessToken, refreshToken } =
+        await this.authService.refreshAccessTokenAndRefreshToken(
+          requestRefreshToken,
+        );
+      return response
+        .status(201)
+        .cookie('refreshToken', refreshToken, this.cookieOptions)
+        .send({ accessToken });
+    } catch (err) {
+      if (err.message === 'No matching refresh token') {
+        throw new UnauthorizedException(err.message);
+      }
+      throw new InternalServerErrorException(err.message);
+    }
   }
 }
