@@ -16,7 +16,7 @@ const SignupMainSection = ({
   setCurrentStep,
 }: SignupMainSectionProps) => {
   const nicknameRef = useRef<string>("");
-  const jobRef = useRef<string | null>(null);
+  const positionRef = useRef<string | null>(null);
   const techRef = useRef<string[]>([]);
 
   const handlePrevStepAreaClick = () => {
@@ -36,15 +36,16 @@ const SignupMainSection = ({
   const handleSignupButtonClick = () => {};
 
   useEffect(() => {
+    const nicknameInput = document.getElementById("nickname");
+    const nicknameInputElement = document.getElementById("nickname-input-box");
+    const techStackInput = document.getElementById("tech");
+
     switch (currentStepNumber) {
       case SIGNUP_STEP.STEP1.NUMBER:
-        const nicknameInput = document.getElementById("nickname");
-        nicknameInput?.scrollIntoView({ block: "center", behavior: "smooth" });
+        nicknameInput?.scrollIntoView({ behavior: "smooth", block: "center" });
         break;
 
       case SIGNUP_STEP.STEP2.NUMBER:
-        const nicknameInputElement =
-          document.getElementById("nickname-input-box");
         nicknameInputElement?.scrollIntoView({
           behavior: "smooth",
           block: "start",
@@ -52,8 +53,7 @@ const SignupMainSection = ({
         break;
 
       case SIGNUP_STEP.STEP3.NUMBER:
-        const jobInputElement = document.getElementById("job-input-box");
-        jobInputElement?.scrollIntoView({ behavior: "smooth", block: "start" });
+        techStackInput?.scrollIntoView({ behavior: "smooth", block: "center" });
         break;
     }
   }, [currentStepNumber]);
@@ -70,7 +70,9 @@ const SignupMainSection = ({
         <NicknameInput
           {...{ currentStepNumber, setCurrentStep, nicknameRef }}
         />
-        <PositionInput {...{ currentStepNumber, setCurrentStep, jobRef }} />
+        <PositionInput
+          {...{ currentStepNumber, setCurrentStep, positionRef }}
+        />
         <TechStackInput
           {...{ setCurrentStep, techRef }}
           onSignupButtonClick={handleSignupButtonClick}
