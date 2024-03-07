@@ -8,13 +8,13 @@ interface JobInputProps {
   setCurrentStep: React.Dispatch<
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;
-  jobRef: React.MutableRefObject<string | null>;
+  positionRef: React.MutableRefObject<string | null>;
 }
 
 const PositionInput = ({
   currentStepNumber,
   setCurrentStep,
-  jobRef,
+  positionRef,
 }: JobInputProps) => {
   const { Dropdown, selectedOption } = useDropdown({
     placeholder: JOB_INPUT_INFO.PLACEHOLDER,
@@ -26,7 +26,7 @@ const PositionInput = ({
   };
 
   useEffect(() => {
-    jobRef.current = selectedOption;
+    positionRef.current = selectedOption;
   }, [selectedOption]);
 
   return (
@@ -37,12 +37,12 @@ const PositionInput = ({
           : "items-end"
       }`}
     >
-      <div id="job-input-box" className="w-[80%] flex gap-4 items-center">
+      <div id="position-input-box" className="w-[80%] flex gap-4 items-center">
         <span className="text-3xl font-semibold text-dark-gray">
           저의 주요 직무는
         </span>
         <Dropdown
-          buttonClassName={`w-[14.25rem] h-[3.25rem] rounded-xl bg-middle-green text-white text-m shadow-box ${
+          buttonClassName={`w-[14.25rem] min-h-[3.25rem] rounded-xl bg-middle-green text-white text-m shadow-box ${
             selectedOption && "font-bold"
           }`}
           containerClassName="w-[14.25rem] h-[18.5rem] overflow-y-auto shadow-box"
@@ -50,7 +50,7 @@ const PositionInput = ({
         />
         <span className="text-3xl font-semibold text-dark-gray">입니다</span>
       </div>
-      {currentStepNumber === SIGNUP_STEP.STEP2.NUMBER && (
+      {currentStepNumber !== SIGNUP_STEP.STEP3.NUMBER && (
         <NextStepButton onNextButtonClick={handleNextButtonClick}>
           Next
         </NextStepButton>
