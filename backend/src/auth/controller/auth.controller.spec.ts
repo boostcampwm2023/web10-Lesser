@@ -47,6 +47,7 @@ describe('Auth Controller Unit Test', () => {
   });
 
   describe('Github Authentication', () => {
+    const mockBody = { authCode: 'authCode' };
     const mockResponse = {
       cookie: jest.fn().mockReturnThis(),
       status: jest.fn().mockReturnThis(),
@@ -57,12 +58,7 @@ describe('Auth Controller Unit Test', () => {
         .spyOn(authService, 'githubAuthentication')
         .mockResolvedValue({ tempIdToken: 'tempIdToken' });
 
-      await controller.githubAuthentication(
-        {
-          authCode: 'authCode',
-        },
-        mockResponse,
-      );
+      await controller.githubAuthentication(mockBody, mockResponse);
 
       expect(mockResponse.send).toHaveBeenCalledWith({
         tempIdToken: 'tempIdToken',
@@ -77,12 +73,7 @@ describe('Auth Controller Unit Test', () => {
         refreshToken: 'refresh token',
       });
 
-      await controller.githubAuthentication(
-        {
-          authCode: 'authCode',
-        },
-        mockResponse,
-      );
+      await controller.githubAuthentication(mockBody, mockResponse);
 
       expect(authService.githubAuthentication).toHaveBeenCalled();
       expect(mockResponse.status).toHaveBeenCalledWith(201);
@@ -106,12 +97,10 @@ describe('Auth Controller Unit Test', () => {
         .mockRejectedValue(new Error('Cannot retrieve access token'));
 
       try {
-        await controller.githubAuthentication(
-          { authCode: 'authCode' },
-          mockResponse,
-        );
+        await controller.githubAuthentication(mockBody, mockResponse);
       } catch (error) {
         expect(error).toBeInstanceOf(UnauthorizedException);
+        expect(error.message).toBe('Invalid authorization code');
         expect(error.response.statusCode).toEqual(401);
       }
     });
@@ -121,15 +110,12 @@ describe('Auth Controller Unit Test', () => {
         .spyOn(authService, 'githubAuthentication')
         .mockRejectedValue(new Error('Cannot retrieve github user'));
 
-      try {
-        await controller.githubAuthentication(
-          { authCode: 'authCode' },
-          mockResponse,
-        );
-      } catch (error) {
-        expect(error).toBeInstanceOf(UnauthorizedException);
-        expect(error.response.statusCode).toEqual(401);
-      }
+      expect(
+        async () =>
+          await controller.githubAuthentication(mockBody, mockResponse),
+      ).rejects.toThrow(
+        new UnauthorizedException('Invalid authorization code'),
+      );
     });
 
     it('should return 500 response when githubAuthentication service throws unknown error', async () => {
@@ -137,15 +123,10 @@ describe('Auth Controller Unit Test', () => {
         .spyOn(authService, 'githubAuthentication')
         .mockRejectedValue(new Error());
 
-      try {
-        await controller.githubAuthentication(
-          { authCode: 'authCode' },
-          mockResponse,
-        );
-      } catch (error) {
-        expect(error).toBeInstanceOf(InternalServerErrorException);
-        expect(error.response.statusCode).toEqual(500);
-      }
+      expect(
+        async () =>
+          await controller.githubAuthentication(mockBody, mockResponse),
+      ).rejects.toThrow(InternalServerErrorException);
     });
   });
 
@@ -232,7 +213,7 @@ describe('Auth Controller Unit Test', () => {
       expect(
         async () =>
           await controller.githubSignup(mockRequest, mockBody, mockResponse),
-      ).rejects.toThrow(UnauthorizedException);
+      ).rejects.toThrow(new UnauthorizedException('Expired:tempIdToken'));
     });
 
     it('should throw 401 error when githubSignup service throws "tempIdToken does not match"', async () => {
@@ -248,7 +229,7 @@ describe('Auth Controller Unit Test', () => {
       expect(
         async () =>
           await controller.githubSignup(mockRequest, mockBody, mockResponse),
-      ).rejects.toThrow(UnauthorizedException);
+      ).rejects.toThrow(new UnauthorizedException('Expired:tempIdToken'));
     });
 
     it('should return 500 response when githubSignup service throws unknown error', async () => {
@@ -309,7 +290,7 @@ describe('Auth Controller Unit Test', () => {
 
       expect(
         async () => await controller.logout(mockRequest, mockResponse),
-      ).rejects.toThrow(UnauthorizedException);
+      ).rejects.toThrow(new UnauthorizedException('Not a logged in member'));
     });
 
     it('should throw 401 error when logout service throws "Failed to verify token', async () => {
@@ -325,7 +306,7 @@ describe('Auth Controller Unit Test', () => {
 
       expect(
         async () => await controller.logout(mockRequest, mockResponse),
-      ).rejects.toThrow(UnauthorizedException);
+      ).rejects.toThrow(new UnauthorizedException('Expired:accessToken'));
     });
 
     it('should throw 500 error when logout service throws unknown error', async () => {
@@ -400,24 +381,24 @@ describe('Auth Controller Unit Test', () => {
 
       expect(
         async () => await controller.refresh(mockRequest, mockResponse),
-      ).rejects.toThrow(UnauthorizedException);
+      ).rejects.toThrow(new UnauthorizedException('Expired:refreshToken'));
     });
 
-	it('should throw 401 error when refresh service throws "Failed to verify token"', async () => {
-		const requestRefreshToken = 'refreshToken';
-		const mockRequest = {
-		  cookies: {
-			refreshToken: requestRefreshToken,
-		  },
-		} as Request;
-		jest
-		  .spyOn(authService, 'refreshAccessTokenAndRefreshToken')
-		  .mockRejectedValue(new Error('Failed to verify token'));
-  
-		expect(
-		  async () => await controller.refresh(mockRequest, mockResponse),
-		).rejects.toThrow(UnauthorizedException);
-	  });
+    it('should throw 401 error when refresh service throws "Failed to verify token"', async () => {
+      const requestRefreshToken = 'refreshToken';
+      const mockRequest = {
+        cookies: {
+          refreshToken: requestRefreshToken,
+        },
+      } as Request;
+      jest
+        .spyOn(authService, 'refreshAccessTokenAndRefreshToken')
+        .mockRejectedValue(new Error('Failed to verify token'));
+
+      expect(
+        async () => await controller.refresh(mockRequest, mockResponse),
+      ).rejects.toThrow(new UnauthorizedException('Expired:refreshToken'));
+    });
 
     it('should throw 500 error when refresh service throws unknown error', async () => {
       const requestRefreshToken = 'refreshToken';
