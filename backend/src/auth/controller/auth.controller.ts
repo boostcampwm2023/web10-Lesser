@@ -52,7 +52,7 @@ export class AuthController {
         err.message === 'Cannot retrieve access token' ||
         err.message === 'Cannot retrieve github user'
       ) {
-        throw new UnauthorizedException(err.message);
+        throw new UnauthorizedException('Invalid authorization code');
       }
       throw new InternalServerErrorException(err.message);
     }
@@ -90,7 +90,7 @@ export class AuthController {
         err.message === 'Failed to verify token' ||
         err.message === 'tempIdToken does not match'
       ) {
-        throw new UnauthorizedException(err.message);
+        throw new UnauthorizedException('Expired:tempIdToken');
       }
       throw new InternalServerErrorException(err.message);
     }
@@ -113,11 +113,11 @@ export class AuthController {
     try {
       await this.authService.logout(accessToken);
     } catch (err) {
-      if (
-        err.message === 'Not a logged in member' ||
-        err.message === 'Failed to verify token'
-      ) {
-        throw new UnauthorizedException(err.message);
+      if (err.message === 'Not a logged in member') {
+        throw new UnauthorizedException('Not a logged in member');
+      }
+      if (err.message === 'Failed to verify token') {
+        throw new UnauthorizedException('Expired:accessToken');
       }
       throw new InternalServerErrorException(err.message);
     }
@@ -148,7 +148,7 @@ export class AuthController {
         err.message === 'No matching refresh token' ||
         err.message === 'Failed to verify token'
       ) {
-        throw new UnauthorizedException(err.message);
+        throw new UnauthorizedException('Expired:refreshToken');
       }
       throw new InternalServerErrorException(err.message);
     }
