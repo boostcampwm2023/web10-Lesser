@@ -1,6 +1,6 @@
 import { baseAPI } from "../utils";
 import { API_URL, ROUTER_URL } from "../../constants/path";
-import { AuthenticatoinDTO, GithubOauthUrlDTO, TempIdTokenResponse } from "../../types/authDTO";
+import { AuthenticationDTO, GithubOauthUrlDTO, TempIdTokenResponse } from "../../types/authDTO";
 import { useNavigate } from "react-router-dom";
 
 export const getLoginURL = async () => {
@@ -10,7 +10,7 @@ export const getLoginURL = async () => {
 
 export const postAuthCode = async (authCode: string) => {
   const navitage = useNavigate();
-  const response = await baseAPI.post<AuthenticatoinDTO>(API_URL.AUTH, { authCode });
+  const response = await baseAPI.post<AuthenticationDTO>(API_URL.AUTH, { authCode });
   if (response.status === 201) {
     return;
   }
