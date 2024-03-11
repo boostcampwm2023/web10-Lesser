@@ -1,0 +1,11 @@
+FROM nginx
+
+RUN rm -rf /etc/nginx/conf.d
+
+RUN mkdir /etc/nginx/conf.d
+
+COPY conf/prod.conf /etc/ngix/conf.d
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
