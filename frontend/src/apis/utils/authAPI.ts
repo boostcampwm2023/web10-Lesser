@@ -31,11 +31,11 @@ const successResponse = (response: AxiosResponse) => {
 };
 
 const failResponse = async (error: AxiosError) => {
-  if (error.status == 401) {
+  if (error.status === 401 && error.message === "Expired:accessToken") {
     unauthorizedErrorRetry++;
-    console.log("unauthorizedErrorRetry count :", unauthorizedErrorRetry);
 
     if (unauthorizedErrorRetry >= 3) {
+      unauthorizedErrorRetry = 0;
       return Promise.reject(error);
     }
 

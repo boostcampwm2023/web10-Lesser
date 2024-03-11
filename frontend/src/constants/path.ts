@@ -13,4 +13,5 @@ export const ROUTER_URL = {
   LOGIN: "/login",
   SIGNUP: "/signup",
   AUTH: "/auth/github/callback",
+  PROJECTS: "/projects",
 };
