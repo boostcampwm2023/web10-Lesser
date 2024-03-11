@@ -1,8 +1,6 @@
 FROM nginx
 
-RUN rm -rf /etc/nginx/conf.d
-
-COPY conf /etc/nginx
+COPY conf/dev.conf /etc/ngix/conf.d
 
 EXPOSE 80
 

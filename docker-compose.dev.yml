@@ -4,6 +4,7 @@ services:
   nginx:
     build:
       context: ./nginx
+      dockerfile: Dockerfile.dev
     ports:
       - "80:80"
       - "443:443"
