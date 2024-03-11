@@ -15,7 +15,12 @@ describe("dropdown hook test", () => {
       options,
     });
 
-    return <Dropdown />;
+    return (
+      <div>
+        <p>외부</p>
+        <Dropdown />;
+      </div>
+    );
   };
 
   it("드롭다운 클릭 시 잘 펼쳐지는가", () => {
@@ -40,6 +45,14 @@ describe("dropdown hook test", () => {
     fireEvent.click(screen.getByText(placeholder));
 
     expect(screen.getByText(placeholder).textContent).toBe(placeholder);
+    expect(screen.queryByText(options[0])).toBeNull();
+  });
+
+  it("외부 클릭 시 드롭다운이 닫히는가", () => {
+    render(<TestComponent />);
+    fireEvent.click(screen.getByText(placeholder));
+    fireEvent.click(screen.getByText("외부"));
+
     expect(screen.queryByText(options[0])).toBeNull();
   });
 });
