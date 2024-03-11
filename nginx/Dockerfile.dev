@@ -1,5 +1,5 @@
 FROM nginx
 
-COPY conf/conf.d/dev.conf /etc/ngix/conf.d
+COPY conf/conf.d/dev.conf /etc/nginx/conf.d
 
 CMD ["nginx", "-g", "daemon off;"]
