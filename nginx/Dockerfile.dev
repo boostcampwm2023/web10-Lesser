@@ -1,7 +1,5 @@
 FROM nginx
 
-COPY conf/dev.conf /etc/ngix/conf.d
-
-EXPOSE 80
+COPY conf/conf.d/dev.conf /etc/ngix/conf.d
 
 CMD ["nginx", "-g", "daemon off;"]
