@@ -6,4 +6,4 @@ export interface AccessTokenResponse {
 export interface TempIdTokenResponse {
   tempIdToken: string;
 }
-export type AuthenticatoinDTO = AccessTokenResponse | TempIdTokenResponse;
+export type AuthenticationDTO = AccessTokenResponse | TempIdTokenResponse;
