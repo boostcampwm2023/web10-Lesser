@@ -1,3 +1,4 @@
+import { Controller, InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MemberService } from '../service/member.service';
 import { MemberController } from './member.controller';
@@ -44,6 +45,16 @@ describe('MemberController', () => {
       expect(memberService.validateUsername).toHaveBeenCalledWith(username);
       expect(controllerResponse.available).toBe(false);
       expect(controllerResponse.message).toBe('duplicate username');
+    });
+
+    it('should throw 500 error when unknown error', async () => {
+      jest
+        .spyOn(memberService, 'validateUsername')
+        .mockRejectedValue(new Error());
+
+      expect(
+        async () => await memberController.availabilityUsername(username),
+      ).rejects.toThrow(InternalServerErrorException);
     });
   });
 });
