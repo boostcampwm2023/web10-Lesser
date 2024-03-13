@@ -29,4 +29,9 @@ export class MemberService {
     );
     return member.id;
   }
+
+  async validateUsername(username: string): Promise<void> {
+    const member = await this.memberRepository.findByUsername(username);
+    if (member !== null) throw new Error('duplicate username');
+  }
 }
