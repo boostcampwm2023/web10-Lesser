@@ -1,4 +1,9 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  InternalServerErrorException,
+  Query,
+} from '@nestjs/common';
 import { MemberService } from '../service/member.service';
 
 @Controller('member')
@@ -10,7 +15,9 @@ export class MemberController {
       await this.memberService.validateUsername(username);
       return { available: true };
     } catch (err) {
-      return { available: false, message: err.message };
+      if (err.message === 'duplicate username')
+        return { available: false, message: err.message };
+      throw new InternalServerErrorException(err.message);
     }
   }
 }
