@@ -154,7 +154,7 @@ export class AuthController {
     }
   }
 
-  @Post('/github/username')
+  @Get('/github/username')
   async getGithubUsername(
     @Req() request: Request & { headers: CustomHeaders },
   ) {
