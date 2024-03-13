@@ -8,9 +8,9 @@ export class MemberController {
   async availabilityUsername(@Query('username') username) {
     try {
       await this.memberService.validateUsername(username);
+      return { available: true };
     } catch (err) {
       return { available: false, message: err.message };
     }
-    return { available: true };
   }
 }
