@@ -153,4 +153,32 @@ export class AuthController {
       throw new InternalServerErrorException(err.message);
     }
   }
+
+  @Post('/github/username')
+  async getGithubUsername(
+    @Req() request: Request & { headers: CustomHeaders },
+  ) {
+    const authHeader = request.headers.authorization;
+    if (!authHeader) {
+      throw new UnauthorizedException('Authorization header is missing');
+    }
+    const [bearer, tempIdToken] = authHeader.split(' ');
+    if (bearer !== 'Bearer' || !tempIdToken) {
+      throw new UnauthorizedException('Invalid authorization header format');
+    }
+
+    try {
+      const githubUsername =
+        await this.authService.getGithubUsernameByTempIdToken(tempIdToken);
+      return { githubUsername };
+    } catch (err) {
+      if (
+        err.message === 'Failed to verify token' ||
+        err.message === 'tempIdToken does not match'
+      ) {
+        throw new UnauthorizedException('Expired:tempIdToken');
+      }
+      throw new InternalServerErrorException(err.message);
+    }
+  }
 }

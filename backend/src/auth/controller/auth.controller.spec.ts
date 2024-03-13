@@ -23,6 +23,7 @@ describe('Auth Controller Unit Test', () => {
             githubSignup: jest.fn(),
             logout: jest.fn(),
             refreshAccessTokenAndRefreshToken: jest.fn(),
+            getGithubUsernameByTempIdToken: jest.fn(),
           },
         },
       ],
@@ -413,6 +414,99 @@ describe('Auth Controller Unit Test', () => {
 
       expect(
         async () => await controller.refresh(mockRequest, mockResponse),
+      ).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
+  describe('Get github username', () => {
+    interface CustomHeaders {
+      authorization: string;
+    }
+    it('should return github username when given valid temp id token', async () => {
+      const tempIdToken = 'tempIdToken';
+      const githubUsername = 'githubUsername';
+      const mockRequest = {
+        headers: {
+          authorization: `Bearer ${tempIdToken}`,
+        },
+      } as Request & { headers: CustomHeaders };
+      jest
+        .spyOn(authService, 'getGithubUsernameByTempIdToken')
+        .mockResolvedValue(githubUsername);
+
+      const response = await controller.getGithubUsername(mockRequest);
+
+      expect(authService.getGithubUsernameByTempIdToken).toHaveBeenCalledWith(
+        tempIdToken,
+      );
+      expect(response.githubUsername).toBe(githubUsername);
+    });
+
+    it('should throw 401 if authorization header is missing', () => {
+      const mockRequest = {
+        headers: {},
+      } as Request & { headers: CustomHeaders };
+
+      expect(
+        async () => await controller.getGithubUsername(mockRequest),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should throw 401 if authorization header format is invalid', () => {
+      const mockRequest = {
+        headers: {
+          authorization: 'InvalidFormat',
+        },
+      } as Request & { headers: CustomHeaders };
+
+      expect(
+        async () => await controller.getGithubUsername(mockRequest),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should throw 401 when get github username service throws "Failed to verify token', async () => {
+      const tempIdToken = 'tempIdToken';
+      const mockRequest = {
+        headers: {
+          authorization: `Bearer ${tempIdToken}`,
+        },
+      } as Request & { headers: CustomHeaders };
+      jest
+        .spyOn(authService, 'getGithubUsernameByTempIdToken')
+        .mockRejectedValue(new Error('Failed to verify token'));
+
+      expect(
+        async () => await controller.getGithubUsername(mockRequest),
+      ).rejects.toThrow(new UnauthorizedException('Expired:tempIdToken'));
+    });
+
+    it('should throw 401 when github username service throws "tempIdToken does not match"', async () => {
+      const mockRequest = {
+        headers: {
+          authorization: 'Bearer expiredToken',
+        },
+      } as Request & { headers: CustomHeaders };
+      jest
+        .spyOn(authService, 'getGithubUsernameByTempIdToken')
+        .mockRejectedValue(new Error('tempIdToken does not match'));
+
+      expect(
+        async () => await controller.getGithubUsername(mockRequest),
+      ).rejects.toThrow(new UnauthorizedException('Expired:tempIdToken'));
+    });
+
+    it('should return 500 response when github username service throws unknown error', async () => {
+      const mockRequest = {
+        headers: {
+          authorization: 'Bearer validToken',
+        },
+      } as Request & { headers: CustomHeaders };
+      jest
+        .spyOn(authService, 'getGithubUsernameByTempIdToken')
+        .mockRejectedValue(new Error());
+
+      expect(
+        async () => await controller.getGithubUsername(mockRequest),
       ).rejects.toThrow(InternalServerErrorException);
     });
   });
