@@ -44,6 +44,7 @@ describe('Auth Service Unit Test', () => {
             findByGithubId: jest.fn(),
             updateTempIdToken: jest.fn(),
             findByUuid: jest.fn(),
+            findByTempIdToken: jest.fn(),
           },
         },
         {
@@ -469,6 +470,28 @@ describe('Auth Service Unit Test', () => {
         async () =>
           await authService.refreshAccessTokenAndRefreshToken(oldRefreshToken),
       ).rejects.toThrow('No matching refresh token');
+    });
+  });
+
+  describe('Get github username by temp id token', () => {
+    const tempIdToken = 'tempIdToken';
+
+    it('should return github username when given valid temp id token', async () => {
+      const githubUsername = 'githubUsername';
+      const tempMember = TempMember.of(
+        'uuid',
+        tempIdToken,
+        0,
+        githubUsername,
+        'image_url',
+      );
+      jest.spyOn(authService, 'getTempMember').mockResolvedValue(tempMember);
+
+      const response =
+        await authService.getGithubUsernameByTempIdToken(tempIdToken);
+
+      expect(authService.getTempMember).toHaveBeenCalledWith(tempIdToken);
+      expect(response).toBe(githubUsername);
     });
   });
 });

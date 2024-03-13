@@ -177,4 +177,9 @@ export class AuthService {
       await this.lesserJwtService.createAccessToken(memberId);
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
+
+  async getGithubUsernameByTempIdToken(tempIdToken: string) {
+    const tempMember = await this.getTempMember(tempIdToken);
+    return tempMember.username;
+  }
 }
