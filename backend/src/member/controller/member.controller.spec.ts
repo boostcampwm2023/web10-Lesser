@@ -1,4 +1,7 @@
-import { Controller, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MemberService } from '../service/member.service';
 import { MemberController } from './member.controller';
@@ -45,6 +48,18 @@ describe('MemberController', () => {
       expect(memberService.validateUsername).toHaveBeenCalledWith(username);
       expect(controllerResponse.available).toBe(false);
       expect(controllerResponse.message).toBe('duplicate username');
+    });
+
+    it('should throw 400 error when username is missing', async () => {
+      expect(
+        async () => await memberController.availabilityUsername(''),
+      ).rejects.toThrow(new BadRequestException('username is missing'));
+      expect(
+        async () => await memberController.availabilityUsername(undefined),
+      ).rejects.toThrow(new BadRequestException('username is missing'));
+      expect(
+        async () => await memberController.availabilityUsername(null),
+      ).rejects.toThrow(new BadRequestException('username is missing'));
     });
 
     it('should throw 500 error when unknown error', async () => {
