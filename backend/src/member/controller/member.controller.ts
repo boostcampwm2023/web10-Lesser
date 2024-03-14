@@ -1,8 +1,9 @@
 import {
   Controller,
   Get,
-  InternalServerErrorException,
   Query,
+  BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { MemberService } from '../service/member.service';
 
@@ -10,7 +11,8 @@ import { MemberService } from '../service/member.service';
 export class MemberController {
   constructor(private readonly memberService: MemberService) {}
   @Get('/availability')
-  async availabilityUsername(@Query('username') username) {
+  async availabilityUsername(@Query('username') username: string) {
+    if (!username) throw new BadRequestException('username is missing')
     try {
       await this.memberService.validateUsername(username);
       return { available: true };
