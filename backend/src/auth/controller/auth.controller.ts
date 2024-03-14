@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
 import { CookieOptions, Response, Request } from 'express';
+import { GithubAuthenticationRequestDto } from './dto/GithubAthenticationRequest.dto';
+import { GithubSignupRequestDto } from './dto/GithubSignupRequest.dto';
 
 interface CustomHeaders {
   authorization: string;
@@ -32,7 +34,7 @@ export class AuthController {
 
   @Post('github/authentication')
   async githubAuthentication(
-    @Body() body: { authCode: string },
+    @Body() body: GithubAuthenticationRequestDto,
     @Res() response: Response,
   ) {
     try {
@@ -61,7 +63,7 @@ export class AuthController {
   @Post('github/signup')
   async githubSignup(
     @Req() request: Request & { headers: CustomHeaders },
-    @Body() body: { username: string; position: string; techStack: string[] },
+    @Body() body: GithubSignupRequestDto,
     @Res() response: Response,
   ) {
     const authHeader = request.headers.authorization;
