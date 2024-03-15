@@ -5,21 +5,24 @@ import useDebounce from "../../hooks/common/useDebounce";
 import { getNicknameAvailability } from "../../apis/api/signupAPI";
 
 interface NicknameInputProps {
+  currentStepNumber: number;
   setCurrentStep: React.Dispatch<
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;
   nicknameRef: React.MutableRefObject<string>;
 }
 
-const NicknameInput = ({ setCurrentStep, nicknameRef }: NicknameInputProps) => {
+const NicknameInput = ({
+  currentStepNumber,
+  setCurrentStep,
+  nicknameRef,
+}: NicknameInputProps) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [validated, setValidated] = useState<boolean | null>(null);
   const debounce = useDebounce();
 
   const handleNextButtonClick = () => {
     setCurrentStep(SIGNUP_STEP.STEP2);
-    const jobElement = document.getElementById("job");
-    jobElement?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
 
   const nicknameAvailabilityCheck = async () => {
@@ -46,7 +49,13 @@ const NicknameInput = ({ setCurrentStep, nicknameRef }: NicknameInputProps) => {
   }, [inputValue]);
 
   return (
-    <div id="nickname" className="h-[100%] flex items-center">
+    <div
+      className={`flex h-[100%] ${
+        currentStepNumber === SIGNUP_STEP.STEP1.NUMBER
+          ? "items-center"
+          : "items-end"
+      }`}
+    >
       <div className="w-[80%]">
         <label
           className="text-3xl font-semibold text-dark-gray"
@@ -55,7 +64,7 @@ const NicknameInput = ({ setCurrentStep, nicknameRef }: NicknameInputProps) => {
           LESSER에서 사용할 제 이름은
         </label>
         <br />
-        <div className="flex">
+        <div id="nickname-input-box" className="flex">
           <div className="inline">
             <input
               type="text"

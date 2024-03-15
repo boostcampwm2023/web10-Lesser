@@ -1,34 +1,35 @@
 import {
-  BaseEntity,
   Column,
-  CreateDateColumn,
   Entity,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
   UpdateDateColumn,
+  Index,
 } from 'typeorm';
 
 @Entity()
-export class Member extends BaseEntity {
-  @PrimaryGeneratedColumn()
+export class Member {
+  @PrimaryGeneratedColumn('increment', { type: 'int' })
   id: number;
 
-  @Column()
+  @Index()
+  @Column({ type: 'int', unique: true, nullable: false })
   github_id: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: 39, nullable: false })
   github_username: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 256, nullable: false })
   github_image_url: string;
 
-  @Column()
+  @Index()
+  @Column({ type: 'varchar', length: 39, unique: true, nullable: false })
   username: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 20, nullable: false })
   position: string;
 
-  @Column('json')
+  @Column({ type: 'json', nullable: false })
   tech_stack: object;
 
   @CreateDateColumn({ type: 'timestamp' })

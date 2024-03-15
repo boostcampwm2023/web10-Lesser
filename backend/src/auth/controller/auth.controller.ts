@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
 import { CookieOptions, Response, Request } from 'express';
+import { GithubAuthenticationRequestDto } from './dto/GithubAthenticationRequest.dto';
+import { GithubSignupRequestDto } from './dto/GithubSignupRequest.dto';
 
 interface CustomHeaders {
   authorization: string;
@@ -32,7 +34,7 @@ export class AuthController {
 
   @Post('github/authentication')
   async githubAuthentication(
-    @Body() body: { authCode: string },
+    @Body() body: GithubAuthenticationRequestDto,
     @Res() response: Response,
   ) {
     try {
@@ -52,7 +54,7 @@ export class AuthController {
         err.message === 'Cannot retrieve access token' ||
         err.message === 'Cannot retrieve github user'
       ) {
-        throw new UnauthorizedException(err.message);
+        throw new UnauthorizedException('Invalid authorization code');
       }
       throw new InternalServerErrorException(err.message);
     }
@@ -61,7 +63,7 @@ export class AuthController {
   @Post('github/signup')
   async githubSignup(
     @Req() request: Request & { headers: CustomHeaders },
-    @Body() body: { username: string; position: string; techStack: string[] },
+    @Body() body: GithubSignupRequestDto,
     @Res() response: Response,
   ) {
     const authHeader = request.headers.authorization;
@@ -90,7 +92,7 @@ export class AuthController {
         err.message === 'Failed to verify token' ||
         err.message === 'tempIdToken does not match'
       ) {
-        throw new UnauthorizedException(err.message);
+        throw new UnauthorizedException('Expired:tempIdToken');
       }
       throw new InternalServerErrorException(err.message);
     }
@@ -113,11 +115,11 @@ export class AuthController {
     try {
       await this.authService.logout(accessToken);
     } catch (err) {
-      if (
-        err.message === 'Not a logged in member' ||
-        err.message === 'Failed to verify token'
-      ) {
-        throw new UnauthorizedException(err.message);
+      if (err.message === 'Not a logged in member') {
+        throw new UnauthorizedException('Not a logged in member');
+      }
+      if (err.message === 'Failed to verify token') {
+        throw new UnauthorizedException('Expired:accessToken');
       }
       throw new InternalServerErrorException(err.message);
     }
@@ -148,7 +150,35 @@ export class AuthController {
         err.message === 'No matching refresh token' ||
         err.message === 'Failed to verify token'
       ) {
-        throw new UnauthorizedException(err.message);
+        throw new UnauthorizedException('Expired:refreshToken');
+      }
+      throw new InternalServerErrorException(err.message);
+    }
+  }
+
+  @Get('/github/username')
+  async getGithubUsername(
+    @Req() request: Request & { headers: CustomHeaders },
+  ) {
+    const authHeader = request.headers.authorization;
+    if (!authHeader) {
+      throw new UnauthorizedException('Authorization header is missing');
+    }
+    const [bearer, tempIdToken] = authHeader.split(' ');
+    if (bearer !== 'Bearer' || !tempIdToken) {
+      throw new UnauthorizedException('Invalid authorization header format');
+    }
+
+    try {
+      const githubUsername =
+        await this.authService.getGithubUsernameByTempIdToken(tempIdToken);
+      return { githubUsername };
+    } catch (err) {
+      if (
+        err.message === 'Failed to verify token' ||
+        err.message === 'tempIdToken does not match'
+      ) {
+        throw new UnauthorizedException('Expired:tempIdToken');
       }
       throw new InternalServerErrorException(err.message);
     }

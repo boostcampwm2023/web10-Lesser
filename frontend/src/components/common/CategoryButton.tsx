@@ -9,7 +9,7 @@ const CategoryButton = ({
   category,
   onCloseButtonClick,
 }: CategoryButtonProps) => (
-  <div className="w-[12.25rem] h-[3.25rem] bg-light-green rounded-xl text-white text-2xl font-bold flex items-center py-2 pl-9 pr-3">
+  <div className="min-w-[12.25rem] min-h-[3.25rem] bg-light-green rounded-xl text-white text-2xl font-bold flex items-center py-2 pl-9 pr-3 shadow-box">
     {category}
     <button
       type="button"

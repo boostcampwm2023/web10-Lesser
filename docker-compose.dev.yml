@@ -4,14 +4,19 @@ services:
   nginx:
     build:
       context: ./nginx
+      dockerfile: Dockerfile.dev
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - backend
       - frontend
+    volumes:
+      - certbot-www:/var/www/certbot/:ro
+      - certbot-conf:/etc/nginx/ssl/:ro
     networks:
       - lesser-net
-  
+
   backend:
     build:
       context: ./backend
@@ -28,7 +33,7 @@ services:
       - db
     networks:
       - lesser-net
-  
+
   frontend:
     build:
       context: ./frontend
@@ -52,3 +57,7 @@ networks:
 
 volumes:
   mysql_data: {}
+  certbot-www:
+    external: true
+  certbot-conf:
+    external: true
