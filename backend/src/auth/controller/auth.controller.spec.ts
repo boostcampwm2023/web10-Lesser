@@ -86,7 +86,7 @@ describe('Auth Controller Unit Test', () => {
         'refresh token',
         {
           httpOnly: true,
-          secure: false,
+          secure: true,
           path: '/api/auth/',
           sameSite: 'strict',
         },
@@ -194,7 +194,7 @@ describe('Auth Controller Unit Test', () => {
         'refresh token',
         {
           httpOnly: true,
-          secure: false,
+          secure: true,
           path: '/api/auth/',
           sameSite: 'strict',
         },
@@ -270,7 +270,7 @@ describe('Auth Controller Unit Test', () => {
       expect(authService.logout).toHaveBeenCalledWith(accessToken);
       expect(mockResponse.clearCookie).toHaveBeenCalledWith('refreshToken', {
         httpOnly: true,
-        secure: false,
+        secure: true,
         path: '/api/auth/',
         sameSite: 'strict',
       });
@@ -362,7 +362,7 @@ describe('Auth Controller Unit Test', () => {
         newRefreshToken,
         {
           httpOnly: true,
-          secure: false,
+          secure: true,
           path: '/api/auth/',
           sameSite: 'strict',
         },
