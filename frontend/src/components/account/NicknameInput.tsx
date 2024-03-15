@@ -1,6 +1,8 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { SIGNUP_STEP } from "../../constants/account";
 import NextStepButton from "./NextStepButton";
+import useDebounce from "../../hooks/common/useDebounce";
+import { getNicknameAvailability } from "../../apis/api/signupAPI";
 
 interface NicknameInputProps {
   setCurrentStep: React.Dispatch<
@@ -11,7 +13,8 @@ interface NicknameInputProps {
 
 const NicknameInput = ({ setCurrentStep, nicknameRef }: NicknameInputProps) => {
   const [inputValue, setInputValue] = useState<string>("");
-  const [validated] = useState<boolean | null>(null);
+  const [validated, setValidated] = useState<boolean | null>(null);
+  const debounce = useDebounce();
 
   const handleNextButtonClick = () => {
     setCurrentStep(SIGNUP_STEP.STEP2);
@@ -19,10 +22,28 @@ const NicknameInput = ({ setCurrentStep, nicknameRef }: NicknameInputProps) => {
     jobElement?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
 
-  const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(target.value);
-    nicknameRef.current = target.value;
+  const nicknameAvailabilityCheck = async () => {
+    if (!inputValue) {
+      return;
+    }
+
+    const available = await getNicknameAvailability(inputValue);
+    if (available) {
+      setValidated(true);
+    } else {
+      setValidated(false);
+    }
   };
+
+  const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    const value = target.value.trim();
+    setInputValue(value);
+    nicknameRef.current = value;
+  };
+
+  useEffect(() => {
+    debounce(1000, nicknameAvailabilityCheck);
+  }, [inputValue]);
 
   return (
     <div id="nickname" className="h-[100%] flex items-center">
@@ -47,19 +68,23 @@ const NicknameInput = ({ setCurrentStep, nicknameRef }: NicknameInputProps) => {
               } ${
                 validated !== null &&
                 !validated &&
-                "border-b-3 border-error-text focus:border-error-text"
+                "border-b-3 border-error-red focus:border-error-red"
               }`}
             />
             {validated !== null && !validated && (
-              <p className="text-error-text">이미 사용 중인 닉네임입니다</p>
+              <p className="font-bold text-error-red text-xxs">
+                이미 사용 중인 닉네임입니다
+              </p>
             )}
           </div>
           <span className="text-3xl font-semibold text-dark-gray">입니다</span>
         </div>
       </div>
-      <NextStepButton onNextButtonClick={handleNextButtonClick}>
-        Next
-      </NextStepButton>
+      {validated && (
+        <NextStepButton onNextButtonClick={handleNextButtonClick}>
+          Next
+        </NextStepButton>
+      )}
     </div>
   );
 };

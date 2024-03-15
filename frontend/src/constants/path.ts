@@ -5,6 +5,7 @@ export const API_URL = {
   AUTH: "/auth/github/authentication",
   SIGN_UP: "/auth/github/signup",
   LOG_OUT: "/auth/logout",
+  NICKNAME_AVAILABLILITY: "/member/availability",
 };
 
 export const ROUTER_URL = {
