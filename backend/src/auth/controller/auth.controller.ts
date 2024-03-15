@@ -22,7 +22,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
   private cookieOptions: CookieOptions = {
     httpOnly: true,
-    secure: false, // HTTPS 적용시 true로 변경
+    secure: process.env.NODE_ENV === 'LOCAL' ? false : true,
     path: '/api/auth/',
     sameSite: 'strict',
   };
