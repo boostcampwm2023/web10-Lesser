@@ -14,7 +14,7 @@ export class LoginMember {
   @PrimaryColumn()
   member_id: number;
 
-  @OneToOne(() => Member)
+  @OneToOne(() => Member, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'member_id' })
   member: Member;
 
