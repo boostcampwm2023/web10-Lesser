@@ -6,7 +6,6 @@ const GlobalErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
   return (
     <div>
       <ErrorPage {...{ error, resetErrorBoundary }} />
-      <button onClick={resetErrorBoundary}>Try again</button>
     </div>
   );
 };
