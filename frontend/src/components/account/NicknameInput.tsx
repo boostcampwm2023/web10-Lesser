@@ -31,10 +31,6 @@ const NicknameInput = ({
   };
 
   const nicknameAvailabilityCheck = async () => {
-    if (!inputValue) {
-      return;
-    }
-
     const available = await getNicknameAvailability(inputValue);
     if (available) {
       setValidated(true);
@@ -50,6 +46,11 @@ const NicknameInput = ({
   };
 
   useEffect(() => {
+    if (!inputValue) {
+      setValidated(null);
+      return;
+    }
+
     debounce(1000, nicknameAvailabilityCheck);
   }, [inputValue]);
 
@@ -90,7 +91,7 @@ const NicknameInput = ({
               value={inputValue}
               onChange={(e) => handleInputChange(e)}
               className={`w-[27.5rem] h-[3rem] border-b-2 focus:outline-none focus:border-b-3 focus:border-middle-green  font-semibold text-3xl ${
-                inputValue && "border-b-3 border-middle-green "
+                inputValue && validated && "border-b-3 border-middle-green "
               } ${
                 validated !== null &&
                 !validated &&
