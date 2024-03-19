@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
 import { CookieOptions, Response, Request } from 'express';
-import { GithubAuthenticationRequestDto } from './dto/GithubAthenticationRequest.dto';
+import { GithubAuthenticationRequestDto } from './dto/GithubAuthenticationRequest.dto';
 import { GithubSignupRequestDto } from './dto/GithubSignupRequest.dto';
 
 interface CustomHeaders {
@@ -22,7 +22,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
   private cookieOptions: CookieOptions = {
     httpOnly: true,
-    secure: false, // HTTPS 적용시 true로 변경
+    secure: process.env.NODE_ENV === 'LOCAL' ? false : true,
     path: '/api/auth/',
     sameSite: 'strict',
   };
