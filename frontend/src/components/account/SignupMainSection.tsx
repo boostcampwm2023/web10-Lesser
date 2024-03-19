@@ -1,8 +1,11 @@
 import { useEffect, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { postSignup } from "../../apis/api/signupAPI";
 import NicknameInput from "./NicknameInput";
 import PositionInput from "./PositionInput";
 import TechStackInput from "./TechStackInput";
 import { SIGNUP_STEP } from "../../constants/account";
+import { ROUTER_URL } from "../../constants/path";
 
 interface SignupMainSectionProps {
   currentStepNumber: number;
@@ -16,8 +19,10 @@ const SignupMainSection = ({
   setCurrentStep,
 }: SignupMainSectionProps) => {
   const nicknameRef = useRef<string>("");
-  const positionRef = useRef<string | null>(null);
-  const techRef = useRef<string[]>([]);
+  const positionRef = useRef<null | string>(null);
+  const techRef = useRef<null | string[]>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handlePrevStepAreaClick = () => {
     setCurrentStep((prevStep) => {
@@ -33,7 +38,18 @@ const SignupMainSection = ({
     });
   };
 
-  const handleSignupButtonClick = () => {};
+  const handleSignupButtonClick = async () => {
+    const status = await postSignup({
+      username: nicknameRef.current,
+      position: positionRef.current,
+      techStack: techRef.current,
+      tempIdToken: location.state.tempIdToken,
+    });
+
+    if (status === 201) {
+      navigate(ROUTER_URL.PROJECTS);
+    }
+  };
 
   useEffect(() => {
     const nicknameInput = document.getElementById("nickname");
