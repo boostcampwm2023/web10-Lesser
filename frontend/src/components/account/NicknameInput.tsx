@@ -2,7 +2,11 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { SIGNUP_STEP } from "../../constants/account";
 import NextStepButton from "./NextStepButton";
 import useDebounce from "../../hooks/common/useDebounce";
-import { getNicknameAvailability } from "../../apis/api/signupAPI";
+import {
+  getGithubUsername,
+  getNicknameAvailability,
+} from "../../apis/api/signupAPI";
+import { useLocation } from "react-router-dom";
 
 interface NicknameInputProps {
   currentStepNumber: number;
@@ -19,6 +23,7 @@ const NicknameInput = ({
 }: NicknameInputProps) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [validated, setValidated] = useState<boolean | null>(null);
+  const location = useLocation();
   const debounce = useDebounce();
 
   const handleNextButtonClick = () => {
@@ -47,6 +52,18 @@ const NicknameInput = ({
   useEffect(() => {
     debounce(1000, nicknameAvailabilityCheck);
   }, [inputValue]);
+
+  useEffect(() => {
+    const getUsername = async () => {
+      const githubUsername = await getGithubUsername(
+        location.state.tempIdToken
+      );
+      setInputValue(githubUsername);
+      nicknameRef.current = githubUsername;
+    };
+
+    getUsername();
+  }, []);
 
   return (
     <div
