@@ -1,27 +1,36 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 import { GithubApiService } from 'src/github-api/github-api.service';
+import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { Member } from 'src/member/entity/member.entity';
 import { DataSource } from 'typeorm';
 
 export let app: INestApplication;
 export let githubApiService: GithubApiService;
+export let lesserJwtService: LesserJwtService;
 export let dataSource: DataSource;
 export const jwtTokenPattern =
   /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
 
-export const saveMemberToDatabase = async () => {
+export const memberFixture = {
+  github_id: 123,
+  github_username: 'github_username',
+  github_image_url: 'avatar_url',
+  username: 'username',
+  position: 'position',
+  tech_stack: { stacks: ['js', 'ts'] },
+};
+
+export const createMember = async (newMember) => {
   const memberRepository = dataSource.getRepository(Member);
-  const member = {
-    github_id: 123,
-    github_username: 'github_username',
-    github_image_url: 'avatar_url',
-    username: 'username',
-    position: 'position',
-    tech_stack: { stacks: ['js', 'ts'] },
-  };
-  return await memberRepository.save(member);
+  const member = await memberRepository.save(newMember);
+  const [accessToken, refreshToken] = await Promise.all([
+    lesserJwtService.createAccessToken(member.id),
+    lesserJwtService.createRefreshToken(member.id),
+  ]);
+  return { accessToken, refreshToken, member };
 };
 
 beforeAll(async () => {
@@ -41,6 +50,7 @@ beforeAll(async () => {
     })
     .compile();
   githubApiService = moduleFixture.get<GithubApiService>(GithubApiService);
+  lesserJwtService = moduleFixture.get<LesserJwtService>(LesserJwtService);
 
   app = moduleFixture.createNestApplication();
   app.setGlobalPrefix('api');
