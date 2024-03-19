@@ -3,7 +3,8 @@ import {
   app,
   githubApiService,
   jwtTokenPattern,
-  saveMemberToDatabase,
+  createMember,
+  memberFixture,
 } from 'test/setup';
 
 describe('POST /api/auth/github/authentication', () => {
@@ -17,7 +18,7 @@ describe('POST /api/auth/github/authentication', () => {
   });
 
   it('should return 201', async () => {
-    await saveMemberToDatabase();
+    await createMember(memberFixture);
     const response = await request(app.getHttpServer())
       .post('/api/auth/github/authentication')
       .send({ authCode: 'authCode' });
