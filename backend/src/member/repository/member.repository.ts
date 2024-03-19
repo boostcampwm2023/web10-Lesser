@@ -10,6 +10,10 @@ export class MemberRepository {
     private readonly memberRepository: Repository<Member>,
   ) {}
 
+  findById(id: number): Promise<Member> {
+    return this.memberRepository.findOneBy({ id });
+  }
+
   findByGithubId(githubId: number): Promise<Member> {
     return this.memberRepository.findOneBy({ github_id: githubId });
   }
