@@ -9,7 +9,7 @@ interface TechStackInputProps {
   setCurrentStep: React.Dispatch<
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;
-  techRef: React.MutableRefObject<string[]>;
+  techRef: React.MutableRefObject<null | string[]>;
   onSignupButtonClick: () => void;
 }
 
@@ -39,6 +39,7 @@ const TechStackInput = ({
             <CategoryButton
               category={techStack}
               onCloseButtonClick={handleCloseButtonClick}
+              key={techStack}
             />
           ))}
         </div>
@@ -54,9 +55,11 @@ const TechStackInput = ({
         </button>
         <p className="text-3xl font-semibold text-dark-gray">입니다</p>
       </div>
-      <NextStepButton onNextButtonClick={onSignupButtonClick}>
-        가입하기
-      </NextStepButton>
+      {techStackList.length !== 0 && (
+        <NextStepButton onNextButtonClick={onSignupButtonClick}>
+          가입하기
+        </NextStepButton>
+      )}
     </div>
   );
 };

@@ -2,7 +2,7 @@ import { TECH_STACK_INFO } from "../../constants/account";
 
 interface TechStackModalProps {
   close: () => void;
-  techRef: React.MutableRefObject<string[]>;
+  techRef: React.MutableRefObject<null | string[]>;
   setTechStackList: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
@@ -13,6 +13,12 @@ const TechStackModal = ({
 }: TechStackModalProps) => {
   const handleTechStackClick = (techStack: string) => {
     setTechStackList((techStackList) => {
+      if (!techRef.current) {
+        const newTechStackList = [techStack];
+        techRef.current = [techStack];
+        return newTechStackList;
+      }
+
       const newTechStackList = [...techStackList];
       if (techStackList.indexOf(techStack) < 0) {
         techRef.current.push(techStack);
@@ -31,6 +37,7 @@ const TechStackModal = ({
         <ul>
           {TECH_STACK_INFO.map((techStack) => (
             <li
+              key={techStack}
               onClick={() => handleTechStackClick(techStack)}
               className="py-2.5 px-9 hover:text-white hover:cursor-pointer hover:bg-middle-green"
             >

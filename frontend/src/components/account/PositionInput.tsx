@@ -50,7 +50,7 @@ const PositionInput = ({
         />
         <span className="text-3xl font-semibold text-dark-gray">입니다</span>
       </div>
-      {currentStepNumber !== SIGNUP_STEP.STEP3.NUMBER && (
+      {currentStepNumber !== SIGNUP_STEP.STEP3.NUMBER && selectedOption && (
         <NextStepButton onNextButtonClick={handleNextButtonClick}>
           Next
         </NextStepButton>
