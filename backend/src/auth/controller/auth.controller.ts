@@ -13,7 +13,7 @@ import { CookieOptions, Response, Request } from 'express';
 import { GithubAuthenticationRequestDto } from './dto/GithubAuthenticationRequest.dto';
 import { GithubSignupRequestDto } from './dto/GithubSignupRequest.dto';
 
-interface CustomHeaders {
+export interface CustomHeaders {
   authorization: string;
 }
 

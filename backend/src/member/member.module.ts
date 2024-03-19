@@ -4,9 +4,10 @@ import { Member } from './entity/member.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MemberRepository } from './repository/member.repository';
 import { MemberController } from './controller/member.controller';
+import { LesserJwtModule } from 'src/lesser-jwt/lesser-jwt.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Member])],
+  imports: [LesserJwtModule, TypeOrmModule.forFeature([Member])],
   providers: [MemberService, MemberRepository],
   exports: [MemberService],
   controllers: [MemberController],
