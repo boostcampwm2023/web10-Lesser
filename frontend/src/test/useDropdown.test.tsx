@@ -3,7 +3,7 @@
  */
 
 import { render, screen, fireEvent } from "@testing-library/react";
-import useDropdown from "./useDropdown.tsx";
+import useDropdown from "../hooks/common/dropdown/useDropdown.tsx";
 
 describe("dropdown hook test", () => {
   const placeholder = "드롭다운 버튼";
