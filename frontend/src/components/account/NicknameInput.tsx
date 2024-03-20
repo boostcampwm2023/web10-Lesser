@@ -1,6 +1,12 @@
-import { ChangeEvent, useState } from "react";
-import NextStepButton from "./NextStepButton";
+import { ChangeEvent, useEffect, useState } from "react";
 import { SIGNUP_STEP } from "../../constants/account";
+import NextStepButton from "./NextStepButton";
+import useDebounce from "../../hooks/common/useDebounce";
+import {
+  getGithubUsername,
+  getNicknameAvailability,
+} from "../../apis/api/signupAPI";
+import { useLocation } from "react-router-dom";
 
 interface NicknameInputProps {
   currentStepNumber: number;
@@ -16,16 +22,49 @@ const NicknameInput = ({
   nicknameRef,
 }: NicknameInputProps) => {
   const [inputValue, setInputValue] = useState<string>("");
-  const [validated] = useState<boolean | null>(null);
+  const [validated, setValidated] = useState<boolean | null>(null);
+  const location = useLocation();
+  const debounce = useDebounce();
 
   const handleNextButtonClick = () => {
     setCurrentStep(SIGNUP_STEP.STEP2);
   };
 
-  const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(target.value);
-    nicknameRef.current = target.value;
+  const nicknameAvailabilityCheck = async () => {
+    const available = await getNicknameAvailability(inputValue);
+    if (available) {
+      setValidated(true);
+    } else {
+      setValidated(false);
+    }
   };
+
+  const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    const value = target.value.trim();
+    setInputValue(value);
+    nicknameRef.current = value;
+  };
+
+  useEffect(() => {
+    if (!inputValue) {
+      setValidated(null);
+      return;
+    }
+
+    debounce(1000, nicknameAvailabilityCheck);
+  }, [inputValue]);
+
+  useEffect(() => {
+    const getUsername = async () => {
+      const githubUsername = await getGithubUsername(
+        location.state.tempIdToken
+      );
+      setInputValue(githubUsername);
+      nicknameRef.current = githubUsername;
+    };
+
+    getUsername();
+  }, []);
 
   return (
     <div
@@ -52,21 +91,23 @@ const NicknameInput = ({
               value={inputValue}
               onChange={(e) => handleInputChange(e)}
               className={`w-[27.5rem] h-[3rem] border-b-2 focus:outline-none focus:border-b-3 focus:border-middle-green  font-semibold text-3xl ${
-                inputValue && "border-b-3 border-middle-green "
+                inputValue && validated && "border-b-3 border-middle-green "
               } ${
                 validated !== null &&
                 !validated &&
-                "border-b-3 border-error-text focus:border-error-text"
+                "border-b-3 border-error-red focus:border-error-red"
               }`}
             />
             {validated !== null && !validated && (
-              <p className="text-error-text">이미 사용 중인 닉네임입니다</p>
+              <p className="font-bold text-error-red text-xxs">
+                이미 사용 중인 닉네임입니다
+              </p>
             )}
           </div>
           <span className="text-3xl font-semibold text-dark-gray">입니다</span>
         </div>
       </div>
-      {currentStepNumber === SIGNUP_STEP.STEP1.NUMBER && (
+      {validated && (
         <NextStepButton onNextButtonClick={handleNextButtonClick}>
           Next
         </NextStepButton>
