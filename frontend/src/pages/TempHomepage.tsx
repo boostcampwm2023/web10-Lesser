@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import React from "react";
+import { ROUTER_URL } from "../constants/path";
 
 const TempHomepage = () => {
   console.log("실행중");
@@ -16,21 +17,21 @@ const TempHomepage = () => {
       </div>
       <ul>
         <li>
-          <Link to={"/login"} className="hover:underline">
+          <Link to={ROUTER_URL.LOGIN} className="hover:underline">
             Log in
           </Link>
         </li>
         <li>
-          <Link to={"/signup"} className="hover:underline">
+          <Link to={ROUTER_URL.SIGNUP} className="hover:underline">
             Sign up
           </Link>
         </li>
+        <li>
+          <Link to={"/throw-error"} className="hover:underline">
+            에러를 던져봅시다!
+          </Link>
+        </li>
       </ul>
-      <div className="w-screen border-4 border-black">
-        <p className="text-xl font-bold">Typing 애니메이션 테스트</p>
-        <p>애니메이션 문구 : abcdefg</p>
-        <p>테스트 결과 :</p>
-      </div>
     </div>
   );
 };
