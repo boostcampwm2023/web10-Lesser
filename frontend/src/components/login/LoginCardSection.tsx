@@ -1,4 +1,3 @@
-// import { ScriptBar, TypingAnimeComponent } from ".";
 import LESSER_LOGO from "../../assets/Logo.svg";
 import ScriptBar from "./ScriptBar";
 import TypingAnimeComponent from "./TypingAnimeComponent";
