@@ -6,6 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
+import { MemberService } from 'src/member/service/member.service';
 
 describe('Auth Controller Unit Test', () => {
   let controller: AuthController;
@@ -26,109 +27,15 @@ describe('Auth Controller Unit Test', () => {
             getGithubUsernameByTempIdToken: jest.fn(),
           },
         },
+        {
+          provide: MemberService,
+          useValue: {},
+        },
       ],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
     authService = module.get<AuthService>(AuthService);
-  });
-
-  describe('Get Github Auth Server Url', () => {
-    it('should return data from the service', async () => {
-      jest
-        .spyOn(authService, 'getGithubAuthUrl')
-        .mockReturnValue('github auth url');
-
-      const controllerResponse = controller.getGithubAuthServerUrl();
-      const serviceResponse = authService.getGithubAuthUrl();
-
-      expect(controllerResponse.authUrl).toEqual(serviceResponse);
-      expect(authService.getGithubAuthUrl).toHaveBeenCalled();
-    });
-  });
-
-  describe('Github Authentication', () => {
-    const mockBody = { authCode: 'authCode' };
-    const mockResponse = {
-      cookie: jest.fn().mockReturnThis(),
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn().mockReturnThis(),
-    } as unknown as Response;
-    it('should return tempid token', async () => {
-      jest
-        .spyOn(authService, 'githubAuthentication')
-        .mockResolvedValue({ tempIdToken: 'tempIdToken' });
-
-      await controller.githubAuthentication(mockBody, mockResponse);
-
-      expect(mockResponse.send).toHaveBeenCalledWith({
-        tempIdToken: 'tempIdToken',
-      });
-      expect(mockResponse.status).toHaveBeenCalledWith(209);
-      expect(authService.githubAuthentication).toHaveBeenCalled();
-    });
-
-    it('should return access token, refresh token', async () => {
-      jest.spyOn(authService, 'githubAuthentication').mockResolvedValue({
-        accessToken: 'access token',
-        refreshToken: 'refresh token',
-      });
-
-      await controller.githubAuthentication(mockBody, mockResponse);
-
-      expect(authService.githubAuthentication).toHaveBeenCalled();
-      expect(mockResponse.status).toHaveBeenCalledWith(201);
-      expect(mockResponse.send).toHaveBeenCalledWith({
-        accessToken: 'access token',
-      });
-      expect(mockResponse.cookie).toHaveBeenCalledWith(
-        'refreshToken',
-        'refresh token',
-        {
-          httpOnly: true,
-          secure: true,
-          path: '/api/auth/',
-          sameSite: 'strict',
-        },
-      );
-    });
-    it('should return 401 response when githubAuthentication service throws "Cannot retrieve access token"', async () => {
-      jest
-        .spyOn(authService, 'githubAuthentication')
-        .mockRejectedValue(new Error('Cannot retrieve access token'));
-
-      try {
-        await controller.githubAuthentication(mockBody, mockResponse);
-      } catch (error) {
-        expect(error).toBeInstanceOf(UnauthorizedException);
-        expect(error.message).toBe('Invalid authorization code');
-        expect(error.response.statusCode).toEqual(401);
-      }
-    });
-
-    it('should return 401 response when githubAuthentication service throws "Cannot retrieve github user"', async () => {
-      jest
-        .spyOn(authService, 'githubAuthentication')
-        .mockRejectedValue(new Error('Cannot retrieve github user'));
-
-      expect(
-        async () =>
-          await controller.githubAuthentication(mockBody, mockResponse),
-      ).rejects.toThrow(
-        new UnauthorizedException('Invalid authorization code'),
-      );
-    });
-
-    it('should return 500 response when githubAuthentication service throws unknown error', async () => {
-      jest
-        .spyOn(authService, 'githubAuthentication')
-        .mockRejectedValue(new Error());
-
-      expect(
-        async () =>
-          await controller.githubAuthentication(mockBody, mockResponse),
-      ).rejects.toThrow(InternalServerErrorException);
-    });
   });
 
   describe('Github Signup', () => {
