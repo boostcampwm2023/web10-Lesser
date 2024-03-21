@@ -1,13 +1,10 @@
-import { Link } from "react-router-dom";
-import { ROUTER_URL } from "../../constants/path";
+import { ProjectList, ProjectsSideBar } from "../../components/projects";
 
-const ProjectsPage = () => {
-  return (
-    <div>
-      this is ProjectsPage
-      <Link to={ROUTER_URL.TEMP} />
-    </div>
-  );
-};
+const ProjectsPage = () => (
+  <main className="flex items-center min-w-[76rem] h-[100vh]">
+    <ProjectsSideBar />
+    <ProjectList />
+  </main>
+);
 
 export default ProjectsPage;

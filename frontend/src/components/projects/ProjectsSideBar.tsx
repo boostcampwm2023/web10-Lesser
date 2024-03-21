@@ -1,0 +1,28 @@
+const ProjectsSideBar = () => (
+  <aside className="pt-16 pb-10 w-fit px-9 shadow-box">
+    <h1 className="mb-16 text-5xl font-bold text-middle-green">내 프로젝트</h1>
+    <p className="mb-8 font-semibold text-m text-dark-gray">
+      프로젝트를 생성하고
+    </p>
+    <p className="mb-8 font-semibold text-m text-dark-gray">관리하고</p>
+    <p className="mb-[9.625rem] font-semibold text-m text-dark-gray">
+      확인해 보세요
+    </p>
+    <div className="w-[23.375rem] py-6 px-[1.875rem] flex items-center gap-6 bg-gradient-to-bl from-white-transparent to-90% bg-light-green rounded-[1.125rem] text-white">
+      <img src="" alt="프로필 사진" />
+      <div className="">
+        <p className="font-semibold text-m">사용자 닉네임</p>
+        <div className="flex gap-6 text-xs">
+          <button type="button" className="">
+            Logout
+          </button>
+          <button type="button" className="">
+            My Page
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+);
+
+export default ProjectsSideBar;
