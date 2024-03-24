@@ -23,16 +23,16 @@ describe('GET /api/member', () => {
   it('should return 401 (Invalid authorization header format)', async () => {
     const response = await request(app.getHttpServer())
       .get('/api/member')
-      .set('Authorization', `accessToken`);
+      .set('Authorization', 'accessToken');
 
     expect(response.status).toBe(401);
     expect(response.body.message).toBe('Invalid authorization header format');
   });
 
-  it('should return 401 Expired:accessToken', async () => {
+  it('should return 401 (Expired:accessToken)', async () => {
     const response = await request(app.getHttpServer())
       .get('/api/member')
-      .set('Authorization', `Bearer accessToken`);
+      .set('Authorization', 'Bearer accessToken');
 
     expect(response.status).toBe(401);
     expect(response.body.message).toBe('Expired:accessToken');
