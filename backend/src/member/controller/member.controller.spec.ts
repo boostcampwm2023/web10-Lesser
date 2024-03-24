@@ -31,7 +31,7 @@ describe('MemberController', () => {
     const username = 'username';
     it('should return true when valid username', async () => {
       const controllerResponse =
-        await memberController.availabilityUsername(username);
+        await memberController.getUsernameAvailability(username);
 
       expect(memberService.validateUsername).toHaveBeenCalledWith(username);
       expect(controllerResponse.available).toBe(true);
@@ -43,7 +43,7 @@ describe('MemberController', () => {
         .mockRejectedValue(new Error('duplicate username'));
 
       const controllerResponse =
-        await memberController.availabilityUsername(username);
+        await memberController.getUsernameAvailability(username);
 
       expect(memberService.validateUsername).toHaveBeenCalledWith(username);
       expect(controllerResponse.available).toBe(false);
@@ -52,13 +52,13 @@ describe('MemberController', () => {
 
     it('should throw 400 error when username is missing', async () => {
       expect(
-        async () => await memberController.availabilityUsername(''),
+        async () => await memberController.getUsernameAvailability(''),
       ).rejects.toThrow(new BadRequestException('username is missing'));
       expect(
-        async () => await memberController.availabilityUsername(undefined),
+        async () => await memberController.getUsernameAvailability(undefined),
       ).rejects.toThrow(new BadRequestException('username is missing'));
       expect(
-        async () => await memberController.availabilityUsername(null),
+        async () => await memberController.getUsernameAvailability(null),
       ).rejects.toThrow(new BadRequestException('username is missing'));
     });
 
@@ -68,7 +68,7 @@ describe('MemberController', () => {
         .mockRejectedValue(new Error());
 
       expect(
-        async () => await memberController.availabilityUsername(username),
+        async () => await memberController.getUsernameAvailability(username),
       ).rejects.toThrow(InternalServerErrorException);
     });
   });
