@@ -1,12 +1,13 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useDropdown from "../../hooks/common/dropdown/useDropdown";
 import { ProjectCard } from ".";
 import { PROJECT_LIST_OPTION } from "../../constants/projects";
 import plus from "../../assets/icons/plus.svg";
 import { ProjectDTO } from "../../types/projectDTO";
+import { getProjects } from "../../apis/api/projectAPI";
 
 const ProjectList = () => {
-  const [projects] = useState<ProjectDTO[]>([]);
+  const [projects, setProjects] = useState<ProjectDTO[]>([]);
   const { Dropdown, selectedOption } = useDropdown({
     placeholder: "업데이트 순",
     options: PROJECT_LIST_OPTION,
@@ -30,6 +31,13 @@ const ProjectList = () => {
       }),
     [projects, selectedOption]
   );
+
+  useEffect(() => {
+    (async () => {
+      const projectList = await getProjects();
+      setProjects(projectList);
+    })();
+  }, []);
 
   return (
     <section className="w-[75rem] min-h-[40.5rem]">
