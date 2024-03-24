@@ -25,6 +25,12 @@ export const memberFixture = {
   tech_stack: { stacks: ['js', 'ts'] },
 };
 
+export const githubUserFixture = {
+  id: '123',
+  login: 'username',
+  avatar_url: 'avatar_url',
+};
+
 export const createMember = async (newMember, app: INestApplication) => {
   const authenticationResponse = await request(app.getHttpServer())
     .post('/api/auth/github/authentication')
@@ -51,11 +57,7 @@ beforeAll(async () => {
       fetchAccessToken: jest
         .fn()
         .mockResolvedValue({ access_token: 'github.access.token' }),
-      fetchGithubUser: jest.fn().mockResolvedValue({
-        id: '123',
-        login: 'username',
-        avatar_url: 'avatar_url',
-      }),
+      fetchGithubUser: jest.fn().mockResolvedValue(githubUserFixture),
     })
     .compile();
   githubApiService = moduleFixture.get<GithubApiService>(GithubApiService);
