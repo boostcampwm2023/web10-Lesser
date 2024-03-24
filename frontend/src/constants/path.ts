@@ -12,9 +12,11 @@ export const API_URL = {
 };
 
 export const ROUTER_URL = {
-  TEMP: "/",
+  ROOT: "/",
+  TEMP: "/temp",
   LOGIN: "/login",
   SIGNUP: "/signup",
   AUTH: "/auth/github/callback",
   PROJECTS: "/projects",
+  ERROR: "/error",
 };

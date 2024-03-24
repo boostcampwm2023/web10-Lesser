@@ -7,3 +7,9 @@ export interface TempIdTokenResponse {
   tempIdToken: string;
 }
 export type AuthenticationDTO = AccessTokenResponse | TempIdTokenResponse;
+
+export interface SignupDTO {
+  username: string;
+  position: null | string;
+  techStack: null | string[];
+}

@@ -12,6 +12,7 @@ import { AuthService } from '../service/auth.service';
 import { CookieOptions, Response, Request } from 'express';
 import { GithubAuthenticationRequestDto } from './dto/GithubAuthenticationRequest.dto';
 import { GithubSignupRequestDto } from './dto/GithubSignupRequest.dto';
+import { MemberService } from 'src/member/service/member.service';
 
 export interface CustomHeaders {
   authorization: string;
@@ -19,7 +20,10 @@ export interface CustomHeaders {
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly memberService: MemberService,
+  ) {}
   private cookieOptions: CookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'LOCAL' ? false : true,
@@ -39,16 +43,23 @@ export class AuthController {
   ) {
     try {
       const result = await this.authService.githubAuthentication(body.authCode);
-      if ('tempIdToken' in result) {
-        const responseBody = { tempIdToken: result.tempIdToken };
-        return response.status(209).send(responseBody);
-      } else {
-        const responseBody = { accessToken: result.accessToken };
+      if ('accessToken' in result && 'refreshToken' in result) {
+        const { accessToken, refreshToken } = result;
+        const { username, githubImageUrl } =
+          await this.memberService.getMemberPublicInfo(accessToken);
+        const responseBody = {
+          accessToken,
+          member: { username, imageUrl: githubImageUrl },
+        };
         return response
           .status(201)
-          .cookie('refreshToken', result.refreshToken, this.cookieOptions)
+          .cookie('refreshToken', refreshToken, this.cookieOptions)
           .send(responseBody);
-      }
+      } else if ('tempIdToken' in result) {
+        const responseBody = { tempIdToken: result.tempIdToken };
+        return response.status(209).send(responseBody);
+      } else
+        throw new Error('assert: unexpected authentication result returned');
     } catch (err) {
       if (
         err.message === 'Cannot retrieve access token' ||

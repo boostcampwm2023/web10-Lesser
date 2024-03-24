@@ -18,6 +18,7 @@ import { TempMember } from './auth/entity/tempMember.entity';
 import { MemberModule } from './member/member.module';
 import { Member } from './member/entity/member.entity';
 import { LoginMember } from './auth/entity/loginMember.entity';
+import { ProjectModule } from './project/project.module';
 import * as cookieParser from 'cookie-parser';
 
 @Module({
@@ -40,6 +41,7 @@ import * as cookieParser from 'cookie-parser';
     GithubApiModule,
     LesserJwtModule,
     MemberModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],
