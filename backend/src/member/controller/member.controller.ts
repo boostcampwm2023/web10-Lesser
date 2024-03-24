@@ -14,7 +14,7 @@ import { MemberService } from '../service/member.service';
 export class MemberController {
   constructor(private readonly memberService: MemberService) {}
   @Get('/availability')
-  async availabilityUsername(@Query('username') username: string) {
+  async getUsernameAvailability(@Query('username') username: string) {
     if (!username) throw new BadRequestException('username is missing');
     try {
       await this.memberService.validateUsername(username);
