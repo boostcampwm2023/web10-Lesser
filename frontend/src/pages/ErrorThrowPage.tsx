@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 
 const ErrorThrowPage = () => {
-  useEffect(() => {
-    throw Error("임시 에러입니다!");
-  });
+  // useEffect(() => {
+  //   throw Error("임시 에러입니다!");
+  // });
 
   return (
     <div>

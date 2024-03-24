@@ -8,6 +8,10 @@ const setAccessToken = (newAccessToken: string | undefined) => {
   accessToken = newAccessToken;
 };
 
+const checkAccessToken = (): boolean => {
+  return !!accessToken;
+};
+
 const authAPI = axios.create({
   baseURL: BASE_URL,
   timeout: 1000,
@@ -65,4 +69,4 @@ const successRefresh = async (
 
 authAPI.interceptors.response.use(successResponse, failResponse);
 
-export { authAPI, setAccessToken };
+export { authAPI, setAccessToken, checkAccessToken };
