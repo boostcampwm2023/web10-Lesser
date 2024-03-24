@@ -1,3 +1,4 @@
+import * as request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -6,6 +7,7 @@ import { GithubApiService } from 'src/github-api/github-api.service';
 import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { Member } from 'src/member/entity/member.entity';
 import { DataSource } from 'typeorm';
+import { response } from 'express';
 
 export let app: INestApplication;
 export let githubApiService: GithubApiService;
@@ -23,14 +25,21 @@ export const memberFixture = {
   tech_stack: { stacks: ['js', 'ts'] },
 };
 
-export const createMember = async (newMember) => {
-  const memberRepository = dataSource.getRepository(Member);
-  const member = await memberRepository.save(newMember);
-  const [accessToken, refreshToken] = await Promise.all([
-    lesserJwtService.createAccessToken(member.id),
-    lesserJwtService.createRefreshToken(member.id),
-  ]);
-  return { accessToken, refreshToken, member };
+export const createMember = async (newMember, app: INestApplication) => {
+  const authenticationResponse = await request(app.getHttpServer())
+    .post('/api/auth/github/authentication')
+    .send({ authCode: 'authCode' });
+  const signupResponse = await request(app.getHttpServer())
+    .post('/api/auth/github/signup')
+    .set('Authorization', `Bearer ${authenticationResponse.body.tempIdToken}`)
+    .send({
+      username: newMember.username,
+      position: newMember.position,
+      techStack: newMember.tech_stack.stacks,
+    });
+  const [, refreshToken] =
+    signupResponse.header['set-cookie'][0].match(/refreshToken=([^;]+)/);
+  return { accessToken: signupResponse.body.accessToken, refreshToken };
 };
 
 beforeAll(async () => {

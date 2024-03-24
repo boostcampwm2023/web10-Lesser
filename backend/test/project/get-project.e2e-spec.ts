@@ -4,7 +4,7 @@ import { projectFixtures } from 'fixtures/project-fixtures';
 
 describe('GET /api/project', () => {
   it('should return 200', async () => {
-    const { accessToken } = await createMember(memberFixture);
+    const { accessToken } = await createMember(memberFixture, app);
 
     const response = await request(app.getHttpServer())
       .get('/api/project')

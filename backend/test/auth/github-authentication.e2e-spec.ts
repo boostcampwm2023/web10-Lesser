@@ -9,8 +9,8 @@ import {
 
 describe('POST /api/auth/github/authentication', () => {
   it('should return 201', async () => {
-    const { member } = await createMember(memberFixture);
-    
+    await createMember(memberFixture, app);
+
     const response = await request(app.getHttpServer())
       .post('/api/auth/github/authentication')
       .send({ authCode: 'authCode' });
@@ -18,8 +18,8 @@ describe('POST /api/auth/github/authentication', () => {
     expect(response.status).toBe(201);
     expect(response.body.accessToken).toMatch(jwtTokenPattern);
     expect(response.body.member).toEqual({
-      username: member.username,
-      imageUrl: member.github_image_url,
+      username: memberFixture.username,
+      imageUrl: memberFixture.github_image_url,
     });
     const [cookie] = response.headers['set-cookie'];
     expect(cookie).toBeDefined();
