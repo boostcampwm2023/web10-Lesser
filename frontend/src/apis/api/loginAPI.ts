@@ -24,6 +24,7 @@ export const postAuthCode = async (authCode: string) => {
   if (response.status === 201) {
     const body = response.data as AccessTokenResponse;
     setAccessToken(body.accessToken);
+    window.localStorage.setItem("member", JSON.stringify(body.member));
     navigate(ROUTER_URL.PROJECTS);
     return;
   }
