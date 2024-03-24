@@ -2,7 +2,6 @@ import { Outlet, RouteObject, RouterProvider, createBrowserRouter } from "react-
 import { LoginPage, SignupPage, AuthPage, TempHomepage } from "./pages";
 import { ROUTER_URL } from "./constants/path";
 import ProjectsPage from "./pages/projects/ProjectsPage";
-import ErrorThrowPage from "./pages/ErrorThrowPage";
 import GlobalErrorBoundary from "./GlobalErrorBoundary";
 import PrivateRoute from "./components/common/route/PrivateRoute";
 import PublicRoute from "./components/common/route/PublicRoute";
@@ -60,10 +59,6 @@ const router = createBrowserRouter([
           element: <ProjectsPage />,
         },
       ]),
-      {
-        path: "/throw-error",
-        element: <ErrorThrowPage />,
-      },
     ],
   },
 ]);
