@@ -35,7 +35,7 @@ const ProjectList = () => {
       }
     };
 
-    return structuredClone(projects).sort(sortByOption).reverse();
+    return structuredClone(projects).sort(sortByOption);
   }, [projects, selectedOption]);
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const ProjectList = () => {
   }, []);
 
   return (
-    <section className="w-[75rem] min-w-[46.1rem] min-h-[40.5rem]">
+    <section className="w-[720px] min-w-[46.1rem] min-h-[40.5rem]">
       <div className="flex justify-between mb-5 w-[100%]">
         <p className="font-bold text-m text-middle-green">| 프로젝트 목록</p>
         <div className="flex items-center gap-6">
