@@ -93,7 +93,12 @@ export class AuthController {
         body.position,
         { stacks: body.techStack },
       );
-      const responseBody = { accessToken };
+      const { username, githubImageUrl } =
+        await this.memberService.getMemberPublicInfo(accessToken);
+      const responseBody = {
+        accessToken,
+        member: { username, imageUrl: githubImageUrl },
+      };
       return response
         .status(201)
         .cookie('refreshToken', refreshToken, this.cookieOptions)
