@@ -15,22 +15,27 @@ const ProjectList = () => {
   });
 
   const projectList = useMemo<ProjectDTO[]>(() => {
+    const now = -new Date();
     const sortByOption = (a: ProjectDTO, b: ProjectDTO) => {
       if (selectedOption === PROJECT_LIST_OPTION[0]) {
         const aStartDate = a.currentSprint
           ? new Date(a.currentSprint?.startDate)
-          : new Date();
+          : now;
         const bStartDate = b.currentSprint
           ? new Date(b.currentSprint?.startDate)
-          : new Date();
+          : now;
 
-        return Number(aStartDate) - Number(bStartDate);
+        if (aStartDate === bStartDate) {
+          return Number(new Date(b.createdAt)) - Number(new Date(a.createdAt));
+        }
+
+        return Number(bStartDate) - Number(aStartDate);
       } else {
-        return Number(new Date(a.createdAt)) - Number(new Date(b.createdAt));
+        return Number(new Date(b.createdAt)) - Number(new Date(a.createdAt));
       }
     };
 
-    return structuredClone(projects).sort(sortByOption);
+    return structuredClone(projects).sort(sortByOption).reverse();
   }, [projects, selectedOption]);
 
   useEffect(() => {
