@@ -7,6 +7,7 @@ import { MemberService } from 'src/member/service/member.service';
 describe('Auth Controller Unit Test', () => {
   let controller: AuthController;
   let authService: AuthService;
+  let memberService: MemberService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -25,13 +26,14 @@ describe('Auth Controller Unit Test', () => {
         },
         {
           provide: MemberService,
-          useValue: {},
+          useValue: { getMemberPublicInfo: jest.fn() },
         },
       ],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
     authService = module.get<AuthService>(AuthService);
+    memberService = module.get<MemberService>(MemberService);
   });
 
   describe('Github Authentication', () => {
@@ -60,6 +62,10 @@ describe('Auth Controller Unit Test', () => {
         accessToken: 'access token',
         refreshToken: 'refresh token',
       });
+      jest.spyOn(memberService, 'getMemberPublicInfo').mockResolvedValue({
+        username: 'username',
+        githubImageUrl: 'githubImageUrl',
+      });
 
       await controller.githubAuthentication(mockBody, mockResponse);
 
@@ -67,6 +73,10 @@ describe('Auth Controller Unit Test', () => {
       expect(mockResponse.status).toHaveBeenCalledWith(201);
       expect(mockResponse.send).toHaveBeenCalledWith({
         accessToken: 'access token',
+        member: {
+          username: 'username',
+          imageUrl: 'githubImageUrl',
+        },
       });
       expect(mockResponse.cookie).toHaveBeenCalledWith(
         'refreshToken',

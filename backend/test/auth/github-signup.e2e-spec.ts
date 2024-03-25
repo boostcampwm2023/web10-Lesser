@@ -19,11 +19,10 @@ describe('POST /api/auth/github/signup', () => {
 
     expect(response.status).toBe(201);
     expect(response.body.accessToken).toMatch(jwtTokenPattern);
-    // 추후 적용
-    // expect(response.body.member).toEqual({
-    //   username: memberFixture.username,
-    //   imageUrl: memberFixture.github_image_url,
-    // });
+    expect(response.body.member).toEqual({
+      username: memberFixture.username,
+      imageUrl: memberFixture.github_image_url,
+    });
     const [cookie] = response.headers['set-cookie'];
     expect(cookie).toBeDefined();
     const [, refreshToken] = cookie.match(/refreshToken=([^;]+)/);
