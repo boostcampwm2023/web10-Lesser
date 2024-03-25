@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import chevron from "../../../assets/icons/chevron-down.svg";
 
 interface useDropdownParams {
   placeholder: string;
   options: string[];
+  defaultOption?: string;
 }
 
 interface DropdownProps {
@@ -11,8 +13,14 @@ interface DropdownProps {
   itemClassName?: string;
 }
 
-const useDropdown = ({ placeholder, options }: useDropdownParams) => {
-  const [selectedOption, setSelectedOption] = useState<string>("");
+const useDropdown = ({
+  placeholder,
+  options,
+  defaultOption,
+}: useDropdownParams) => {
+  const [selectedOption, setSelectedOption] = useState<string>(
+    defaultOption ? defaultOption : ""
+  );
   const dropdownRef = useRef<HTMLButtonElement>(null);
 
   const Dropdown = ({
@@ -56,6 +64,7 @@ const useDropdown = ({ placeholder, options }: useDropdownParams) => {
           className={buttonClassName}
         >
           {selectedOption || placeholder}
+          <img src={chevron} className="w-7" alt="드롭다운 화살표" />
         </button>
         {open && (
           <ul className={`${containerClassName} absolute`}>
@@ -63,7 +72,11 @@ const useDropdown = ({ placeholder, options }: useDropdownParams) => {
               <li
                 key={index}
                 onMouseDown={() => handleOptionClick(option)}
-                className={`${itemClassName} hover:cursor-pointer`}
+                className={`${
+                  selectedOption === option
+                    ? "text-middle-green"
+                    : "text-text-gray"
+                } ${itemClassName} hover:cursor-pointer`}
               >
                 {option}
               </li>
