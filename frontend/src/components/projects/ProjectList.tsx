@@ -9,28 +9,29 @@ import { getProjects } from "../../apis/api/projectAPI";
 const ProjectList = () => {
   const [projects, setProjects] = useState<ProjectDTO[]>([]);
   const { Dropdown, selectedOption } = useDropdown({
-    placeholder: "업데이트 순",
+    placeholder: "",
     options: PROJECT_LIST_OPTION,
+    defaultOption: PROJECT_LIST_OPTION[0],
   });
 
-  const projectList = useMemo<ProjectDTO[]>(
-    () =>
-      structuredClone(projects).sort((a, b) => {
-        if (selectedOption === PROJECT_LIST_OPTION[0]) {
-          const aStartDate = a.currentSprint
-            ? new Date(a.currentSprint?.startDate)
-            : new Date();
-          const bStartDate = b.currentSprint
-            ? new Date(b.currentSprint?.startDate)
-            : new Date();
+  const projectList = useMemo<ProjectDTO[]>(() => {
+    const sortByOption = (a: ProjectDTO, b: ProjectDTO) => {
+      if (selectedOption === PROJECT_LIST_OPTION[0]) {
+        const aStartDate = a.currentSprint
+          ? new Date(a.currentSprint?.startDate)
+          : new Date();
+        const bStartDate = b.currentSprint
+          ? new Date(b.currentSprint?.startDate)
+          : new Date();
 
-          return Number(aStartDate) - Number(bStartDate);
-        } else {
-          return Number(new Date(a.createdAt)) - Number(new Date(b.createdAt));
-        }
-      }),
-    [projects, selectedOption]
-  );
+        return Number(aStartDate) - Number(bStartDate);
+      } else {
+        return Number(new Date(a.createdAt)) - Number(new Date(b.createdAt));
+      }
+    };
+
+    return structuredClone(projects).sort(sortByOption);
+  }, [projects, selectedOption]);
 
   useEffect(() => {
     (async () => {
@@ -40,21 +41,25 @@ const ProjectList = () => {
   }, []);
 
   return (
-    <section className="w-[75rem] min-h-[40.5rem]">
-      <div className="flex justify-between">
+    <section className="w-[75rem] min-w-[46.1rem] min-h-[40.5rem]">
+      <div className="flex justify-between mb-5 w-[100%]">
         <p className="font-bold text-m text-middle-green">| 프로젝트 목록</p>
         <div className="flex items-center gap-6">
-          <Dropdown buttonClassName="flex items-center w-[10rem] h-[2.5rem] py-2 pl-9 text-white text-xs bg-middle-green pr-3 rounded-[0.375rem] shadow-box" />
+          <Dropdown
+            buttonClassName="flex justify-between items-center min-w-[11.625rem] h-[2.5rem] py-2 pl-9 text-white text-xs bg-middle-green pr-3 rounded-[0.375rem] shadow-box"
+            containerClassName="min-w-[11.625rem] overflow-y-auto shadow-box bg-white rounded-b-lg"
+            itemClassName="text-xs font-bold py-3 px-9 hover:bg-middle-green hover:text-white hover:font-bold"
+          />
           <button
             type="button"
-            className="flex items-center w-[10rem] h-[2.5rem] py-2 pl-3 pr-9 text-white text-xs bg-middle-green gap-3 rounded-[0.375rem] shadow-box"
+            className="flex items-center w-[10.45rem] h-[2.5rem] py-2 pl-3 pr-9 text-white text-xs bg-middle-green gap-3 rounded-[0.375rem] shadow-box"
           >
             <img src={plus} alt="더하기" className="w-7" />
             추가하기
           </button>
         </div>
       </div>
-      <div className="">
+      <div className="flex flex-wrap gap-10 w-[100%] max-h-[38.75rem] overflow-y-auto">
         {projectList.map((project: ProjectDTO) => (
           <ProjectCard key={project.id} project={project} />
         ))}

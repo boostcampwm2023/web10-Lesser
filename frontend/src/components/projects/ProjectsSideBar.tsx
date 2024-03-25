@@ -1,5 +1,5 @@
 const ProjectsSideBar = () => (
-  <aside className="pt-16 pb-10 w-fit px-9 shadow-box">
+  <aside className="pt-16 pb-10 ml-6 w-fit px-9 shadow-box">
     <h1 className="mb-16 text-5xl font-bold text-middle-green">내 프로젝트</h1>
     <p className="mb-8 font-semibold text-m text-dark-gray">
       프로젝트를 생성하고
