@@ -1,13 +1,10 @@
 import * as request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 import { GithubApiService } from 'src/github-api/github-api.service';
 import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
-import { Member } from 'src/member/entity/member.entity';
 import { DataSource } from 'typeorm';
-import { response } from 'express';
 
 export let app: INestApplication;
 export let githubApiService: GithubApiService;

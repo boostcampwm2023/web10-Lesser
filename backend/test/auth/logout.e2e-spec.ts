@@ -11,6 +11,13 @@ describe('POST /api/auth/logout', () => {
       .send();
 
     expect(response.status).toBe(200);
+
+    const [cookie] = response.headers['set-cookie'];
+    expect(cookie).toBeDefined();
+    expect(cookie.includes('refreshToken=;')).toBeTruthy();
+    expect(
+      cookie.includes('Expires=Thu, 01 Jan 1970 00:00:00 GMT;'),
+    ).toBeTruthy();
   });
 
   it('should return 401 (Not a logged in member)', async () => {
