@@ -23,7 +23,7 @@ export class AuthController {
 		private cookieOptions: CookieOptions = {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === 'LOCAL' ? false : true,
-			path: '/api/auth/',
+			path: '/api/auth',
 			sameSite: 'strict',
 		};
 		

@@ -1,7 +1,7 @@
+import { Response } from 'express';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from '../service/auth.service';
-import { Response } from 'express';
 import { MemberService } from 'src/member/service/member.service';
 
 describe('Auth Controller Unit Test', () => {
@@ -84,7 +84,7 @@ describe('Auth Controller Unit Test', () => {
         {
           httpOnly: true,
           secure: true,
-          path: '/api/auth/',
+          path: '/api/auth',
           sameSite: 'strict',
         },
       );
