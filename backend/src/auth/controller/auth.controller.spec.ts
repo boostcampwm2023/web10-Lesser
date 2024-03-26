@@ -85,7 +85,7 @@ describe('Auth Controller Unit Test', () => {
           httpOnly: true,
           secure: true,
           path: '/api/auth/',
-          sameSite: 'strict',
+          sameSite: 'none',
         },
       );
     });

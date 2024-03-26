@@ -24,7 +24,7 @@ export class AuthController {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === 'LOCAL' ? false : true,
 			path: '/api/auth/',
-			sameSite: 'strict',
+			sameSite: 'none',
 		};
 		
 		@Get('github/authorization-server')
