@@ -19,3 +19,7 @@ export interface SignupDTO {
   position: null | string;
   techStack: null | string[];
 }
+
+export interface RefreshDTO {
+  accessToken: string;
+}

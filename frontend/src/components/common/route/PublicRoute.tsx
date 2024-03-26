@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import checkAuthentication from "../../../utils/checkAuthentication";
+import checkAuthentication from "../../../utils/route/checkAuthentication";
 import RouteLoading from "./RouteLoading";
 import { Navigate, Outlet } from "react-router-dom";
 import { ROUTER_URL } from "../../../constants/path";

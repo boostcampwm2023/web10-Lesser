@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
-import checkAuthentication from "../../../utils/checkAuthentication";
+import checkAuthentication from "../../../utils/route/checkAuthentication";
 import { useErrorBoundary } from "react-error-boundary";
 import RouteLoading from "./RouteLoading";
 

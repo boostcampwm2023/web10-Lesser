@@ -35,7 +35,7 @@ const successResponse = (response: AxiosResponse) => {
 };
 
 const failResponse = async (error: AxiosError) => {
-  if (error.status === 401 && error.message === "Expired:accessToken") {
+  if (error.status === 401) {
     unauthorizedErrorRetry++;
 
     if (unauthorizedErrorRetry >= 3) {
@@ -47,6 +47,7 @@ const failResponse = async (error: AxiosError) => {
       const response = await authAPI.post<AccessTokenResponse>(API_URL.REFRESH);
       successRefresh(response.data.accessToken, error.config);
     } catch {
+      unauthorizedErrorRetry = 0;
       return Promise.reject(error);
     }
   }
