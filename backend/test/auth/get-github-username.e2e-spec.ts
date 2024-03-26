@@ -16,22 +16,13 @@ describe('GET /api/auth/github/username', () => {
     expect(response.body.githubUsername).toBe(githubUserFixture.login);
   });
 
-  it('should return 401 (Authorization header is missing)', async () => {
+  it('should return 401 (Bearer Token is missing)', async () => {
     const response = await request(app.getHttpServer()).get(
       '/api/auth/github/username',
     );
 
     expect(response.status).toBe(401);
-    expect(response.body.message).toBe('Authorization header is missing');
-  });
-
-  it('should return 401 (Invalid authorization header format)', async () => {
-    const response = await request(app.getHttpServer())
-      .get('/api/auth/github/username')
-      .set('Authorization', 'accessToken');
-
-    expect(response.status).toBe(401);
-    expect(response.body.message).toBe('Invalid authorization header format');
+    expect(response.body.message).toBe('Bearer Token is missing');
   });
 
   it('should return 401 (Expired:tempIdToken)', async () => {

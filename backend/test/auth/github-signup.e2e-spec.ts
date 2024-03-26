@@ -39,23 +39,13 @@ describe('POST /api/auth/github/signup', () => {
     expect(response.status).toBe(400);
   });
 
-  it('should return 401 (Authorization header is missing)', async () => {
+  it('should return 401 (Bearer Token is missing)', async () => {
     const response = await request(app.getHttpServer())
       .post('/api/auth/github/signup')
       .send(memberSignupPayload);
 
     expect(response.status).toBe(401);
-    expect(response.body.message).toBe('Authorization header is missing');
-  });
-
-  it('should return 401 (Invalid authorization header format)', async () => {
-    const response = await request(app.getHttpServer())
-      .post('/api/auth/github/signup')
-      .set('Authorization', `No Bearer tempIdToken`)
-      .send(memberSignupPayload);
-
-    expect(response.status).toBe(401);
-    expect(response.body.message).toBe('Invalid authorization header format');
+    expect(response.body.message).toBe('Bearer Token is missing');
   });
 
   it('should return 401 (Expired:tempIdToken)', async () => {

@@ -1,48 +1,44 @@
 import {
-  Body,
-  Controller,
-  Get,
-  InternalServerErrorException,
-  Post,
-  Req,
-  Res,
-  UnauthorizedException,
+	Body,
+	Controller,
+	Get,
+	InternalServerErrorException,
+	Post,
+	Req,
+	Res,
+	UnauthorizedException,
 } from '@nestjs/common';
-import { AuthService } from '../service/auth.service';
 import { CookieOptions, Response, Request } from 'express';
+import { AuthService } from '../service/auth.service';
+import { MemberService } from 'src/member/service/member.service';
 import { GithubAuthenticationRequestDto } from './dto/GithubAuthenticationRequest.dto';
 import { GithubSignupRequestDto } from './dto/GithubSignupRequest.dto';
-import { MemberService } from 'src/member/service/member.service';
-
-export interface CustomHeaders {
-  authorization: string;
-}
-
+import { BearerTokenRequest } from 'src/common/middleware/parse-bearer-token.middleware';
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly memberService: MemberService,
-  ) {}
-  private cookieOptions: CookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'LOCAL' ? false : true,
-    path: '/api/auth/',
-    sameSite: 'strict',
-  };
-
-  @Get('github/authorization-server')
-  getGithubAuthServerUrl() {
-    return { authUrl: this.authService.getGithubAuthUrl() };
-  }
-
-  @Post('github/authentication')
-  async githubAuthentication(
-    @Body() body: GithubAuthenticationRequestDto,
-    @Res() response: Response,
-  ) {
-    try {
-      const result = await this.authService.githubAuthentication(body.authCode);
+	constructor(
+		private readonly authService: AuthService,
+		private readonly memberService: MemberService,
+		) {}
+		private cookieOptions: CookieOptions = {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'LOCAL' ? false : true,
+			path: '/api/auth/',
+			sameSite: 'strict',
+		};
+		
+		@Get('github/authorization-server')
+		getGithubAuthServerUrl() {
+			return { authUrl: this.authService.getGithubAuthUrl() };
+		}
+		
+		@Post('github/authentication')
+		async githubAuthentication(
+			@Body() body: GithubAuthenticationRequestDto,
+			@Res() response: Response,
+			) {
+				try {
+					const result = await this.authService.githubAuthentication(body.authCode);
       if ('accessToken' in result && 'refreshToken' in result) {
         const { accessToken, refreshToken } = result;
         const { username, githubImageUrl } =
@@ -73,19 +69,13 @@ export class AuthController {
 
   @Post('github/signup')
   async githubSignup(
-    @Req() request: Request & { headers: CustomHeaders },
+    @Req() request: BearerTokenRequest,
     @Body() body: GithubSignupRequestDto,
     @Res() response: Response,
   ) {
-    const authHeader = request.headers.authorization;
-    if (!authHeader) {
-      throw new UnauthorizedException('Authorization header is missing');
-    }
-    const [bearer, tempIdToken] = authHeader.split(' ');
-    if (bearer !== 'Bearer' || !tempIdToken) {
-      throw new UnauthorizedException('Invalid authorization header format');
-    }
-
+    const tempIdToken = request.token;
+    if (!tempIdToken)
+      throw new UnauthorizedException('Bearer Token is missing');
     try {
       const { accessToken, refreshToken } = await this.authService.githubSignup(
         tempIdToken,
@@ -115,18 +105,10 @@ export class AuthController {
   }
 
   @Post('logout')
-  async logout(
-    @Req() request: Request & { headers: CustomHeaders },
-    @Res() response: Response,
-  ) {
-    const authHeader = request.headers.authorization;
-    if (!authHeader) {
-      throw new UnauthorizedException('Authorization header is missing');
-    }
-    const [bearer, accessToken] = authHeader.split(' ');
-    if (bearer !== 'Bearer' || !accessToken) {
-      throw new UnauthorizedException('Invalid authorization header format');
-    }
+  async logout(@Req() request: BearerTokenRequest, @Res() response: Response) {
+    const accessToken = request.token;
+    if (!accessToken)
+      throw new UnauthorizedException('Bearer Token is missing');
 
     try {
       await this.authService.logout(accessToken);
@@ -151,7 +133,6 @@ export class AuthController {
     if (!requestRefreshToken) {
       throw new UnauthorizedException('Refresh Token is missing');
     }
-
     try {
       const { accessToken, refreshToken } =
         await this.authService.refreshAccessTokenAndRefreshToken(
@@ -173,18 +154,10 @@ export class AuthController {
   }
 
   @Get('/github/username')
-  async getGithubUsername(
-    @Req() request: Request & { headers: CustomHeaders },
-  ) {
-    const authHeader = request.headers.authorization;
-    if (!authHeader) {
-      throw new UnauthorizedException('Authorization header is missing');
-    }
-    const [bearer, tempIdToken] = authHeader.split(' ');
-    if (bearer !== 'Bearer' || !tempIdToken) {
-      throw new UnauthorizedException('Invalid authorization header format');
-    }
-
+  async getGithubUsername(@Req() request: BearerTokenRequest) {
+    const tempIdToken = request.token;
+    if (!tempIdToken)
+      throw new UnauthorizedException('Bearer Token is missing');
     try {
       const githubUsername =
         await this.authService.getGithubUsernameByTempIdToken(tempIdToken);

@@ -35,23 +35,13 @@ describe('POST /api/auth/logout', () => {
     expect(response.body.message).toBe('Not a logged in member');
   });
 
-  it('should return 401 (Authorization header is missing)', async () => {
+  it('should return 401 (Bearer Token is missing)', async () => {
     const response = await request(app.getHttpServer())
       .post('/api/auth/logout')
       .send();
 
     expect(response.status).toBe(401);
-    expect(response.body.message).toBe('Authorization header is missing');
-  });
-
-  it('should return 401 (Invalid authorization header format)', async () => {
-    const response = await request(app.getHttpServer())
-      .post('/api/auth/logout')
-      .set('Authorization', `accessToken`)
-      .send();
-
-    expect(response.status).toBe(401);
-    expect(response.body.message).toBe('Invalid authorization header format');
+    expect(response.body.message).toBe('Bearer Token is missing');
   });
 
   it('should return 401 (Expired:accessToken)', async () => {
