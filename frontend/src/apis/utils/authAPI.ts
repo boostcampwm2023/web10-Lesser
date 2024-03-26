@@ -4,7 +4,7 @@ import { AccessTokenResponse } from "../../types/authDTO";
 
 let accessToken: string | undefined;
 
-const setAccessToken = (newAccessToken: string) => {
+const setAccessToken = (newAccessToken: string | undefined) => {
   accessToken = newAccessToken;
 };
 
