@@ -23,8 +23,8 @@ export class AuthController {
 		private cookieOptions: CookieOptions = {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === 'LOCAL' ? false : true,
-			path: '/api/auth',
-			sameSite: 'strict',
+			path: '/api/auth/',
+			sameSite: 'none',
 		};
 		
 		@Get('github/authorization-server')
