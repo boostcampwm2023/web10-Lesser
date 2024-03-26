@@ -1,41 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
 import useDropdown from "../../hooks/common/dropdown/useDropdown";
 import { ProjectCard } from ".";
-import { PROJECT_LIST_OPTION } from "../../constants/projects";
+import { PROJECT_SORT_OPTION } from "../../constants/projects";
 import plus from "../../assets/icons/plus.svg";
 import { ProjectDTO } from "../../types/projectDTO";
 import { getProjects } from "../../apis/api/projectAPI";
+import projectSortByOption from "../../utils/projectSortByOption";
 
 const ProjectList = () => {
   const [projects, setProjects] = useState<ProjectDTO[]>([]);
   const { Dropdown, selectedOption } = useDropdown({
     placeholder: "",
-    options: PROJECT_LIST_OPTION,
-    defaultOption: PROJECT_LIST_OPTION[0],
+    options: [PROJECT_SORT_OPTION.UPDATE, PROJECT_SORT_OPTION.RECENT],
+    defaultOption: PROJECT_SORT_OPTION.UPDATE,
   });
 
   const projectList = useMemo<ProjectDTO[]>(() => {
-    const now = -new Date();
-    const sortByOption = (a: ProjectDTO, b: ProjectDTO) => {
-      if (selectedOption === PROJECT_LIST_OPTION[0]) {
-        const aStartDate = a.currentSprint
-          ? new Date(a.currentSprint?.startDate)
-          : now;
-        const bStartDate = b.currentSprint
-          ? new Date(b.currentSprint?.startDate)
-          : now;
+    const earliest = -new Date();
 
-        if (aStartDate === bStartDate) {
-          return Number(new Date(b.createdAt)) - Number(new Date(a.createdAt));
-        }
-
-        return Number(bStartDate) - Number(aStartDate);
-      } else {
-        return Number(new Date(b.createdAt)) - Number(new Date(a.createdAt));
-      }
-    };
-
-    return structuredClone(projects).sort(sortByOption);
+    return structuredClone(projects).sort((projectA, projectB) =>
+      projectSortByOption({
+        projectA,
+        projectB,
+        option: selectedOption,
+        earliest,
+      })
+    );
   }, [projects, selectedOption]);
 
   useEffect(() => {
