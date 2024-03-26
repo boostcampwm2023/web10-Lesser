@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { GithubApiService } from 'src/github-api/github-api.service';
-import {
-  GITHUB_CLIENT_ID,
-  GITHUB_CLIENT_SECRETS,
-} from 'src/lesser-config/constants';
-import { GithubUserDto } from './dto/github-user.dto';
-import { TempMemberRepository } from '../repository/tempMember.repository';
-import { TempMember } from '../entity/tempMember.entity';
-import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { v4 as uuidv4 } from 'uuid';
+import { GithubApiService } from 'src/github-api/github-api.service';
+import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { MemberService } from 'src/member/service/member.service';
+import { TempMemberRepository } from '../repository/tempMember.repository';
 import { LoginMemberRepository } from '../repository/loginMember.repository';
+import { GithubUserDto } from './dto/github-user.dto';
+import { TempMember } from '../entity/tempMember.entity';
 import { LoginMember } from '../entity/loginMember.entity';
+import {
+	GITHUB_CLIENT_ID,
+	GITHUB_CLIENT_SECRETS,
+  } from 'src/lesser-config/constants';
 
 @Injectable()
 export class AuthService {

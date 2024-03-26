@@ -2,13 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { GithubApiService } from 'src/github-api/github-api.service';
-import { GithubUserDto } from './dto/github-user.dto';
-import { TempMemberRepository } from '../repository/tempMember.repository';
 import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
-import { TempMember } from '../entity/tempMember.entity';
 import { MemberService } from 'src/member/service/member.service';
-import { Member } from 'src/member/entity/member.entity';
+import { TempMemberRepository } from '../repository/tempMember.repository';
 import { LoginMemberRepository } from '../repository/loginMember.repository';
+import { GithubUserDto } from './dto/github-user.dto';
+import { TempMember } from '../entity/tempMember.entity';
+import { Member } from 'src/member/entity/member.entity';
 import { LoginMember } from '../entity/loginMember.entity';
 
 describe('Auth Service Unit Test', () => {

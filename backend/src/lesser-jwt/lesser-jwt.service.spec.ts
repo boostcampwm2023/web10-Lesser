@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { LesserJwtService } from './lesser-jwt.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { LesserJwtService } from './lesser-jwt.service';
 
 describe('LesserJwtService', () => {
   let lesserJwtService: LesserJwtService;
