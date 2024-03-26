@@ -8,6 +8,7 @@ export const API_URL = {
   REFRESH: "/auth/refresh",
   NICKNAME_AVAILABLILITY: "/member/availability",
   GITHUB_USERNAME: "/auth/github/username",
+  PROJECT: "/project",
 };
 
 export const ROUTER_URL = {

@@ -3,4 +3,7 @@ module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
   setupFilesAfterEnv: ["<rootDir>/src/setupTest.ts"],
+  transform: {
+    "^.+\\.svg$": "<rootDir>/svgTransformer.cjs",
+  },
 };

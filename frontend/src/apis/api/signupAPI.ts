@@ -1,5 +1,4 @@
-import axios from "axios";
-import { API_URL, BASE_URL } from "../../constants/path";
+import { API_URL } from "../../constants/path";
 import { baseAPI } from "../utils";
 import { SignupDTO } from "../../types/authDTO";
 import { setAccessToken } from "../utils/authAPI";
@@ -9,7 +8,8 @@ interface SignupParams extends SignupDTO {
 }
 
 export const getNicknameAvailability = async (nickname: string) => {
-  const response = await axios(BASE_URL + API_URL.NICKNAME_AVAILABLILITY, {
+  const response = await baseAPI.get(API_URL.NICKNAME_AVAILABLILITY, {
+    withCredentials: false,
     params: { username: nickname },
   });
   return response.data.available;
