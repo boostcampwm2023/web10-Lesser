@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -20,6 +20,7 @@ import { Member } from './member/entity/member.entity';
 import { LoginMember } from './auth/entity/loginMember.entity';
 import { ProjectModule } from './project/project.module';
 import * as cookieParser from 'cookie-parser';
+import { BearerTokenMiddleware } from './common/middleware/parse-bearer-token.middleware';
 
 @Module({
   imports: [
@@ -49,5 +50,8 @@ import * as cookieParser from 'cookie-parser';
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(cookieParser()).forRoutes('*');
+    consumer
+      .apply(BearerTokenMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }

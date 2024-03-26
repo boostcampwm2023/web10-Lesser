@@ -7,7 +7,7 @@ import {
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CustomHeaders } from 'src/auth/controller/auth.controller';
+import { BearerTokenRequest } from 'src/common/middleware/parse-bearer-token.middleware';
 import { MemberService } from '../service/member.service';
 
 @Controller('member')
@@ -26,15 +26,10 @@ export class MemberController {
     }
   }
   @Get('/')
-  async getMember(@Req() request: Request & { headers: CustomHeaders }) {
-    const authHeader = request.headers.authorization;
-    if (!authHeader) {
-      throw new UnauthorizedException('Authorization header is missing');
-    }
-    const [bearer, accessToken] = authHeader.split(' ');
-    if (bearer !== 'Bearer' || !accessToken) {
-      throw new UnauthorizedException('Invalid authorization header format');
-    }
+  async getMember(@Req() request: BearerTokenRequest) {
+    const accessToken = request.token;
+    if (!accessToken)
+      throw new UnauthorizedException('Bearer Token is missing');
     try {
       const { username, githubImageUrl } =
         await this.memberService.getMemberPublicInfo(accessToken);
