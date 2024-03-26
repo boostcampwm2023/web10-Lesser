@@ -27,6 +27,11 @@ const TempHomepage = () => {
           </Link>
         </li>
         <li>
+          <Link to={ROUTER_URL.PROJECTS} className="hover:underline">
+            Projects
+          </Link>
+        </li>
+        <li>
           <Link to={"/throw-error"} className="hover:underline">
             에러를 던져봅시다!
           </Link>
