@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { MemberService } from './service/member.service';
-import { Member } from './entity/member.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MemberRepository } from './repository/member.repository';
-import { MemberController } from './controller/member.controller';
 import { LesserJwtModule } from 'src/lesser-jwt/lesser-jwt.module';
+import { MemberController } from './controller/member.controller';
+import { MemberService } from './service/member.service';
+import { MemberRepository } from './repository/member.repository';
+import { Member } from './entity/member.entity';
 
 @Module({
   imports: [LesserJwtModule, TypeOrmModule.forFeature([Member])],

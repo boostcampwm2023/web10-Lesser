@@ -1,4 +1,3 @@
-import { Member } from 'src/member/entity/member.entity';
 import {
   Column,
   CreateDateColumn,
@@ -8,6 +7,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Member } from 'src/member/entity/member.entity';
 
 @Entity()
 export class LoginMember {

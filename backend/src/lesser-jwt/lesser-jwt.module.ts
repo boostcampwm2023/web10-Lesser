@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { LesserJwtService } from './lesser-jwt.service';
-import { LesserConfigModule } from 'src/lesser-config/lesser-config.module';
 import { ConfigService } from '@nestjs/config';
+import { LesserConfigModule } from 'src/lesser-config/lesser-config.module';
+import { LesserJwtService } from './lesser-jwt.service';
 import { JWT_SECRET } from 'src/lesser-config/constants';
 
 @Module({
