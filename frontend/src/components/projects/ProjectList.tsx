@@ -54,7 +54,7 @@ const ProjectList = () => {
           </button>
         </div>
       </div>
-      <div className="flex flex-wrap gap-10 w-[100%] max-h-[38.75rem] overflow-y-auto">
+      <div className="flex flex-wrap gap-10 w-[720px] max-h-[38.75rem] overflow-y-auto scrollbar-hide">
         {projectList.map((project: ProjectDTO) => (
           <ProjectCard key={project.id} project={project} />
         ))}
