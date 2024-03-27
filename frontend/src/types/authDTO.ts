@@ -1,11 +1,13 @@
 export type GithubOauthUrlDTO = { authUrl: string };
 
+export interface memberResponse {
+  username: string;
+  imageUrl: string;
+}
+
 export interface AccessTokenResponse {
   accessToken: string;
-  member: {
-    username: string;
-    imageUrl: string;
-  };
+  member: memberResponse;
 }
 
 export interface TempIdTokenResponse {
