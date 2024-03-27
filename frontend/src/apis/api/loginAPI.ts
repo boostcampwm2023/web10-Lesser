@@ -10,9 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { authAPI, setAccessToken } from "../utils/authAPI";
 
 export const getLoginURL = async () => {
-  const response = await baseAPI.get<GithubOauthUrlDTO>(
-    API_URL.GITHUB_OAUTH_URL
-  );
+  const response = await baseAPI.get<GithubOauthUrlDTO>(API_URL.GITHUB_OAUTH_URL);
   return response.data.authUrl;
 };
 
@@ -40,6 +38,7 @@ export const postLogout = async () => {
 
   if (response.status === 200) {
     setAccessToken(undefined);
+    window.localStorage.clear();
     return response;
   }
 };
