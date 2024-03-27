@@ -36,8 +36,8 @@ const ProjectList = () => {
   }, []);
 
   return (
-    <section className="w-[720px] min-w-[46.1rem] min-h-[40.5rem]">
-      <div className="flex justify-between mb-5 w-[100%]">
+    <section className="min-w-[720px] min-h-[40.5rem] flex flex-col gap-6">
+      <div className="flex justify-between w-[100%]">
         <p className="font-bold text-m text-middle-green">| 프로젝트 목록</p>
         <div className="flex items-center gap-6">
           <Dropdown
@@ -47,14 +47,14 @@ const ProjectList = () => {
           />
           <button
             type="button"
-            className="flex items-center w-[10.45rem] h-[2.5rem] py-2 pl-3 pr-9 text-white text-xs bg-middle-green gap-3 rounded-[0.375rem] shadow-box"
+            className="flex items-center justify-center w-[10.45rem] h-[2.5rem] py-2 pl-3 pr-9 text-white text-xs bg-middle-green gap-3 rounded-[0.375rem] shadow-box"
           >
             <img src={plus} alt="더하기" className="w-7" />
             추가하기
           </button>
         </div>
       </div>
-      <div className="flex flex-wrap gap-10 w-[100%] max-h-[38.75rem] overflow-y-auto">
+      <div className="flex flex-wrap gap-10 w-[720px] max-h-[37.25rem] overflow-y-auto scrollbar-hide">
         {projectList.map((project: ProjectDTO) => (
           <ProjectCard key={project.id} project={project} />
         ))}

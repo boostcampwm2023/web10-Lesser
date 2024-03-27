@@ -12,7 +12,7 @@ const ErrorPage = ({ error, resetErrorBoundary }: FallbackProps) => {
     <div>
       <p>Error 발생</p>
       <p>error : {error.message}</p>
-      <p onClick={redirectTempPage}>Temp Page</p>
+      <p onClick={redirectTempPage}>Temp Page로 이동</p>
     </div>
   );
 };
