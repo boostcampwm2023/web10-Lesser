@@ -13,7 +13,7 @@ export const API_URL = {
 
 export const ROUTER_URL = {
   ROOT: "/",
-  TEMP: "/temp",
+  TEMP: "/",
   LOGIN: "/login",
   SIGNUP: "/signup",
   AUTH: "/auth/github/callback",
