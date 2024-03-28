@@ -4,6 +4,7 @@ import {
   AccessTokenResponse,
   AuthenticationDTO,
   GithubOauthUrlDTO,
+  RefreshDTO,
   TempIdTokenResponse,
 } from "../../types/authDTO";
 import { useNavigate } from "react-router-dom";
@@ -41,4 +42,9 @@ export const postLogout = async () => {
     window.localStorage.clear();
     return response;
   }
+};
+
+export const postRefresh = async () => {
+  const response = await authAPI.post<RefreshDTO>(API_URL.REFRESH);
+  setAccessToken(response.data.accessToken);
 };

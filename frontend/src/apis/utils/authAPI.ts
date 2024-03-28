@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { API_URL, BASE_URL } from "../../constants/path";
-import { AccessTokenResponse } from "../../types/authDTO";
+import { RefreshDTO } from "../../types/authDTO";
 
 let accessToken: string | undefined;
 
@@ -44,7 +44,7 @@ const failResponse = async (error: AxiosError) => {
     }
 
     try {
-      const response = await authAPI.post<AccessTokenResponse>(API_URL.REFRESH);
+      const response = await authAPI.post<RefreshDTO>(API_URL.REFRESH);
       successRefresh(response.data.accessToken, error.config);
     } catch {
       unauthorizedErrorRetry = 0;
@@ -63,7 +63,6 @@ const successRefresh = async (
   if (config) {
     config.headers["Authorization"] = `Bearer ${newAccessToken}`;
     const newResponse = await authAPI(config);
-
     return newResponse;
   }
 };
