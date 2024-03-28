@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import chevron from "../../../assets/icons/chevron-down.svg";
+import chevronDown from "../../../assets/icons/chevron-down.svg";
+import chevronUp from "../../../assets/icons/chevron-up.svg";
 
 interface useDropdownParams {
   placeholder: string;
@@ -11,6 +12,7 @@ interface DropdownProps {
   buttonClassName?: string;
   containerClassName?: string;
   itemClassName?: string;
+  iconSize?: string;
 }
 
 const useDropdown = ({
@@ -27,6 +29,7 @@ const useDropdown = ({
     buttonClassName = "",
     containerClassName = "",
     itemClassName = "",
+    iconSize = "",
   }: DropdownProps) => {
     const [open, setOpen] = useState<boolean>(false);
 
@@ -61,10 +64,22 @@ const useDropdown = ({
         <button
           ref={dropdownRef}
           onClick={handleButtonClick}
-          className={buttonClassName}
+          className={`${buttonClassName} ${open && "shadow-none"}`}
         >
           {selectedOption || placeholder}
-          <img src={chevron} className="w-7" alt="드롭다운 화살표" />
+          {open ? (
+            <img
+              src={chevronUp}
+              className={`"w-${iconSize}"`}
+              alt="드롭다운 화살표"
+            />
+          ) : (
+            <img
+              src={chevronDown}
+              className={`"w-${iconSize}"`}
+              alt="드롭다운 화살표"
+            />
+          )}
         </button>
         {open && (
           <ul className={`${containerClassName} absolute`}>
