@@ -78,7 +78,7 @@ const SignupMainSection = ({
     <main className="relative ml-10 pl-7 w-[100%] h-[40.5rem]">
       <div
         className={`absolute top-0 bg-gradient-to-b from-white to-90% min-w-[90%] min-h-[9.25rem] z-10 ${
-          currentStepNumber > 1 && "hover:cursor-pointer"
+          currentStepNumber > 1 && "hover:cursor-pointer hover:to-0%"
         }`}
         onClick={handlePrevStepAreaClick}
       ></div>
