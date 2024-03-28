@@ -5,7 +5,7 @@ const AuthPage = () => {
   const [searchParams] = useSearchParams();
   const code = searchParams.get("code");
 
-  const isLocal = window.location.pathname.split("/").pop() == "local";
+  const isLocal = window.location.pathname.split("/").pop() === "local";
   if (isLocal) {
     window.location.href = `http://localhost:5173/auth/github/callback?code=${code}`;
     return;
