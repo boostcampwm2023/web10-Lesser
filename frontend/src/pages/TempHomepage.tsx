@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React from "react";
 import { ROUTER_URL } from "../constants/path";
 
@@ -10,6 +10,10 @@ const TempHomepage = () => {
       console.log(await response.json());
     });
   });
+  const navigate = useNavigate();
+  const navigateToSignupPage = () => {
+    navigate(ROUTER_URL.SIGNUP, { state: { tempIdToken: "hello world" } });
+  };
   return (
     <div>
       <div className="shadow-box bg-white mb-[40px]">
@@ -25,6 +29,11 @@ const TempHomepage = () => {
           <Link to={ROUTER_URL.SIGNUP} className="hover:underline">
             Sign up
           </Link>
+        </li>
+        <li>
+          <button className="hover:underline" onClick={navigateToSignupPage}>
+            Sign up with TempIDToken
+          </button>
         </li>
         <li>
           <Link to={ROUTER_URL.PROJECTS} className="hover:underline">
