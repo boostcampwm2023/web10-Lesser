@@ -49,7 +49,7 @@ const router = createBrowserRouter([
       ]),
       createPublicRouter([
         {
-          path: ROUTER_URL.AUTH,
+          path: `${ROUTER_URL.AUTH}/*`,
           element: <AuthPage />,
         },
       ]),

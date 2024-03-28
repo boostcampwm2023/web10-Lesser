@@ -1,12 +1,12 @@
 import {
-	Body,
-	Controller,
-	Get,
-	InternalServerErrorException,
-	Post,
-	Req,
-	Res,
-	UnauthorizedException,
+  Body,
+  Controller,
+  Get,
+  InternalServerErrorException,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CookieOptions, Response, Request } from 'express';
 import { AuthService } from '../service/auth.service';
@@ -14,31 +14,33 @@ import { MemberService } from 'src/member/service/member.service';
 import { GithubAuthenticationRequestDto } from './dto/GithubAuthenticationRequest.dto';
 import { GithubSignupRequestDto } from './dto/GithubSignupRequest.dto';
 import { BearerTokenRequest } from 'src/common/middleware/parse-bearer-token.middleware';
+
 @Controller('auth')
 export class AuthController {
-	constructor(
-		private readonly authService: AuthService,
-		private readonly memberService: MemberService,
-		) {}
-		private cookieOptions: CookieOptions = {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === 'LOCAL' ? false : true,
-			path: '/api/auth/',
-			sameSite: 'none',
-		};
-		
-		@Get('github/authorization-server')
-		getGithubAuthServerUrl() {
-			return { authUrl: this.authService.getGithubAuthUrl() };
-		}
-		
-		@Post('github/authentication')
-		async githubAuthentication(
-			@Body() body: GithubAuthenticationRequestDto,
-			@Res() response: Response,
-			) {
-				try {
-					const result = await this.authService.githubAuthentication(body.authCode);
+  constructor(
+    private readonly authService: AuthService,
+    private readonly memberService: MemberService,
+  ) {}
+  private cookieOptions: CookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'LOCAL' ? false : true,
+    path: '/api/auth/',
+    sameSite: 'none',
+  };
+
+  @Get('github/authorization-server')
+  getGithubAuthServerUrl(@Req() request: Request) {
+    const isLocal = request.headers.origin.includes('localhost');
+    return { authUrl: this.authService.getGithubAuthUrl(isLocal) };
+  }
+
+  @Post('github/authentication')
+  async githubAuthentication(
+    @Body() body: GithubAuthenticationRequestDto,
+    @Res() response: Response,
+  ) {
+    try {
+      const result = await this.authService.githubAuthentication(body.authCode);
       if ('accessToken' in result && 'refreshToken' in result) {
         const { accessToken, refreshToken } = result;
         const { username, githubImageUrl } =
