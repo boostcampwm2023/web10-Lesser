@@ -30,7 +30,7 @@ export class AuthController {
 
   @Get('github/authorization-server')
   getGithubAuthServerUrl(@Req() request: Request) {
-    const isLocal = request.headers.origin.includes('localhost');
+    const isLocal = request.headers.origin?.includes('localhost');
     return { authUrl: this.authService.getGithubAuthUrl(isLocal) };
   }
 
