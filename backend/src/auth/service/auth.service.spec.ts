@@ -91,7 +91,7 @@ describe('Auth Service Unit Test', () => {
     it('should return a valid GitHub authorization URL', async () => {
       jest.spyOn(configService, 'get').mockReturnValue('client_id');
 
-      const authUrl = authService.getGithubAuthUrl();
+      const authUrl = authService.getGithubAuthUrl(false);
 
       const urlPattern = new RegExp(
         `^https://github.com/login/oauth/authorize\\?client_id=[\\w]+&scope=[\\w]*$`,

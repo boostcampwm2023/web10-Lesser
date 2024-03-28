@@ -10,9 +10,9 @@ import { GithubUserDto } from './dto/github-user.dto';
 import { TempMember } from '../entity/tempMember.entity';
 import { LoginMember } from '../entity/loginMember.entity';
 import {
-	GITHUB_CLIENT_ID,
-	GITHUB_CLIENT_SECRETS,
-  } from 'src/lesser-config/constants';
+  GITHUB_CLIENT_ID,
+  GITHUB_CLIENT_SECRETS,
+} from 'src/lesser-config/constants';
 
 @Injectable()
 export class AuthService {
@@ -26,9 +26,12 @@ export class AuthService {
   ) {}
   private readonly ENV_GITHUB_CLIENT_ID =
     this.configService.get(GITHUB_CLIENT_ID);
+  private readonly GITHUB_AUTH_URL = `https://github.com/login/oauth/authorize?client_id=${this.ENV_GITHUB_CLIENT_ID}&scope=`;
 
-  getGithubAuthUrl(): string {
-    return `https://github.com/login/oauth/authorize?client_id=${this.ENV_GITHUB_CLIENT_ID}&scope=`;
+  getGithubAuthUrl(isLocal: boolean): string {
+    if (isLocal)
+      return `${this.GITHUB_AUTH_URL}&redirect_uri=https://dev.lesser-project.site/auth/github/callback/local`;
+    return this.GITHUB_AUTH_URL;
   }
 
   async githubAuthentication(
