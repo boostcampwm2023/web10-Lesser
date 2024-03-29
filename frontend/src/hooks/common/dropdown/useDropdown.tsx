@@ -65,6 +65,7 @@ const useDropdown = ({
           ref={dropdownRef}
           onClick={handleButtonClick}
           className={`${buttonClassName} ${open && "shadow-none"}`}
+          style={{ wordBreak: "keep-all" }}
         >
           {selectedOption || placeholder}
           {open ? (
@@ -92,6 +93,7 @@ const useDropdown = ({
                     ? "text-middle-green"
                     : "text-text-gray"
                 } ${itemClassName} hover:cursor-pointer`}
+                style={{ wordBreak: "keep-all" }}
               >
                 {option}
               </li>

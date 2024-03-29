@@ -48,8 +48,8 @@ const PositionInput = ({
           buttonClassName={`flex items-center w-[16rem] min-h-[3.25rem] gap-3 pl-9 rounded-xl bg-middle-green text-white text-m shadow-box ${
             selectedOption && "font-bold"
           }`}
-          containerClassName="w-[16rem] max-h-[16rem] overflow-y-auto shadow-box rounded-b-lg scroll-hide"
-          itemClassName="text-2xl text-text-gray py-3 px-9 hover:bg-middle-green hover:text-white hover:font-bold break-normal"
+          containerClassName="w-[16rem] max-h-[16rem] overflow-y-auto shadow-box rounded-b-lg scrollbar-hide"
+          itemClassName="text-2xl text-text-gray py-3 px-9 hover:bg-middle-green hover:text-white hover:font-bold"
         />
         <span className="text-3xl font-semibold text-dark-gray">입니다</span>
       </div>
