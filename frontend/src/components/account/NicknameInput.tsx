@@ -95,6 +95,7 @@ const NicknameInput = ({
               name="nickname"
               id="nickname"
               value={inputValue}
+              autoComplete="off"
               onChange={(e) => handleInputChange(e)}
               onKeyDown={handleEnterDown}
               className={`w-[27.5rem] h-[3rem] border-b-2 focus:outline-none focus:border-b-3 font-semibold text-3xl ${
