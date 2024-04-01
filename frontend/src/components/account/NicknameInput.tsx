@@ -45,9 +45,15 @@ const NicknameInput = ({
     nicknameRef.current = value;
   };
 
+  const handleEnterDown = ({ key }: React.KeyboardEvent) => {
+    if (key === "Enter" && validated) {
+      setCurrentStep(SIGNUP_STEP.STEP2);
+    }
+  };
+
   useEffect(() => {
+    setValidated(null);
     if (!inputValue) {
-      setValidated(null);
       return;
     }
 
@@ -89,13 +95,16 @@ const NicknameInput = ({
               name="nickname"
               id="nickname"
               value={inputValue}
+              autoComplete="off"
               onChange={(e) => handleInputChange(e)}
-              className={`w-[27.5rem] h-[3rem] border-b-2 focus:outline-none focus:border-b-3 focus:border-middle-green  font-semibold text-3xl ${
+              onKeyDown={handleEnterDown}
+              className={`w-[27.5rem] h-[3rem] border-b-2 focus:outline-none focus:border-b-3 font-semibold text-3xl ${
                 inputValue && validated && "border-b-3 border-middle-green "
-              } ${
-                validated !== null &&
-                !validated &&
-                "border-b-3 border-error-red focus:border-error-red"
+              } 
+              ${
+                validated !== null && !validated
+                  ? "border-b-3 border-error-red focus:border-error-red"
+                  : "focus:border-middle-green"
               }`}
             />
             {validated !== null && !validated && (
@@ -107,7 +116,7 @@ const NicknameInput = ({
           <span className="text-3xl font-semibold text-dark-gray">입니다</span>
         </div>
       </div>
-      {validated && (
+      {validated && currentStepNumber !== SIGNUP_STEP.STEP2.NUMBER && (
         <NextStepButton onNextButtonClick={handleNextButtonClick}>
           Next
         </NextStepButton>

@@ -10,9 +10,9 @@ const NextStepButton = ({
   <button
     type="button"
     onClick={onNextButtonClick}
-    className="text-[#68790E] font-bold text-3xl self-end drop-shadow-box"
+    className="text-[#68790E] font-bold text-3xl self-end"
   >
-    {children}
+    <span style={{ textShadow: "8px 8px 25px 0px #00000051" }}>{children}</span>
   </button>
 );
 
