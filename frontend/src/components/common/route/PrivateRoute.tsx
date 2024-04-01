@@ -5,20 +5,20 @@ import { useErrorBoundary } from "react-error-boundary";
 import RouteLoading from "./RouteLoading";
 
 const PrivateRoute = (): React.ReactElement => {
-  const [isLoading, setIsLoading] = useState<Boolean>(true);
+  const [loadingState, setLoadingState] = useState<Boolean>(true);
   const { showBoundary } = useErrorBoundary();
 
   useEffect(() => {
     checkAuthentication().then((result: Boolean | unknown) => {
       if (result === true) {
-        setIsLoading(false);
+        setLoadingState(false);
       } else {
         showBoundary(result);
       }
     });
   }, [checkAuthentication]);
 
-  return isLoading ? <RouteLoading /> : <Outlet />;
+  return loadingState ? <RouteLoading /> : <Outlet />;
 };
 
 export default PrivateRoute;

@@ -6,20 +6,16 @@ import GlobalErrorBoundary from "./GlobalErrorBoundary";
 import PrivateRoute from "./components/common/route/PrivateRoute";
 import PublicRoute from "./components/common/route/PublicRoute";
 
-const createPrivateRouter = (children: RouteObject[]) => {
-  const privateRoute = {
-    element: <PrivateRoute />,
-    children,
-  };
-  return privateRoute;
-};
+type RouteType = "PRIVATE" | "PUBLIC";
 
-const createPublicRouter = (children: RouteObject[]) => {
-  const publicRoute = {
-    element: <PublicRoute />,
-    children,
-  };
-  return publicRoute;
+const createAuthCheckRouter = (routeType: RouteType, children: RouteObject[]) => {
+  const authCheckRouter = children.map((child: RouteObject) => {
+    return {
+      element: routeType === "PRIVATE" ? <PrivateRoute /> : <PublicRoute />,
+      children: [child],
+    };
+  });
+  return authCheckRouter;
 };
 
 const router = createBrowserRouter([
@@ -35,25 +31,21 @@ const router = createBrowserRouter([
         index: true,
         element: <TempHomepage />,
       },
-      createPublicRouter([
+      ...createAuthCheckRouter("PUBLIC", [
         {
           path: ROUTER_URL.LOGIN,
           element: <LoginPage />,
         },
-      ]),
-      createPublicRouter([
         {
           path: ROUTER_URL.SIGNUP,
           element: <SignupPage />,
         },
-      ]),
-      createPublicRouter([
         {
           path: `${ROUTER_URL.AUTH}/*`,
           element: <AuthPage />,
         },
       ]),
-      createPrivateRouter([
+      ...createAuthCheckRouter("PRIVATE", [
         {
           path: ROUTER_URL.PROJECTS,
           element: <ProjectsPage />,
