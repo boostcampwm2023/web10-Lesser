@@ -18,5 +18,7 @@ export const ROUTER_URL = {
   SIGNUP: "/signup",
   AUTH: "/auth/github/callback",
   PROJECTS: "/projects",
+  MAIN: "/projects/:projectId",
+  BACKLOG: "/projects/:projectId/backlog",
   ERROR: "/error",
 };
