@@ -5,22 +5,22 @@ import { Navigate, Outlet } from "react-router-dom";
 import { ROUTER_URL } from "../../../constants/path";
 
 const PublicRoute = () => {
-  const [isLoading, setIsLoading] = useState<Boolean>(false);
+  const [loadingState, setLoadingState] = useState<Boolean>(true);
   const [authenticated, setAuthenticated] = useState<Boolean>(false);
 
   useEffect(() => {
     checkAuthentication().then((result) => {
       if (result === true) {
-        setIsLoading(true);
+        setLoadingState(false);
         setAuthenticated(true);
       } else {
-        setIsLoading(true);
+        setLoadingState(false);
         setAuthenticated(false);
       }
     });
   }, [checkAuthentication]);
 
-  return !isLoading ? (
+  return loadingState ? (
     <RouteLoading />
   ) : !authenticated ? (
     <Outlet />
