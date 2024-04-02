@@ -44,11 +44,28 @@ describe('POST /api/auth/github/authentication', () => {
     expect(response.status).toBe(400);
   });
 
-  it('should return 401', async () => {
-    jest.spyOn(githubApiService, 'fetchAccessToken').mockResolvedValue({});
+  it('should return 401 when given fetch github access token error', async () => {
+    jest
+      .spyOn(githubApiService, 'fetchAccessToken')
+      .mockRejectedValue(undefined);
     const response = await request(app.getHttpServer())
       .post('/api/auth/github/authentication')
       .send({ authCode: 'invalidAuthCode' });
+
+    expect(response.status).toBe(401);
+  });
+
+  it('should return 401 when given fetch github user error', async () => {
+    jest
+      .spyOn(githubApiService, 'fetchAccessToken')
+      .mockResolvedValue({ access_token: 'accessToken' });
+    jest
+      .spyOn(githubApiService, 'fetchGithubUser')
+      .mockRejectedValue(undefined);
+
+    const response = await request(app.getHttpServer())
+      .post('/api/auth/github/authentication')
+      .send({ authCode: 'authCode' });
 
     expect(response.status).toBe(401);
   });
