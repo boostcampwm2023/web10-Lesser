@@ -28,7 +28,7 @@ export class LesserJwtService {
       if (payload.tokenType !== type) throw Error('Invalid token type');
       return payload;
     } catch (error) {
-      throw new Error('Failed to verify token');
+      throw new Error(`Failed to verify token: ${type}`);
     }
   }
 }

@@ -59,18 +59,32 @@ describe('LesserJwtService', () => {
       expect(payload.sub).toEqual(sub);
     });
 
-    it('should throw error when given invalid token', async () => {
+    it('should throw error when given invalid access token', async () => {
       const token = 'invalid token';
       await expect(
         async () => await lesserJwtService.getPayload(token, 'access'),
-      ).rejects.toThrow();
+      ).rejects.toThrow('Failed to verify token: access');
+    });
+
+    it('should throw error when given invalid refresh token', async () => {
+      const token = 'invalid token';
+      await expect(
+        async () => await lesserJwtService.getPayload(token, 'refresh'),
+      ).rejects.toThrow('Failed to verify token: refresh');
+    });
+
+    it('should throw error when given invalid tempId token', async () => {
+      const token = 'invalid token';
+      await expect(
+        async () => await lesserJwtService.getPayload(token, 'tempId'),
+      ).rejects.toThrow('Failed to verify token: tempId');
     });
 
     it('should throw error when given expired token', async () => {
       const token = jwtService.sign({ sub: 1 }, { expiresIn: '-1' });
       await expect(
         async () => await lesserJwtService.getPayload(token, 'access'),
-      ).rejects.toThrow();
+      ).rejects.toThrow('Failed to verify token: access');
     });
 
     it('should throw error when token type miss-match', async () => {
