@@ -21,8 +21,11 @@
     "noFallthroughCasesInSwitch": true,
 
     /* CommonJS module */
-    "esModuleInterop": true
+    "esModuleInterop": true,
+
+    /* svgr */
+    "types": ["vite-plugin-svgr/client"]
   },
-  "include": ["src"],
+  "include": ["src", "svg.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
