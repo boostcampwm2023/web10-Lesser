@@ -58,25 +58,31 @@ export class AuthService {
   }
 
   async getAccessToken(authCode: string) {
+    const body = {
+      client_id: this.configService.get(GITHUB_CLIENT_ID),
+      client_secret: this.configService.get(GITHUB_CLIENT_SECRETS),
+      code: authCode,
+    };
     try {
-      const body = {
-        client_id: this.configService.get(GITHUB_CLIENT_ID),
-        client_secret: this.configService.get(GITHUB_CLIENT_SECRETS),
-        code: authCode,
-      };
-      const { access_token } =
-        await this.githubApiService.fetchAccessToken(body);
-      if (!access_token) throw new Error('Invalid authorization code');
+      const { access_token } = await this.githubApiService
+        .fetchAccessToken(body)
+        .catch(() => {
+          throw new Error('Github fetch access token API error');
+        });
+      if (!access_token) throw new Error('Invalid auth code');
       return access_token;
-    } catch (err) {
+    } catch {
       throw new Error('Cannot retrieve access token');
     }
   }
 
   async getGithubUser(accessToken: string) {
     try {
-      const { id, login, avatar_url } =
-        await this.githubApiService.fetchGithubUser(accessToken);
+      const { id, login, avatar_url } = await this.githubApiService
+        .fetchGithubUser(accessToken)
+        .catch(() => {
+          throw new Error('Github fetch user API error');
+        });
       const githubUser = GithubUserDto.of(id, login, avatar_url);
       return githubUser;
     } catch (err) {
