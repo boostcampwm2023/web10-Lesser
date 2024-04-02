@@ -21,6 +21,8 @@ import { LoginMember } from './auth/entity/loginMember.entity';
 import { ProjectModule } from './project/project.module';
 import * as cookieParser from 'cookie-parser';
 import { BearerTokenMiddleware } from './common/middleware/parse-bearer-token.middleware';
+import { APP_FILTER } from '@nestjs/core';
+import { ErrorExceptionFilter } from './common/exception-filter/exception.filter';
 
 @Module({
   imports: [
@@ -45,7 +47,13 @@ import { BearerTokenMiddleware } from './common/middleware/parse-bearer-token.mi
     ProjectModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: ErrorExceptionFilter,
+    },
+  ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
