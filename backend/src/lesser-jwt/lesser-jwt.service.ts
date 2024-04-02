@@ -5,19 +5,19 @@ import { JwtService } from '@nestjs/jwt';
 export class LesserJwtService {
   constructor(private readonly jwtService: JwtService) {}
   createAccessToken(id: number): Promise<string> {
-    const payload = { sub: { id }, tokenType: 'access' };
+    const payload = { sub: { id }, tokenType: 'access', iat: Date.now() };
     const options = { expiresIn: '15m' };
     return this.jwtService.signAsync(payload, options);
   }
 
   createRefreshToken(id: number): Promise<string> {
-    const payload = { sub: { id }, tokenType: 'refresh' };
+    const payload = { sub: { id }, tokenType: 'refresh', iat: Date.now() };
     const options = { expiresIn: '1d' };
     return this.jwtService.signAsync(payload, options);
   }
 
   createTempIdToken(uuid: string): Promise<string> {
-    const payload = { sub: { uuid }, tokenType: 'tempId' };
+    const payload = { sub: { uuid }, tokenType: 'tempId', iat: Date.now() };
     const options = { expiresIn: '30m' };
     return this.jwtService.signAsync(payload, options);
   }

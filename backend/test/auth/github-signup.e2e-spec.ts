@@ -65,7 +65,6 @@ describe('POST /api/auth/github/signup', () => {
       .post('/api/auth/github/authentication')
       .send({ authCode: 'authCode' });
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
     await request(app.getHttpServer())
       .post('/api/auth/github/authentication')
       .send({ authCode: 'authCode' });
