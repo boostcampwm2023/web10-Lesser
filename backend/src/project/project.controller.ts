@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Req,
-  UnauthorizedException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Controller, Get, Req, UnauthorizedException } from '@nestjs/common';
 import { projectFixtures } from 'fixtures/project-fixtures';
 import { BearerTokenRequest } from 'src/common/middleware/parse-bearer-token.middleware';
 
@@ -18,14 +12,10 @@ export class ProjectController {
     const accessToken = request.token;
     if (!accessToken)
       throw new UnauthorizedException('Bearer Token is missing');
-    try {
-      // access token 검증을 위한 임시 로직
-      await this.lesserJwtService.getPayload(accessToken, 'access');
-    } catch (err) {
-      if (err.message === 'Failed to verify token')
-        throw new UnauthorizedException('Expired:accessToken');
-      throw new InternalServerErrorException(err.message);
-    }
+
+    // access token 검증을 위한 임시 로직
+    await this.lesserJwtService.getPayload(accessToken, 'access');
+
     return { projects: projectFixtures };
   }
 }

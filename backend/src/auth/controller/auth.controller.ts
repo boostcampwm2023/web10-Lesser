@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  InternalServerErrorException,
   Post,
   Req,
   Res,
@@ -39,34 +38,23 @@ export class AuthController {
     @Body() body: GithubAuthenticationRequestDto,
     @Res() response: Response,
   ) {
-    try {
-      const result = await this.authService.githubAuthentication(body.authCode);
-      if ('accessToken' in result && 'refreshToken' in result) {
-        const { accessToken, refreshToken } = result;
-        const { username, githubImageUrl } =
-          await this.memberService.getMemberPublicInfo(accessToken);
-        const responseBody = {
-          accessToken,
-          member: { username, imageUrl: githubImageUrl },
-        };
-        return response
-          .status(201)
-          .cookie('refreshToken', refreshToken, this.cookieOptions)
-          .send(responseBody);
-      } else if ('tempIdToken' in result) {
-        const responseBody = { tempIdToken: result.tempIdToken };
-        return response.status(209).send(responseBody);
-      } else
-        throw new Error('assert: unexpected authentication result returned');
-    } catch (err) {
-      if (
-        err.message === 'Cannot retrieve access token' ||
-        err.message === 'Cannot retrieve github user'
-      ) {
-        throw new UnauthorizedException('Invalid authorization code');
-      }
-      throw new InternalServerErrorException(err.message);
-    }
+    const result = await this.authService.githubAuthentication(body.authCode);
+    if ('accessToken' in result && 'refreshToken' in result) {
+      const { accessToken, refreshToken } = result;
+      const { username, githubImageUrl } =
+        await this.memberService.getMemberPublicInfo(accessToken);
+      const responseBody = {
+        accessToken,
+        member: { username, imageUrl: githubImageUrl },
+      };
+      return response
+        .status(201)
+        .cookie('refreshToken', refreshToken, this.cookieOptions)
+        .send(responseBody);
+    } else if ('tempIdToken' in result) {
+      const responseBody = { tempIdToken: result.tempIdToken };
+      return response.status(209).send(responseBody);
+    } else throw new Error('assert: unexpected authentication result returned');
   }
 
   @Post('github/signup')
@@ -78,32 +66,24 @@ export class AuthController {
     const tempIdToken = request.token;
     if (!tempIdToken)
       throw new UnauthorizedException('Bearer Token is missing');
-    try {
-      const { accessToken, refreshToken } = await this.authService.githubSignup(
-        tempIdToken,
-        body.username,
-        body.position,
-        { stacks: body.techStack },
-      );
-      const { username, githubImageUrl } =
-        await this.memberService.getMemberPublicInfo(accessToken);
-      const responseBody = {
-        accessToken,
-        member: { username, imageUrl: githubImageUrl },
-      };
-      return response
-        .status(201)
-        .cookie('refreshToken', refreshToken, this.cookieOptions)
-        .send(responseBody);
-    } catch (err) {
-      if (
-        err.message === 'Failed to verify token' ||
-        err.message === 'tempIdToken does not match'
-      ) {
-        throw new UnauthorizedException('Expired:tempIdToken');
-      }
-      throw new InternalServerErrorException(err.message);
-    }
+
+    const { accessToken, refreshToken } = await this.authService.githubSignup(
+      tempIdToken,
+      body.username,
+      body.position,
+      { stacks: body.techStack },
+    );
+    const { username, githubImageUrl } =
+      await this.memberService.getMemberPublicInfo(accessToken);
+    const responseBody = {
+      accessToken,
+      member: { username, imageUrl: githubImageUrl },
+    };
+
+    return response
+      .status(201)
+      .cookie('refreshToken', refreshToken, this.cookieOptions)
+      .send(responseBody);
   }
 
   @Post('logout')
@@ -112,17 +92,8 @@ export class AuthController {
     if (!accessToken)
       throw new UnauthorizedException('Bearer Token is missing');
 
-    try {
-      await this.authService.logout(accessToken);
-    } catch (err) {
-      if (err.message === 'Not a logged in member') {
-        throw new UnauthorizedException('Not a logged in member');
-      }
-      if (err.message === 'Failed to verify token') {
-        throw new UnauthorizedException('Expired:accessToken');
-      }
-      throw new InternalServerErrorException(err.message);
-    }
+    await this.authService.logout(accessToken);
+
     return response
       .clearCookie('refreshToken', this.cookieOptions)
       .status(200)
@@ -135,24 +106,16 @@ export class AuthController {
     if (!requestRefreshToken) {
       throw new UnauthorizedException('Refresh Token is missing');
     }
-    try {
-      const { accessToken, refreshToken } =
-        await this.authService.refreshAccessTokenAndRefreshToken(
-          requestRefreshToken,
-        );
-      return response
-        .status(201)
-        .cookie('refreshToken', refreshToken, this.cookieOptions)
-        .send({ accessToken });
-    } catch (err) {
-      if (
-        err.message === 'No matching refresh token' ||
-        err.message === 'Failed to verify token'
-      ) {
-        throw new UnauthorizedException('Expired:refreshToken');
-      }
-      throw new InternalServerErrorException(err.message);
-    }
+
+    const { accessToken, refreshToken } =
+      await this.authService.refreshAccessTokenAndRefreshToken(
+        requestRefreshToken,
+      );
+
+    return response
+      .status(201)
+      .cookie('refreshToken', refreshToken, this.cookieOptions)
+      .send({ accessToken });
   }
 
   @Get('/github/username')
@@ -160,18 +123,10 @@ export class AuthController {
     const tempIdToken = request.token;
     if (!tempIdToken)
       throw new UnauthorizedException('Bearer Token is missing');
-    try {
-      const githubUsername =
-        await this.authService.getGithubUsernameByTempIdToken(tempIdToken);
-      return { githubUsername };
-    } catch (err) {
-      if (
-        err.message === 'Failed to verify token' ||
-        err.message === 'tempIdToken does not match'
-      ) {
-        throw new UnauthorizedException('Expired:tempIdToken');
-      }
-      throw new InternalServerErrorException(err.message);
-    }
+
+    const githubUsername =
+      await this.authService.getGithubUsernameByTempIdToken(tempIdToken);
+
+    return { githubUsername };
   }
 }
