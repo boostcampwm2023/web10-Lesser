@@ -58,6 +58,8 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <div>landing page</div> },
           { path: ROUTER_URL.BACKLOG, element: <div>backlog Page</div> },
+          { path: ROUTER_URL.SPRINT, element: <div>sprint Page</div> },
+          { path: ROUTER_URL.SETTINGS, element: <div>setting Page</div> },
         ],
       },
     ],
