@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { SIGNUP_STEP } from "../../constants/account";
-import NextStepButton from "./NextStepButton";
+import NextStepButton from "../common/NextStepButton";
 import useDebounce from "../../hooks/common/useDebounce";
 import {
   getGithubUsername,

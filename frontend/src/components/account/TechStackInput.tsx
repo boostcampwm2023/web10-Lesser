@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useModal } from "../../hooks/common/modal/useModal";
 import TechStackModal from "./TechStackModal";
 import plus from "../../assets/icons/plus.svg";
-import NextStepButton from "./NextStepButton";
+import NextStepButton from "../common/NextStepButton";
 import CategoryButton from "../common/CategoryButton";
 
 interface TechStackInputProps {

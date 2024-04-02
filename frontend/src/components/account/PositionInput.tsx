@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import useDropdown from "../../hooks/common/dropdown/useDropdown";
-import NextStepButton from "./NextStepButton";
+import NextStepButton from "../common/NextStepButton";
 import { JOB_INPUT_INFO, SIGNUP_STEP } from "../../constants/account";
 
 interface JobInputProps {
