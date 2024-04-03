@@ -23,9 +23,9 @@ const ProjectsSideBar = () => {
       <p className="mb-8 font-semibold text-m text-dark-gray">프로젝트를 생성하고</p>
       <p className="mb-8 font-semibold text-m text-dark-gray">관리하고</p>
       <p className="mb-[9.625rem] font-semibold text-m text-dark-gray">확인해 보세요</p>
-      <div className="w-[23.375rem] py-6 px-[1.875rem] flex items-center gap-6 bg-gradient-to-bl from-white-transparent to-90% bg-light-green rounded-[1.125rem] text-white">
-        <div className="rounded-full w-16 h-16 overflow-hidden">
-          <img src={userData.imageUrl} alt="프로필 사진" className="w-16 h-16 object-contain" />
+      <div className="w-[23.375rem] py-6 px-[1.875rem] flex items-center gap-6 bg-gradient-to-bl from-white-transparent to-90% bg-middle-green rounded-[1.125rem] text-white">
+        <div className="w-16 h-16 overflow-hidden rounded-full">
+          <img src={userData.imageUrl} alt="프로필 사진" className="object-contain w-16 h-16" />
         </div>
         <div className="flex flex-col gap-1">
           <p className="font-semibold text-m">{userData.username}</p>
