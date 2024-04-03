@@ -23,6 +23,8 @@ import * as cookieParser from 'cookie-parser';
 import { BearerTokenMiddleware } from './common/middleware/parse-bearer-token.middleware';
 import { APP_FILTER } from '@nestjs/core';
 import { ErrorExceptionFilter } from './common/exception-filter/exception.filter';
+import { Project } from './project/entity/project.entity';
+import { ProjectToMember } from './project/entity/project-member.entity';
 
 @Module({
   imports: [
@@ -35,8 +37,9 @@ import { ErrorExceptionFilter } from './common/exception-filter/exception.filter
         username: ConfigService.get(DATABASE_USER),
         password: ConfigService.get(DATABASE_PASSWORD),
         database: ConfigService.get(DATABASE_NAME),
-        entities: [Member, TempMember, LoginMember],
+        entities: [Member, TempMember, LoginMember, Project, ProjectToMember],
         synchronize: ConfigService.get('NODE_ENV') == 'PROD' ? false : true,
+        logging: true
       }),
     }),
     AuthModule,
