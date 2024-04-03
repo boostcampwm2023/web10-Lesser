@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import useDropdown from "../../hooks/common/dropdown/useDropdown";
 import { ProjectCard } from ".";
 import { PROJECT_SORT_OPTION } from "../../constants/projects";
 import plus from "../../assets/icons/plus.svg";
 import { ProjectDTO } from "../../types/projectDTO";
-import { getProjects } from "../../apis/api/projectAPI";
 import projectSortByOption from "../../utils/projectSortByOption";
+import { useGetProjects } from "../../hooks/queries/project";
 
 const ProjectList = () => {
-  const [projects, setProjects] = useState<ProjectDTO[]>([]);
+  const { data: projects, error } = useGetProjects();
   const { Dropdown, selectedOption } = useDropdown({
     placeholder: "",
     options: [PROJECT_SORT_OPTION.UPDATE, PROJECT_SORT_OPTION.RECENT],
@@ -18,22 +18,23 @@ const ProjectList = () => {
   const projectList = useMemo<ProjectDTO[]>(() => {
     const earliest = -new Date();
 
-    return structuredClone(projects).sort((projectA, projectB) =>
-      projectSortByOption({
-        projectA,
-        projectB,
-        option: selectedOption,
-        earliest,
-      })
-    );
+    if (Array.isArray(projects)) {
+      return structuredClone(projects).sort((projectA, projectB) =>
+        projectSortByOption({
+          projectA,
+          projectB,
+          option: selectedOption,
+          earliest,
+        })
+      );
+    }
+
+    return [];
   }, [projects, selectedOption]);
 
-  useEffect(() => {
-    (async () => {
-      const projectList = await getProjects();
-      setProjects(projectList);
-    })();
-  }, []);
+  if (error) {
+    throw error;
+  }
 
   return (
     <section className="min-w-[720px] min-h-[40.5rem] flex flex-col gap-6">
