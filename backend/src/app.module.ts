@@ -18,6 +18,8 @@ import { TempMember } from './auth/entity/tempMember.entity';
 import { MemberModule } from './member/member.module';
 import { Member } from './member/entity/member.entity';
 import { LoginMember } from './auth/entity/loginMember.entity';
+import { Project } from './project/entity/project.entity';
+import { ProjectToMember } from './project/entity/project-member.entity';
 import { ProjectModule } from './project/project.module';
 import * as cookieParser from 'cookie-parser';
 import { BearerTokenMiddleware } from './common/middleware/parse-bearer-token.middleware';
@@ -35,7 +37,7 @@ import { ErrorExceptionFilter } from './common/exception-filter/exception.filter
         username: ConfigService.get(DATABASE_USER),
         password: ConfigService.get(DATABASE_PASSWORD),
         database: ConfigService.get(DATABASE_NAME),
-        entities: [Member, TempMember, LoginMember],
+        entities: [Member, TempMember, LoginMember, Project, ProjectToMember],
         synchronize: ConfigService.get('NODE_ENV') == 'PROD' ? false : true,
       }),
     }),

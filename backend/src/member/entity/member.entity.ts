@@ -1,3 +1,4 @@
+import { ProjectToMember } from 'src/project/entity/project-member.entity';
 import {
   Column,
   Entity,
@@ -5,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -31,6 +33,9 @@ export class Member {
 
   @Column({ type: 'json', nullable: false })
   tech_stack: object;
+
+  @OneToMany(() => ProjectToMember, (projectToMember) => projectToMember.member)
+  projectToMember: ProjectToMember;
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
