@@ -3,7 +3,7 @@ import { getProjects } from "../../../apis/api/projectAPI";
 import { ProjectDTO } from "../../../types/projectDTO";
 
 const useGetProjects = () =>
-  useQuery<ProjectDTO>({
+  useQuery<ProjectDTO[]>({
     queryKey: ["projects"],
     queryFn: getProjects,
   });
