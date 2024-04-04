@@ -12,7 +12,7 @@ const LandingProjectLink = ({ projectId, type }: LandingProjectLinkProps) => {
   return (
     <Link
       to={LINK_URL.BACKLOG(projectId)}
-      className={`w-[8.75rem] h-[5rem] border rounded-lg flex justify-center gap-2 items-center ${color} hover:shadow-button`}
+      className={`w-[8.75rem] h-[5rem] rounded-lg flex justify-center gap-2 items-center ${color} hover:shadow-button`}
     >
       <Icon height={36} width={36} fill="#FFFFFF" />
       <div className="flex flex-col gap-1 text-white text-[1rem] font-bold">
