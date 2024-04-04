@@ -29,7 +29,7 @@ const useDropdown = ({
     buttonClassName = "",
     containerClassName = "",
     itemClassName = "",
-    iconSize = "",
+    iconSize = "24",
   }: DropdownProps) => {
     const [open, setOpen] = useState<boolean>(false);
 
