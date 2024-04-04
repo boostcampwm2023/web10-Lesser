@@ -25,7 +25,8 @@ export const LANDING_SPRINT_BAR = {
     bgColor: "bg-light-green",
     color: "text-light-green",
     text: "스프린트 일정",
-    display: (dataNum: number) => `D-${dataNum}`,
+    display: (dataNum: number) =>
+      dataNum === 0 ? "D-day" : dataNum < 0 ? `D-${Math.abs(dataNum)}` : `D+${dataNum}`,
   },
   TOTAL: {
     bgColor: "bg-middle-green",
