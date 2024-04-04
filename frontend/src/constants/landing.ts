@@ -41,3 +41,18 @@ export const LANDING_SPRINT_BAR = {
     display: (dataNum: number) => `${dataNum}%`,
   },
 };
+
+export const USER_STATE_DISPLAY = {
+  on: {
+    bgColor: "bg-middle-green",
+    text: "접속 중",
+  },
+  off: {
+    bgColor: "bg-light-gray",
+    text: "부재 중",
+  },
+  away: {
+    bgColor: "bg-warning-yellow",
+    text: "자리 비움",
+  },
+};
