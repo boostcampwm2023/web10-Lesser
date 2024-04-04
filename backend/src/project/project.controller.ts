@@ -26,10 +26,21 @@ export class ProjectController {
     if (!accessToken)
       throw new UnauthorizedException('Bearer Token is missing');
 
-    // access token 검증을 위한 임시 로직
-    await this.lesserJwtService.getPayload(accessToken, 'access');
+    const {
+      sub: { id },
+    } = await this.lesserJwtService.getPayload(accessToken, 'access');
+    const member = await this.memberRepository.findById(id);
+    if (!member) throw new Error('assert: member must be found from database');
 
-    return { projects: projectFixtures };
+    const projectList = await this.projectService.getProjectList(member);
+    const projects = projectList.map((project) => ({
+      id: project.id,
+      title: project.title,
+      createdAt: project.created_at,
+      currentSprint: null,
+    }));
+
+    return { projects };
   }
 
   @Post('/')
