@@ -19,3 +19,24 @@ export const LANDING_PROJECT_LINK = {
     Icon: SettingsIcon,
   },
 };
+
+export const LANDING_SPRINT_BAR = {
+  SPRINT: {
+    bgColor: "bg-light-green",
+    color: "text-light-green",
+    text: "스프린트 일정",
+    display: (dataNum: number) => `D-${dataNum}`,
+  },
+  TOTAL: {
+    bgColor: "bg-middle-green",
+    color: "text-middle-green",
+    text: "전체 진행률",
+    display: (dataNum: number) => `${dataNum}%`,
+  },
+  PERSONAL: {
+    bgColor: "bg-dark-green",
+    color: "text-dark-green",
+    text: "내 진행률",
+    display: (dataNum: number) => `${dataNum}%`,
+  },
+};
