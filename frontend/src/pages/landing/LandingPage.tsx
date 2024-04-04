@@ -4,9 +4,9 @@ import { useParams } from "react-router-dom";
 import LandingProject from "../../components/landing/LandingProject";
 import LandingSprint from "../../components/landing/LandingSprint";
 import useDropdown from "../../hooks/common/dropdown/useDropdown";
-import ProfileImage from "../../components/common/ProfileImage";
 import { DEFAULT_MEMBER } from "../../constants/projects";
-import { USER_STATE_DISPLAY } from "../../constants/landing";
+import UserBlock from "../../components/landing/UserBlock";
+import LandingMember from "../../components/landing/LandingMember";
 
 const sampleData: LandingDTO = {
   project: {
@@ -54,56 +54,11 @@ const sampleData: LandingDTO = {
   ], // 외부 링크가 없는 경우 빈 배열 []
 };
 
-const UserStateDisplay = ({ status }: { status: "on" | "off" | "away" }) => {
-  const { bgColor, text } = USER_STATE_DISPLAY[status];
-  return (
-    <div className="flex gap-2 items-center w-[4.0625rem]">
-      <div className={`w-3 h-3 rounded-full ${bgColor}`} />
-      <p className="text-xxxs font-semibold">{text}</p>
-    </div>
-  );
-};
-
-interface UserBlockProps {
-  imageUrl: string;
-  username: string;
-  status: "on" | "off" | "away";
-}
-
-const UserBlock = ({ imageUrl, username, status }: UserBlockProps) => {
-  return (
-    <div className="w-full flex justify-between items-center bg-white rounded-lg p-3">
-      <ProfileImage imageUrl={imageUrl} pxSize={40} />
-      <p className="text-xs font-bold text-middle-green">{username}</p>
-      <UserStateDisplay status={status} />
-    </div>
-  );
-};
-
 const LandingPage = () => {
   const [landingData] = useState<LandingDTO>(sampleData);
   const { projectId } = useParams();
   if (!projectId) throw Error("Invalid Web URL");
   const { project, sprint, member } = landingData;
-
-  const { Dropdown, selectedOption } = useDropdown({
-    placeholder: "내 상태",
-    options: ["접속 중", "부재 중", "자리비움"],
-    defaultOption: "접속 중",
-  });
-  const { imageUrl, username } = JSON.parse(
-    window.localStorage.getItem("member") ?? DEFAULT_MEMBER
-  );
-  const getUserState = (state: string): "on" | "off" | "away" => {
-    switch (state) {
-      case "접속 중":
-        return "on";
-      case "부재 중":
-        return "off";
-      default:
-        return "away";
-    }
-  };
 
   return (
     <div className="h-full w-full flex flex-col justify-between">
@@ -113,28 +68,7 @@ const LandingPage = () => {
       </div>
       <div className="h-[20.5625rem] w-full shrink-0 flex gap-9">
         <LandingSprint {...{ sprint }} />
-        <div className="w-full shadow-box rounded-lg bg-gradient-to-tr to-light-green-linear-from from-light-green pt-6 pl-6 pr-3 overflow-y-scroll scrollbar-thin scrollbar-thumb-light-green scrollbar-track-transparent">
-          <div className="flex flex-col gap-3">
-            <div className="flex justify-between">
-              <p className="text-white text-xs font-bold">| 내 상태</p>
-              <div className="h-fit" />
-              <Dropdown
-                buttonClassName="flex justify-between items-center w-[6rem] h-6 pl-5 text-white text-xxxs bg-middle-green pr-3 rounded-md"
-                containerClassName="w-[6rem] bg-white rounded-b-lg overflow-hidden"
-                itemClassName="w-full text-xxxs text-center font-semibold py-2 hover:bg-middle-green hover:text-white hover:font-semibold"
-                iconSize="12"
-              />
-            </div>
-            <UserBlock {...{ imageUrl, username, status: getUserState(selectedOption) }} />
-            <div className="flex justify-between text-white">
-              <p className="text-xs font-bold">| 함께하는 사람들</p>
-              <button className="text-xxs hover:underline">초대링크 복사</button>
-            </div>
-            {member.map((memberData: LandingMemberDTO) => {
-              return <UserBlock {...memberData} />;
-            })}
-          </div>
-        </div>
+        <LandingMember {...{ member }} />
         <div className="w-full shadow-box rounded-lg"></div>
       </div>
     </div>
