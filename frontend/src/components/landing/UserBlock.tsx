@@ -19,7 +19,7 @@ const UserStateDisplay = ({ status }: { status: "on" | "off" | "away" }) => {
 
 const UserBlock = ({ imageUrl, username, status }: UserBlockProps) => {
   return (
-    <div className="w-full flex justify-between items-center bg-white rounded-lg p-3">
+    <div className="w-full flex justify-between items-center bg-white rounded-lg p-3 shadow-box">
       <ProfileImage imageUrl={imageUrl} pxSize={40} />
       <p className="text-xs font-bold text-middle-green">{username}</p>
       <UserStateDisplay status={status} />
