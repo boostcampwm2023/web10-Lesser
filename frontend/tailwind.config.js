@@ -14,6 +14,7 @@ export default {
         "text-gray": "#9E9E9E",
         "text-black": "#1A1414",
         "error-red": "#E33535",
+        "warning-yellow": "#F0B400",
         "white-transparent": "rgba(255, 255, 255, 0.29)",
         "light-green-linear-from": "rgba(102, 119, 11, 0.62)",
         "middle-green-linear-from": "rgba(57, 104, 40, 0.71)",
