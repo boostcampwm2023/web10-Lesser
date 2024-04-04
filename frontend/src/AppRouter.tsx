@@ -6,6 +6,7 @@ import GlobalErrorBoundary from "./GlobalErrorBoundary";
 import PrivateRoute from "./components/common/route/PrivateRoute";
 import PublicRoute from "./components/common/route/PublicRoute";
 import MainPage from "./pages/main/MainPage";
+import LandingPage from "./pages/landing/LandingPage";
 
 type RouteType = "PRIVATE" | "PUBLIC";
 
@@ -56,7 +57,7 @@ const router = createBrowserRouter([
         path: ROUTER_URL.MAIN,
         element: <MainPage />,
         children: [
-          { index: true, element: <div>landing page</div> },
+          { index: true, element: <LandingPage /> },
           { path: ROUTER_URL.BACKLOG, element: <div>backlog Page</div> },
           { path: ROUTER_URL.SPRINT, element: <div>sprint Page</div> },
           { path: ROUTER_URL.SETTINGS, element: <div>setting Page</div> },

@@ -1,6 +1,6 @@
 import { LINK_URL, ROUTER_URL } from "../../constants/path";
 import { DEFAULT_MEMBER } from "../../constants/projects";
-import { ProjectSidebarProps } from "../../types/main";
+import { ProjectSidebarProps } from "../../types/common/main";
 import PageIcon from "./PageIcon";
 import PageOutIcon from "../../assets/icons/pageout.svg?react";
 import NotificationIcon from "../../assets/icons/notifications.svg?react";

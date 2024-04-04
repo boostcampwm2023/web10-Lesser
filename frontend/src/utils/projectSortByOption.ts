@@ -1,5 +1,5 @@
 import { PROJECT_SORT_OPTION } from "../constants/projects";
-import { ProjectDTO } from "../types/projectDTO";
+import { ProjectDTO } from "../types/DTO/projectDTO";
 
 interface ProjectSortByOptionParams {
   projectA: ProjectDTO;
@@ -23,18 +23,12 @@ const projectSortByOption = ({
       : earliest;
 
     if (projectASprintStart === projectBSprintStart) {
-      return (
-        Number(new Date(projectB.createdAt)) -
-        Number(new Date(projectA.createdAt))
-      );
+      return Number(new Date(projectB.createdAt)) - Number(new Date(projectA.createdAt));
     }
 
     return Number(projectBSprintStart) - Number(projectASprintStart);
   } else {
-    return (
-      Number(new Date(projectB.createdAt)) -
-      Number(new Date(projectA.createdAt))
-    );
+    return Number(new Date(projectB.createdAt)) - Number(new Date(projectA.createdAt));
   }
 };
 

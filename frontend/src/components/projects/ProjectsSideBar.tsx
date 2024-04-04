@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { postLogout } from "../../apis/api/loginAPI";
 import { ROUTER_URL } from "../../constants/path";
-import { memberResponse } from "../../types/authDTO";
+import { memberResponse } from "../../types/DTO/authDTO";
 import { DEFAULT_MEMBER } from "../../constants/projects";
 
 const ProjectsSideBar = () => {

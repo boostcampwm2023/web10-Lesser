@@ -8,7 +8,7 @@ const MainPage = () => {
   return (
     <div className="flex justify-center items-center h-screen min-w-[76rem] gap-9">
       <ProjectSidebar {...{ pathname, projectId }} />
-      <div className="h-[40.5rem] min-w-[67.9375rem] border-2">
+      <div className="h-[40.5rem] min-w-[67.9375rem]">
         <Outlet />
       </div>
     </div>

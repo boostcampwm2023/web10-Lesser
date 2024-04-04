@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { API_URL, BASE_URL } from "../../constants/path";
-import { RefreshDTO } from "../../types/authDTO";
+import { RefreshDTO } from "../../types/DTO/authDTO";
 
 let accessToken: string | undefined;
 

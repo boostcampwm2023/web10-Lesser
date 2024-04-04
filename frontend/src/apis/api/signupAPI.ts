@@ -1,6 +1,6 @@
 import { API_URL } from "../../constants/path";
 import { baseAPI } from "../utils";
-import { SignupDTO } from "../../types/authDTO";
+import { SignupDTO } from "../../types/DTO/authDTO";
 import { setAccessToken } from "../utils/authAPI";
 
 interface SignupParams extends SignupDTO {
@@ -25,12 +25,7 @@ export const getGithubUsername = async (tempIdToken: string) => {
   }
 };
 
-export const postSignup = async ({
-  tempIdToken,
-  username,
-  position,
-  techStack,
-}: SignupParams) => {
+export const postSignup = async ({ tempIdToken, username, position, techStack }: SignupParams) => {
   const response = await baseAPI(API_URL.SIGN_UP, {
     method: "post",
     data: { username, position, techStack },
