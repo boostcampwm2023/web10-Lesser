@@ -10,7 +10,7 @@ export default {
         "dark-green": "#032809",
         "light-green": "#66770B",
         "dark-gray": "#696969",
-        "light-gray": "D9D9D9",
+        "light-gray": "#D9D9D9",
         "text-gray": "#9E9E9E",
         "text-black": "#1A1414",
         "error-red": "#E33535",

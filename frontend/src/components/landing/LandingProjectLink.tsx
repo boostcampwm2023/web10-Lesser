@@ -15,7 +15,7 @@ const LandingProjectLink = ({ projectId, type }: LandingProjectLinkProps) => {
       className={`w-[8.75rem] h-[5rem] rounded-lg flex justify-center gap-2 items-center ${color} hover:shadow-button`}
     >
       <Icon height={36} width={36} fill="#FFFFFF" />
-      <div className="flex flex-col gap-1 text-white text-[1rem] font-bold">
+      <div className="flex flex-col items-center gap-0 text-white text-[1rem] font-semibold">
         <p>{text}</p>
         <p>바로가기</p>
       </div>
