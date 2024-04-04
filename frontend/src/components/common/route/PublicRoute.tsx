@@ -18,7 +18,7 @@ const PublicRoute = () => {
         setAuthenticated(false);
       }
     });
-  }, [checkAuthentication]);
+  });
 
   return loadingState ? (
     <RouteLoading />
