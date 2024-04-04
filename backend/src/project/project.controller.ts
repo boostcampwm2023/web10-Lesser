@@ -1,31 +1,64 @@
 import {
+  Body,
   Controller,
   Get,
+  Post,
   Req,
   UnauthorizedException,
-  InternalServerErrorException,
 } from '@nestjs/common';
 import { projectFixtures } from 'fixtures/project-fixtures';
 import { BearerTokenRequest } from 'src/common/middleware/parse-bearer-token.middleware';
-
 import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
+import { MemberRepository } from 'src/member/repository/member.repository';
+import { ProjectService } from './service/project.service';
+import { CreateProjectRequestDto } from './dto/CreateProjectRequest.dto';
 
 @Controller('project')
 export class ProjectController {
-  constructor(private readonly lesserJwtService: LesserJwtService) {}
+  constructor(
+    private readonly lesserJwtService: LesserJwtService,
+    private readonly projectService: ProjectService,
+    private readonly memberRepository: MemberRepository,
+  ) {}
   @Get('/')
   async getProjectList(@Req() request: BearerTokenRequest) {
     const accessToken = request.token;
     if (!accessToken)
       throw new UnauthorizedException('Bearer Token is missing');
-    try {
-      // access token 검증을 위한 임시 로직
-      await this.lesserJwtService.getPayload(accessToken, 'access');
-    } catch (err) {
-      if (err.message === 'Failed to verify token')
-        throw new UnauthorizedException('Expired:accessToken');
-      throw new InternalServerErrorException(err.message);
-    }
-    return { projects: projectFixtures };
+
+    const {
+      sub: { id },
+    } = await this.lesserJwtService.getPayload(accessToken, 'access');
+    const member = await this.memberRepository.findById(id);
+    if (!member) throw new Error('assert: member must be found from database');
+
+    const projectList = await this.projectService.getProjectList(member);
+    const projects = projectList.map((project) => ({
+      id: project.id,
+      title: project.title,
+      createdAt: project.created_at,
+      currentSprint: null,
+    }));
+
+    return { projects };
+  }
+
+  @Post('/')
+  async createProject(
+    @Req() request: BearerTokenRequest,
+    @Body() body: CreateProjectRequestDto,
+  ) {
+    const accessToken = request.token;
+    if (!accessToken)
+      throw new UnauthorizedException('Bearer Token is missing');
+
+    const {
+      sub: { id },
+    } = await this.lesserJwtService.getPayload(accessToken, 'access');
+    const member = await this.memberRepository.findById(id);
+    if (!member) throw new Error('assert: member must be found from database');
+
+    await this.projectService.createProject(member, body.title, body.subject);
+    return;
   }
 }

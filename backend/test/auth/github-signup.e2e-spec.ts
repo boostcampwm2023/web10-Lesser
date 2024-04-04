@@ -48,12 +48,31 @@ describe('POST /api/auth/github/signup', () => {
     expect(response.body.message).toBe('Bearer Token is missing');
   });
 
-  it('should return 401 (Expired:tempIdToken)', async () => {
+  it('should return 401 (Expired:tempIdToken) when given invalid temp id token', async () => {
     const response = await request(app.getHttpServer())
       .post('/api/auth/github/signup')
       .set('Authorization', `Bearer invalidToken`)
       .send(memberSignupPayload);
 
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe('Expired:tempIdToken');
+  });
+
+  it('should return 401 (Expired:tempIdToken) when given not matching temp id token', async () => {
+    const {
+      body: { tempIdToken },
+    } = await request(app.getHttpServer())
+      .post('/api/auth/github/authentication')
+      .send({ authCode: 'authCode' });
+
+    await request(app.getHttpServer())
+      .post('/api/auth/github/authentication')
+      .send({ authCode: 'authCode' });
+
+    const response = await request(app.getHttpServer())
+      .post('/api/auth/github/signup')
+      .set('Authorization', `Bearer ${tempIdToken}`)
+      .send(memberSignupPayload);
     expect(response.status).toBe(401);
     expect(response.body.message).toBe('Expired:tempIdToken');
   });

@@ -23,6 +23,6 @@
     /* CommonJS module */
     "esModuleInterop": true
   },
-  "include": ["src"],
+  "include": ["src", "svg.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

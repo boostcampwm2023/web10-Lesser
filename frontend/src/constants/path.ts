@@ -19,5 +19,18 @@ export const ROUTER_URL = {
   AUTH: "/auth/github/callback",
   PROJECTS: "/projects",
   PROJECTS_CREATE: "projects/create",
+  MAIN: "/projects/:projectId",
+  BACKLOG: "/projects/:projectId/backlog",
+  SPRINT: "/projects/:projectId/sprint",
+  SPRINT_CREATE: "/projects/:projectId/sprint/create",
+  SETTINGS: "/projects/:projectId/settings",
   ERROR: "/error",
+};
+
+export const LINK_URL = {
+  MAIN: (projectId: string) => `/projects/${projectId}`,
+  BACKLOG: (projectId: string) => `/projects/${projectId}/backlog`,
+  SPRINT: (projectId: string) => `/projects/${projectId}/sprint`,
+  SPRINT_CREATE: (projectId: string) => `/projects/${projectId}/sprint/create`,
+  SETTINGS: (projectId: string) => `/projects/${projectId}/settings`,
 };
