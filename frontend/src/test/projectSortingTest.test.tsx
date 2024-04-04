@@ -1,5 +1,5 @@
 import { PROJECT_SORT_OPTION } from "../constants/projects";
-import { ProjectDTO } from "../types/projectDTO";
+import { ProjectDTO } from "../types/DTO/projectDTO";
 import projectSortByOption from "../utils/projectSortByOption";
 
 const mockProjectListData: ProjectDTO[] = [

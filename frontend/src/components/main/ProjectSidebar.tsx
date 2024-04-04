@@ -1,4 +1,4 @@
-import { ProjectSidebarProps } from "../../types/main";
+import { ProjectSidebarProps } from "../../types/common/main";
 import PageLinkIcons from "./PageLinkIcons";
 import UtilIcons from "./UtilIcons";
 

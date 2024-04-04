@@ -6,7 +6,7 @@ import {
   GithubOauthUrlDTO,
   RefreshDTO,
   TempIdTokenResponse,
-} from "../../types/authDTO";
+} from "../../types/DTO/authDTO";
 import { useNavigate } from "react-router-dom";
 import { authAPI, setAccessToken } from "../utils/authAPI";
 

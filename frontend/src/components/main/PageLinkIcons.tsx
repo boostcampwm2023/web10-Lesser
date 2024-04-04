@@ -4,7 +4,7 @@ import BacklogIcon from "../../assets/icons/backlog.svg?react";
 import SprintIcon from "../../assets/icons/sprint.svg?react";
 import SettingIcon from "../../assets/icons/settings.svg?react";
 import { LINK_URL } from "../../constants/path";
-import { ProjectSidebarProps } from "../../types/main";
+import { ProjectSidebarProps } from "../../types/common/main";
 
 const PageLinkIcons = ({ pathname, projectId }: ProjectSidebarProps) => {
   return (
