@@ -36,6 +36,7 @@ export default {
       },
       boxShadow: {
         box: "8px 8px 25px 0px #00000051",
+        button: "2px 2px 8px 2px rgba(0, 0, 0, 0.3)",
       },
       dropShadow: {
         box: "8px 8px 25px 0px #00000051",
