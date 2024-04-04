@@ -9,7 +9,7 @@ interface LandingProjectProps {
 
 const LandingProject = ({ project, projectId }: LandingProjectProps) => {
   return (
-    <div className="border w-full p-6 flex flex-col justify-between shadow-box rounded-lg">
+    <div className="w-full p-6 flex flex-col justify-between shadow-box rounded-lg">
       <div className="flex justify-between items-baseline text-middle-green font-bold">
         <p className="text-xl">| {project.title}</p>
         <p className="text-xs">{formatDate(project.createdAt)}</p>
