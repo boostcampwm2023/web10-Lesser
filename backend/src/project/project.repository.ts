@@ -23,4 +23,11 @@ export class ProjectRepository {
       ProjectToMember.of(project, member),
     );
   }
+
+  getProjectList(member: Member): Promise<Project[]> {
+    return this.projectRepository.find({
+      where: { projectToMember: { member: { id: member.id } } },
+      relations: { projectToMember: true },
+    });
+  }
 }

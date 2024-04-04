@@ -17,6 +17,7 @@ describe('ProjectService', () => {
           useValue: {
             create: jest.fn(),
             addProjectMember: jest.fn(),
+            getProjectList: jest.fn(),
           },
         },
       ],
@@ -26,15 +27,15 @@ describe('ProjectService', () => {
     projectRepository = module.get<ProjectRepository>(ProjectRepository);
   });
 
+  const member = Member.of(
+    1,
+    'githubUsername',
+    'imageUrl',
+    'username',
+    'position',
+    { stacks: ['js', 'ts'] },
+  );
   describe('Create project', () => {
-    const member = Member.of(
-      1,
-      'githubUsername',
-      'imageUrl',
-      'username',
-      'position',
-      { stacks: ['js', 'ts'] },
-    );
     const [title, subject] = ['title', 'subject'];
     const project = Project.of(title, subject);
 
@@ -48,6 +49,23 @@ describe('ProjectService', () => {
         project,
         member,
       );
+    });
+  });
+
+  describe('Get project list', () => {
+    const projectList = [
+      Project.of('title1', 'subject1'),
+      Project.of('title2', 'subject2'),
+    ];
+    it('should return project list', async () => {
+      jest
+        .spyOn(projectRepository, 'getProjectList')
+        .mockResolvedValue(projectList);
+
+      const result = await projectService.getProjectList(member);
+
+      expect(projectRepository.getProjectList).toHaveBeenCalledWith(member);
+      expect(result).toEqual(projectList);
     });
   });
 });
