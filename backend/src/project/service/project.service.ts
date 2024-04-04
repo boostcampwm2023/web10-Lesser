@@ -13,4 +13,8 @@ export class ProjectService {
     );
     await this.projectRepository.addProjectMember(createdProject, member);
   }
+
+  async getProjectList(member: Member): Promise<Project[]> {
+    return await this.projectRepository.getProjectList(member);
+  }
 }
