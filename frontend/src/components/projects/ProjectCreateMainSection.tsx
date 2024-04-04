@@ -6,6 +6,7 @@ import {
   PROJECT_SUBJECT_INPUT_ID,
 } from "../../constants/projects";
 import { Step } from "../../types/common";
+import usePostCreateProject from "../../hooks/queries/project/usePostCreateProject";
 
 interface ProjectCreateMainSectionProps {
   currentStep: Step;
@@ -16,8 +17,9 @@ const ProjectCreateMainSection = ({
   currentStep,
   setCurrentStep,
 }: ProjectCreateMainSectionProps) => {
-  const projectNameRef = useRef<string>("");
+  const projectTitleRef = useRef<string>("");
   const projectSubjectRef = useRef<string>("");
+  const mutation = usePostCreateProject();
 
   const handlePrevStepAreaClick = () => {
     setCurrentStep((prevStep) => {
@@ -29,25 +31,37 @@ const ProjectCreateMainSection = ({
     });
   };
 
-  const handleCreateButtonClick = async () => {};
+  const handleCreateButtonClick = async () => {
+    mutation.mutate({
+      title: projectTitleRef.current,
+      subject: projectSubjectRef.current,
+    });
+  };
 
   const handleNextButtonClick = () => {
     setCurrentStep(PROJECT_CREATE_STEP.STEP2);
   };
 
   useEffect(() => {
-    const nicknameInput = document.getElementById(PROJECT_NAME_INPUT_ID);
-    const nicknameInputElement = document.getElementById(
+    const projectTitleInputElement = document.getElementById(
+      PROJECT_NAME_INPUT_ID
+    );
+    const projectTitleInputBox = document.getElementById(
       `${PROJECT_NAME_INPUT_ID}-input-box`
     );
 
     switch (currentStep.NUMBER) {
       case PROJECT_CREATE_STEP.STEP1.NUMBER:
-        nicknameInput?.scrollIntoView({ behavior: "smooth", block: "center" });
+        projectTitleInputElement?.focus();
+        projectTitleInputElement?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
         break;
 
       case PROJECT_CREATE_STEP.STEP2.NUMBER:
-        nicknameInputElement?.scrollIntoView({
+        document.getElementById(PROJECT_SUBJECT_INPUT_ID)?.focus();
+        projectTitleInputBox?.scrollIntoView({
           behavior: "smooth",
           block: "start",
         });
@@ -65,7 +79,7 @@ const ProjectCreateMainSection = ({
       ></div>
       <section className="h-[100%] overflow-y-hidden">
         <ProjectCreateInput
-          inputRef={projectNameRef}
+          inputRef={projectTitleRef}
           targetStepIsCurrentStep={currentStep === PROJECT_CREATE_STEP.STEP1}
           setCurrentStep={setCurrentStep}
           onNextButtonClick={handleNextButtonClick}

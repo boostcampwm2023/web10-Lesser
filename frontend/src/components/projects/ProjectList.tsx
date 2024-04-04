@@ -6,6 +6,8 @@ import plus from "../../assets/icons/plus.svg";
 import { ProjectDTO } from "../../types/projectDTO";
 import projectSortByOption from "../../utils/projectSortByOption";
 import { useGetProjects } from "../../hooks/queries/project";
+import { useNavigate } from "react-router-dom";
+import { ROUTER_URL } from "../../constants/path";
 
 const ProjectList = () => {
   const { data: projects, error } = useGetProjects();
@@ -14,6 +16,11 @@ const ProjectList = () => {
     options: [PROJECT_SORT_OPTION.UPDATE, PROJECT_SORT_OPTION.RECENT],
     defaultOption: PROJECT_SORT_OPTION.UPDATE,
   });
+  const navigate = useNavigate();
+
+  const handleCreateButtonClick = () => {
+    navigate(`/${ROUTER_URL.PROJECTS_CREATE}`);
+  };
 
   const projectList = useMemo<ProjectDTO[]>(() => {
     const earliest = -new Date();
@@ -49,6 +56,7 @@ const ProjectList = () => {
           <button
             type="button"
             className="flex items-center justify-center w-[10.45rem] h-[2.5rem] py-2 pl-3 pr-9 text-white text-xs bg-middle-green gap-3 rounded-[0.375rem] shadow-box"
+            onClick={handleCreateButtonClick}
           >
             <img src={plus} alt="더하기" className="w-7" />
             추가하기

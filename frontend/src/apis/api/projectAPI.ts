@@ -8,3 +8,11 @@ export const getProjects = async () => {
     return response.data.projects;
   }
 };
+
+export const postCreateProject = async (body: {
+  title: string;
+  subject: string;
+}) => {
+  const response = await authAPI.post(API_URL.PROJECT, body);
+  return response.data;
+};
