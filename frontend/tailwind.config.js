@@ -33,6 +33,7 @@ export default {
         s: "1.25rem", //20px
         xs: "1.125rem", //18px
         xxs: "0.875rem", //14px
+        xxxs: "0.75rem", // 12px
       },
       boxShadow: {
         box: "8px 8px 25px 0px #00000051",

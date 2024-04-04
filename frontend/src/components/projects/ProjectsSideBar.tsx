@@ -3,6 +3,7 @@ import { postLogout } from "../../apis/api/loginAPI";
 import { ROUTER_URL } from "../../constants/path";
 import { memberResponse } from "../../types/DTO/authDTO";
 import { DEFAULT_MEMBER } from "../../constants/projects";
+import ProfileImage from "../common/ProfileImage";
 
 const ProjectsSideBar = () => {
   const navigate = useNavigate();
@@ -24,9 +25,7 @@ const ProjectsSideBar = () => {
       <p className="mb-8 font-semibold text-m text-dark-gray">관리하고</p>
       <p className="mb-[9.625rem] font-semibold text-m text-dark-gray">확인해 보세요</p>
       <div className="w-[23.375rem] py-6 px-[1.875rem] flex items-center gap-6 bg-gradient-to-bl from-white-transparent to-90% bg-light-green rounded-[1.125rem] text-white">
-        <div className="rounded-full w-16 h-16 overflow-hidden">
-          <img src={userData.imageUrl} alt="프로필 사진" className="w-16 h-16 object-contain" />
-        </div>
+        <ProfileImage imageUrl={userData.imageUrl} pxSize={64} />
         <div className="flex flex-col gap-1">
           <p className="font-semibold text-m">{userData.username}</p>
           <div className="flex gap-6 text-xs">

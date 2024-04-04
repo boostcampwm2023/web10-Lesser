@@ -3,6 +3,7 @@ import { LandingDTO } from "../../types/DTO/landingDTO";
 import { useParams } from "react-router-dom";
 import LandingProject from "../../components/landing/LandingProject";
 import LandingSprint from "../../components/landing/LandingSprint";
+import useDropdown from "../../hooks/common/dropdown/useDropdown";
 
 const sampleData: LandingDTO = {
   project: {
@@ -39,7 +40,13 @@ const LandingPage = () => {
   const [landingData] = useState<LandingDTO>(sampleData);
   const { projectId } = useParams();
   if (!projectId) throw Error("Invalid Web URL");
-  const { project, sprint } = landingData;
+  const { project, sprint, member } = landingData;
+
+  const { Dropdown, selectedOption } = useDropdown({
+    placeholder: "내 상태",
+    options: ["접속 중", "부재 중", "자리비움"],
+  });
+
   return (
     <div className="h-full w-full flex flex-col justify-between">
       <div className="h-[17.6875rem] w-full shrink-0 flex gap-9">
@@ -49,11 +56,19 @@ const LandingPage = () => {
       <div className="h-[20.5625rem] w-full shrink-0 flex gap-9">
         <LandingSprint {...{ sprint }} />
         <div className="w-full shadow-box rounded-lg bg-gradient-to-tr to-light-green-linear-from from-light-green pt-6 pl-6 pr-3 overflow-y-scroll scrollbar-thin scrollbar-thumb-light-green scrollbar-track-transparent">
-          <div className="h-[100px] shrink-0 shadow-box"></div>
-          <div className="h-[100px] shrink-0 shadow-box"></div>
-          <div className="h-[100px] shrink-0 shadow-box"></div>
-          <div className="h-[100px] shrink-0 shadow-box"></div>
-          <div className="h-[100px] shrink-0 shadow-box"></div>
+          <div className="flex flex-col gap-3">
+            <div className="flex justify-between">
+              <p className="text-white text-xs font-bold">| 내 상태</p>
+              <div className="h-fit" />
+              <Dropdown
+                buttonClassName="flex justify-between items-center w-[6rem] h-6 pl-5 text-white text-xxxs bg-middle-green pr-3 rounded-md"
+                containerClassName="w-[6rem] bg-white rounded-b-lg overflow-hidden"
+                itemClassName="w-full text-xxxs text-center font-semibold py-2 hover:bg-middle-green hover:text-white hover:font-semibold"
+                iconSize="12"
+              />
+            </div>
+            <div>hwll</div>
+          </div>
         </div>
         <div className="w-full shadow-box rounded-lg"></div>
       </div>
