@@ -66,9 +66,8 @@ const ProjectCreateMainSection = ({
       <section className="h-[100%] overflow-y-hidden">
         <ProjectCreateInput
           inputRef={projectNameRef}
-          currentStep={currentStep}
+          targetStepIsCurrentStep={currentStep === PROJECT_CREATE_STEP.STEP1}
           setCurrentStep={setCurrentStep}
-          targetStep={PROJECT_CREATE_STEP.STEP1}
           onNextButtonClick={handleNextButtonClick}
           elementId={PROJECT_NAME_INPUT_ID}
           label="우리가 수행할 프로젝트의 이름은"
@@ -77,9 +76,8 @@ const ProjectCreateMainSection = ({
         />
         <ProjectCreateInput
           inputRef={projectSubjectRef}
-          currentStep={currentStep}
+          targetStepIsCurrentStep={currentStep === PROJECT_CREATE_STEP.STEP2}
           setCurrentStep={setCurrentStep}
-          targetStep={PROJECT_CREATE_STEP.STEP2}
           onNextButtonClick={handleCreateButtonClick}
           elementId={PROJECT_SUBJECT_INPUT_ID}
           label="우리가 수행할 프로젝트의 주제는"

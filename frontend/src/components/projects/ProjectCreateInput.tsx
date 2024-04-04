@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { useRef, useState } from "react";
 import NextStepButton from "../common/NextStepButton";
 import {
   PROJECT_CREATE_STEP,
@@ -8,8 +8,7 @@ import { Step } from "../../types/common";
 
 interface ProjectCreateInputProps {
   elementId: string;
-  targetStep: Step;
-  currentStep: Step;
+  targetStepIsCurrentStep: boolean;
   setCurrentStep: React.Dispatch<React.SetStateAction<Step>>;
   onNextButtonClick: () => void;
   label: string;
@@ -20,8 +19,7 @@ interface ProjectCreateInputProps {
 
 const ProjectCreateInput = ({
   elementId,
-  targetStep,
-  currentStep,
+  targetStepIsCurrentStep,
   setCurrentStep,
   onNextButtonClick,
   label,
@@ -29,17 +27,34 @@ const ProjectCreateInput = ({
   buttonContent,
   containerHeight,
 }: ProjectCreateInputProps) => {
-  const [inputValue, setInputValue] = useState("");
+  const [valid, setValid] = useState<boolean>(false);
+  const inputElement = useRef<HTMLInputElement>(null);
   const targetStepIsProjectName = elementId === PROJECT_NAME_INPUT_ID;
 
-  const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    const value = target.value.trim();
-    setInputValue(value);
-    inputRef.current = value;
+  const handleInputChange = () => {
+    const value = inputElement.current?.value.trim();
+
+    if (value) {
+      setValid(true);
+      return;
+    }
+
+    setValid(false);
+  };
+
+  const handleNextButtonClick = () => {
+    const value = inputElement.current?.value.trim();
+
+    if (value && inputElement.current) {
+      inputElement.current.value = value;
+      inputRef.current = value;
+    }
+
+    onNextButtonClick();
   };
 
   const handleEnterDown = ({ key }: React.KeyboardEvent) => {
-    if (key === "Enter" && inputValue) {
+    if (key === "Enter" && valid) {
       setCurrentStep(PROJECT_CREATE_STEP.STEP2);
     }
   };
@@ -47,7 +62,7 @@ const ProjectCreateInput = ({
   return (
     <div
       className={`flex h-[${containerHeight}%] ${
-        currentStep.NUMBER === targetStep.NUMBER ? "items-center" : "items-end"
+        targetStepIsCurrentStep ? "items-center" : "items-end"
       }`}
     >
       <div className="w-[80%]">
@@ -68,14 +83,14 @@ const ProjectCreateInput = ({
             type="text"
             name={elementId}
             id={elementId}
-            value={inputValue}
+            ref={inputElement}
             autoComplete="off"
-            onChange={(event) => handleInputChange(event)}
+            onChange={handleInputChange}
             onKeyDown={handleEnterDown}
             className={`${
               targetStepIsProjectName ? "w-[27.5rem]" : "w-[525px]"
             } h-[3rem] border-b-2 focus:outline-none focus:border-b-3 font-semibold text-3xl text-middle-green focus:border-middle-green ${
-              inputValue && "border-b-3 border-middle-green"
+              valid && "border-b-3 border-middle-green"
             }`}
           />
 
@@ -84,8 +99,8 @@ const ProjectCreateInput = ({
           </p>
         </div>
       </div>
-      {inputValue && currentStep.NUMBER === targetStep.NUMBER && (
-        <NextStepButton onNextButtonClick={onNextButtonClick}>
+      {valid && targetStepIsCurrentStep && (
+        <NextStepButton onNextButtonClick={handleNextButtonClick}>
           {buttonContent}
         </NextStepButton>
       )}
