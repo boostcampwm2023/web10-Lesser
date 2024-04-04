@@ -48,7 +48,13 @@ const LandingPage = () => {
       </div>
       <div className="h-[20.5625rem] w-full shrink-0 flex gap-9">
         <LandingSprint {...{ sprint }} />
-        <div className="w-full shadow-box rounded-lg"></div>
+        <div className="w-full shadow-box rounded-lg bg-gradient-to-tr to-light-green-linear-from from-light-green pt-6 pl-6 pr-3 overflow-y-scroll scrollbar-thin scrollbar-thumb-light-green scrollbar-track-transparent">
+          <div className="h-[100px] shrink-0 shadow-box"></div>
+          <div className="h-[100px] shrink-0 shadow-box"></div>
+          <div className="h-[100px] shrink-0 shadow-box"></div>
+          <div className="h-[100px] shrink-0 shadow-box"></div>
+          <div className="h-[100px] shrink-0 shadow-box"></div>
+        </div>
         <div className="w-full shadow-box rounded-lg"></div>
       </div>
     </div>
