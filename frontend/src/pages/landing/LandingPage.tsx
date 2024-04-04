@@ -1,11 +1,8 @@
 import { useState } from "react";
-import { LandingDTO, LandingMemberDTO } from "../../types/DTO/landingDTO";
+import { LandingDTO } from "../../types/DTO/landingDTO";
 import { useParams } from "react-router-dom";
 import LandingProject from "../../components/landing/LandingProject";
 import LandingSprint from "../../components/landing/LandingSprint";
-import useDropdown from "../../hooks/common/dropdown/useDropdown";
-import { DEFAULT_MEMBER } from "../../constants/projects";
-import UserBlock from "../../components/landing/UserBlock";
 import LandingMember from "../../components/landing/LandingMember";
 
 const sampleData: LandingDTO = {

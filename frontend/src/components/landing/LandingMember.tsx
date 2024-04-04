@@ -26,7 +26,7 @@ const LandingMember = ({ member }: { member: LandingMemberDTO[] }) => {
   };
 
   return (
-    <div className="w-full shadow-box rounded-lg bg-gradient-to-tr to-light-green-linear-from from-light-green py-6 pl-6 pr-3 overflow-y-scroll scrollbar-thin scrollbar-thumb-light-green scrollbar-track-transparent">
+    <div className="w-full shadow-box rounded-lg bg-gradient-to-tr to-light-green-linear-from from-light-green py-6 px-6 overflow-y-scroll scrollbar-thin scrollbar-thumb-light-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
       <div className="flex flex-col gap-3">
         <div className="flex justify-between">
           <p className="text-white text-xs font-bold">| 내 상태</p>
