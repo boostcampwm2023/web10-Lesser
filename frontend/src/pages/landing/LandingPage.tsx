@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { LandingDTO } from "../../types/DTO/landingDTO";
+import { LandingDTO, LandingLinkDTO } from "../../types/DTO/landingDTO";
 import { useParams } from "react-router-dom";
 import LandingProject from "../../components/landing/LandingProject";
 import LandingSprint from "../../components/landing/LandingSprint";
 import LandingMember from "../../components/landing/LandingMember";
+import Plus from "../../assets/icons/plus.svg?react";
+import LandingLinkBlock from "../../components/landing/LandingLinkBlock";
 
 const sampleData: LandingDTO = {
   project: {
@@ -46,8 +48,12 @@ const sampleData: LandingDTO = {
     { id: 1, head: "메모 제목", body: "메모 내용", author: "작성자" },
   ], // 메모가 없는 경우 빈 배열 []
   link: [
-    { id: 0, description: "디자인 피그마", url: "https://..." },
-    { id: 1, description: "디자인 피그마", url: "https://..." },
+    {
+      id: 0,
+      description: "디자인 피그마",
+      url: "https://www.figma.com/file/LmXr1RO0z2n5tzZISnSzB0/Lesser-v2?type=design&node-id=132%3A71&mode=design&t=h72jjqXrHoRX6OoT-1",
+    },
+    { id: 1, description: "네이버", url: "https://naver.com" },
   ], // 외부 링크가 없는 경우 빈 배열 []
 };
 
@@ -55,7 +61,7 @@ const LandingPage = () => {
   const [landingData] = useState<LandingDTO>(sampleData);
   const { projectId } = useParams();
   if (!projectId) throw Error("Invalid Web URL");
-  const { project, sprint, member } = landingData;
+  const { project, sprint, member, link } = landingData;
 
   return (
     <div className="h-full w-full flex flex-col justify-between">
@@ -66,7 +72,23 @@ const LandingPage = () => {
       <div className="h-[20.5625rem] w-full shrink-0 flex gap-9">
         <LandingSprint {...{ sprint }} />
         <LandingMember {...{ member }} />
-        <div className="w-full shadow-box rounded-lg"></div>
+        <div className="w-full shadow-box rounded-lg flex flex-col pt-6 pl-6 pr-3 bg-gradient-to-tr from-dark-green-linear-from to-dark-green-linear-to">
+          <div className="flex justify-between">
+            <p className="text-white text-m font-bold">| 외부 링크</p>
+            <Plus width={24} height={24} stroke="#FFFFFF " />
+          </div>
+          <div className="flex flex-col gap-3 pr-6 pt-6 overflow-y-scroll scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-dark-green scrollbar-track-transparent">
+            {link.map((linkData: LandingLinkDTO) => {
+              return <LandingLinkBlock {...linkData} />;
+            })}
+            <div className="h-[50px] shadow-box shrink-0"></div>
+            <div className="h-[50px] shadow-box shrink-0"></div>
+            <div className="h-[50px] shadow-box shrink-0"></div>
+            <div className="h-[50px] shadow-box shrink-0"></div>
+            <div className="h-[50px] shadow-box shrink-0"></div>
+            <div className="h-[50px] shadow-box shrink-0"></div>
+          </div>
+        </div>
       </div>
     </div>
   );
