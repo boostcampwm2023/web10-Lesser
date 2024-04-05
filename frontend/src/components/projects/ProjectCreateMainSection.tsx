@@ -5,7 +5,7 @@ import {
   PROJECT_NAME_INPUT_ID,
   PROJECT_SUBJECT_INPUT_ID,
 } from "../../constants/projects";
-import { Step } from "../../types/common";
+import { Step } from "../../types/common/common";
 
 interface ProjectCreateMainSectionProps {
   currentStep: Step;
