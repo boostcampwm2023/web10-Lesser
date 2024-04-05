@@ -54,6 +54,16 @@ const sampleData: LandingDTO = {
       url: "https://www.figma.com/file/LmXr1RO0z2n5tzZISnSzB0/Lesser-v2?type=design&node-id=132%3A71&mode=design&t=h72jjqXrHoRX6OoT-1",
     },
     { id: 1, description: "네이버", url: "https://naver.com" },
+    {
+      id: 2,
+      description: "슬랙 팀 채널",
+      url: "https://boostcampwm-8-me.slack.com/archives/C065HLL4561",
+    },
+    {
+      id: 3,
+      description: "LESSER 레포지토리",
+      url: "https://github.com/boostcampwm2023/web10-Lesser",
+    },
   ], // 외부 링크가 없는 경우 빈 배열 []
 };
 
@@ -73,20 +83,14 @@ const LandingPage = () => {
         <LandingSprint {...{ sprint }} />
         <LandingMember {...{ member }} />
         <div className="w-full shadow-box rounded-lg flex flex-col pt-6 pl-6 pr-3 bg-gradient-to-tr from-dark-green-linear-from to-dark-green-linear-to">
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center pr-3">
             <p className="text-white text-m font-bold">| 외부 링크</p>
             <Plus width={24} height={24} stroke="#FFFFFF " />
           </div>
-          <div className="flex flex-col gap-3 pr-6 pt-6 overflow-y-scroll scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-dark-green scrollbar-track-transparent">
+          <div className="flex flex-col gap-3 pr-6 py-6 overflow-y-scroll scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-dark-green scrollbar-track-transparent">
             {link.map((linkData: LandingLinkDTO) => {
-              return <LandingLinkBlock {...linkData} />;
+              return <LandingLinkBlock {...linkData} key={linkData.id} />;
             })}
-            <div className="h-[50px] shadow-box shrink-0"></div>
-            <div className="h-[50px] shadow-box shrink-0"></div>
-            <div className="h-[50px] shadow-box shrink-0"></div>
-            <div className="h-[50px] shadow-box shrink-0"></div>
-            <div className="h-[50px] shadow-box shrink-0"></div>
-            <div className="h-[50px] shadow-box shrink-0"></div>
           </div>
         </div>
       </div>

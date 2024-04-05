@@ -1,6 +1,16 @@
 import BacklogIcon from "../assets/icons/landing.svg?react";
 import SprintIcon from "../assets/icons/sprint.svg?react";
 import SettingsIcon from "../assets/icons/settings.svg?react";
+import linkIcon from "../assets/icons/Link.svg";
+import githubLogo from "../assets/logo/Tech Logos/GitHub.svg";
+import notionLogo from "../assets/logo/Tech Logos/Notion.svg";
+import slackLogo from "../assets/logo/Tech Logos/Slack.svg";
+import figmaLogo from "../assets/logo/Tech Logos/Figma.svg";
+import gitlabLogo from "../assets/logo/Tech Logos/Gitlab.svg";
+import googleLogo from "../assets/logo/Tech Logos/Google.svg";
+import discordLogo from "../assets/logo/Tech Logos/discord.svg";
+import youtubeLogo from "../assets/logo/Tech Logos/youtube.svg";
+import naverLogo from "../assets/logo/Tech Logos/naver.png";
 
 export const LANDING_PROJECT_LINK = {
   BACKLOG: {
@@ -26,7 +36,11 @@ export const LANDING_SPRINT_BAR = {
     color: "text-light-green",
     text: "스프린트 일정",
     display: (dataNum: number) =>
-      dataNum === 0 ? "D-day" : dataNum < 0 ? `D-${Math.abs(dataNum)}` : `D+${dataNum}`,
+      dataNum === 0
+        ? "D-day"
+        : dataNum < 0
+        ? `D-${Math.abs(dataNum)}`
+        : `D+${dataNum}`,
   },
   TOTAL: {
     bgColor: "bg-middle-green",
@@ -55,4 +69,29 @@ export const USER_STATE_DISPLAY = {
     bgColor: "bg-warning-yellow",
     text: "자리 비움",
   },
+};
+
+export const LINK_LOGO_URL = {
+  LINK: linkIcon,
+  NAVER: naverLogo,
+  GITHUB: githubLogo,
+  GITLAB: gitlabLogo,
+  SLACK: slackLogo,
+  FIGMA: figmaLogo,
+  NOTION: notionLogo,
+  GOOGLE: googleLogo,
+  DISCORD: discordLogo,
+  YOUTUBE: youtubeLogo,
+};
+
+export const LINK_URL_TYPE = {
+  NAVER: "naver.com",
+  GITHUB: "github.com",
+  GITLAB: "gitlab.com",
+  SLACK: "slack.com",
+  FIGMA: "figma.com",
+  NOTION: "notion.so",
+  GOOGLE: "google.com",
+  DISCORD: "discord.com",
+  YOUTUBE: "youtube.com",
 };
