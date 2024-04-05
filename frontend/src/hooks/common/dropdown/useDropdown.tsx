@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import ChevronDownIcon from "../../../assets/icons/chevron-down.svg?react";
-import ChevronUpIcon from "../../../assets/icons/chevron-up.svg?react";
+import chevronDownIcon from "../../../assets/icons/chevron-down.svg";
+import chevronUpIcon from "../../../assets/icons/chevron-up.svg";
 
 interface useDropdownParams {
   placeholder: string;
@@ -15,15 +15,21 @@ interface DropdownProps {
   iconSize?: string;
 }
 
-const useDropdown = ({ placeholder, options, defaultOption }: useDropdownParams) => {
-  const [selectedOption, setSelectedOption] = useState<string>(defaultOption ? defaultOption : "");
+const useDropdown = ({
+  placeholder,
+  options,
+  defaultOption,
+}: useDropdownParams) => {
+  const [selectedOption, setSelectedOption] = useState<string>(
+    defaultOption ? defaultOption : ""
+  );
   const dropdownRef = useRef<HTMLButtonElement>(null);
 
   const Dropdown = ({
     buttonClassName = "",
     containerClassName = "",
     itemClassName = "",
-    iconSize = "24",
+    iconSize = "",
   }: DropdownProps) => {
     const [open, setOpen] = useState<boolean>(false);
 
@@ -37,7 +43,10 @@ const useDropdown = ({ placeholder, options, defaultOption }: useDropdownParams)
     };
 
     const handleOutsideClick = ({ target }: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(target as Node)
+      ) {
         setOpen(false);
       }
     };
@@ -60,9 +69,23 @@ const useDropdown = ({ placeholder, options, defaultOption }: useDropdownParams)
         >
           {selectedOption || placeholder}
           {open ? (
-            <ChevronUpIcon width={iconSize} height={iconSize} stroke="#FFFFFF" />
+            <div className={iconSize}>
+              <img src={chevronUpIcon} className="w-full" />
+            </div>
           ) : (
-            <ChevronDownIcon width={iconSize} height={iconSize} stroke="#FFFFFF" />
+            // <ChevronUpIcon
+            //   width={iconSize}
+            //   height={iconSize}
+            //   stroke="#FFFFFF"
+            // />
+            <div className={iconSize}>
+              <img src={chevronDownIcon} className="w-full" />
+            </div>
+            // <ChevronDownIcon
+            //   width={iconSize}
+            //   height={iconSize}
+            //   stroke="#FFFFFF"
+            // />
           )}
         </button>
         {open && (
@@ -72,7 +95,9 @@ const useDropdown = ({ placeholder, options, defaultOption }: useDropdownParams)
                 key={index}
                 onMouseDown={() => handleOptionClick(option)}
                 className={`${
-                  selectedOption === option ? "text-middle-green" : "text-text-gray"
+                  selectedOption === option
+                    ? "text-middle-green"
+                    : "text-text-gray"
                 } ${itemClassName} hover:cursor-pointer`}
                 style={{ wordBreak: "keep-all" }}
               >

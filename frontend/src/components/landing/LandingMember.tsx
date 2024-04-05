@@ -35,10 +35,12 @@ const LandingMember = ({ member }: { member: LandingMemberDTO[] }) => {
             buttonClassName="flex justify-between items-center w-[6rem] h-6 pl-5 text-white text-xxxs bg-middle-green pr-3 rounded-md"
             containerClassName="w-[6rem] bg-white rounded-b-lg overflow-hidden"
             itemClassName="w-full text-xxxs text-center font-semibold py-2 hover:bg-middle-green hover:text-white hover:font-semibold"
-            iconSize="12"
+            iconSize="w-[12px] h-[12px]"
           />
         </div>
-        <UserBlock {...{ imageUrl, username, status: getUserState(selectedOption) }} />
+        <UserBlock
+          {...{ imageUrl, username, status: getUserState(selectedOption) }}
+        />
         <div className="flex justify-between text-white">
           <p className="text-xs font-bold">| 함께하는 사람들</p>
           <button className="text-xxs hover:underline">초대링크 복사</button>
