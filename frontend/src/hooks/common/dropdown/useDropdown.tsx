@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import chevronDown from "../../../assets/icons/chevron-down.svg";
-import chevronUp from "../../../assets/icons/chevron-up.svg";
+import chevronDownIcon from "../../../assets/icons/chevron-down.svg";
+import chevronUpIcon from "../../../assets/icons/chevron-up.svg";
 
 interface useDropdownParams {
   placeholder: string;
@@ -69,17 +69,23 @@ const useDropdown = ({
         >
           {selectedOption || placeholder}
           {open ? (
-            <img
-              src={chevronUp}
-              className={`"w-${iconSize}"`}
-              alt="드롭다운 화살표"
-            />
+            <div className={iconSize}>
+              <img src={chevronUpIcon} className="w-full" />
+            </div>
           ) : (
-            <img
-              src={chevronDown}
-              className={`"w-${iconSize}"`}
-              alt="드롭다운 화살표"
-            />
+            // <ChevronUpIcon
+            //   width={iconSize}
+            //   height={iconSize}
+            //   stroke="#FFFFFF"
+            // />
+            <div className={iconSize}>
+              <img src={chevronDownIcon} className="w-full" />
+            </div>
+            // <ChevronDownIcon
+            //   width={iconSize}
+            //   height={iconSize}
+            //   stroke="#FFFFFF"
+            // />
           )}
         </button>
         {open && (

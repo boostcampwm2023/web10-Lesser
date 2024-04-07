@@ -1,4 +1,4 @@
-import { ProjectDTO } from "../../types/projectDTO";
+import { ProjectDTO } from "../../types/DTO/projectDTO";
 import formatDate from "../../utils/formatDate";
 
 interface ProjectCardProps {

@@ -1,4 +1,4 @@
-import { SVGReactElement } from "../../types/common";
+import { SVGReactElement } from "../../types/common/common";
 import { Link } from "react-router-dom";
 import ChevronRightIcon from "../../assets/icons/chevron-right.svg?react";
 

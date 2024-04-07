@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import NextStepButton from "../common/NextStepButton";
 import { PROJECT_NAME_INPUT_ID } from "../../constants/projects";
-import { Step } from "../../types/common";
+import { Step } from "../../types/common/common";
 
 interface ProjectCreateInputProps {
   elementId: string;

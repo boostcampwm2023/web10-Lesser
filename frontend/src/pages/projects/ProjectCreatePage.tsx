@@ -4,7 +4,7 @@ import {
   ProjectCreateSideBar,
 } from "../../components/projects";
 import { PROJECT_CREATE_STEP } from "../../constants/projects";
-import { Step } from "../../types/common";
+import { Step } from "../../types/common/common";
 
 const ProjectCreatePage = () => {
   const [currentStep, setCurrentStep] = useState<Step>(

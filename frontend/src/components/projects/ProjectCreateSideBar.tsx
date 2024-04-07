@@ -1,4 +1,4 @@
-import { Step } from "../../types/common";
+import { Step } from "../../types/common/common";
 
 interface ProjectCreateSideBarProps {
   currentStep: Step;

@@ -3,7 +3,7 @@ import useDropdown from "../../hooks/common/dropdown/useDropdown";
 import { ProjectCard } from ".";
 import { PROJECT_SORT_OPTION } from "../../constants/projects";
 import plus from "../../assets/icons/plus.svg";
-import { ProjectDTO } from "../../types/projectDTO";
+import { ProjectDTO } from "../../types/DTO/projectDTO";
 import projectSortByOption from "../../utils/projectSortByOption";
 import { useGetProjects } from "../../hooks/queries/project";
 import { useNavigate } from "react-router-dom";

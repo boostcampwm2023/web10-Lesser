@@ -16,7 +16,7 @@ const PrivateRoute = (): React.ReactElement => {
         showBoundary(result);
       }
     });
-  }, [checkAuthentication]);
+  });
 
   return loadingState ? <RouteLoading /> : <Outlet />;
 };
