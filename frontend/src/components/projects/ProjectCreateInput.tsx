@@ -1,9 +1,6 @@
 import { useRef, useState } from "react";
 import NextStepButton from "../common/NextStepButton";
-import {
-  PROJECT_CREATE_STEP,
-  PROJECT_NAME_INPUT_ID,
-} from "../../constants/projects";
+import { PROJECT_NAME_INPUT_ID } from "../../constants/projects";
 import { Step } from "../../types/common";
 
 interface ProjectCreateInputProps {
@@ -20,7 +17,6 @@ interface ProjectCreateInputProps {
 const ProjectCreateInput = ({
   elementId,
   targetStepIsCurrentStep,
-  setCurrentStep,
   onNextButtonClick,
   label,
   inputRef,
@@ -55,7 +51,7 @@ const ProjectCreateInput = ({
 
   const handleEnterDown = ({ key }: React.KeyboardEvent) => {
     if (key === "Enter" && valid) {
-      setCurrentStep(PROJECT_CREATE_STEP.STEP2);
+      handleNextButtonClick();
     }
   };
 

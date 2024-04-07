@@ -1,39 +1,47 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import useDropdown from "../../hooks/common/dropdown/useDropdown";
 import { ProjectCard } from ".";
 import { PROJECT_SORT_OPTION } from "../../constants/projects";
 import plus from "../../assets/icons/plus.svg";
 import { ProjectDTO } from "../../types/projectDTO";
-import { getProjects } from "../../apis/api/projectAPI";
 import projectSortByOption from "../../utils/projectSortByOption";
+import { useGetProjects } from "../../hooks/queries/project";
+import { useNavigate } from "react-router-dom";
+import { ROUTER_URL } from "../../constants/path";
 
 const ProjectList = () => {
-  const [projects, setProjects] = useState<ProjectDTO[]>([]);
+  const { data: projects, error } = useGetProjects();
   const { Dropdown, selectedOption } = useDropdown({
     placeholder: "",
     options: [PROJECT_SORT_OPTION.UPDATE, PROJECT_SORT_OPTION.RECENT],
     defaultOption: PROJECT_SORT_OPTION.UPDATE,
   });
+  const navigate = useNavigate();
+
+  const handleCreateButtonClick = () => {
+    navigate(`/${ROUTER_URL.PROJECTS_CREATE}`);
+  };
 
   const projectList = useMemo<ProjectDTO[]>(() => {
     const earliest = -new Date();
 
-    return structuredClone(projects).sort((projectA, projectB) =>
-      projectSortByOption({
-        projectA,
-        projectB,
-        option: selectedOption,
-        earliest,
-      })
-    );
+    if (Array.isArray(projects)) {
+      return structuredClone(projects).sort((projectA, projectB) =>
+        projectSortByOption({
+          projectA,
+          projectB,
+          option: selectedOption,
+          earliest,
+        })
+      );
+    }
+
+    return [];
   }, [projects, selectedOption]);
 
-  useEffect(() => {
-    (async () => {
-      const projectList = await getProjects();
-      setProjects(projectList);
-    })();
-  }, []);
+  if (error) {
+    throw error;
+  }
 
   return (
     <section className="min-w-[720px] min-h-[40.5rem] flex flex-col gap-6">
@@ -48,6 +56,7 @@ const ProjectList = () => {
           <button
             type="button"
             className="flex items-center justify-center w-[10.45rem] h-[2.5rem] py-2 pl-3 pr-9 text-white text-xs bg-middle-green gap-3 rounded-[0.375rem] shadow-box"
+            onClick={handleCreateButtonClick}
           >
             <img src={plus} alt="더하기" className="w-7" />
             추가하기
