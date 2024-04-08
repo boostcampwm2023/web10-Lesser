@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getProjects } from "../../../apis/api/projectAPI";
-import { ProjectDTO } from "../../../types/projectDTO";
+import { ProjectDTO } from "../../../types/DTO/projectDTO";
 
 const useGetProjects = () =>
   useQuery<ProjectDTO[]>({

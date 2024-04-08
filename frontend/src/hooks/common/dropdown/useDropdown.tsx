@@ -29,7 +29,7 @@ const useDropdown = ({
     buttonClassName = "",
     containerClassName = "",
     itemClassName = "",
-    iconSize = "",
+    iconSize = "24",
   }: DropdownProps) => {
     const [open, setOpen] = useState<boolean>(false);
 
@@ -73,19 +73,9 @@ const useDropdown = ({
               <img src={chevronUpIcon} className="w-full" />
             </div>
           ) : (
-            // <ChevronUpIcon
-            //   width={iconSize}
-            //   height={iconSize}
-            //   stroke="#FFFFFF"
-            // />
             <div className={iconSize}>
               <img src={chevronDownIcon} className="w-full" />
             </div>
-            // <ChevronDownIcon
-            //   width={iconSize}
-            //   height={iconSize}
-            //   stroke="#FFFFFF"
-            // />
           )}
         </button>
         {open && (

@@ -45,8 +45,8 @@ const LandingMember = ({ member }: { member: LandingMemberDTO[] }) => {
           <p className="text-xs font-bold">| 함께하는 사람들</p>
           <button className="text-xxs hover:underline">초대링크 복사</button>
         </div>
-        {member.map((memberData: LandingMemberDTO) => {
-          return <UserBlock {...memberData} />;
+        {member.map((memberData: LandingMemberDTO, index: number) => {
+          return <UserBlock {...memberData} key={`${username}${index}`} />;
         })}
       </div>
     </div>
