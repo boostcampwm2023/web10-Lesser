@@ -7,7 +7,6 @@ import {
 } from "../../constants/projects";
 import { Step } from "../../types/common/common";
 import usePostCreateProject from "../../hooks/queries/project/usePostCreateProject";
-import { Step } from "../../types/common/common";
 
 interface ProjectCreateMainSectionProps {
   currentStep: Step;
