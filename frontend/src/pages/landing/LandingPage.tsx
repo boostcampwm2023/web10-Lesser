@@ -1,13 +1,10 @@
 import { useState } from "react";
-import { LandingDTO, LandingLinkDTO } from "../../types/DTO/landingDTO";
+import { LandingDTO } from "../../types/DTO/landingDTO";
 import { useParams } from "react-router-dom";
 import LandingProject from "../../components/landing/LandingProject";
 import LandingSprint from "../../components/landing/LandingSprint";
 import LandingMember from "../../components/landing/LandingMember";
-import Plus from "../../assets/icons/plus.svg?react";
-import LandingLinkBlock from "../../components/landing/LandingLinkBlock";
-import { useModal } from "../../hooks/common/modal/useModal";
-import LandingLinkModal from "../../components/landing/LandingLinkModal";
+import LandingLink from "../../components/landing/LandingLink";
 
 const sampleData: LandingDTO = {
   project: {
@@ -75,11 +72,6 @@ const LandingPage = () => {
   if (!projectId) throw Error("Invalid Web URL");
   const { project, sprint, member, link } = landingData;
 
-  const { open, close } = useModal(true);
-  const handleCreateLinkClick = () => {
-    open(<LandingLinkModal close={close} />);
-  };
-
   return (
     <div className="h-full w-full flex flex-col justify-between">
       <div className="h-[17.6875rem] w-full shrink-0 flex gap-9">
@@ -89,19 +81,7 @@ const LandingPage = () => {
       <div className="h-[20.5625rem] w-full shrink-0 flex gap-9">
         <LandingSprint {...{ sprint }} />
         <LandingMember {...{ member }} />
-        <div className="w-full shadow-box rounded-lg flex flex-col pt-6 pl-6 pr-3 bg-gradient-to-tr from-dark-green-linear-from to-dark-green-linear-to">
-          <div className="flex justify-between items-center pr-3">
-            <p className="text-white text-m font-bold">| 외부 링크</p>
-            <button onClick={handleCreateLinkClick}>
-              <Plus width={24} height={24} stroke="#FFFFFF " />
-            </button>
-          </div>
-          <div className="flex flex-col gap-3 pr-6 py-6 overflow-y-scroll scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-dark-green scrollbar-track-transparent">
-            {link.map((linkData: LandingLinkDTO) => {
-              return <LandingLinkBlock {...linkData} key={linkData.id} />;
-            })}
-          </div>
-        </div>
+        <LandingLink {...{ link }} />
       </div>
     </div>
   );
