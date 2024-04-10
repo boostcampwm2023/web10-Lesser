@@ -5,6 +5,7 @@ export interface LandingProjectDTO {
 }
 
 export interface LandingMemberDTO {
+  id: number;
   username: string;
   imageUrl: string;
   status: "on" | "off" | "away";
@@ -36,6 +37,7 @@ export interface LandingLinkDTO {
 export interface LandingDTO {
   project: LandingProjectDTO;
   member: LandingMemberDTO[];
+  myInfo: LandingMemberDTO;
   sprint: LandingSprintDTO | null;
   board: LandingMemoDTO[];
   link: LandingLinkDTO[];
