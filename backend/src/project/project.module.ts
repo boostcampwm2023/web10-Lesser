@@ -8,6 +8,7 @@ import { ProjectToMember } from 'src/project/entity/project-member.entity';
 import { Member } from 'src/member/entity/member.entity';
 import { ProjectRepository } from './project.repository';
 import { MemberRepository } from 'src/member/repository/member.repository';
+import { ProjectWebsocketGateway } from './websocket.gateway';
 
 @Module({
   imports: [
@@ -15,6 +16,11 @@ import { MemberRepository } from 'src/member/repository/member.repository';
     TypeOrmModule.forFeature([Project, ProjectToMember, Member]),
   ],
   controllers: [ProjectController],
-  providers: [ProjectService, ProjectRepository, MemberRepository],
+  providers: [
+    ProjectService,
+    ProjectRepository,
+    MemberRepository,
+    ProjectWebsocketGateway,
+  ],
 })
 export class ProjectModule {}
