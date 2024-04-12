@@ -17,4 +17,8 @@ export class ProjectService {
   async getProjectList(member: Member): Promise<Project[]> {
     return await this.projectRepository.getProjectList(member);
   }
+
+  async getProject(projectId: number): Promise<Project> {
+    return await this.projectRepository.getProject(projectId);
+  }
 }
