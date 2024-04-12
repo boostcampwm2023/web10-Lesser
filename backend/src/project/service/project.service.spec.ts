@@ -18,6 +18,7 @@ describe('ProjectService', () => {
             create: jest.fn(),
             addProjectMember: jest.fn(),
             getProjectList: jest.fn(),
+            getProject: jest.fn(),
           },
         },
       ],
@@ -66,6 +67,18 @@ describe('ProjectService', () => {
 
       expect(projectRepository.getProjectList).toHaveBeenCalledWith(member);
       expect(result).toEqual(projectList);
+    });
+  });
+
+  describe('Get project', () => {
+    const project = Project.of('title', 'subject');
+    const projectId = 1;
+    it('should return project', async () => {
+      jest.spyOn(projectRepository, 'getProject').mockResolvedValue(project);
+      const result = await projectService.getProject(projectId);
+
+      expect(projectRepository.getProject).toHaveBeenCalledWith(projectId);
+      expect(result).toEqual(project);
     });
   });
 });
