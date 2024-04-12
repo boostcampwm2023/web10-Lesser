@@ -2,7 +2,7 @@ import * as request from 'supertest';
 import { app, appInit, createMember, memberFixture } from 'test/setup';
 import { io } from 'socket.io-client';
 
-describe('GET /api/project', () => {
+describe('WS landing', () => {
   let socket;
   beforeEach(async () => {
     await app.close();
