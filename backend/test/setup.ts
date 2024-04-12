@@ -45,7 +45,7 @@ export const createMember = async (newMember, app: INestApplication) => {
   return { accessToken: signupResponse.body.accessToken, refreshToken };
 };
 
-beforeAll(async () => {
+export const appInit = async () => {
   const moduleFixture: TestingModule = await Test.createTestingModule({
     imports: [AppModule],
   })
@@ -66,6 +66,10 @@ beforeAll(async () => {
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   );
   await app.init();
+};
+
+beforeAll(async () => {
+  await appInit();
 });
 
 beforeEach(async () => {
