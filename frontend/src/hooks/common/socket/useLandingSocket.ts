@@ -1,4 +1,5 @@
 import { Socket } from "socket.io-client";
+import { useEffect, useState } from "react";
 import {
   LandingDTO,
   LandingLinkDTO,
@@ -7,30 +8,33 @@ import {
   LandingProjectDTO,
   LandingSprintDTO,
 } from "../../../types/DTO/landingDTO";
-import { useEffect, useState } from "react";
-
-type MemberEvent = "memberUpdate" | "memberCreate" | "memberDelete";
+import { DEFAULT_VALUE } from "../../../constants/landing";
 
 interface SocketData {
-  action: "init" | MemberEvent;
+  action: LandingSocketEvent;
   content: any;
 }
 
-enum LandingSocketType {
-  Landing = "landing",
+enum LandingSocketEvent {
+  INIT = "init",
+  MEMBER_UPDATE = "memberUpdate",
+  MEMBER_CREATE = "memberCreate",
+  MEMBER_DELETE = "memberDelete",
 }
 
 const useLandingSocket = (socket: Socket) => {
-  const [project, setProject] = useState<LandingProjectDTO>();
-  const [myInfo, setMyInfo] = useState<LandingMemberDTO>();
+  const [project, setProject] = useState<LandingProjectDTO>(
+    DEFAULT_VALUE.PROJECT
+  );
+  const [myInfo, setMyInfo] = useState<LandingMemberDTO>(DEFAULT_VALUE.MY_INFO);
   const [member, setMember] = useState<LandingMemberDTO[]>([]);
-  const [sprint, setSprint] = useState<LandingSprintDTO | null>();
+  const [sprint, setSprint] = useState<LandingSprintDTO | null>(null);
   const [board, setBoard] = useState<LandingMemoDTO[]>([]);
   const [link, setLink] = useState<LandingLinkDTO[]>([]);
 
   const handleOnLanding = ({ action, content }: SocketData) => {
     switch (action) {
-      case "init":
+      case LandingSocketEvent.INIT:
         const { project, myInfo, member, sprint, board, link } =
           content as LandingDTO;
         setProject(project);
@@ -44,7 +48,7 @@ const useLandingSocket = (socket: Socket) => {
   };
 
   useEffect(() => {
-    socket.emit("joinPage", LandingSocketType.Landing);
+    socket.emit("joinPage", "landing");
     socket.on("landing", handleOnLanding);
   }, [socket]);
 

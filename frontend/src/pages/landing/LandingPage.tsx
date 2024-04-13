@@ -1,10 +1,14 @@
-import { useState } from "react";
-import { LandingDTO } from "../../types/DTO/landingDTO";
-import { useParams } from "react-router-dom";
+import { LandingDTO, MemberStatus } from "../../types/DTO/landingDTO";
+import { useOutletContext, useParams } from "react-router-dom";
 import LandingProject from "../../components/landing/LandingProject";
 import LandingSprint from "../../components/landing/LandingSprint";
 import LandingMember from "../../components/landing/LandingMember";
 import LandingLink from "../../components/landing/LandingLink";
+import { Socket } from "socket.io-client";
+import useLandingSocket from "../../hooks/common/socket/useLandingSocket";
+import { useState } from "react";
+import { DEFAULT_MEMBER } from "../../constants/projects";
+import { memberResponse } from "../../types/DTO/authDTO";
 
 const sampleData: LandingDTO = {
   project: {
@@ -72,9 +76,23 @@ const sampleData: LandingDTO = {
 
 const LandingPage = () => {
   const [landingData] = useState<LandingDTO>(sampleData);
+  const userData: memberResponse = JSON.parse(
+    window.localStorage.getItem("member") ?? DEFAULT_MEMBER
+  );
+  const { project, sprint, member, link } = landingData;
+  const myInfo = {
+    id: 0,
+    username: userData.username,
+    imageUrl: userData.imageUrl,
+    status: "on" as MemberStatus,
+  };
+
   const { projectId } = useParams();
   if (!projectId) throw Error("Invalid Web URL");
-  const { project, sprint, member, link } = landingData;
+
+  // const socket: Socket = useOutletContext();
+  // const { project, myInfo, member, sprint, board, link } =
+  //   useLandingSocket(socket);
 
   return (
     <div className="h-full w-full flex flex-col justify-between">
@@ -84,7 +102,7 @@ const LandingPage = () => {
       </div>
       <div className="h-[20.5625rem] w-full shrink-0 flex gap-9">
         <LandingSprint {...{ sprint }} />
-        <LandingMember {...{ member }} />
+        <LandingMember {...{ member, myInfo }} />
         <LandingLink {...{ link }} />
       </div>
     </div>

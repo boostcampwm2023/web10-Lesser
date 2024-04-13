@@ -1,3 +1,5 @@
+export type MemberStatus = "on" | "off" | "away";
+
 export interface LandingProjectDTO {
   title: string;
   subject: string;
@@ -8,7 +10,7 @@ export interface LandingMemberDTO {
   id: number;
   username: string;
   imageUrl: string;
-  status: "on" | "off" | "away";
+  status: MemberStatus;
 }
 
 export interface LandingSprintDTO {
