@@ -11,6 +11,21 @@ import googleLogo from "../assets/logo/Tech Logos/Google.svg";
 import discordLogo from "../assets/logo/Tech Logos/discord.svg";
 import youtubeLogo from "../assets/logo/Tech Logos/youtube.svg";
 import naverLogo from "../assets/logo/Tech Logos/naver.png";
+import { MemberStatus } from "../types/DTO/landingDTO";
+
+export const DEFAULT_VALUE = {
+  PROJECT: {
+    title: "",
+    subject: "",
+    createdAt: "",
+  },
+  MY_INFO: {
+    id: 0,
+    username: "",
+    imageUrl: "",
+    status: "on" as MemberStatus,
+  },
+};
 
 export const LANDING_PROJECT_LINK = {
   BACKLOG: {
@@ -94,4 +109,19 @@ export const LINK_URL_TYPE = {
   GOOGLE: "google.com",
   DISCORD: "discord.com",
   YOUTUBE: "youtube.com",
+};
+
+export const USER_STATUS_WORD = {
+  on: "접속 중",
+  off: "부재 중",
+  away: "자리비움",
+};
+type MyMap = {
+  [key: string]: MemberStatus;
+};
+
+export const USER_WORD_STATUS: MyMap = {
+  "접속 중": "on",
+  "부재 중": "off",
+  자리비움: "away",
 };
