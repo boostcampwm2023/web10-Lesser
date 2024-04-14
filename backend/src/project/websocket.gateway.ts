@@ -11,7 +11,10 @@ interface ClientSocket extends Socket {
   projectId?: number;
 }
 
-@WebSocketGateway({ namespace: /project-.+/ })
+@WebSocketGateway({
+  namespace: /project-\d+/,
+  path: '/api/socket.io',
+})
 export class ProjectWebsocketGateway implements OnGatewayConnection {
   constructor(private readonly projectService: ProjectService) {}
   handleConnection(client: ClientSocket, ...args: any[]) {
