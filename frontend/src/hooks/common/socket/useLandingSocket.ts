@@ -12,7 +12,7 @@ import { DEFAULT_VALUE } from "../../../constants/landing";
 
 interface SocketData {
   action: LandingSocketEvent;
-  content: any;
+  content: LandingDTO;
 }
 
 enum LandingSocketEvent {
@@ -48,8 +48,12 @@ const useLandingSocket = (socket: Socket) => {
   };
 
   useEffect(() => {
-    socket.emit("joinPage", "landing");
+    socket.emit("joinLanding");
     socket.on("landing", handleOnLanding);
+
+    return () => {
+      socket.off("landing");
+    };
   }, [socket]);
 
   return { project, myInfo, member, sprint, board, link };

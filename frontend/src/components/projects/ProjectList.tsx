@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import useDropdown from "../../hooks/common/dropdown/useDropdown";
 import { ProjectCard } from ".";
 import { PROJECT_SORT_OPTION } from "../../constants/projects";
@@ -65,7 +66,9 @@ const ProjectList = () => {
       </div>
       <div className="flex flex-wrap gap-10 w-[720px] max-h-[37.25rem] overflow-y-auto scrollbar-hide">
         {projectList.map((project: ProjectDTO) => (
-          <ProjectCard key={project.id} project={project} />
+          <Link key={project.id} to={`${ROUTER_URL.PROJECTS}/${project.id}`}>
+            <ProjectCard project={project} />
+          </Link>
         ))}
       </div>
     </section>

@@ -1,7 +1,9 @@
 import { USER_STATUS_WORD, USER_WORD_STATUS } from "../../constants/landing";
-import useDropdown from "../../hooks/common/dropdown/useDropdown";
-import { LandingMemberDTO } from "../../types/DTO/landingDTO";
 import UserBlock from "./UserBlock";
+import useDropdown from "../../hooks/common/dropdown/useDropdown";
+import { memberResponse } from "../../types/DTO/authDTO";
+import { LandingMemberDTO } from "../../types/DTO/landingDTO";
+import { DEFAULT_MEMBER } from "../../constants/projects";
 
 const LandingMember = ({
   member,
@@ -16,11 +18,17 @@ const LandingMember = ({
     defaultOption: USER_STATUS_WORD[myInfo.status],
   });
 
+  const userData: memberResponse = JSON.parse(
+    window.localStorage.getItem("member") ?? DEFAULT_MEMBER
+  );
+  const imageUrl = myInfo.imageUrl ?? userData.imageUrl;
+  const username = myInfo.username ?? userData.username;
+
   return (
-    <div className="w-full shadow-box rounded-lg bg-gradient-to-tr to-light-green-linear-from from-light-green py-6 px-6 overflow-y-scroll scrollbar-thin scrollbar-thumb-light-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
+    <div className="w-full px-6 py-6 overflow-y-scroll rounded-lg shadow-box bg-gradient-to-tr to-light-green-linear-from from-light-green scrollbar-thin scrollbar-thumb-light-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
       <div className="flex flex-col gap-3">
         <div className="flex justify-between">
-          <p className="text-white text-xs font-bold">| 내 상태</p>
+          <p className="text-xs font-bold text-white">| 내 상태</p>
           <div className="h-fit" />
           <Dropdown
             buttonClassName="flex justify-between items-center w-[6rem] h-6 pl-5 text-white text-xxxs bg-middle-green pr-3 rounded-md"
@@ -30,17 +38,17 @@ const LandingMember = ({
           />
         </div>
         <UserBlock
-          imageUrl={myInfo.imageUrl}
-          username={myInfo.username}
+          imageUrl={imageUrl}
+          username={username}
           status={USER_WORD_STATUS[selectedOption]}
         />
         <div className="flex justify-between text-white">
           <p className="text-xs font-bold">| 함께하는 사람들</p>
           <button className="text-xxs hover:underline">초대링크 복사</button>
         </div>
-        {member.map((memberData: LandingMemberDTO) => {
-          return <UserBlock {...memberData} key={memberData.id} />;
-        })}
+        {member.map((memberData: LandingMemberDTO) => (
+          <UserBlock {...memberData} key={memberData.id} />
+        ))}
       </div>
     </div>
   );

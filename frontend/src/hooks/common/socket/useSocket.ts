@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 
 const useSocket = (projectId: string) => {
   const WS_URL = `${BASE_URL}/project-${projectId}`;
-  const socket = io(WS_URL);
+  const socket = io(WS_URL, {
+    path: `/api/socket.io`,
+  });
   const [connected, setConnected] = useState<boolean>(false);
 
   useEffect(() => {
