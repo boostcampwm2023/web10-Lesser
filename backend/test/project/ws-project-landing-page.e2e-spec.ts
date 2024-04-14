@@ -28,7 +28,9 @@ describe('WS landing', () => {
       .get('/api/project')
       .set('Authorization', `Bearer ${accessToken}`);
     const [project] = response.body.projects;
-    socket = io(`http://localhost:3000/project-${project.id}`);
+    socket = io(`http://localhost:3000/project-${project.id}`, {
+      path: '/api/socket.io',
+    });
 
     return new Promise<void>((resolve) => {
       socket.on('connect', () => {
