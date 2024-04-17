@@ -49,8 +49,12 @@ const ProjectCreateInput = ({
     onNextButtonClick();
   };
 
-  const handleEnterDown = ({ key }: React.KeyboardEvent) => {
-    if (key === "Enter" && valid) {
+  const handleEnterDown = (event: React.KeyboardEvent) => {
+    if (event.nativeEvent.isComposing) {
+      return;
+    }
+
+    if (event.key === "Enter" && valid) {
       handleNextButtonClick();
     }
   };
