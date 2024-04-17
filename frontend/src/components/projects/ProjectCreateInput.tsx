@@ -95,11 +95,13 @@ const ProjectCreateInput = ({
           </p>
         </div>
       </div>
-      {valid && targetStepIsCurrentStep && (
-        <NextStepButton onNextButtonClick={handleNextButtonClick}>
-          {buttonContent}
-        </NextStepButton>
-      )}
+      <div className="min-w-[6.875rem] self-end">
+        {valid && targetStepIsCurrentStep && (
+          <NextStepButton onNextButtonClick={handleNextButtonClick}>
+            {buttonContent}
+          </NextStepButton>
+        )}
+      </div>
     </div>
   );
 };

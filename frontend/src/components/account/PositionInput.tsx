@@ -34,13 +34,16 @@ const PositionInput = ({
 
   return (
     <div
-      className={`flex h-[90%] ${
+      className={`flex gap-[4.375rem] h-[90%] ${
         currentStepNumber !== SIGNUP_STEP.STEP3.NUMBER
           ? "items-center"
           : "items-end"
       }`}
     >
-      <div id="position-input-box" className="w-[80%] flex gap-4 items-center">
+      <div
+        id="position-input-box"
+        className="min-w-[567px] flex gap-4 items-center"
+      >
         <span className="text-3xl font-semibold text-dark-gray">
           저의 주요 직무는
         </span>
@@ -53,11 +56,13 @@ const PositionInput = ({
         />
         <span className="text-3xl font-semibold text-dark-gray">입니다</span>
       </div>
-      {currentStepNumber !== SIGNUP_STEP.STEP3.NUMBER && selectedOption && (
-        <NextStepButton onNextButtonClick={handleNextButtonClick}>
-          Next
-        </NextStepButton>
-      )}
+      <div className="min-w-[6.875rem] self-end">
+        {currentStepNumber !== SIGNUP_STEP.STEP3.NUMBER && selectedOption && (
+          <NextStepButton onNextButtonClick={handleNextButtonClick}>
+            Next
+          </NextStepButton>
+        )}
+      </div>
     </div>
   );
 };

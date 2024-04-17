@@ -74,7 +74,7 @@ const NicknameInput = ({
 
   return (
     <div
-      className={`flex h-[100%] ${
+      className={`flex gap-[4.375rem] h-[100%] ${
         currentStepNumber === SIGNUP_STEP.STEP1.NUMBER
           ? "items-center"
           : "items-end"
@@ -88,7 +88,7 @@ const NicknameInput = ({
           LESSER에서 사용할 제 이름은
         </label>
         <br />
-        <div id="nickname-input-box" className="flex">
+        <div id="nickname-input-box" className="flex w-[525px]">
           <div className="inline">
             <input
               type="text"
@@ -116,11 +116,13 @@ const NicknameInput = ({
           <span className="text-3xl font-semibold text-dark-gray">입니다</span>
         </div>
       </div>
-      {validated && currentStepNumber !== SIGNUP_STEP.STEP2.NUMBER && (
-        <NextStepButton onNextButtonClick={handleNextButtonClick}>
-          Next
-        </NextStepButton>
-      )}
+      <div className="min-w-[6.875rem] self-end">
+        {validated && currentStepNumber !== SIGNUP_STEP.STEP2.NUMBER && (
+          <NextStepButton onNextButtonClick={handleNextButtonClick}>
+            Next
+          </NextStepButton>
+        )}
+      </div>
     </div>
   );
 };
