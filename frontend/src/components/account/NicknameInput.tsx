@@ -31,6 +31,10 @@ const NicknameInput = ({
   };
 
   const nicknameAvailabilityCheck = async () => {
+    if (!inputValue) {
+      return;
+    }
+
     const available = await getNicknameAvailability(inputValue);
     if (available) {
       setValidated(true);
@@ -53,10 +57,6 @@ const NicknameInput = ({
 
   useEffect(() => {
     setValidated(null);
-    if (!inputValue) {
-      return;
-    }
-
     debounce(1000, nicknameAvailabilityCheck);
   }, [inputValue]);
 
