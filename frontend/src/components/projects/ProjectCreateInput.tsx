@@ -57,7 +57,7 @@ const ProjectCreateInput = ({
 
   return (
     <div
-      className={`flex h-[${containerHeight}%] ${
+      className={`flex gap-[4.375rem] h-[${containerHeight}%] ${
         targetStepIsCurrentStep ? "items-center" : "items-end"
       }`}
     >
