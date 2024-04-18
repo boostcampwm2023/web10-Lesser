@@ -12,7 +12,7 @@ const ProjectCreatePage = () => {
   );
 
   return (
-    <div className="flex items-center min-w-[76rem] h-[100vh] mx-6">
+    <div className="flex justify-center items-center min-w-[76rem] h-[100vh] gap-15">
       <ProjectCreateSideBar currentStep={currentStep} />
       <ProjectCreateMainSection
         currentStep={currentStep}

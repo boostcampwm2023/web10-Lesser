@@ -10,9 +10,9 @@ const NextStepButton = ({
   <button
     type="button"
     onClick={onNextButtonClick}
-    className="text-[#68790E] font-bold text-3xl self-end"
+    className="text-[#68790E] font-bold text-3xl"
   >
-    <span style={{ textShadow: "8px 8px 25px 0px #00000051" }}>{children}</span>
+    <p style={{ textShadow: "8px 8px 25px 0px #00000051" }}>{children}</p>
   </button>
 );
 

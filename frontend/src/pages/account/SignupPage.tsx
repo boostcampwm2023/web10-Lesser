@@ -17,9 +17,15 @@ const SignupPage = () => {
   }
 
   return (
-    <div className="flex items-center min-w-[76rem] h-[100vh] mx-6">
-      <SignupSideBar currentStepName={currentStep.NAME} currentStepNumber={currentStep.NUMBER} />
-      <SignupMainSection currentStepNumber={currentStep.NUMBER} setCurrentStep={setCurrentStep} />
+    <div className="flex justify-center items-center min-w-[76rem] h-[100vh] mx-6">
+      <SignupSideBar
+        currentStepName={currentStep.NAME}
+        currentStepNumber={currentStep.NUMBER}
+      />
+      <SignupMainSection
+        currentStepNumber={currentStep.NUMBER}
+        setCurrentStep={setCurrentStep}
+      />
     </div>
   );
 };

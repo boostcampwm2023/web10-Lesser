@@ -29,7 +29,7 @@ const TechStackInput = ({
   };
 
   return (
-    <div id="tech" className="h-[90%] flex items-center">
+    <div id="tech" className="h-[90%] flex items-center gap-[4.375rem]">
       <div className="w-[80%]">
         <p className="mb-3 text-3xl font-semibold text-dark-gray">
           저의 주요 기술 스택은
@@ -44,7 +44,7 @@ const TechStackInput = ({
           ))}
         </div>
         <button
-          className="w-[11.25rem] h-[3.25rem] bg-middle-green rounded-xl text-m text-white mb-3 flex items-center shadow-box pl-3 pr-9"
+          className="w-[11.25rem] h-[3.25rem] bg-middle-green rounded-xl text-m text-white mb-3 flex items-center gap-3 shadow-box pl-3 pr-9"
           type="button"
           onClick={() =>
             open(<TechStackModal {...{ techRef, close, setTechStackList }} />)
@@ -55,11 +55,13 @@ const TechStackInput = ({
         </button>
         <p className="text-3xl font-semibold text-dark-gray">입니다</p>
       </div>
-      {techStackList.length !== 0 && (
-        <NextStepButton onNextButtonClick={onSignupButtonClick}>
-          가입하기
-        </NextStepButton>
-      )}
+      <div className="min-w-[6.875rem] self-end">
+        {techStackList.length !== 0 && (
+          <NextStepButton onNextButtonClick={onSignupButtonClick}>
+            가입하기
+          </NextStepButton>
+        )}
+      </div>
     </div>
   );
 };

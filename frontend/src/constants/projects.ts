@@ -10,3 +10,5 @@ export const PROJECT_CREATE_STEP = {
 export const PROJECT_NAME_INPUT_ID = "projectName";
 
 export const PROJECT_SUBJECT_INPUT_ID = "projectSubject";
+
+export const MAX_INPUT_LENGTH = 256;
