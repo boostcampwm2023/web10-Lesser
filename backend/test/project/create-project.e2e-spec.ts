@@ -19,8 +19,11 @@ describe('POST /api/project', () => {
   });
 
   it('should return 400', async () => {
+    const { accessToken } = await createMember(memberFixture, app);
+
     const response = await request(app.getHttpServer())
       .post('/api/project')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send({
         invalidProperty: 'invalidProperty',
       });
