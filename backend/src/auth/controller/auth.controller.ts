@@ -13,7 +13,9 @@ import { MemberService } from 'src/member/service/member.service';
 import { GithubAuthenticationRequestDto } from './dto/GithubAuthenticationRequest.dto';
 import { GithubSignupRequestDto } from './dto/GithubSignupRequest.dto';
 import { BearerTokenRequest } from 'src/common/middleware/parse-bearer-token.middleware';
+import { Public } from 'src/common/guard/authentication.guard';
 
+@Public()
 @Controller('auth')
 export class AuthController {
   constructor(
