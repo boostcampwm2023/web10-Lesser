@@ -46,6 +46,7 @@ export class ProjectWebsocketGateway implements OnGatewayConnection {
         sprint: null,
         board: [],
         link: [],
+        inviteLinkId: project.inviteLinkId,
       },
     };
     client.emit('landing', response);

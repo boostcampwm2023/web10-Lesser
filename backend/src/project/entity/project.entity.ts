@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  Generated,
 } from 'typeorm';
 import { ProjectToMember } from './project-member.entity';
 
@@ -18,6 +19,10 @@ export class Project {
 
   @Column({ type: 'varchar', length: 256, nullable: false })
   subject: string;
+
+  @Column({ type: 'uuid' })
+  @Generated('uuid')
+  inviteLinkId: string;
 
   @OneToMany(
     () => ProjectToMember,
