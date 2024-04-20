@@ -23,8 +23,10 @@ import { ProjectToMember } from './project/entity/project-member.entity';
 import { ProjectModule } from './project/project.module';
 import * as cookieParser from 'cookie-parser';
 import { BearerTokenMiddleware } from './common/middleware/parse-bearer-token.middleware';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ErrorExceptionFilter } from './common/exception-filter/exception.filter';
+import { AuthenticationGuard } from './common/guard/authentication.guard';
+import { MemberRepository } from './member/repository/member.repository';
 
 @Module({
   imports: [
@@ -55,6 +57,11 @@ import { ErrorExceptionFilter } from './common/exception-filter/exception.filter
       provide: APP_FILTER,
       useClass: ErrorExceptionFilter,
     },
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticationGuard,
+    },
+	MemberRepository
   ],
 })
 export class AppModule {

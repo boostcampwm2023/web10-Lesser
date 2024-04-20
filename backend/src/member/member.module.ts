@@ -9,7 +9,7 @@ import { Member } from './entity/member.entity';
 @Module({
   imports: [LesserJwtModule, TypeOrmModule.forFeature([Member])],
   providers: [MemberService, MemberRepository],
-  exports: [MemberService],
+  exports: [MemberService, TypeOrmModule],
   controllers: [MemberController],
 })
 export class MemberModule {}

@@ -6,12 +6,17 @@ import {
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
+import {
+  Public,
+} from 'src/common/guard/authentication.guard';
 import { BearerTokenRequest } from 'src/common/middleware/parse-bearer-token.middleware';
 import { MemberService } from '../service/member.service';
 
 @Controller('member')
 export class MemberController {
   constructor(private readonly memberService: MemberService) {}
+
+  @Public()
   @Get('/availability')
   async getUsernameAvailability(@Query('username') username: string) {
     if (!username) throw new BadRequestException('username is missing');
