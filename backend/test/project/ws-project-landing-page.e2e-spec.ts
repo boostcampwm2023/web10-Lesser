@@ -47,6 +47,7 @@ describe('WS landing', () => {
         expect(content.sprint).toBeDefined();
         expect(content.board).toBeDefined();
         expect(content.link).toBeDefined();
+        expect(content.inviteLinkId).toBeDefined();
         resolve();
       });
     });
