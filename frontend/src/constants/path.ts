@@ -24,6 +24,7 @@ export const ROUTER_URL = {
   SPRINT: "/projects/:projectId/sprint",
   SPRINT_CREATE: "/projects/:projectId/sprint/create",
   SETTINGS: "/projects/:projectId/settings",
+  INVITE: "projects/invite/:projectTitle/:projectId",
   ERROR: "/error",
 };
 

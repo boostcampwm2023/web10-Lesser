@@ -6,6 +6,7 @@ import PositionInput from "./PositionInput";
 import TechStackInput from "./TechStackInput";
 import { SIGNUP_STEP } from "../../constants/account";
 import { ROUTER_URL } from "../../constants/path";
+import { SESSION_STORAGE_KEY } from "../../constants/storageKey";
 
 interface SignupMainSectionProps {
   currentStepNumber: number;
@@ -45,9 +46,12 @@ const SignupMainSection = ({
       techStack: techRef.current,
       tempIdToken: location.state.tempIdToken,
     });
+    const redirectURL = sessionStorage.getItem(SESSION_STORAGE_KEY.REDIRECT);
 
     if (status === 201) {
-      navigate(ROUTER_URL.PROJECTS);
+      redirectURL
+        ? navigate(redirectURL, { replace: true })
+        : navigate(ROUTER_URL.PROJECTS, { replace: true });
     }
   };
 
