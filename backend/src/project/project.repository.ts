@@ -24,14 +24,29 @@ export class ProjectRepository {
     );
   }
 
-  getProject(projectId: number): Promise<Project> {
-    return this.projectRepository.findOne({ where: { id: projectId } });	
+  getProjectByLinkId(projectLinkId: string): Promise<Project | null> {
+    return this.projectRepository.findOne({
+      where: { inviteLinkId: projectLinkId },
+    });
+  }
+
+  getProject(projectId: number): Promise<Project | null> {
+    return this.projectRepository.findOne({ where: { id: projectId } });
   }
 
   getProjectList(member: Member): Promise<Project[]> {
     return this.projectRepository.find({
       where: { projectToMember: { member: { id: member.id } } },
       relations: { projectToMember: true },
+    });
+  }
+
+  getProjectToMember(
+    project: Project,
+    member: Member,
+  ): Promise<ProjectToMember | null> {
+    return this.projectToMemberRepository.findOne({
+      where: { project: { id: project.id }, member: { id: member.id } },
     });
   }
 }
