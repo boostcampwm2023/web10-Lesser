@@ -22,6 +22,15 @@ export const memberFixture = {
   tech_stack: { stacks: ['js', 'ts'] },
 };
 
+export const memberFixture2 = {
+  github_id: 321,
+  github_username: 'github_username',
+  github_image_url: 'avatar_url',
+  username: 'username2',
+  position: 'position',
+  tech_stack: { stacks: ['js', 'ts'] },
+};
+
 export const githubUserFixture = {
   id: '123',
   login: 'username',
