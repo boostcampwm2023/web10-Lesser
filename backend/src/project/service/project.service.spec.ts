@@ -3,6 +3,7 @@ import { ProjectService } from './project.service';
 import { ProjectRepository } from '../project.repository';
 import { Member } from 'src/member/entity/member.entity';
 import { Project } from '../entity/project.entity';
+import { ProjectToMember } from '../entity/project-member.entity';
 
 describe('ProjectService', () => {
   let projectService: ProjectService;
@@ -19,6 +20,8 @@ describe('ProjectService', () => {
             addProjectMember: jest.fn(),
             getProjectList: jest.fn(),
             getProject: jest.fn(),
+            getProjectByLinkId: jest.fn(),
+            getProjectToMember: jest.fn(),
           },
         },
       ],
@@ -79,6 +82,52 @@ describe('ProjectService', () => {
 
       expect(projectRepository.getProject).toHaveBeenCalledWith(projectId);
       expect(result).toEqual(project);
+    });
+  });
+
+  describe('Add Member', () => {
+    const projectLinkId = 'inviteUuid';
+    const project = Project.of('title', 'subject');
+    it('should return void when given member, title, subject', async () => {
+      jest
+        .spyOn(projectRepository, 'getProjectByLinkId')
+        .mockResolvedValue(project);
+      jest
+        .spyOn(projectRepository, 'getProjectToMember')
+        .mockResolvedValue(null);
+
+      await projectService.addMember(projectLinkId, member);
+
+      expect(projectRepository.getProjectByLinkId).toHaveBeenCalledWith(
+        projectLinkId,
+      );
+      expect(projectRepository.addProjectMember).toHaveBeenCalledWith(
+        project,
+        member,
+      );
+    });
+
+    it('should throw when already joined member', async () => {
+      jest
+        .spyOn(projectRepository, 'getProjectByLinkId')
+        .mockResolvedValue(project);
+      jest
+        .spyOn(projectRepository, 'getProjectToMember')
+        .mockResolvedValue(ProjectToMember.of(project, member));
+
+      await expect(
+        async () => await projectService.addMember(projectLinkId, member),
+      ).rejects.toThrow('already joined member');
+    });
+
+    it('should throw when invalid project link id', async () => {
+      jest
+        .spyOn(projectRepository, 'getProjectByLinkId')
+        .mockResolvedValue(null);
+
+      await expect(
+        async () => await projectService.addMember(projectLinkId, member),
+      ).rejects.toThrow('project link id not found');
     });
   });
 });
