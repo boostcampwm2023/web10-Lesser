@@ -19,10 +19,11 @@ export class ProjectService {
     return await this.projectRepository.getProjectList(member);
   }
 
-  async getProject(projectId: number): Promise<Project> {
+  async getProject(projectId: number): Promise<Project | null> {
     return await this.projectRepository.getProject(projectId);
   }
 
+  //ToDo: ProjectLinkId가 아닌 project를 매개변수로 사용하도록 변경
   async addMember(projectLinkId: string, member: Member): Promise<void> {
     const project =
       await this.projectRepository.getProjectByLinkId(projectLinkId);
@@ -34,10 +35,7 @@ export class ProjectService {
     await this.projectRepository.addProjectMember(project, member);
   }
 
-  async isProjectMember(
-    project: Project,
-    member: Member,
-  ): Promise<boolean> {
+  async isProjectMember(project: Project, member: Member): Promise<boolean> {
     const projectToMember: ProjectToMember | null =
       await this.projectRepository.getProjectToMember(project, member);
     if (!projectToMember) return false;
