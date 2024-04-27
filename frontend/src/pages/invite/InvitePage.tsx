@@ -2,7 +2,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { checkAccessToken } from "../../apis/utils/authAPI";
 import { ROUTER_URL } from "../../constants/path";
 import { useEffect } from "react";
-import { SESSION_STORAGE_KEY } from "../../constants/storageKey";
+import { STORAGE_KEY } from "../../constants/storageKey";
 import { postJoinProject } from "../../apis/api/projectAPI";
 
 const InvitePage = () => {
@@ -27,13 +27,13 @@ const InvitePage = () => {
 
   useEffect(() => {
     if (!checkAccessToken()) {
-      sessionStorage.setItem(SESSION_STORAGE_KEY.REDIRECT, pathname);
+      sessionStorage.setItem(STORAGE_KEY.REDIRECT, pathname);
       navigate(ROUTER_URL.LOGIN, { replace: true });
     }
 
     return () => {
       if (checkAccessToken()) {
-        sessionStorage.removeItem(SESSION_STORAGE_KEY.REDIRECT);
+        sessionStorage.removeItem(STORAGE_KEY.REDIRECT);
       }
     };
   }, []);

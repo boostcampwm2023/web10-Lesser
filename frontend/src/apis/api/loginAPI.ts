@@ -9,7 +9,7 @@ import {
 } from "../../types/DTO/authDTO";
 import { useNavigate } from "react-router-dom";
 import { authAPI, setAccessToken } from "../utils/authAPI";
-import { SESSION_STORAGE_KEY } from "../../constants/storageKey";
+import { STORAGE_KEY } from "../../constants/storageKey";
 
 export const getLoginURL = async () => {
   const response = await baseAPI.get<GithubOauthUrlDTO>(
@@ -20,14 +20,17 @@ export const getLoginURL = async () => {
 
 export const postAuthCode = async (authCode: string) => {
   const navigate = useNavigate();
-  const redirectURL = sessionStorage.getItem(SESSION_STORAGE_KEY.REDIRECT);
+  const redirectURL = sessionStorage.getItem(STORAGE_KEY.REDIRECT);
   const response = await baseAPI.post<AuthenticationDTO>(API_URL.AUTH, {
     authCode,
   });
   if (response.status === 201) {
     const body = response.data as AccessTokenResponse;
     setAccessToken(body.accessToken);
-    window.localStorage.setItem("member", JSON.stringify(body.member));
+    window.localStorage.setItem(
+      STORAGE_KEY.MEMBER,
+      JSON.stringify(body.member)
+    );
     redirectURL
       ? navigate(redirectURL, { replace: true })
       : navigate(ROUTER_URL.PROJECTS);

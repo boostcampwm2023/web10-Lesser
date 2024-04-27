@@ -3,12 +3,12 @@ import checkAuthentication from "../../../utils/route/checkAuthentication";
 import RouteLoading from "./RouteLoading";
 import { Navigate, Outlet } from "react-router-dom";
 import { ROUTER_URL } from "../../../constants/path";
-import { SESSION_STORAGE_KEY } from "../../../constants/storageKey";
+import { STORAGE_KEY } from "../../../constants/storageKey";
 
 const PublicRoute = () => {
   const [loadingState, setLoadingState] = useState<boolean>(true);
   const [authenticated, setAuthenticated] = useState<boolean>(false);
-  const redirectURL = sessionStorage.getItem(SESSION_STORAGE_KEY.REDIRECT);
+  const redirectURL = sessionStorage.getItem(STORAGE_KEY.REDIRECT);
 
   useEffect(() => {
     checkAuthentication().then((result) => {

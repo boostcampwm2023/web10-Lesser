@@ -1,3 +1,4 @@
-export const SESSION_STORAGE_KEY = {
-  REDIRECT: 'redirect'
-}
+export const STORAGE_KEY = {
+  MEMBER: "member",
+  REDIRECT: "redirect",
+};
