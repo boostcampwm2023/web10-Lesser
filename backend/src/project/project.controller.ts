@@ -6,7 +6,6 @@ import {
   Post,
   Req,
   Res,
-  UseGuards,
 } from '@nestjs/common';
 import { ProjectService } from './service/project.service';
 import { CreateProjectRequestDto } from './dto/CreateProjectRequest.dto';
@@ -63,7 +62,7 @@ export class ProjectController {
     if (isProjectMember)
       return response.status(200).send({ projectId: project.id });
 
-    await this.projectService.addMember(body.inviteLinkId, request.member);
+    await this.projectService.addMember(project, request.member);
     return response.status(201).send();
   }
 }

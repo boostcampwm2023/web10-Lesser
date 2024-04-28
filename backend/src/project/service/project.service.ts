@@ -23,21 +23,14 @@ export class ProjectService {
     return await this.projectRepository.getProject(projectId);
   }
 
-  async addMember(projectLinkId: string, member: Member): Promise<void> {
-    const project =
-      await this.projectRepository.getProjectByLinkId(projectLinkId);
-    if (!project) throw new Error('project link id not found');
-
+  async addMember(project: Project, member: Member): Promise<void> {
     const isProjectMember = await this.isProjectMember(project, member);
     if (isProjectMember) throw new Error('already joined member');
 
     await this.projectRepository.addProjectMember(project, member);
   }
 
-  async isProjectMember(
-    project: Project,
-    member: Member,
-  ): Promise<boolean> {
+  async isProjectMember(project: Project, member: Member): Promise<boolean> {
     const projectToMember: ProjectToMember | null =
       await this.projectRepository.getProjectToMember(project, member);
     if (!projectToMember) return false;
