@@ -123,7 +123,7 @@ export class AuthService {
     tempIdToken: string,
     username: string,
     position: string,
-    techStack: object,
+    techStack: { stacks: string[] },
   ) {
     const tempMember = await this.getTempMember(tempIdToken);
     const memberId = await this.memberService.save(

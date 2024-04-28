@@ -19,7 +19,7 @@ export class MemberService {
     githubImageUrl: string,
     username: string,
     position: string,
-    techStack: object,
+    techStack: { stacks: string[] },
   ): Promise<number> {
     const member = await this.memberRepository.create(
       Member.of(
