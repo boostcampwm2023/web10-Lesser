@@ -16,3 +16,9 @@ export const postCreateProject = async (body: {
   const response = await authAPI.post(API_URL.PROJECT, body);
   return response.data;
 };
+
+export const postJoinProject = async (inviteLinkId: string) => {
+  const response = await authAPI.post(API_URL.PROJECT_JOIN, { inviteLinkId });
+
+  return response;
+};

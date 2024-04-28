@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   LandingDTO,
   LandingLinkDTO,
@@ -31,11 +31,12 @@ const useLandingSocket = (socket: Socket) => {
   const [sprint, setSprint] = useState<LandingSprintDTO | null>(null);
   const [board, setBoard] = useState<LandingMemoDTO[]>([]);
   const [link, setLink] = useState<LandingLinkDTO[]>([]);
+  const inviteLinkIdRef = useRef<string>('')
 
   const handleOnLanding = ({ action, content }: SocketData) => {
     switch (action) {
       case LandingSocketEvent.INIT:
-        const { project, myInfo, member, sprint, board, link } =
+        const { project, myInfo, member, sprint, board, link, inviteLinkId } =
           content as LandingDTO;
         setProject(project);
         setMyInfo(myInfo);
@@ -43,6 +44,7 @@ const useLandingSocket = (socket: Socket) => {
         setSprint(sprint);
         setBoard(board);
         setLink(link);
+        inviteLinkIdRef.current = inviteLinkId
         break;
     }
   };
@@ -56,7 +58,7 @@ const useLandingSocket = (socket: Socket) => {
     };
   }, [socket]);
 
-  return { project, myInfo, member, sprint, board, link };
+  return { project, myInfo, member, sprint, board, link, inviteLinkIdRef };
 };
 
 export default useLandingSocket;

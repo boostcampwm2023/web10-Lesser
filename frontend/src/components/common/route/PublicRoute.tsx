@@ -3,10 +3,12 @@ import checkAuthentication from "../../../utils/route/checkAuthentication";
 import RouteLoading from "./RouteLoading";
 import { Navigate, Outlet } from "react-router-dom";
 import { ROUTER_URL } from "../../../constants/path";
+import { STORAGE_KEY } from "../../../constants/storageKey";
 
 const PublicRoute = () => {
-  const [loadingState, setLoadingState] = useState<Boolean>(true);
-  const [authenticated, setAuthenticated] = useState<Boolean>(false);
+  const [loadingState, setLoadingState] = useState<boolean>(true);
+  const [authenticated, setAuthenticated] = useState<boolean>(false);
+  const redirectURL = sessionStorage.getItem(STORAGE_KEY.REDIRECT);
 
   useEffect(() => {
     checkAuthentication().then((result) => {
@@ -25,7 +27,7 @@ const PublicRoute = () => {
   ) : !authenticated ? (
     <Outlet />
   ) : (
-    <Navigate to={ROUTER_URL.PROJECTS} />
+    <Navigate to={redirectURL ? redirectURL : ROUTER_URL.PROJECTS} />
   );
 };
 
