@@ -119,11 +119,6 @@ describe('WS landing', () => {
 
   it('should connect_error (Not Project Member)', async () => {
     const accessToken = (await createMember(memberFixture, app)).accessToken;
-    jest.spyOn(githubApiService, 'fetchGithubUser').mockResolvedValue({
-      id: memberFixture2.github_id,
-      login: memberFixture2.github_username,
-      avatar_url: memberFixture2.github_image_url,
-    });
     const { accessToken: newAccessToken } = await createMember(
       memberFixture2,
       app,

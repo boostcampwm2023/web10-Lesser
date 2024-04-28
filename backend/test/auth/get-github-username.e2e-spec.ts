@@ -1,8 +1,16 @@
 import * as request from 'supertest';
-import { app, githubUserFixture } from 'test/setup';
+import { app, githubApiService } from 'test/setup';
 
 describe('GET /api/auth/github/username', () => {
   it('should return 200 when given valid tempIdToken', async () => {
+    const githubUserFixture = {
+      id: '123',
+      login: 'username',
+      avatar_url: 'avatar_url',
+    };
+    jest
+      .spyOn(githubApiService, 'fetchGithubUser')
+      .mockResolvedValue(githubUserFixture);
     const authenticationResponse = await request(app.getHttpServer())
       .post('/api/auth/github/authentication')
       .send({ authCode: 'authCode' });

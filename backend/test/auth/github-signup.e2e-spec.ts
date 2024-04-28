@@ -1,5 +1,10 @@
 import * as request from 'supertest';
-import { app, jwtTokenPattern, memberFixture } from 'test/setup';
+import {
+  app,
+  githubApiService,
+  jwtTokenPattern,
+  memberFixture,
+} from 'test/setup';
 
 describe('POST /api/auth/github/signup', () => {
   const memberSignupPayload = {
@@ -8,6 +13,14 @@ describe('POST /api/auth/github/signup', () => {
     techStack: memberFixture.tech_stack.stacks,
   };
   it('should return 201', async () => {
+    const githubUserFixture = {
+      id: '123',
+      login: 'username',
+      avatar_url: 'avatar_url',
+    };
+    jest
+      .spyOn(githubApiService, 'fetchGithubUser')
+      .mockResolvedValue(githubUserFixture);
     const authenticationResponse = await request(app.getHttpServer())
       .post('/api/auth/github/authentication')
       .send({ authCode: 'authCode' });

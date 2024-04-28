@@ -40,11 +40,6 @@ describe('Join Project', () => {
   });
 
   it('should return 201', async () => {
-    jest.spyOn(githubApiService, 'fetchGithubUser').mockResolvedValue({
-      id: '321',
-      login: 'username',
-      avatar_url: 'avatar_url',
-    });
     const { accessToken: newAccessToken } = await createMember(
       memberFixture2,
       app,
@@ -57,11 +52,6 @@ describe('Join Project', () => {
   });
 
   it('should return 200 when already joined member', async () => {
-    jest.spyOn(githubApiService, 'fetchGithubUser').mockResolvedValue({
-      id: '321',
-      login: 'username',
-      avatar_url: 'avatar_url',
-    });
     const { accessToken: newAccessToken } = await createMember(
       memberFixture2,
       app,
@@ -80,11 +70,6 @@ describe('Join Project', () => {
   });
 
   it('should return 400 when given bad request', async () => {
-    jest.spyOn(githubApiService, 'fetchGithubUser').mockResolvedValue({
-      id: '321',
-      login: 'username',
-      avatar_url: 'avatar_url',
-    });
     const { accessToken: newAccessToken } = await createMember(
       memberFixture2,
       app,
@@ -117,11 +102,6 @@ describe('Join Project', () => {
 
   it('should return 404 when project link ID is not found', async () => {
     const invalidUUID = 'c93a87e8-a0a4-4b55-bdf2-59bf691f5c37';
-    jest.spyOn(githubApiService, 'fetchGithubUser').mockResolvedValue({
-      id: memberFixture2.github_id,
-      login: memberFixture2.github_username,
-      avatar_url: memberFixture2.github_image_url,
-    });
     const { accessToken: newAccessToken } = await createMember(
       memberFixture2,
       app,

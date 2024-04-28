@@ -8,6 +8,7 @@ import { DataSource } from 'typeorm';
 import { Project } from 'src/project/entity/project.entity';
 import { CreateProjectRequestDto } from 'src/project/dto/CreateProjectRequest.dto';
 import { io } from 'socket.io-client';
+import { Member } from 'src/member/entity/member.entity';
 
 export let app: INestApplication;
 export let githubApiService: GithubApiService;
@@ -21,31 +22,36 @@ export const projectPayload = {
   subject: '애자일한 프로젝트 관리 툴',
 };
 
-export const memberFixture = {
-  github_id: 123,
-  github_username: 'github_username',
-  github_image_url: 'avatar_url',
-  username: 'username',
-  position: 'position',
-  tech_stack: { stacks: ['js', 'ts'] },
-};
+export const memberFixture = Member.of(
+  123,
+  'github_username',
+  'avatar_url',
+  'username',
+  'position',
+  { stacks: ['js', 'ts'] },
+);
 
-export const memberFixture2 = {
-  github_id: 321,
-  github_username: 'github_username',
-  github_image_url: 'avatar_url',
-  username: 'username2',
-  position: 'position',
-  tech_stack: { stacks: ['js', 'ts'] },
-};
+export const memberFixture2 = Member.of(
+  321,
+  'github_username',
+  'avatar_url',
+  'username2',
+  'position',
+  { stacks: ['js', 'ts'] },
+);
 
-export const githubUserFixture = {
-  id: '123',
-  login: 'username',
-  avatar_url: 'avatar_url',
-};
-
-export const createMember = async (newMember, app: INestApplication) => {
+export const createMember = async (
+  newMember: Member,
+  app: INestApplication,
+): Promise<{
+  accessToken: string;
+  refreshToken: string;
+}> => {
+  jest.spyOn(githubApiService, 'fetchGithubUser').mockResolvedValue({
+    id: newMember.github_id,
+    login: newMember.github_username,
+    avatar_url: newMember.github_image_url,
+  });
   const authenticationResponse = await request(app.getHttpServer())
     .post('/api/auth/github/authentication')
     .send({ authCode: 'authCode' });
@@ -78,6 +84,8 @@ export const createProject = async (
   return project;
 };
 
+export const joinProject = async () => {};
+
 export const connectServer = (projectId, accessToken) => {
   const socket = io(`http://localhost:3000/project-${projectId}`, {
     path: '/api/socket.io',
@@ -97,7 +105,7 @@ export const appInit = async () => {
       fetchAccessToken: jest
         .fn()
         .mockResolvedValue({ access_token: 'github.access.token' }),
-      fetchGithubUser: jest.fn().mockResolvedValue(githubUserFixture),
+      fetchGithubUser: jest.fn(),
     })
     .compile();
   githubApiService = moduleFixture.get<GithubApiService>(GithubApiService);
