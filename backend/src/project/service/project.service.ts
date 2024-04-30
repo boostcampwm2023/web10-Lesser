@@ -19,7 +19,7 @@ export class ProjectService {
     return await this.projectRepository.getProjectList(member);
   }
 
-  async getProject(projectId: number): Promise<Project> {
+  async getProject(projectId: number): Promise<Project | null> {
     return await this.projectRepository.getProject(projectId);
   }
 

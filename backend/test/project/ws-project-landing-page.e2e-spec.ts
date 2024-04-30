@@ -1,41 +1,36 @@
-import * as request from 'supertest';
-import { app, appInit, createMember, memberFixture } from 'test/setup';
-import { io } from 'socket.io-client';
+import {
+  app,
+  appInit,
+  connectServer,
+  createMember,
+  createProject,
+  memberFixture,
+  projectPayload,
+} from 'test/setup';
 
 describe('WS landing', () => {
   let socket;
+
   beforeEach(async () => {
     await app.close();
     await appInit();
     await app.listen(3000);
   });
+
   afterEach(async () => {
     socket.close();
   });
 
-  const projectPayload = {
-    title: 'Lesser1',
-    subject: '애자일한 프로젝트 관리 툴',
-  };
-
   it('should return project data', async () => {
-    const { accessToken } = await createMember(memberFixture, app);
-    await request(app.getHttpServer())
-      .post('/api/project')
-      .set('Authorization', `Bearer ${accessToken}`)
-      .send(projectPayload);
-    const response = await request(app.getHttpServer())
-      .get('/api/project')
-      .set('Authorization', `Bearer ${accessToken}`);
-    const [project] = response.body.projects;
-    socket = io(`http://localhost:3000/project-${project.id}`, {
-      path: '/api/socket.io',
-    });
+    const accessToken = (await createMember(memberFixture, app)).accessToken;
+    const project = await createProject(accessToken, projectPayload, app);
+    socket = connectServer(project.id, accessToken);
 
-    return new Promise<void>((resolve) => {
+    return new Promise<void>((resolve, reject) => {
       socket.on('connect', () => {
         socket.emit('joinLanding');
       });
+
       socket.on('landing', (data) => {
         const { action, content } = data;
         expect(action).toBe('init');
@@ -49,6 +44,10 @@ describe('WS landing', () => {
         expect(content.link).toBeDefined();
         expect(content.inviteLinkId).toBeDefined();
         resolve();
+      });
+
+      socket.on('connect_error', () => {
+        reject('connect_error fail');
       });
     });
   });
