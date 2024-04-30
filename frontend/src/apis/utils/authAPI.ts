@@ -1,4 +1,8 @@
-import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import axios, {
+  AxiosError,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from "axios";
 import { API_URL, BASE_URL } from "../../constants/path";
 import { RefreshDTO } from "../../types/DTO/authDTO";
 
@@ -10,6 +14,10 @@ const setAccessToken = (newAccessToken: string | undefined) => {
 
 const checkAccessToken = (): boolean => {
   return !!accessToken;
+};
+
+const getAccessToken = (): string | undefined => {
+  return accessToken;
 };
 
 const authAPI = axios.create({
@@ -69,4 +77,4 @@ const successRefresh = async (
 
 authAPI.interceptors.response.use(successResponse, failResponse);
 
-export { authAPI, setAccessToken, checkAccessToken };
+export { authAPI, setAccessToken, checkAccessToken, getAccessToken };
