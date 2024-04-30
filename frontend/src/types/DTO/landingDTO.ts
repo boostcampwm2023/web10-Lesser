@@ -43,4 +43,5 @@ export interface LandingDTO {
   sprint: LandingSprintDTO | null;
   board: LandingMemoDTO[];
   link: LandingLinkDTO[];
+  inviteLinkId: string
 }

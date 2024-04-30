@@ -8,9 +8,13 @@ import { DEFAULT_MEMBER } from "../../constants/projects";
 const LandingMember = ({
   member,
   myInfo,
+  inviteLinkIdRef,
+  projectTitle,
 }: {
   member: LandingMemberDTO[];
   myInfo: LandingMemberDTO;
+  inviteLinkIdRef: React.MutableRefObject<string>;
+  projectTitle: string;
 }) => {
   const { Dropdown, selectedOption } = useDropdown({
     placeholder: "내 상태",
@@ -23,6 +27,19 @@ const LandingMember = ({
   );
   const imageUrl = myInfo.imageUrl ?? userData.imageUrl;
   const username = myInfo.username ?? userData.username;
+
+  const handleInviteButtonClick = () => {
+    window.navigator.clipboard
+      .writeText(
+        `${window.location.origin}/projects/invite/${projectTitle.replace(
+          /\s/g,
+          ""
+        )}/${inviteLinkIdRef.current}`
+      )
+      .then(() => {
+        alert("초대링크가 복사되었습니다.");
+      });
+  };
 
   return (
     <div className="w-full px-6 py-6 overflow-y-scroll rounded-lg shadow-box bg-gradient-to-tr to-light-green-linear-from from-light-green scrollbar-thin scrollbar-thumb-light-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
@@ -44,7 +61,12 @@ const LandingMember = ({
         />
         <div className="flex justify-between text-white">
           <p className="text-xs font-bold">| 함께하는 사람들</p>
-          <button className="text-xxs hover:underline">초대링크 복사</button>
+          <button
+            className="text-xxs hover:underline"
+            onClick={handleInviteButtonClick}
+          >
+            초대링크 복사
+          </button>
         </div>
         {member.map((memberData: LandingMemberDTO) => (
           <UserBlock {...memberData} key={memberData.id} />

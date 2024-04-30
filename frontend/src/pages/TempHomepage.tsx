@@ -45,6 +45,11 @@ const TempHomepage = () => {
             에러를 던져봅시다!
           </Link>
         </li>
+        <li>
+          <Link to={"projects/invite/projectTitle/projectId"}>
+            초대
+          </Link>
+        </li>
       </ul>
     </div>
   );

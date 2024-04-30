@@ -18,6 +18,7 @@ import PrivateRoute from "./components/common/route/PrivateRoute";
 import PublicRoute from "./components/common/route/PublicRoute";
 import MainPage from "./pages/main/MainPage";
 import LandingPage from "./pages/landing/LandingPage";
+import InvitePage from "./pages/invite/InvitePage";
 
 type RouteType = "PRIVATE" | "PUBLIC";
 
@@ -78,6 +79,10 @@ const router = createBrowserRouter([
           { path: ROUTER_URL.SPRINT, element: <div>sprint Page</div> },
           { path: ROUTER_URL.SETTINGS, element: <div>setting Page</div> },
         ],
+      },
+      {
+        path: ROUTER_URL.INVITE,
+        element: <InvitePage />,
       },
     ],
   },

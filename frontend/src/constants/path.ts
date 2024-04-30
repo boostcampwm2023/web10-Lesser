@@ -9,6 +9,7 @@ export const API_URL = {
   NICKNAME_AVAILABLILITY: "/member/availability",
   GITHUB_USERNAME: "/auth/github/username",
   PROJECT: "/project",
+  PROJECT_JOIN: "/project/join",
 };
 
 export const ROUTER_URL = {
@@ -24,6 +25,7 @@ export const ROUTER_URL = {
   SPRINT: "/projects/:projectId/sprint",
   SPRINT_CREATE: "/projects/:projectId/sprint/create",
   SETTINGS: "/projects/:projectId/settings",
+  INVITE: "projects/invite/:projectTitle/:projectId",
   ERROR: "/error",
 };
 

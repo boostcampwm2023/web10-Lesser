@@ -9,27 +9,39 @@ import {
 } from "../../types/DTO/authDTO";
 import { useNavigate } from "react-router-dom";
 import { authAPI, setAccessToken } from "../utils/authAPI";
+import { STORAGE_KEY } from "../../constants/storageKey";
 
 export const getLoginURL = async () => {
-  const response = await baseAPI.get<GithubOauthUrlDTO>(API_URL.GITHUB_OAUTH_URL);
+  const response = await baseAPI.get<GithubOauthUrlDTO>(
+    API_URL.GITHUB_OAUTH_URL
+  );
   return response.data.authUrl;
 };
 
 export const postAuthCode = async (authCode: string) => {
   const navigate = useNavigate();
+  const redirectURL = sessionStorage.getItem(STORAGE_KEY.REDIRECT);
   const response = await baseAPI.post<AuthenticationDTO>(API_URL.AUTH, {
     authCode,
   });
   if (response.status === 201) {
     const body = response.data as AccessTokenResponse;
     setAccessToken(body.accessToken);
-    window.localStorage.setItem("member", JSON.stringify(body.member));
-    navigate(ROUTER_URL.PROJECTS);
+    window.localStorage.setItem(
+      STORAGE_KEY.MEMBER,
+      JSON.stringify(body.member)
+    );
+    redirectURL
+      ? navigate(redirectURL, { replace: true })
+      : navigate(ROUTER_URL.PROJECTS);
     return;
   }
   if (response.status === 209) {
     const body = response.data as TempIdTokenResponse;
-    navigate(ROUTER_URL.SIGNUP, { state: { tempIdToken: body.tempIdToken } });
+    navigate(ROUTER_URL.SIGNUP, {
+      state: { tempIdToken: body.tempIdToken },
+      replace: redirectURL ? true : false,
+    });
     return;
   }
 };

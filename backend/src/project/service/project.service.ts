@@ -23,12 +23,7 @@ export class ProjectService {
     return await this.projectRepository.getProject(projectId);
   }
 
-  //ToDo: ProjectLinkId가 아닌 project를 매개변수로 사용하도록 변경
-  async addMember(projectLinkId: string, member: Member): Promise<void> {
-    const project =
-      await this.projectRepository.getProjectByLinkId(projectLinkId);
-    if (!project) throw new Error('project link id not found');
-
+  async addMember(project: Project, member: Member): Promise<void> {
     const isProjectMember = await this.isProjectMember(project, member);
     if (isProjectMember) throw new Error('already joined member');
 
