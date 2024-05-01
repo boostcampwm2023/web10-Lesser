@@ -84,7 +84,32 @@ export const createProject = async (
   return project;
 };
 
-export const joinProject = async () => {};
+export const getProjectLinkId = async (
+  accessToken: string,
+  projectId: number,
+) => {
+  let projectLinkId;
+  const socket = connectServer(projectId, accessToken);
+  await new Promise<void>((resolve) => {
+    socket.on('connect', () => {
+      socket.emit('joinLanding');
+    });
+    socket.on('landing', (data) => {
+      const { content } = data;
+      projectLinkId = projectLinkId = content.inviteLinkId;
+      resolve();
+    });
+  });
+  socket.close();
+  return projectLinkId;
+};
+
+export const joinProject = (accessToken: string, projectLinkId: string) => {
+  request(app.getHttpServer())
+    .post('/api/project/join')
+    .set('Authorization', `Bearer ${accessToken}`)
+    .send({ inviteLinkId: projectLinkId });
+};
 
 export const connectServer = (projectId, accessToken) => {
   const socket = io(`http://localhost:3000/project-${projectId}`, {
