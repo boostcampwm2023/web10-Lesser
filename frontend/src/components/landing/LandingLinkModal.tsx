@@ -10,7 +10,7 @@ const LandingLinkModal = ({ close }: { close: () => void }) => {
 
   return (
     <div
-      className="top-0 left-0 absolute w-screen h-screen flex justify-center items-center bg-black bg-opacity-30"
+      className="top-0 left-0 absolute w-screen h-screen flex justify-center items-center bg-black bg-opacity-30 z-50"
       onClick={handleCloseClick}
     >
       <div className="w-[40.625rem] bg-white flex flex-col p-9 gap-9 rounded-lg shadow-box">
