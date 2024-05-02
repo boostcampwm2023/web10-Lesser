@@ -21,7 +21,7 @@ const LandingPage = () => {
     <div className="flex flex-col justify-between w-full h-full">
       <div className="h-[17.6875rem] w-full shrink-0 flex gap-9">
         <LandingProject {...{ project, projectId }} />
-        <div className="w-full rounded-lg shadow-box bg-gradient-to-tr from-dark-green-linear-from to-dark-green-linear-to"></div>
+        <div className="w-full rounded-lg shadow-box bg-gradient-to-tr from-dark-green-linear-from to-dark-green-linear-to overflow-y-scroll scrollbar-thin scrollbar-thumb-dark-green scrollbar-track-transparent scrollbar-thumb-rounded-full"></div>
       </div>
       <div className="h-[20.5625rem] w-full shrink-0 flex gap-9">
         <LandingSprint {...{ sprint }} />
