@@ -69,17 +69,17 @@ const router = createBrowserRouter([
           path: ROUTER_URL.PROJECTS_CREATE,
           element: <ProjectCreatePage />,
         },
+        {
+          path: ROUTER_URL.MAIN,
+          element: <MainPage />,
+          children: [
+            { index: true, element: <LandingPage /> },
+            { path: ROUTER_URL.BACKLOG, element: <div>backlog Page</div> },
+            { path: ROUTER_URL.SPRINT, element: <div>sprint Page</div> },
+            { path: ROUTER_URL.SETTINGS, element: <div>setting Page</div> },
+          ],
+        },
       ]),
-      {
-        path: ROUTER_URL.MAIN,
-        element: <MainPage />,
-        children: [
-          { index: true, element: <LandingPage /> },
-          { path: ROUTER_URL.BACKLOG, element: <div>backlog Page</div> },
-          { path: ROUTER_URL.SPRINT, element: <div>sprint Page</div> },
-          { path: ROUTER_URL.SETTINGS, element: <div>setting Page</div> },
-        ],
-      },
       {
         path: ROUTER_URL.INVITE,
         element: <InvitePage />,
