@@ -11,7 +11,7 @@ const LandingLink = ({ link }: { link: LandingLinkDTO[] }) => {
   };
 
   return (
-    <div className="w-full shadow-box rounded-lg flex flex-col pt-6 pl-6 pr-3 bg-gradient-to-tr from-dark-green-linear-from to-dark-green-linear-to">
+    <div className="w-full shadow-box rounded-lg flex flex-col pt-6 pl-6 pr-3 bg-gradient-to-tr to-middle-green-linear-from from-middle-green">
       <div className="flex justify-between items-center pr-3">
         <p className="text-white text-m font-bold">| 외부 링크</p>
         <button
