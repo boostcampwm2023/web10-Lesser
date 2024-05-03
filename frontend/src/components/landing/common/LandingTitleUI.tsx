@@ -1,4 +1,4 @@
-import Plus from "../../assets/icons/plus.svg?react";
+import Plus from "../../../assets/icons/plus.svg?react";
 
 interface LandingTitleUIProps {
   handleClick: () => void;

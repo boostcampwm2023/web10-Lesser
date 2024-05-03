@@ -1,3 +1,5 @@
+import TrashBinIcon from "../../../assets/icons/trash-can.svg?react";
+
 interface LandingMemoBlockProps {
   username: string;
 }
@@ -12,7 +14,7 @@ const LandingMemoBlock = ({ username }: LandingMemoBlockProps) => {
         />
         <textarea
           placeholder="내용을 작성하세요"
-          className="text-xxs bg-transparent focus:outline-none h-full resize-none"
+          className="text-xxs bg-transparent focus:outline-none h-full resize-none scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-dark-gray scrollbar-track-transparent"
           spellCheck="false"
         />
         <p className="text-xxxs font-bold">{username}</p>
@@ -22,7 +24,9 @@ const LandingMemoBlock = ({ username }: LandingMemoBlockProps) => {
         <button className="w-7 h-7 rounded-full outline outline-offset-2 outline-blue-500 bg-[#FFAFA3]" />
         <button className="w-7 h-7 rounded-full outline outline-offset-2 outline-blue-500 bg-[#80CAFF]" />
         <button className="w-7 h-7 rounded-full outline outline-offset-2 outline-blue-500 bg-[#D9D9D9]" />
-        <button className="w-7 h-7 rounded-full outline outline-offset-2 outline-blue-500 bg-error-red" />
+        <button className="w-7 h-7 rounded-full hover:outline outline-offset-2 outline-blue-500 bg-error-red flex justify-center items-center">
+          <TrashBinIcon width={18} height={18} color="#FFFFFF" />
+        </button>
       </div>
     </div>
   );
