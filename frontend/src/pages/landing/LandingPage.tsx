@@ -22,14 +22,28 @@ const LandingPage = () => {
     <div className="flex flex-col justify-between w-full h-full">
       <div className="h-[17.6875rem] w-full shrink-0 flex gap-9">
         <LandingProject {...{ project, projectId }} />
-        <div className="w-full rounded-lg shadow-box bg-gradient-to-tr from-dark-green-linear-from to-dark-green-linear-to overflow-y-scroll scrollbar-thin scrollbar-thumb-dark-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
-          <div className="py-6 ps-6 pe-3">
+        <div className="w-full rounded-lg shadow-box bg-gradient-to-tr from-dark-green-linear-from to-dark-green-linear-to">
+          <div className="py-6 ps-6 pe-3 w-[32rem]">
             <LandingTitleUI
               title={"프로젝트 메모"}
               handleClick={() => {
                 console.log("hello");
               }}
             />
+            <div className="mt-2 flex flex-wrap w-full h-[12rem] gap-4 overflow-y-scroll scrollbar-thin scrollbar-thumb-dark-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
+              <div className="w-[13.75rem] h-[9.375rem] flex flex-col px-4 py-3 gap-2 bg-[#FFD966]">
+                <input
+                  placeholder="제목을 작성하세요"
+                  className="text-xs font-bold bg-transparent focus:outline-none"
+                />
+                <textarea
+                  placeholder="내용을 작성하세요"
+                  className="text-xxs bg-transparent focus:outline-none h-full resize-none"
+                  spellCheck="false"
+                />
+                <p className="text-xxxs font-bold">김용현</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
