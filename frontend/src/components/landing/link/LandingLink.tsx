@@ -1,8 +1,8 @@
-import { useModal } from "../../hooks/common/modal/useModal";
-import { LandingLinkDTO } from "../../types/DTO/landingDTO";
+import { useModal } from "../../../hooks/common/modal/useModal";
+import { LandingLinkDTO } from "../../../types/DTO/landingDTO";
 import LandingLinkBlock from "./LandingLinkBlock";
 import LandingLinkModal from "./LandingLinkModal";
-import LandingTitleUI from "./LandingTitleUI";
+import LandingTitleUI from "../common/LandingTitleUI";
 
 const LandingLink = ({ link }: { link: LandingLinkDTO[] }) => {
   const { open, close } = useModal(true);

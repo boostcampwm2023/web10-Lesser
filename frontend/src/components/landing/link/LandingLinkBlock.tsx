@@ -1,7 +1,7 @@
-import { LINK_LOGO_URL } from "../../constants/landing";
-import { LandingLinkDTO } from "../../types/DTO/landingDTO";
-import getLinkType from "../../utils/getLinkType";
-import ProfileImage from "../common/ProfileImage";
+import { LINK_LOGO_URL } from "../../../constants/landing";
+import { LandingLinkDTO } from "../../../types/DTO/landingDTO";
+import getLinkType from "../../../utils/getLinkType";
+import ProfileImage from "../../common/ProfileImage";
 
 const LandingLinkBlock = ({ description, url }: LandingLinkDTO) => {
   const linkLogoUrl = LINK_LOGO_URL[getLinkType(url)];

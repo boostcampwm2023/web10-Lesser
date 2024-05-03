@@ -1,11 +1,12 @@
 import { useOutletContext, useParams } from "react-router-dom";
-import LandingProject from "../../components/landing/LandingProject";
-import LandingSprint from "../../components/landing/LandingSprint";
-import LandingMember from "../../components/landing/LandingMember";
-import LandingLink from "../../components/landing/LandingLink";
+import LandingProject from "../../components/landing/project/LandingProject";
+import LandingSprint from "../../components/landing/sprint/LandingSprint";
+import LandingMember from "../../components/landing/member/LandingMember";
+import LandingLink from "../../components/landing/link/LandingLink";
 import { Socket } from "socket.io-client";
 import useLandingSocket from "../../hooks/common/socket/useLandingSocket";
-import LandingTitleUI from "../../components/landing/LandingTitleUI";
+import LandingTitleUI from "../../components/landing/common/LandingTitleUI";
+import LandingMemoBlock from "../../components/landing/memo/LandingMemo";
 
 const LandingPage = () => {
   const { projectId } = useParams();
@@ -30,19 +31,13 @@ const LandingPage = () => {
                 console.log("hello");
               }}
             />
-            <div className="mt-2 flex flex-wrap w-full h-[12rem] gap-4 overflow-y-scroll scrollbar-thin scrollbar-thumb-dark-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
-              <div className="w-[13.75rem] h-[9.375rem] flex flex-col px-4 py-3 gap-2 bg-[#FFD966]">
-                <input
-                  placeholder="제목을 작성하세요"
-                  className="text-xs font-bold bg-transparent focus:outline-none"
-                />
-                <textarea
-                  placeholder="내용을 작성하세요"
-                  className="text-xxs bg-transparent focus:outline-none h-full resize-none"
-                  spellCheck="false"
-                />
-                <p className="text-xxxs font-bold">김용현</p>
-              </div>
+            <div className="mt-6 flex flex-wrap w-full h-[11rem] gap-4 overflow-y-scroll scrollbar-thin scrollbar-thumb-dark-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
+              <LandingMemoBlock username={"김용현"} />
+              <LandingMemoBlock username={"김용현"} />
+              <LandingMemoBlock username={"김용현"} />
+              <LandingMemoBlock username={"김용현"} />
+              <LandingMemoBlock username={"김용현"} />
+              <LandingMemoBlock username={"김용현"} />
             </div>
           </div>
         </div>

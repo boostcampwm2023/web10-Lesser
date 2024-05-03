@@ -1,5 +1,5 @@
-import { LandingProjectDTO } from "../../types/DTO/landingDTO";
-import formatDate from "../../utils/formatDate";
+import { LandingProjectDTO } from "../../../types/DTO/landingDTO";
+import formatDate from "../../../utils/formatDate";
 import LandingProjectLink from "./LandingProjectLink";
 
 interface LandingProjectProps {
