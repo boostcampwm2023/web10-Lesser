@@ -32,7 +32,7 @@ export class Member {
   position: string;
 
   @Column({ type: 'json', nullable: false })
-  tech_stack: object;
+  tech_stack: { stacks: string[] };
 
   @OneToMany(() => ProjectToMember, (projectToMember) => projectToMember.member)
   projectToMember: ProjectToMember;
@@ -49,7 +49,7 @@ export class Member {
     githubImageUrl: string,
     username: string,
     position: string,
-    techStack: object,
+    techStack: { stacks: string[] },
   ) {
     const newMember = new Member();
     newMember.github_id = githubId;
