@@ -19,13 +19,13 @@ const LandingMemoBlock = ({ username }: LandingMemoBlockProps) => {
         />
         <p className="text-xxxs font-bold">{username}</p>
       </div>
-      <div className="absolute w-[13.75rem] h-fit bg-black top-[10rem] z-10 rounded-xl flex justify-between px-4 py-3">
-        <button className="w-7 h-7 rounded-full outline outline-offset-2 outline-blue-500 bg-[#FFD966]" />
-        <button className="w-7 h-7 rounded-full outline outline-offset-2 outline-blue-500 bg-[#FFAFA3]" />
-        <button className="w-7 h-7 rounded-full outline outline-offset-2 outline-blue-500 bg-[#80CAFF]" />
-        <button className="w-7 h-7 rounded-full outline outline-offset-2 outline-blue-500 bg-[#D9D9D9]" />
-        <button className="w-7 h-7 rounded-full hover:outline outline-offset-2 outline-blue-500 bg-error-red flex justify-center items-center">
-          <TrashBinIcon width={18} height={18} color="#FFFFFF" />
+      <div className="absolute w-32 h-fit bottom-3 right-3 z-10 rounded-full flex justify-between items-center duration-100">
+        <button className="w-5 h-5 rounded-full border-white border bg-[#FFD966] hover:border-blue-500 hover:border-2 hover:scale-125 transition-all ease-in-out" />
+        <button className="w-5 h-5 rounded-full border-white border bg-[#FFAFA3] hover:border-blue-500 hover:border-2 hover:scale-125 transition-all ease-in-out" />
+        <button className="w-5 h-5 rounded-full border-white border bg-[#80CAFF] hover:border-blue-500 hover:border-2 hover:scale-125 transition-all ease-in-out" />
+        <button className="w-5 h-5 rounded-full border-white border bg-[#D9D9D9] hover:border-blue-500 hover:border-2 hover:scale-125 transition-all ease-in-out" />
+        <button className="w-5 h-5 rounded-full border-white border bg-error-red flex justify-center items-center hover:border-blue-500 hover:border-2 hover:scale-125 transition-all ease-in-out">
+          <TrashBinIcon width={12} height={12} color="#FFFFFF" />
         </button>
       </div>
     </div>
