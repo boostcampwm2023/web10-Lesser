@@ -1,18 +1,25 @@
+import { ValidationError } from '@nestjs/common';
 import {
   SubscribeMessage,
   WebSocketGateway,
   ConnectedSocket,
   OnGatewayInit,
+  MessageBody,
 } from '@nestjs/websockets';
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
 import { Server, Socket } from 'socket.io';
-import { AuthenticationGuard } from 'src/common/guard/authentication.guard';
 import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { Member } from 'src/member/entity/member.entity';
 import { MemberRepository } from 'src/member/repository/member.repository';
+import { MemberService } from 'src/member/service/member.service';
 import { ProjectService } from 'src/project/service/project.service';
+import { MemoCreateRequestDto } from './dto/MemoCreateRequest.dto';
+import { Project } from './entity/project.entity';
 
 interface ClientSocket extends Socket {
   projectId?: number;
+  project: Project;
   member: Member;
 }
 
@@ -25,6 +32,7 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
     private readonly projectService: ProjectService,
     private readonly lesserJwtService: LesserJwtService,
     private readonly memberRepository: MemberRepository,
+    private readonly memberService: MemberService,
   ) {}
 
   afterInit(server: Server) {
@@ -66,6 +74,51 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
     client.emit('landing', response);
   }
 
+  @SubscribeMessage('memo')
+  async handleMemoEvent(
+    @ConnectedSocket() client: ClientSocket,
+    @MessageBody() data: MemoCreateRequestDto,
+  ) {
+    const errors = await validate(plainToClass(MemoCreateRequestDto, data));
+    if (errors.length > 0) {
+      const errorList = this.getRecursiveErrorMsgList(errors);
+      client.emit('error', { errorList });
+      return;
+    }
+
+    const { action, content } = data;
+    if (action == 'create') {
+      const createdMemo = await this.projectService.createMemo(
+        client.project,
+        client.member,
+        content.color,
+      );
+      const { username } = await this.memberService.getMember(client.member.id);
+      client.nsp.to('landing').emit('landing', {
+        domain: 'memo',
+        action: 'create',
+        content: {
+          id: createdMemo.id,
+          title: createdMemo.title,
+          content: createdMemo.content,
+          createdAt: createdMemo.created_at,
+          author: username,
+          color: createdMemo.color,
+        },
+      });
+    }
+  }
+
+  private getRecursiveErrorMsgList(errors: ValidationError[]) {
+    return errors.reduce((acc, error) => {
+      if (error.children.length) {
+        acc = acc.concat(this.getRecursiveErrorMsgList(error.children));
+      }
+      if (!error.constraints) return acc;
+      return acc.concat(Object.values(error.constraints));
+    }, []);
+  }
+
   private async authentication(client: ClientSocket) {
     const accessToken = client.handshake.auth?.accessToken;
     if (!accessToken) throw new Error('Bearer Token is missing');
@@ -90,5 +143,6 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
       client.member,
     );
     if (!isProjectMember) throw new Error('Not project member');
+    client.project = project;
   }
 }
