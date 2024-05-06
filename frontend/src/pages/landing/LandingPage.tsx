@@ -32,12 +32,22 @@ const LandingPage = () => {
               }}
             />
             <div className="mt-6 flex flex-wrap w-full h-[11rem] gap-4 overflow-y-scroll scrollbar-thin scrollbar-thumb-dark-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
-              <LandingMemoBlock username={"김용현"} />
-              <LandingMemoBlock username={"김용현"} />
-              <LandingMemoBlock username={"김용현"} />
-              <LandingMemoBlock username={"김용현"} />
-              <LandingMemoBlock username={"김용현"} />
-              <LandingMemoBlock username={"김용현"} />
+              <LandingMemoBlock
+                author={"김용현"}
+                id={1}
+                title={"hello"}
+                content={"world"}
+                createdAt="2024-03-14T12:00:00Z"
+                color="gray"
+              />
+              <LandingMemoBlock
+                author={"김용현"}
+                id={2}
+                title={"hello"}
+                content={"world"}
+                createdAt="2024-03-14T12:00:00Z"
+                color="gray"
+              />
             </div>
           </div>
         </div>

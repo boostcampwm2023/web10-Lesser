@@ -1,11 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import MemoEditor from "./MemoEditor";
+import { LandingMemoDTO } from "../../../types/DTO/landingDTO";
 
-interface LandingMemoBlockProps {
-  username: string;
-}
-
-const LandingMemoBlock = ({ username }: LandingMemoBlockProps) => {
+const LandingMemoBlock = ({ author }: LandingMemoDTO) => {
   const [editorOpened, setEditorOpened] = useState<Boolean>(false);
   const memoRef = useRef<HTMLDivElement>(null);
 
@@ -35,7 +32,7 @@ const LandingMemoBlock = ({ username }: LandingMemoBlockProps) => {
           className="text-xxs bg-transparent focus:outline-none h-full resize-none scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-dark-gray scrollbar-track-transparent"
           spellCheck="false"
         />
-        <p className="text-xxxs font-bold">{username}</p>
+        <p className="text-xxxs font-bold">{author}</p>
       </div>
       {editorOpened && <MemoEditor />}
     </div>

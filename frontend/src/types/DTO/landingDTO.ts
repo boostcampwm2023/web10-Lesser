@@ -25,9 +25,11 @@ export interface LandingSprintDTO {
 
 export interface LandingMemoDTO {
   id: number;
-  head: string;
-  body: string;
+  title: string;
+  content: string;
   author: string;
+  createdAt: string;
+  color: "yellow" | "gray" | "red" | "blue";
 }
 
 export interface LandingLinkDTO {
@@ -41,7 +43,7 @@ export interface LandingDTO {
   member: LandingMemberDTO[];
   myInfo: LandingMemberDTO;
   sprint: LandingSprintDTO | null;
-  board: LandingMemoDTO[];
+  memoList: LandingMemoDTO[];
   link: LandingLinkDTO[];
-  inviteLinkId: string
+  inviteLinkId: string;
 }
