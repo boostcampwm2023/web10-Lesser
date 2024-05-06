@@ -3,12 +3,7 @@ import { LandingMemoDTO } from "../../../types/DTO/landingDTO";
 import { MemoColor } from "../../../types/common/landing";
 import useLandingMemo from "../../../hooks/common/landing/useLandingMemo";
 
-const LandingMemoBlock = ({
-  title,
-  content,
-  author,
-  color,
-}: LandingMemoDTO) => {
+const MemoBlock = ({ title, content, author, color }: LandingMemoDTO) => {
   const {
     editorOpened,
     memoTitle,
@@ -51,4 +46,4 @@ const LandingMemoBlock = ({
   );
 };
 
-export default LandingMemoBlock;
+export default MemoBlock;

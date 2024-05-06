@@ -1,5 +1,5 @@
 import LandingTitleUI from "../common/LandingTitleUI";
-import LandingMemoBlock from "./LandingMemoBlock";
+import MemoBlock from "./MemoBlock";
 
 const LandingMemoList = () => {
   return (
@@ -12,7 +12,7 @@ const LandingMemoList = () => {
           }}
         />
         <div className="mt-6 flex flex-wrap w-full h-[11rem] gap-4 overflow-y-scroll scrollbar-thin scrollbar-thumb-dark-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
-          <LandingMemoBlock
+          <MemoBlock
             author={"김용현"}
             id={1}
             title={""}
@@ -20,7 +20,7 @@ const LandingMemoList = () => {
             createdAt="2024-03-14T12:00:00Z"
             color="yellow"
           />
-          <LandingMemoBlock
+          <MemoBlock
             author={"김용현"}
             id={2}
             title={"hello"}
