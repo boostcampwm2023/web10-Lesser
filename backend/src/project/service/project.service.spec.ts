@@ -4,6 +4,7 @@ import { ProjectRepository } from '../project.repository';
 import { Member } from 'src/member/entity/member.entity';
 import { Project } from '../entity/project.entity';
 import { ProjectToMember } from '../entity/project-member.entity';
+import { Memo, memoColor } from '../entity/memo.entity';
 
 describe('ProjectService', () => {
   let projectService: ProjectService;
@@ -21,6 +22,7 @@ describe('ProjectService', () => {
             getProjectList: jest.fn(),
             getProject: jest.fn(),
             getProjectToMember: jest.fn(),
+            createMemo: jest.fn(),
           },
         },
       ],
@@ -109,6 +111,27 @@ describe('ProjectService', () => {
       await expect(
         async () => await projectService.addMember(project, member),
       ).rejects.toThrow('already joined member');
+    });
+  });
+
+  describe('Create memo', () => {
+    const color = memoColor.YELLOW;
+    const [title, subject] = ['title', 'subject'];
+    const project = Project.of(title, subject);
+    it('should return created memo', async () => {
+      jest
+        .spyOn(projectRepository, 'createMemo')
+        .mockResolvedValue(Memo.of(project, member, '', '', color));
+
+      const memo: Memo = await projectService.createMemo(
+        project,
+        member,
+        color,
+      );
+      expect(memo.title).toBe('');
+      expect(memo.content).toBe('');
+      expect(memo.color).toBe(color);
+      expect(memo.member.id).toBe(member.id);
     });
   });
 });

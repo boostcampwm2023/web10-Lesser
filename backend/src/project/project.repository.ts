@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { Project } from './entity/project.entity';
 import { ProjectToMember } from './entity/project-member.entity';
 import { Member } from 'src/member/entity/member.entity';
+import { Memo, memoColor } from './entity/memo.entity';
 
 @Injectable()
 export class ProjectRepository {
@@ -12,6 +13,8 @@ export class ProjectRepository {
     private readonly projectRepository: Repository<Project>,
     @InjectRepository(ProjectToMember)
     private readonly projectToMemberRepository: Repository<ProjectToMember>,
+    @InjectRepository(Memo)
+    private readonly memoRepository: Repository<Memo>,
   ) {}
 
   create(project: Project): Promise<Project> {
@@ -48,5 +51,9 @@ export class ProjectRepository {
     return this.projectToMemberRepository.findOne({
       where: { project: { id: project.id }, member: { id: member.id } },
     });
+  }
+
+  createMemo(memo: Memo): Promise<Memo> {
+    return this.memoRepository.save(memo);
   }
 }
