@@ -104,8 +104,11 @@ export const getProjectLinkId = async (
   return projectLinkId;
 };
 
-export const joinProject = (accessToken: string, projectLinkId: string) => {
-  request(app.getHttpServer())
+export const joinProject = async (
+  accessToken: string,
+  projectLinkId: string,
+) => {
+  await request(app.getHttpServer())
     .post('/api/project/join')
     .set('Authorization', `Bearer ${accessToken}`)
     .send({ inviteLinkId: projectLinkId });
