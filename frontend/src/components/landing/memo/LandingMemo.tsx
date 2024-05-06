@@ -21,20 +21,24 @@ const LandingMemoBlock = ({ author }: LandingMemoDTO) => {
   }, []);
 
   return (
-    <div className="relative" ref={memoRef} onClick={openEditor}>
-      <div className="w-[13.75rem] h-[9.375rem] flex flex-col px-4 py-3 gap-2 bg-[#FFD966]">
-        <input
-          placeholder="제목을 작성하세요"
-          className="text-xs font-bold bg-transparent focus:outline-none"
-        />
-        <textarea
-          placeholder="내용을 작성하세요"
-          className="text-xxs bg-transparent focus:outline-none h-full resize-none scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-dark-gray scrollbar-track-transparent"
-          spellCheck="false"
-        />
-        <p className="text-xxxs font-bold">{author}</p>
+    <div
+      className="w-[13.75rem] h-[9.375rem] flex flex-col px-4 py-3 gap-2 bg-[#FFD966]"
+      ref={memoRef}
+      onClick={openEditor}
+    >
+      <input
+        placeholder="제목을 작성하세요"
+        className="text-xs font-bold bg-transparent focus:outline-none"
+      />
+      <textarea
+        placeholder="내용을 작성하세요"
+        className="text-xxs bg-transparent focus:outline-none h-full resize-none scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-dark-gray scrollbar-track-transparent"
+        spellCheck="false"
+      />
+      <div className="flex justify-between items-center">
+        <p className="text-xxxs h-5 font-bold">{author}</p>
+        {editorOpened && <MemoEditor />}
       </div>
-      {editorOpened && <MemoEditor />}
     </div>
   );
 };

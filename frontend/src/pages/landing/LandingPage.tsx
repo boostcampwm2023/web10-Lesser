@@ -5,8 +5,7 @@ import LandingMember from "../../components/landing/member/LandingMember";
 import LandingLink from "../../components/landing/link/LandingLink";
 import { Socket } from "socket.io-client";
 import useLandingSocket from "../../hooks/common/socket/useLandingSocket";
-import LandingTitleUI from "../../components/landing/common/LandingTitleUI";
-import LandingMemoBlock from "../../components/landing/memo/LandingMemo";
+import LandingMemoList from "../../components/landing/memo/LandingMemoList";
 
 const LandingPage = () => {
   const { projectId } = useParams();
@@ -23,34 +22,7 @@ const LandingPage = () => {
     <div className="flex flex-col justify-between w-full h-full">
       <div className="h-[17.6875rem] w-full shrink-0 flex gap-9">
         <LandingProject {...{ project, projectId }} />
-        <div className="w-full rounded-lg shadow-box bg-gradient-to-tr from-dark-green-linear-from to-dark-green-linear-to">
-          <div className="py-6 ps-6 pe-3 w-[32rem]">
-            <LandingTitleUI
-              title={"프로젝트 메모"}
-              handleClick={() => {
-                console.log("hello");
-              }}
-            />
-            <div className="mt-6 flex flex-wrap w-full h-[11rem] gap-4 overflow-y-scroll scrollbar-thin scrollbar-thumb-dark-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
-              <LandingMemoBlock
-                author={"김용현"}
-                id={1}
-                title={"hello"}
-                content={"world"}
-                createdAt="2024-03-14T12:00:00Z"
-                color="gray"
-              />
-              <LandingMemoBlock
-                author={"김용현"}
-                id={2}
-                title={"hello"}
-                content={"world"}
-                createdAt="2024-03-14T12:00:00Z"
-                color="gray"
-              />
-            </div>
-          </div>
-        </div>
+        <LandingMemoList />
       </div>
       <div className="h-[20.5625rem] w-full shrink-0 flex gap-9">
         <LandingSprint {...{ sprint }} />

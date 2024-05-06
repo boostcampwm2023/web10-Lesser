@@ -4,7 +4,7 @@ import MemoColorButton from "./MemoColorButton";
 
 const MemoEditor = () => {
   return (
-    <div className="absolute w-32 h-fit bottom-3 right-3 z-10 rounded-full flex justify-between items-center duration-100">
+    <div className="w-32 h-fit rounded-full flex justify-between items-center duration-100">
       <MemoColorButton active={true} color={MemoColor.yellow} />
       <MemoColorButton active={false} color={MemoColor.blue} />
       <MemoColorButton active={false} color={MemoColor.red} />
