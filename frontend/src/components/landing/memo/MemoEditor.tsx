@@ -1,10 +1,10 @@
 import TrashBinIcon from "../../../assets/icons/trash-can.svg?react";
-import { MemoColorString } from "../../../types/common/landing";
+import { MemoColorType } from "../../../types/common/landing";
 import MemoColorButton from "./MemoColorButton";
 
 interface MemoEditorProps {
-  color: MemoColorString;
-  changeMemoColor: (color: MemoColorString) => void;
+  color: MemoColorType;
+  changeMemoColor: (color: MemoColorType) => void;
 }
 
 const MemoEditor = ({ color, changeMemoColor }: MemoEditorProps) => {

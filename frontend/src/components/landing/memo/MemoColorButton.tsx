@@ -1,9 +1,9 @@
-import { MemoColor, MemoColorString } from "../../../types/common/landing";
+import { MemoColorStyle, MemoColorType } from "../../../types/common/landing";
 
 interface MemoColorButtonProps {
   active: Boolean;
-  color: MemoColorString;
-  changeMemoColor: (color: MemoColorString) => void;
+  color: MemoColorType;
+  changeMemoColor: (color: MemoColorType) => void;
 }
 
 const MemoColorButton = ({
@@ -21,7 +21,7 @@ const MemoColorButton = ({
 
   return (
     <button
-      className={`w-5 h-5 rounded-full hover:scale-125 transition-all ease-in-out ${borderStyle} ${MemoColor[color]}`}
+      className={`w-5 h-5 rounded-full hover:scale-125 transition-all ease-in-out ${borderStyle} ${MemoColorStyle[color]}`}
       onClick={handleOnClick}
     />
   );

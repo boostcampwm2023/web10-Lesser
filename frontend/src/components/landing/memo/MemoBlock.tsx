@@ -1,6 +1,6 @@
 import MemoEditor from "./MemoEditor";
 import { LandingMemoDTO } from "../../../types/DTO/landingDTO";
-import { MemoColor } from "../../../types/common/landing";
+import { MemoColorStyle } from "../../../types/common/landing";
 import useLandingMemo from "../../../hooks/common/landing/useLandingMemo";
 
 const MemoBlock = ({ title, content, author, color }: LandingMemoDTO) => {
@@ -15,7 +15,7 @@ const MemoBlock = ({ title, content, author, color }: LandingMemoDTO) => {
     handleContentChange,
     handleTitleChange,
   } = useLandingMemo(title, content, color);
-  const colorStyle = MemoColor[memoColor];
+  const colorStyle = MemoColorStyle[memoColor];
 
   return (
     <div

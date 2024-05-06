@@ -1,4 +1,4 @@
-import { MemoColorString } from "../common/landing";
+import { MemoColorType } from "../common/landing";
 
 export type MemberStatus = "on" | "off" | "away";
 
@@ -31,7 +31,7 @@ export interface LandingMemoDTO {
   content: string;
   author: string;
   createdAt: string;
-  color: MemoColorString;
+  color: MemoColorType;
 }
 
 export interface LandingLinkDTO {

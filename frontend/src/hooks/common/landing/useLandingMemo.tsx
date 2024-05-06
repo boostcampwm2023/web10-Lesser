@@ -1,21 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import { MemoColorString } from "../../../types/common/landing";
+import { MemoColorType } from "../../../types/common/landing";
 
 const useLandingMemo = (
   title: string,
   content: string,
-  color: MemoColorString
+  color: MemoColorType
 ) => {
   const [editorOpened, setEditorOpened] = useState<Boolean>(false);
   const [memoTitle, setMemoTitle] = useState<string>(title);
   const [memoContent, setMemoContent] = useState<string>(content);
-  const [memoColor, setMemoColor] = useState<MemoColorString>(color);
+  const [memoColor, setMemoColor] = useState<MemoColorType>(color);
   const memoRef = useRef<HTMLDivElement>(null);
 
   const openEditor = () => setEditorOpened(true);
   const closeEditor = () => setEditorOpened(false);
 
-  const changeMemoColor = (color: MemoColorString) => {
+  const changeMemoColor = (color: MemoColorType) => {
     setMemoColor(color);
   };
 
