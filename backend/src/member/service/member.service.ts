@@ -52,4 +52,8 @@ export class MemberService {
       githubImageUrl: member.github_image_url,
     };
   }
+
+  async getMember(id: number): Promise<Member> {
+    return this.memberRepository.findById(id);
+  }
 }

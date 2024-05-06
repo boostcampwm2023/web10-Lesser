@@ -3,6 +3,7 @@ import { ProjectRepository } from '../project.repository';
 import { Member } from 'src/member/entity/member.entity';
 import { Project } from '../entity/project.entity';
 import { ProjectToMember } from '../entity/project-member.entity';
+import { Memo, memoColor } from '../entity/memo.entity';
 
 @Injectable()
 export class ProjectService {
@@ -39,5 +40,14 @@ export class ProjectService {
 
   getProjectByLinkId(projectLinkId: string): Promise<Project | null> {
     return this.projectRepository.getProjectByLinkId(projectLinkId);
+  }
+
+  async createMemo(
+    project: Project,
+    member: Member,
+    color: memoColor,
+  ) {
+	const newMemo = Memo.of(project, member, "", "", color);
+	return this.projectRepository.createMemo(newMemo);
   }
 }

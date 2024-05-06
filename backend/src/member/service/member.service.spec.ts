@@ -79,4 +79,25 @@ describe('LesserJwtService', () => {
       expect(githubImageUrl).toBe(newMember.github_image_url);
     });
   });
+
+  describe('Get Member Info By Id', () => {
+    const memberFixture = Member.of(
+      123,
+      'github_username',
+      'avatar_url',
+      'username',
+      'position',
+      { stacks: ['js', 'ts'] },
+    );
+    it('should return member when id is valid', async () => {
+      const storedMember = { ...memberFixture };
+      const id = 0;
+      storedMember.id = id;
+
+      jest.spyOn(memberRepository, 'findById').mockResolvedValue(storedMember);
+
+      const foundMember = await memberService.getMember(id);
+      expect(foundMember).toEqual(storedMember);
+    });
+  });
 });
