@@ -1,6 +1,6 @@
 export enum MemoColor {
-  yellow = "#FFD966",
-  red = "#FFAFA3",
-  blue = "#80CAFF",
-  gray = "#D9D9D9",
+  yellow = "bg-[#FFD966]",
+  red = "bg-[#FFAFA3]",
+  blue = "bg-[#80CAFF]",
+  gray = "bg-[#D9D9D9]",
 }

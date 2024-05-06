@@ -10,11 +10,9 @@ const MemoColorButton = ({ active, color }: MemoColorButtonProps) => {
     ? "border-blue-500 border-2"
     : "border-white border hover:border-blue-500 hover:border-2";
 
-  const colorStyle = `bg-[${color}]`;
-
   return (
     <button
-      className={`w-5 h-5 rounded-full hover:scale-125 transition-all ease-in-out ${borderStyle} ${colorStyle}`}
+      className={`w-5 h-5 rounded-full hover:scale-125 transition-all ease-in-out ${borderStyle} ${color}`}
     />
   );
 };
