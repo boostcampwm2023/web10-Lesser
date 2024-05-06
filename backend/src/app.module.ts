@@ -27,6 +27,7 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ErrorExceptionFilter } from './common/exception-filter/exception.filter';
 import { AuthenticationGuard } from './common/guard/authentication.guard';
 import { MemberRepository } from './member/repository/member.repository';
+import { Memo } from './project/entity/memo.entity';
 
 @Module({
   imports: [
@@ -39,7 +40,14 @@ import { MemberRepository } from './member/repository/member.repository';
         username: ConfigService.get(DATABASE_USER),
         password: ConfigService.get(DATABASE_PASSWORD),
         database: ConfigService.get(DATABASE_NAME),
-        entities: [Member, TempMember, LoginMember, Project, ProjectToMember],
+        entities: [
+          Member,
+          TempMember,
+          LoginMember,
+          Project,
+          ProjectToMember,
+          Memo,
+        ],
         synchronize: ConfigService.get('NODE_ENV') == 'PROD' ? false : true,
       }),
     }),
@@ -61,7 +69,7 @@ import { MemberRepository } from './member/repository/member.repository';
       provide: APP_GUARD,
       useClass: AuthenticationGuard,
     },
-	MemberRepository
+    MemberRepository,
   ],
 })
 export class AppModule {

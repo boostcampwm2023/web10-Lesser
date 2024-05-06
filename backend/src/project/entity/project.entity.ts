@@ -6,7 +6,9 @@ import {
   UpdateDateColumn,
   OneToMany,
   Generated,
+  JoinColumn,
 } from 'typeorm';
+import { Memo } from './memo.entity';
 import { ProjectToMember } from './project-member.entity';
 
 @Entity()
@@ -35,6 +37,9 @@ export class Project {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
+
+  @OneToMany(() => Memo, (memo) => memo.id)
+  memoList: Memo[];
 
   static of(title: string, subject: string) {
     const newProject = new Project();
