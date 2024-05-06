@@ -9,16 +9,19 @@ import { Member } from 'src/member/entity/member.entity';
 import { ProjectRepository } from './project.repository';
 import { MemberRepository } from 'src/member/repository/member.repository';
 import { ProjectWebsocketGateway } from './websocket.gateway';
+import { Memo } from './entity/memo.entity';
+import { MemberService } from 'src/member/service/member.service';
 
 @Module({
   imports: [
     LesserJwtModule,
-    TypeOrmModule.forFeature([Project, ProjectToMember, Member]),
+    TypeOrmModule.forFeature([Project, ProjectToMember, Member, Memo]),
   ],
   controllers: [ProjectController],
   providers: [
     ProjectService,
     ProjectRepository,
+	MemberService,
     MemberRepository,
     ProjectWebsocketGateway,
   ],
