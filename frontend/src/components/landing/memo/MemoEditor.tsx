@@ -13,3 +13,5 @@ const MemoEditor = () => {
     </div>
   );
 };
+
+export default MemoEditor;

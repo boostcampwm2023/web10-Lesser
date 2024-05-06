@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import MemoEditor from "./MemoEditor";
 
 interface LandingMemoBlockProps {
@@ -5,8 +6,25 @@ interface LandingMemoBlockProps {
 }
 
 const LandingMemoBlock = ({ username }: LandingMemoBlockProps) => {
+  const [editorOpened, setEditorOpened] = useState<Boolean>(false);
+  const memoRef = useRef<HTMLDivElement>(null);
+
+  const openEditor = () => setEditorOpened(true);
+  const closeEditor = () => setEditorOpened(false);
+
+  useEffect(() => {
+    const handleClickOutside = ({ target }: MouseEvent) => {
+      if (memoRef.current && !memoRef.current.contains(target as Node)) {
+        closeEditor();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={memoRef} onClick={openEditor}>
       <div className="w-[13.75rem] h-[9.375rem] flex flex-col px-4 py-3 gap-2 bg-[#FFD966]">
         <input
           placeholder="제목을 작성하세요"
@@ -19,7 +37,7 @@ const LandingMemoBlock = ({ username }: LandingMemoBlockProps) => {
         />
         <p className="text-xxxs font-bold">{username}</p>
       </div>
-      <MemoEditor />
+      {editorOpened && <MemoEditor />}
     </div>
   );
 };
