@@ -4,3 +4,5 @@ export enum MemoColor {
   blue = "bg-[#80CAFF]",
   gray = "bg-[#D9D9D9]",
 }
+
+export type MemoColorString = "yellow" | "red" | "blue" | "gray";

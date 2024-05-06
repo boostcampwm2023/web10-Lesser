@@ -1,3 +1,5 @@
+import { MemoColorString } from "../common/landing";
+
 export type MemberStatus = "on" | "off" | "away";
 
 export interface LandingProjectDTO {
@@ -29,7 +31,7 @@ export interface LandingMemoDTO {
   content: string;
   author: string;
   createdAt: string;
-  color: "yellow" | "gray" | "red" | "blue";
+  color: MemoColorString;
 }
 
 export interface LandingLinkDTO {

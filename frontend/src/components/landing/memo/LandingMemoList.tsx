@@ -1,5 +1,5 @@
 import LandingTitleUI from "../common/LandingTitleUI";
-import LandingMemoBlock from "./LandingMemo";
+import LandingMemoBlock from "./LandingMemoBlock";
 
 const LandingMemoList = () => {
   return (
@@ -15,10 +15,10 @@ const LandingMemoList = () => {
           <LandingMemoBlock
             author={"김용현"}
             id={1}
-            title={"hello"}
+            title={""}
             content={"world"}
             createdAt="2024-03-14T12:00:00Z"
-            color="gray"
+            color="yellow"
           />
           <LandingMemoBlock
             author={"김용현"}
