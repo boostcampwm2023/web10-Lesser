@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { LANDING_PROJECT_LINK } from "../../constants/landing";
-import { LINK_URL } from "../../constants/path";
+import { LANDING_PROJECT_LINK } from "../../../constants/landing";
+import { LINK_URL } from "../../../constants/path";
 
 interface LandingProjectLinkProps {
   projectId: string;

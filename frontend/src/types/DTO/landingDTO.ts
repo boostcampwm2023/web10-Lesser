@@ -1,3 +1,5 @@
+import { MemoColorType } from "../common/landing";
+
 export type MemberStatus = "on" | "off" | "away";
 
 export interface LandingProjectDTO {
@@ -25,9 +27,11 @@ export interface LandingSprintDTO {
 
 export interface LandingMemoDTO {
   id: number;
-  head: string;
-  body: string;
+  title: string;
+  content: string;
   author: string;
+  createdAt: string;
+  color: MemoColorType;
 }
 
 export interface LandingLinkDTO {
@@ -41,7 +45,7 @@ export interface LandingDTO {
   member: LandingMemberDTO[];
   myInfo: LandingMemberDTO;
   sprint: LandingSprintDTO | null;
-  board: LandingMemoDTO[];
+  memoList: LandingMemoDTO[];
   link: LandingLinkDTO[];
-  inviteLinkId: string
+  inviteLinkId: string;
 }

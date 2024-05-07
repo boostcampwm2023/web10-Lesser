@@ -1,10 +1,11 @@
 import { useOutletContext, useParams } from "react-router-dom";
-import LandingProject from "../../components/landing/LandingProject";
-import LandingSprint from "../../components/landing/LandingSprint";
-import LandingMember from "../../components/landing/LandingMember";
-import LandingLink from "../../components/landing/LandingLink";
+import LandingProject from "../../components/landing/project/LandingProject";
+import LandingSprint from "../../components/landing/sprint/LandingSprint";
+import LandingMember from "../../components/landing/member/LandingMember";
+import LandingLink from "../../components/landing/link/LandingLink";
 import { Socket } from "socket.io-client";
 import useLandingSocket from "../../hooks/common/socket/useLandingSocket";
+import LandingMemoList from "../../components/landing/memo/LandingMemoList";
 
 const LandingPage = () => {
   const { projectId } = useParams();
@@ -14,17 +15,21 @@ const LandingPage = () => {
 
   const { socket }: { socket: Socket } = useOutletContext();
 
-  const { project, myInfo, member, sprint, link, inviteLinkIdRef } = useLandingSocket(socket);
+  const { project, myInfo, member, sprint, link, inviteLinkIdRef } =
+    useLandingSocket(socket);
 
   return (
     <div className="flex flex-col justify-between w-full h-full">
       <div className="h-[17.6875rem] w-full shrink-0 flex gap-9">
         <LandingProject {...{ project, projectId }} />
-        <div className="w-full rounded-lg shadow-box"></div>
+        <LandingMemoList />
       </div>
       <div className="h-[20.5625rem] w-full shrink-0 flex gap-9">
         <LandingSprint {...{ sprint }} />
-        <LandingMember {...{ member, myInfo, inviteLinkIdRef }} projectTitle={project.title} />
+        <LandingMember
+          {...{ member, myInfo, inviteLinkIdRef }}
+          projectTitle={project.title}
+        />
         <LandingLink {...{ link }} />
       </div>
     </div>

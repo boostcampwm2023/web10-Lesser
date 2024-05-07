@@ -1,5 +1,5 @@
-import { USER_STATE_DISPLAY } from "../../constants/landing";
-import ProfileImage from "../common/ProfileImage";
+import { USER_STATE_DISPLAY } from "../../../constants/landing";
+import ProfileImage from "../../common/ProfileImage";
 
 interface UserBlockProps {
   imageUrl: string;

@@ -1,4 +1,4 @@
-import { LANDING_SPRINT_BAR } from "../../constants/landing";
+import { LANDING_SPRINT_BAR } from "../../../constants/landing";
 
 interface LandingSprintBarProps {
   start: string;
@@ -8,7 +8,13 @@ interface LandingSprintBarProps {
   type: "SPRINT" | "TOTAL" | "PERSONAL";
 }
 
-const LandingSprintBar = ({ start, end, displayNum, percent, type }: LandingSprintBarProps) => {
+const LandingSprintBar = ({
+  start,
+  end,
+  displayNum,
+  percent,
+  type,
+}: LandingSprintBarProps) => {
   const { color, text, bgColor, display } = LANDING_SPRINT_BAR[type];
   return (
     <div className={`flex flex-col ${color}`}>

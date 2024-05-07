@@ -1,9 +1,9 @@
-import { USER_STATUS_WORD, USER_WORD_STATUS } from "../../constants/landing";
+import { USER_STATUS_WORD, USER_WORD_STATUS } from "../../../constants/landing";
 import UserBlock from "./UserBlock";
-import useDropdown from "../../hooks/common/dropdown/useDropdown";
-import { memberResponse } from "../../types/DTO/authDTO";
-import { LandingMemberDTO } from "../../types/DTO/landingDTO";
-import { DEFAULT_MEMBER } from "../../constants/projects";
+import useDropdown from "../../../hooks/common/dropdown/useDropdown";
+import { memberResponse } from "../../../types/DTO/authDTO";
+import { LandingMemberDTO } from "../../../types/DTO/landingDTO";
+import { DEFAULT_MEMBER } from "../../../constants/projects";
 
 const LandingMember = ({
   member,
