@@ -20,6 +20,7 @@ enum LandingSocketEvent {
   MEMBER_UPDATE = "memberUpdate",
   MEMBER_CREATE = "memberCreate",
   MEMBER_DELETE = "memberDelete",
+  MEMO_CREATE = "create",
 }
 
 const useLandingSocket = (socket: Socket) => {
@@ -53,6 +54,12 @@ const useLandingSocket = (socket: Socket) => {
     }
   };
 
+  // const handleMemoCreateEvent = (content: LandingMemoDTO) => {
+  //   setMemoList((state: LandingMemoDTO[]) => {
+  //     return [content, ...state];
+  //   });
+  // };
+
   useEffect(() => {
     socket.emit("joinLanding");
     socket.on("landing", handleOnLanding);
@@ -62,7 +69,15 @@ const useLandingSocket = (socket: Socket) => {
     };
   }, [socket]);
 
-  return { project, myInfo, member, sprint, memoList, link, inviteLinkIdRef };
+  return {
+    project,
+    myInfo,
+    member,
+    sprint,
+    memoList,
+    link,
+    inviteLinkIdRef,
+  };
 };
 
 export default useLandingSocket;

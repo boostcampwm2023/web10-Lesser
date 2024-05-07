@@ -1,15 +1,19 @@
 import { MemoColorStyle, MemoColorType } from "../../../types/common/landing";
 
 interface MemoColorButtonProps {
+  id: number;
   active: Boolean;
   color: MemoColorType;
   changeMemoColor: (color: MemoColorType) => void;
+  emitMemoColorUpdateEvent: (id: number, color: MemoColorType) => void;
 }
 
 const MemoColorButton = ({
+  id,
   active,
   color,
   changeMemoColor,
+  emitMemoColorUpdateEvent,
 }: MemoColorButtonProps) => {
   const borderStyle = active
     ? "border-blue-500 border-2"
@@ -17,6 +21,7 @@ const MemoColorButton = ({
 
   const handleOnClick = () => {
     changeMemoColor(color);
+    emitMemoColorUpdateEvent(id, color);
   };
 
   return (
