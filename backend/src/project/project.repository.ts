@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { Project } from './entity/project.entity';
 import { ProjectToMember } from './entity/project-member.entity';
 import { Member } from 'src/member/entity/member.entity';
-import { Memo, memoColor } from './entity/memo.entity';
+import { Memo } from './entity/memo.entity';
 
 @Injectable()
 export class ProjectRepository {
@@ -55,5 +55,10 @@ export class ProjectRepository {
 
   createMemo(memo: Memo): Promise<Memo> {
     return this.memoRepository.save(memo);
+  }
+
+  async deleteMemo(id: number): Promise<number> {
+    const result = await this.memoRepository.delete({ id });
+    return result.affected ? result.affected : 0;
   }
 }
