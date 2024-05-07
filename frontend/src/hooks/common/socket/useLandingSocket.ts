@@ -33,25 +33,22 @@ const useLandingSocket = (socket: Socket) => {
   const [link, setLink] = useState<LandingLinkDTO[]>([]);
   const inviteLinkIdRef = useRef<string>("");
 
+  const handleInitEvent = (content: LandingDTO) => {
+    const { project, myInfo, member, sprint, memoList, link, inviteLinkId } =
+      content as LandingDTO;
+    setProject(project);
+    setMyInfo(myInfo);
+    setMember(member);
+    setSprint(sprint);
+    setMemoList(memoList);
+    setLink(link);
+    inviteLinkIdRef.current = inviteLinkId;
+  };
+
   const handleOnLanding = ({ action, content }: SocketData) => {
     switch (action) {
       case LandingSocketEvent.INIT:
-        const {
-          project,
-          myInfo,
-          member,
-          sprint,
-          memoList,
-          link,
-          inviteLinkId,
-        } = content as LandingDTO;
-        setProject(project);
-        setMyInfo(myInfo);
-        setMember(member);
-        setSprint(sprint);
-        setMemoList(memoList);
-        setLink(link);
-        inviteLinkIdRef.current = inviteLinkId;
+        handleInitEvent(content);
         break;
     }
   };
