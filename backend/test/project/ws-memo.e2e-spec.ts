@@ -78,9 +78,9 @@ describe('WS memo create', () => {
         content: { color: 'yellow' },
       };
       socket.emit('memo', requestData);
-      expectMemo(socket, memberFixture.username, requestData.content.color);
+      expectCreateMemo(socket, memberFixture.username, requestData.content.color);
       socket.emit('memo', requestData);
-      expectMemo(socket, memberFixture.username, requestData.content.color);
+      expectCreateMemo(socket, memberFixture.username, requestData.content.color);
       socket.on('exception', (data) => {
         reject(data);
       });
