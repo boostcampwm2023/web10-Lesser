@@ -42,12 +42,14 @@ export class ProjectService {
     return this.projectRepository.getProjectByLinkId(projectLinkId);
   }
 
-  async createMemo(
-    project: Project,
-    member: Member,
-    color: memoColor,
-  ) {
-	const newMemo = Memo.of(project, member, "", "", color);
-	return this.projectRepository.createMemo(newMemo);
+  async createMemo(project: Project, member: Member, color: memoColor) {
+    const newMemo = Memo.of(project, member, '', '', color);
+    return this.projectRepository.createMemo(newMemo);
+  }
+
+  async deleteMemo(id: number): Promise<boolean> {
+    const result = await this.projectRepository.deleteMemo(id);
+    if (result) return true;
+    else return false;
   }
 }
