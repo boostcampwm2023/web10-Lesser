@@ -1,3 +1,4 @@
+import { rejects } from 'assert';
 import {
   app,
   appInit,
@@ -52,6 +53,9 @@ describe('WS memo', () => {
         expectMemo(socket1, memberFixture.username, requestData.content.color),
         expectMemo(socket2, memberFixture.username, requestData.content.color),
       ]);
+      socket1.on('exception', (data) => {
+        reject(data);
+      });
       resolve();
     }).finally(() => {
       socket1.close();
@@ -59,9 +63,36 @@ describe('WS memo', () => {
     });
   });
 
+  it('should succeed create memo when memo is created twice', async () => {
+    let socket;
+    return new Promise<void>(async (resolve, reject) => {
+      const accessToken = (await createMember(memberFixture, app)).accessToken;
+      const project = await createProject(accessToken, projectPayload, app);
+
+      socket = connectServer(project.id, accessToken);
+      await emitJoinLanding(socket);
+      await initLanding(socket);
+
+      const requestData = {
+        action: 'create',
+        content: { color: 'yellow' },
+      };
+      socket.emit('memo', requestData);
+      expectMemo(socket, memberFixture.username, requestData.content.color);
+      socket.emit('memo', requestData);
+      expectMemo(socket, memberFixture.username, requestData.content.color);
+      socket.on('exception', (data) => {
+        reject(data);
+      });
+      resolve();
+    }).finally(() => {
+      socket.close();
+    });
+  });
+
   it('should return error message list when data format is invalid', async () => {
     let socket;
-    return new Promise<void>(async (resolve) => {
+    return new Promise<void>(async (resolve, reject) => {
       const accessToken = (await createMember(memberFixture, app)).accessToken;
       const project = await createProject(accessToken, projectPayload, app);
 
@@ -78,6 +109,36 @@ describe('WS memo', () => {
         expect(data.errorList).toBeDefined();
         expect(data.errorList.length).toBeGreaterThan(0);
         resolve();
+      });
+      socket.on('exception', (data) => {
+        reject(data);
+      });
+    }).finally(() => {
+      socket.close();
+    });
+  });
+
+  it('should return error message list when color property is empty', async () => {
+    let socket;
+    return new Promise<void>(async (resolve, reject) => {
+      const accessToken = (await createMember(memberFixture, app)).accessToken;
+      const project = await createProject(accessToken, projectPayload, app);
+
+      socket = connectServer(project.id, accessToken);
+      await emitJoinLanding(socket);
+      await initLanding(socket);
+
+      const requestData = {
+        action: 'create',
+      };
+      socket.emit('memo', requestData);
+      socket.on('error', (data) => {
+        expect(data.errorList).toBeDefined();
+        expect(data.errorList.length).toBeGreaterThan(0);
+        resolve();
+      });
+      socket.on('exception', (data) => {
+        reject(data);
       });
     }).finally(() => {
       socket.close();
