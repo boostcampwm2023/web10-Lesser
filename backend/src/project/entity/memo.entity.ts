@@ -5,7 +5,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -40,7 +39,7 @@ export class Memo {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 
-  @OneToOne(() => Member, (member) => member.id, { nullable: false })
+  @ManyToOne(() => Member, (member) => member.id, { nullable: false })
   @JoinColumn({ name: 'member_id' })
   member: Member;
 
