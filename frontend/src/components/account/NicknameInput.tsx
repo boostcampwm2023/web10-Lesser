@@ -13,13 +13,17 @@ interface NicknameInputProps {
   setCurrentStep: React.Dispatch<
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;
-  nicknameRef: React.MutableRefObject<string>;
+  nicknameValueRef: React.MutableRefObject<string>;
+  inputElementRef: React.MutableRefObject<HTMLInputElement | null>;
+  inputAreaElementRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 const NicknameInput = ({
   currentStepNumber,
   setCurrentStep,
-  nicknameRef,
+  nicknameValueRef,
+  inputElementRef,
+  inputAreaElementRef,
 }: NicknameInputProps) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [validated, setValidated] = useState<boolean | null>(null);
@@ -46,7 +50,7 @@ const NicknameInput = ({
   const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const value = target.value.trim();
     setInputValue(value);
-    nicknameRef.current = value;
+    nicknameValueRef.current = value;
   };
 
   const handleEnterDown = ({ key }: React.KeyboardEvent) => {
@@ -66,7 +70,7 @@ const NicknameInput = ({
         location.state.tempIdToken
       );
       setInputValue(githubUsername);
-      nicknameRef.current = githubUsername;
+      nicknameValueRef.current = githubUsername;
     };
 
     getUsername();
@@ -88,15 +92,16 @@ const NicknameInput = ({
           LESSER에서 사용할 제 이름은
         </label>
         <br />
-        <div id="nickname-input-box" className="flex w-[525px]">
+        <div ref={inputAreaElementRef} className="flex w-[525px]">
           <div className="inline">
             <input
               type="text"
               name="nickname"
               id="nickname"
+              ref={inputElementRef}
               value={inputValue}
               autoComplete="off"
-              onChange={(e) => handleInputChange(e)}
+              onChange={handleInputChange}
               onKeyDown={handleEnterDown}
               className={`w-[27.5rem] h-[3rem] border-b-2 focus:outline-none focus:border-b-3 font-semibold text-3xl ${
                 inputValue && validated && "border-b-3 border-middle-green "

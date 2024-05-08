@@ -9,13 +9,15 @@ interface TechStackInputProps {
   setCurrentStep: React.Dispatch<
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;
-  techRef: React.MutableRefObject<null | string[]>;
+  techValueRef: React.MutableRefObject<null | string[]>;
   onSignupButtonClick: () => void;
+  techStackElementRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 const TechStackInput = ({
-  techRef,
+  techValueRef,
   onSignupButtonClick,
+  techStackElementRef,
 }: TechStackInputProps) => {
   const { open, close } = useModal();
   const [techStackList, setTechStackList] = useState<string[]>([]);
@@ -24,12 +26,15 @@ const TechStackInput = ({
     const newTechStackList = [...techStackList];
     const targetIndex = newTechStackList.indexOf(techStack);
     newTechStackList.splice(targetIndex, 1);
-    techRef.current = newTechStackList;
+    techValueRef.current = newTechStackList;
     setTechStackList(newTechStackList);
   };
 
   return (
-    <div id="tech" className="h-[90%] flex items-center gap-[4.375rem]">
+    <div
+      ref={techStackElementRef}
+      className="h-[90%] flex items-center gap-[4.375rem]"
+    >
       <div className="w-[80%]">
         <p className="mb-3 text-3xl font-semibold text-dark-gray">
           저의 주요 기술 스택은
@@ -47,7 +52,9 @@ const TechStackInput = ({
           className="w-[11.25rem] h-[3.25rem] bg-middle-green rounded-xl text-m text-white mb-3 flex items-center gap-3 shadow-box pl-3 pr-9"
           type="button"
           onClick={() =>
-            open(<TechStackModal {...{ techRef, close, setTechStackList }} />)
+            open(
+              <TechStackModal {...{ techValueRef, close, setTechStackList }} />
+            )
           }
         >
           <img src={plus} alt="plus" />

@@ -8,13 +8,13 @@ interface JobInputProps {
   setCurrentStep: React.Dispatch<
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;
-  positionRef: React.MutableRefObject<string | null>;
+  positionValueRef: React.MutableRefObject<string | null>;
 }
 
 const PositionInput = ({
   currentStepNumber,
   setCurrentStep,
-  positionRef,
+  positionValueRef,
 }: JobInputProps) => {
   const { Dropdown, selectedOption } = useDropdown({
     placeholder: JOB_INPUT_INFO.PLACEHOLDER,
@@ -26,7 +26,7 @@ const PositionInput = ({
   };
 
   useEffect(() => {
-    positionRef.current = selectedOption;
+    positionValueRef.current = selectedOption;
     if (selectedOption) {
       setCurrentStep(SIGNUP_STEP.STEP3);
     }
