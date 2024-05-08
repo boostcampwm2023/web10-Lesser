@@ -23,6 +23,7 @@ describe('ProjectService', () => {
             getProject: jest.fn(),
             getProjectToMember: jest.fn(),
             createMemo: jest.fn(),
+            deleteMemo: jest.fn(),
           },
         },
       ],
@@ -133,5 +134,29 @@ describe('ProjectService', () => {
       expect(memo.color).toBe(color);
       expect(memo.member.id).toBe(member.id);
     });
+  });
+
+  describe('Delete memo', () => {
+    it('should return 1 when deleted a memo', async () => {
+      jest
+        .spyOn(projectRepository, 'deleteMemo')
+        .mockResolvedValue(1);
+
+      const deletedMemoId = 1
+      const result = await projectService.deleteMemo(deletedMemoId)
+
+      expect(result).toBe(true);
+    });
+
+    it('should return 0 when memo is not found', async () => {
+      jest
+      .spyOn(projectRepository, 'deleteMemo')
+      .mockResolvedValue(0);
+
+      const notFoundMemoId = 1
+      const result = await projectService.deleteMemo(notFoundMemoId)
+
+      expect(result).toBe(false);
+    })
   });
 });
