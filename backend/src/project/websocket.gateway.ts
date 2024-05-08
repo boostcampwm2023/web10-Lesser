@@ -11,11 +11,12 @@ import { validate } from 'class-validator';
 import { Server, Socket } from 'socket.io';
 import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { Member } from 'src/member/entity/member.entity';
+import { Project } from './entity/project.entity';
 import { MemberRepository } from 'src/member/repository/member.repository';
 import { MemberService } from 'src/member/service/member.service';
 import { ProjectService } from 'src/project/service/project.service';
 import { MemoCreateRequestDto } from './dto/MemoCreateRequest.dto';
-import { Project } from './entity/project.entity';
+import { MemoDeleteRequestDto } from './dto/MemoDeleteRequest.dto';
 
 interface ClientSocket extends Socket {
   projectId?: number;
@@ -77,17 +78,16 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
   @SubscribeMessage('memo')
   async handleMemoEvent(
     @ConnectedSocket() client: ClientSocket,
-    @MessageBody() data: MemoCreateRequestDto,
+    @MessageBody() data: MemoCreateRequestDto | MemoDeleteRequestDto,
   ) {
-    const errors = await validate(plainToClass(MemoCreateRequestDto, data));
-    if (errors.length > 0) {
-      const errorList = this.getRecursiveErrorMsgList(errors);
-      client.emit('error', { errorList });
-      return;
-    }
-
-    const { action, content } = data;
-    if (action == 'create') {
+    if (data.action === 'create') {
+      const errors = await validate(plainToClass(MemoCreateRequestDto, data));
+      if (errors.length > 0) {
+        const errorList = this.getRecursiveErrorMsgList(errors);
+        client.emit('error', { errorList });
+        return;
+      }
+      const { content } = data as MemoCreateRequestDto;
       const createdMemo = await this.projectService.createMemo(
         client.project,
         client.member,
@@ -106,6 +106,25 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
           color: createdMemo.color,
         },
       });
+    }
+    if (data.action === 'delete') {
+      const errors = await validate(plainToClass(MemoDeleteRequestDto, data));
+      if (errors.length > 0) {
+        const errorList = this.getRecursiveErrorMsgList(errors);
+        client.emit('error', { errorList });
+        return;
+      }
+      const { content } = data as MemoDeleteRequestDto;
+      const isDeleted = await this.projectService.deleteMemo(content.id);
+      if (isDeleted) {
+        client.nsp.to('landing').emit('landing', {
+          domain: 'memo',
+          action: 'delete',
+          content: {
+            id: content.id,
+          },
+        });
+      }
     }
   }
 
