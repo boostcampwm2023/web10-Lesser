@@ -1,8 +1,10 @@
+import { LandingMemoDTO } from "../../../types/DTO/landingDTO";
 import { MemoColorType } from "../../../types/common/landing";
 import LandingTitleUI from "../common/LandingTitleUI";
 import MemoBlock from "./MemoBlock";
 
 interface LandingMemoListProps {
+  memoList: LandingMemoDTO[];
   memoSocketEvent: {
     emitMemoCreateEvent: () => void;
     emitMemoDeleteEvent: (id: number) => void;
@@ -10,7 +12,10 @@ interface LandingMemoListProps {
   };
 }
 
-const LandingMemoList = ({ memoSocketEvent }: LandingMemoListProps) => {
+const LandingMemoList = ({
+  memoList,
+  memoSocketEvent,
+}: LandingMemoListProps) => {
   const { emitMemoCreateEvent, emitMemoDeleteEvent, emitMemoColorUpdateEvent } =
     memoSocketEvent;
   return (
@@ -21,26 +26,14 @@ const LandingMemoList = ({ memoSocketEvent }: LandingMemoListProps) => {
           handleClick={emitMemoCreateEvent}
         />
         <div className="mt-6 flex flex-wrap w-full h-[11rem] gap-4 overflow-y-scroll scrollbar-thin scrollbar-thumb-dark-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
-          <MemoBlock
-            author={"김용현"}
-            id={1}
-            title={""}
-            content={"world"}
-            createdAt="2024-03-14T12:00:00Z"
-            color="yellow"
-            emitMemoDeleteEvent={emitMemoDeleteEvent}
-            emitMemoColorUpdateEvent={emitMemoColorUpdateEvent}
-          />
-          <MemoBlock
-            author={"김용현"}
-            id={2}
-            title={"hello"}
-            content={"world"}
-            createdAt="2024-03-14T12:00:00Z"
-            color="gray"
-            emitMemoDeleteEvent={emitMemoDeleteEvent}
-            emitMemoColorUpdateEvent={emitMemoColorUpdateEvent}
-          />
+          {memoList.map((memo: LandingMemoDTO) => {
+            return (
+              <MemoBlock
+                {...{ ...memo, emitMemoColorUpdateEvent, emitMemoDeleteEvent }}
+                key={memo.id}
+              />
+            );
+          })}
         </div>
       </div>
     </div>

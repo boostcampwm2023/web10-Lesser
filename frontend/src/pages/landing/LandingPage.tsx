@@ -15,7 +15,7 @@ const LandingPage = () => {
   }
 
   const { socket }: { socket: Socket } = useOutletContext();
-  const { project, myInfo, member, sprint, link, inviteLinkIdRef } =
+  const { project, myInfo, member, sprint, link, memoList, inviteLinkIdRef } =
     useLandingSocket(socket);
   const { memoSocketEvent } = useLandingEmitEvent(socket);
 
@@ -23,7 +23,7 @@ const LandingPage = () => {
     <div className="flex flex-col justify-between w-full h-full">
       <div className="h-[17.6875rem] w-full shrink-0 flex gap-9">
         <LandingProject {...{ project, projectId }} />
-        <LandingMemoList memoSocketEvent={memoSocketEvent} />
+        <LandingMemoList {...{ memoList, memoSocketEvent }} />
       </div>
       <div className="h-[20.5625rem] w-full shrink-0 flex gap-9">
         <LandingSprint {...{ sprint }} />
