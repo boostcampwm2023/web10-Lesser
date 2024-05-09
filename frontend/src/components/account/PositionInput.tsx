@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import useDropdown from "../../hooks/common/dropdown/useDropdown";
 import NextStepButton from "../common/NextStepButton";
 import { JOB_INPUT_INFO, SIGNUP_STEP } from "../../constants/account";
+import useDebounce from "../../hooks/common/useDebounce";
 
 interface JobInputProps {
   currentStepNumber: number;
@@ -20,6 +21,7 @@ const PositionInput = ({
     placeholder: JOB_INPUT_INFO.PLACEHOLDER,
     options: JOB_INPUT_INFO.OPTIONS,
   });
+  const debounce = useDebounce();
 
   const handleNextButtonClick = () => {
     setCurrentStep(SIGNUP_STEP.STEP3);
@@ -31,6 +33,33 @@ const PositionInput = ({
       setCurrentStep(SIGNUP_STEP.STEP3);
     }
   }, [selectedOption]);
+
+  useEffect(() => {
+    const handleWheelEvent = (event: WheelEvent) => {
+      if (currentStepNumber !== SIGNUP_STEP.STEP2.NUMBER) {
+        return;
+      }
+
+      debounce(100, () => {
+        const downScrolled = event.deltaY > 0;
+
+        if (downScrolled && selectedOption) {
+          setCurrentStep(SIGNUP_STEP.STEP3);
+          return;
+        }
+
+        if (!downScrolled) {
+          setCurrentStep(SIGNUP_STEP.STEP1);
+        }
+      });
+    };
+
+    window.addEventListener("wheel", handleWheelEvent);
+
+    return () => {
+      window.removeEventListener("wheel", handleWheelEvent);
+    };
+  }, [selectedOption, currentStepNumber]);
 
   return (
     <div

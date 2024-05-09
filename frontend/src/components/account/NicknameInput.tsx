@@ -76,6 +76,28 @@ const NicknameInput = ({
     getUsername();
   }, []);
 
+  useEffect(() => {
+    const handleWheelEvent = (event: WheelEvent) => {
+      if (currentStepNumber !== SIGNUP_STEP.STEP1.NUMBER) {
+        return;
+      }
+
+      debounce(100, () => {
+        const downScrolled = event.deltaY > 0;
+
+        if (downScrolled && validated) {
+          setCurrentStep(SIGNUP_STEP.STEP2);
+        }
+      });
+    };
+
+    window.addEventListener("wheel", handleWheelEvent);
+
+    return () => {
+      window.removeEventListener("wheel", handleWheelEvent);
+    };
+  }, [validated, currentStepNumber]);
+
   return (
     <div
       className={`flex gap-[4.375rem] h-[100%] ${

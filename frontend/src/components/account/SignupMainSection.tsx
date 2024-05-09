@@ -105,7 +105,12 @@ const SignupMainSection = ({
           {...{ currentStepNumber, setCurrentStep, positionValueRef }}
         />
         <TechStackInput
-          {...{ setCurrentStep, techValueRef, techStackElementRef }}
+          {...{
+            setCurrentStep,
+            techValueRef,
+            techStackElementRef,
+            currentStepNumber,
+          }}
           onSignupButtonClick={handleSignupButtonClick}
         />
       </section>

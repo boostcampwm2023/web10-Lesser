@@ -1,26 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useModal } from "../../hooks/common/modal/useModal";
 import TechStackModal from "./TechStackModal";
 import plus from "../../assets/icons/plus.svg";
 import NextStepButton from "../common/NextStepButton";
 import CategoryButton from "../common/CategoryButton";
+import { SIGNUP_STEP } from "../../constants/account";
+import useDebounce from "../../hooks/common/useDebounce";
 
 interface TechStackInputProps {
+  currentStepNumber: number;
+  techValueRef: React.MutableRefObject<null | string[]>;
+  techStackElementRef: React.MutableRefObject<HTMLDivElement | null>;
   setCurrentStep: React.Dispatch<
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;
-  techValueRef: React.MutableRefObject<null | string[]>;
   onSignupButtonClick: () => void;
-  techStackElementRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 const TechStackInput = ({
+  currentStepNumber,
   techValueRef,
-  onSignupButtonClick,
   techStackElementRef,
+  setCurrentStep,
+  onSignupButtonClick,
 }: TechStackInputProps) => {
   const { open, close } = useModal();
   const [techStackList, setTechStackList] = useState<string[]>([]);
+  const debounce = useDebounce();
 
   const handleCloseButtonClick = (techStack: string) => {
     const newTechStackList = [...techStackList];
@@ -29,6 +35,28 @@ const TechStackInput = ({
     techValueRef.current = newTechStackList;
     setTechStackList(newTechStackList);
   };
+
+  useEffect(() => {
+    const handleWheelEvent = (event: WheelEvent) => {
+      if (currentStepNumber !== SIGNUP_STEP.STEP3.NUMBER) {
+        return;
+      }
+
+      debounce(100, () => {
+        const upScrolled = event.deltaY < 0;
+
+        if (upScrolled) {
+          setCurrentStep(SIGNUP_STEP.STEP2);
+        }
+      });
+    };
+
+    window.addEventListener("wheel", handleWheelEvent);
+
+    return () => {
+      window.removeEventListener("wheel", handleWheelEvent);
+    };
+  }, [currentStepNumber]);
 
   return (
     <div
