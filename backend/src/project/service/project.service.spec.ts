@@ -24,6 +24,7 @@ describe('ProjectService', () => {
             getProjectToMember: jest.fn(),
             createMemo: jest.fn(),
             deleteMemo: jest.fn(),
+            getProjectMemoListWithMember: jest.fn(),
           },
         },
       ],
@@ -138,25 +139,47 @@ describe('ProjectService', () => {
 
   describe('Delete memo', () => {
     it('should return 1 when deleted a memo', async () => {
-      jest
-        .spyOn(projectRepository, 'deleteMemo')
-        .mockResolvedValue(1);
+      jest.spyOn(projectRepository, 'deleteMemo').mockResolvedValue(1);
 
-      const deletedMemoId = 1
-      const result = await projectService.deleteMemo(deletedMemoId)
+      const deletedMemoId = 1;
+      const result = await projectService.deleteMemo(deletedMemoId);
 
       expect(result).toBe(true);
     });
 
     it('should return 0 when memo is not found', async () => {
-      jest
-      .spyOn(projectRepository, 'deleteMemo')
-      .mockResolvedValue(0);
+      jest.spyOn(projectRepository, 'deleteMemo').mockResolvedValue(0);
 
-      const notFoundMemoId = 1
-      const result = await projectService.deleteMemo(notFoundMemoId)
+      const notFoundMemoId = 1;
+      const result = await projectService.deleteMemo(notFoundMemoId);
 
       expect(result).toBe(false);
-    })
+    });
+  });
+
+  describe('Get project memo list', () => {
+    it('should return memoList', async () => {
+      const [title, subject] = ['title', 'subject'];
+      const project = Project.of(title, subject);
+      const memo = Memo.of(
+        project,
+        member,
+        'memoTitle',
+        'memoContent',
+        memoColor.YELLOW,
+      );
+      memo.member = member;
+      const newMemoList = [memo];
+
+      jest
+        .spyOn(projectRepository, 'getProjectMemoListWithMember')
+        .mockResolvedValue(newMemoList);
+      const projectId = 1;
+
+      const memoListWithMember =
+        await projectService.getProjectMemoListWithMember(projectId);
+
+      expect(memoListWithMember).toEqual(newMemoList);
+    });
   });
 });
