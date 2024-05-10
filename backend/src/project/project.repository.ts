@@ -53,6 +53,10 @@ export class ProjectRepository {
     });
   }
 
+  getProjectMemoListWithMember(projectId: number): Promise<Memo[]> {
+    return this.memoRepository.find({ where: { projectId }, relations: ["member"] });
+  }
+
   createMemo(memo: Memo): Promise<Memo> {
     return this.memoRepository.save(memo);
   }
