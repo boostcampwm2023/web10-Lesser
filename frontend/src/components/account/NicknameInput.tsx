@@ -1,12 +1,13 @@
 import { ChangeEvent, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { SIGNUP_STEP } from "../../constants/account";
 import NextStepButton from "../common/NextStepButton";
-import useDebounce from "../../hooks/common/useDebounce";
 import {
   getGithubUsername,
   getNicknameAvailability,
 } from "../../apis/api/signupAPI";
-import { useLocation } from "react-router-dom";
+import useWheelDown from "../../hooks/pages/account/useWheelDown";
+import useDebounce from "../../hooks/common/useDebounce";
 
 interface NicknameInputProps {
   currentStepNumber: number;
@@ -15,7 +16,6 @@ interface NicknameInputProps {
   >;
   nicknameValueRef: React.MutableRefObject<string>;
   inputElementRef: React.MutableRefObject<HTMLInputElement | null>;
-  inputAreaElementRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 const NicknameInput = ({
@@ -23,16 +23,23 @@ const NicknameInput = ({
   setCurrentStep,
   nicknameValueRef,
   inputElementRef,
-  inputAreaElementRef,
 }: NicknameInputProps) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [validated, setValidated] = useState<boolean | null>(null);
-  const location = useLocation();
   const debounce = useDebounce();
+  const location = useLocation();
 
-  const handleNextButtonClick = () => {
+  const goToNextStep = () => {
+    inputElementRef.current?.blur;
     setCurrentStep(SIGNUP_STEP.STEP2);
   };
+
+  useWheelDown({
+    currentStepNumber,
+    targetStepNumber: SIGNUP_STEP.STEP1.NUMBER,
+    dependency: validated,
+    goToNextStep,
+  });
 
   const nicknameAvailabilityCheck = async () => {
     if (!inputValue) {
@@ -55,7 +62,7 @@ const NicknameInput = ({
 
   const handleEnterDown = ({ key }: React.KeyboardEvent) => {
     if (key === "Enter" && validated) {
-      setCurrentStep(SIGNUP_STEP.STEP2);
+      goToNextStep();
     }
   };
 
@@ -76,28 +83,6 @@ const NicknameInput = ({
     getUsername();
   }, []);
 
-  useEffect(() => {
-    const handleWheelEvent = (event: WheelEvent) => {
-      if (currentStepNumber !== SIGNUP_STEP.STEP1.NUMBER) {
-        return;
-      }
-
-      debounce(100, () => {
-        const downScrolled = event.deltaY > 0;
-
-        if (downScrolled && validated) {
-          setCurrentStep(SIGNUP_STEP.STEP2);
-        }
-      });
-    };
-
-    window.addEventListener("wheel", handleWheelEvent);
-
-    return () => {
-      window.removeEventListener("wheel", handleWheelEvent);
-    };
-  }, [validated, currentStepNumber]);
-
   return (
     <div
       className={`flex gap-[4.375rem] h-[100%] ${
@@ -114,7 +99,7 @@ const NicknameInput = ({
           LESSER에서 사용할 제 이름은
         </label>
         <br />
-        <div ref={inputAreaElementRef} className="flex w-[525px]">
+        <div className="flex w-[525px]">
           <div className="inline">
             <input
               type="text"
@@ -145,9 +130,7 @@ const NicknameInput = ({
       </div>
       <div className="min-w-[6.875rem] self-end">
         {validated && currentStepNumber !== SIGNUP_STEP.STEP2.NUMBER && (
-          <NextStepButton onNextButtonClick={handleNextButtonClick}>
-            Next
-          </NextStepButton>
+          <NextStepButton onNextButtonClick={goToNextStep}>Next</NextStepButton>
         )}
       </div>
     </div>

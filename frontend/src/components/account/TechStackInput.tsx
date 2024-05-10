@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useModal } from "../../hooks/common/modal/useModal";
 import TechStackModal from "./TechStackModal";
 import plus from "../../assets/icons/plus.svg";
 import NextStepButton from "../common/NextStepButton";
 import CategoryButton from "../common/CategoryButton";
 import { SIGNUP_STEP } from "../../constants/account";
-import useDebounce from "../../hooks/common/useDebounce";
+import useWheelUp from "../../hooks/pages/account/useWheelUp";
 
 interface TechStackInputProps {
   currentStepNumber: number;
@@ -26,7 +26,6 @@ const TechStackInput = ({
 }: TechStackInputProps) => {
   const { open, close } = useModal();
   const [techStackList, setTechStackList] = useState<string[]>([]);
-  const debounce = useDebounce();
 
   const handleCloseButtonClick = (techStack: string) => {
     const newTechStackList = [...techStackList];
@@ -36,27 +35,15 @@ const TechStackInput = ({
     setTechStackList(newTechStackList);
   };
 
-  useEffect(() => {
-    const handleWheelEvent = (event: WheelEvent) => {
-      if (currentStepNumber !== SIGNUP_STEP.STEP3.NUMBER) {
-        return;
-      }
+  const goToPrevStep = () => {
+    setCurrentStep(SIGNUP_STEP.STEP2);
+  };
 
-      debounce(100, () => {
-        const upScrolled = event.deltaY < 0;
-
-        if (upScrolled) {
-          setCurrentStep(SIGNUP_STEP.STEP2);
-        }
-      });
-    };
-
-    window.addEventListener("wheel", handleWheelEvent);
-
-    return () => {
-      window.removeEventListener("wheel", handleWheelEvent);
-    };
-  }, [currentStepNumber]);
+  useWheelUp({
+    currentStepNumber,
+    targetStepNumber: SIGNUP_STEP.STEP1.NUMBER,
+    goToPrevStep,
+  });
 
   return (
     <div

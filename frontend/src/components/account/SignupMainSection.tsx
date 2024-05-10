@@ -23,7 +23,6 @@ const SignupMainSection = ({
   const positionValueRef = useRef<null | string>(null);
   const techValueRef = useRef<null | string[]>(null);
   const inputElementRef = useRef<HTMLInputElement | null>(null);
-  const inputAreaElementRef = useRef<HTMLDivElement | null>(null);
   const techStackElementRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -59,6 +58,7 @@ const SignupMainSection = ({
   };
 
   useEffect(() => {
+    document.documentElement.style.overflow = "hidden";
     switch (currentStepNumber) {
       case SIGNUP_STEP.STEP1.NUMBER:
         inputElementRef.current?.scrollIntoView({
@@ -68,7 +68,7 @@ const SignupMainSection = ({
         break;
 
       case SIGNUP_STEP.STEP2.NUMBER:
-        inputAreaElementRef.current?.scrollIntoView({
+        inputElementRef.current?.scrollIntoView({
           behavior: "smooth",
           block: "start",
         });
@@ -81,6 +81,10 @@ const SignupMainSection = ({
         });
         break;
     }
+
+    return () => {
+      document.documentElement.style.overflow = "auto";
+    };
   }, [currentStepNumber]);
 
   return (
@@ -91,14 +95,13 @@ const SignupMainSection = ({
         }`}
         onClick={handlePrevStepAreaClick}
       ></div>
-      <section className="h-[100%] overflow-y-hidden">
+      <form className="h-[100%] overflow-y-hidden">
         <NicknameInput
           {...{
             currentStepNumber,
             setCurrentStep,
             nicknameValueRef,
             inputElementRef,
-            inputAreaElementRef,
           }}
         />
         <PositionInput
@@ -113,7 +116,7 @@ const SignupMainSection = ({
           }}
           onSignupButtonClick={handleSignupButtonClick}
         />
-      </section>
+      </form>
     </main>
   );
 };

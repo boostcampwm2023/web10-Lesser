@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import useDropdown from "../../hooks/common/dropdown/useDropdown";
 import NextStepButton from "../common/NextStepButton";
 import { JOB_INPUT_INFO, SIGNUP_STEP } from "../../constants/account";
-import useDebounce from "../../hooks/common/useDebounce";
+import useWheelDown from "../../hooks/pages/account/useWheelDown";
+import useWheelUp from "../../hooks/pages/account/useWheelUp";
 
 interface JobInputProps {
   currentStepNumber: number;
@@ -21,10 +22,13 @@ const PositionInput = ({
     placeholder: JOB_INPUT_INFO.PLACEHOLDER,
     options: JOB_INPUT_INFO.OPTIONS,
   });
-  const debounce = useDebounce();
 
-  const handleNextButtonClick = () => {
+  const goToNextStep = () => {
     setCurrentStep(SIGNUP_STEP.STEP3);
+  };
+
+  const goToPrevStep = () => {
+    setCurrentStep(SIGNUP_STEP.STEP1);
   };
 
   useEffect(() => {
@@ -34,32 +38,18 @@ const PositionInput = ({
     }
   }, [selectedOption]);
 
-  useEffect(() => {
-    const handleWheelEvent = (event: WheelEvent) => {
-      if (currentStepNumber !== SIGNUP_STEP.STEP2.NUMBER) {
-        return;
-      }
+  useWheelDown({
+    currentStepNumber,
+    targetStepNumber: SIGNUP_STEP.STEP1.NUMBER,
+    dependency: selectedOption,
+    goToNextStep,
+  });
 
-      debounce(100, () => {
-        const downScrolled = event.deltaY > 0;
-
-        if (downScrolled && selectedOption) {
-          setCurrentStep(SIGNUP_STEP.STEP3);
-          return;
-        }
-
-        if (!downScrolled) {
-          setCurrentStep(SIGNUP_STEP.STEP1);
-        }
-      });
-    };
-
-    window.addEventListener("wheel", handleWheelEvent);
-
-    return () => {
-      window.removeEventListener("wheel", handleWheelEvent);
-    };
-  }, [selectedOption, currentStepNumber]);
+  useWheelUp({
+    currentStepNumber,
+    targetStepNumber: SIGNUP_STEP.STEP1.NUMBER,
+    goToPrevStep,
+  });
 
   return (
     <div
@@ -87,9 +77,7 @@ const PositionInput = ({
       </div>
       <div className="min-w-[6.875rem] self-end">
         {currentStepNumber !== SIGNUP_STEP.STEP3.NUMBER && selectedOption && (
-          <NextStepButton onNextButtonClick={handleNextButtonClick}>
-            Next
-          </NextStepButton>
+          <NextStepButton onNextButtonClick={goToNextStep}>Next</NextStepButton>
         )}
       </div>
     </div>
