@@ -52,4 +52,8 @@ export class ProjectService {
     if (result) return true;
     else return false;
   }
+
+  getProjectMemoListWithMember(projectId: number): Promise<Memo[]> {
+    return this.projectRepository.getProjectMemoListWithMember(projectId);
+  }
 }
