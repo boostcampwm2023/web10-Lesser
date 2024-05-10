@@ -17,6 +17,7 @@ import { MemberService } from 'src/member/service/member.service';
 import { ProjectService } from 'src/project/service/project.service';
 import { MemoCreateRequestDto } from './dto/MemoCreateRequest.dto';
 import { MemoDeleteRequestDto } from './dto/MemoDeleteRequest.dto';
+import { InitLandingResponseDto } from './dto/InitLandingResponse.dto';
 
 interface ClientSocket extends Socket {
   projectId?: number;
@@ -55,23 +56,11 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
   @SubscribeMessage('joinLanding')
   async handleJoinLandingEvent(@ConnectedSocket() client: ClientSocket) {
     client.join('landing');
-    const project = await this.projectService.getProject(client.projectId);
-    const response = {
-      action: 'init',
-      content: {
-        project: {
-          title: project.title,
-          subject: project.subject,
-          createdAt: project.created_at,
-        },
-        myInfo: {},
-        member: [],
-        sprint: null,
-        board: [],
-        link: [],
-        inviteLinkId: project.inviteLinkId,
-      },
-    };
+    const [project, memoListWithMember] = await Promise.all([
+      this.projectService.getProject(client.projectId),
+      this.projectService.getProjectMemoListWithMember(client.project.id),
+    ]);
+    const response = InitLandingResponseDto.of(project, memoListWithMember);
     client.emit('landing', response);
   }
 
