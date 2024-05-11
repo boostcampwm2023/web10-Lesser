@@ -22,7 +22,7 @@ export class Memo {
   @PrimaryGeneratedColumn('increment', { type: 'int' })
   id: number;
 
-  @Column({ name: 'project_id' })
+  @Column({ type: 'int', name: 'project_id' })
   projectId: number;
 
   @ManyToOne(() => Project, (project) => project.id, { nullable: false })
