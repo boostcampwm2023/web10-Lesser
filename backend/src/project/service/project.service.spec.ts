@@ -25,6 +25,8 @@ describe('ProjectService', () => {
             createMemo: jest.fn(),
             deleteMemo: jest.fn(),
             getProjectMemoListWithMember: jest.fn(),
+            updateMemoColor: jest.fn(),
+            findMemoById: jest.fn(),
           },
         },
       ],
@@ -180,6 +182,54 @@ describe('ProjectService', () => {
         await projectService.getProjectMemoListWithMember(projectId);
 
       expect(memoListWithMember).toEqual(newMemoList);
+    });
+  });
+
+  describe('Update memo', () => {
+    const [title, subject] = ['title', 'subject'];
+    const project = Project.of(title, subject);
+    project.id = 1;
+    const color = memoColor.BLUE;
+    const memo = Memo.of(project, member, '', '', memoColor.YELLOW);
+    memo.projectId = project.id;
+    memo.id = 1;
+    it('should return true when updated a memo', async () => {
+      jest.spyOn(projectRepository, 'findMemoById').mockResolvedValue(memo);
+      jest.spyOn(projectRepository, 'updateMemoColor').mockResolvedValue(1);
+
+      const result = await projectService.updateMemoColor(
+        project,
+        memo.id,
+        color,
+      );
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false when memo is not found', async () => {
+      jest.spyOn(projectRepository, 'findMemoById').mockResolvedValue(null);
+      jest.spyOn(projectRepository, 'updateMemoColor').mockResolvedValue(0);
+      const updatedMemoId = 1;
+
+      const result = await projectService.updateMemoColor(
+        project,
+        updatedMemoId,
+        color,
+      );
+
+      expect(result).toBe(false);
+    });
+
+    it('should throw error when project does not have this memo', async () => {
+      jest.spyOn(projectRepository, 'findMemoById').mockResolvedValue(memo);
+      jest.spyOn(projectRepository, 'updateMemoColor').mockResolvedValue(1);
+      const myProject = Project.of('', '');
+      myProject.id = project.id + 100;
+
+      await expect(
+        async () =>
+          await projectService.updateMemoColor(myProject, memo.id, color),
+      ).rejects.toThrow('project does not have this memo');
     });
   });
 });

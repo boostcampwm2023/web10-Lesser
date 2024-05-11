@@ -47,6 +47,7 @@ export class ProjectService {
     return this.projectRepository.createMemo(newMemo);
   }
 
+  //ToDo: 메모 접근권한 확인 필요
   async deleteMemo(id: number): Promise<boolean> {
     const result = await this.projectRepository.deleteMemo(id);
     if (result) return true;
@@ -55,5 +56,17 @@ export class ProjectService {
 
   getProjectMemoListWithMember(projectId: number): Promise<Memo[]> {
     return this.projectRepository.getProjectMemoListWithMember(projectId);
+  }
+  async updateMemoColor(
+    project: Project,
+    id: number,
+    color: memoColor,
+  ): Promise<boolean> {
+    const memo = await this.projectRepository.findMemoById(id);
+    if (!memo) return false;
+    if (memo.projectId !== project.id)
+      throw new Error('project does not have this memo');
+    await this.projectRepository.updateMemoColor(id, color);
+    return true;
   }
 }
