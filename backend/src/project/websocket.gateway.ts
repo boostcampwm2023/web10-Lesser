@@ -18,6 +18,7 @@ import { ProjectService } from 'src/project/service/project.service';
 import { MemoCreateRequestDto } from './dto/MemoCreateRequest.dto';
 import { MemoDeleteRequestDto } from './dto/MemoDeleteRequest.dto';
 import { InitLandingResponseDto } from './dto/InitLandingResponse.dto';
+import { MemoColorUpdateRequestDto } from './dto/MemoColorUpdateRequest.dto';
 
 interface ClientSocket extends Socket {
   projectId?: number;
@@ -67,7 +68,11 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
   @SubscribeMessage('memo')
   async handleMemoEvent(
     @ConnectedSocket() client: ClientSocket,
-    @MessageBody() data: MemoCreateRequestDto | MemoDeleteRequestDto,
+    @MessageBody()
+    data:
+      | MemoCreateRequestDto
+      | MemoDeleteRequestDto
+      | MemoColorUpdateRequestDto,
   ) {
     if (data.action === 'create') {
       const errors = await validate(plainToClass(MemoCreateRequestDto, data));
@@ -95,8 +100,7 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
           color: createdMemo.color,
         },
       });
-    }
-    if (data.action === 'delete') {
+    } else if (data.action === 'delete') {
       const errors = await validate(plainToClass(MemoDeleteRequestDto, data));
       if (errors.length > 0) {
         const errorList = this.getRecursiveErrorMsgList(errors);
@@ -111,6 +115,41 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
           action: 'delete',
           content: {
             id: content.id,
+          },
+        });
+      }
+    } else if (data.action === 'colorUpdate') {
+      const errors = await validate(
+        plainToClass(MemoColorUpdateRequestDto, data),
+      );
+      if (errors.length > 0) {
+        const errorList = this.getRecursiveErrorMsgList(errors);
+        client.emit('error', { errorList });
+        return;
+      }
+      const { content } = data as MemoColorUpdateRequestDto;
+
+      let isUpdated;
+      try {
+        isUpdated = await this.projectService.updateMemoColor(
+          client.project,
+          content.id,
+          content.color,
+        );
+      } catch (error) {
+        if (error.message === 'project does not have this memo') {
+          //ToDo: 에러상황 정의 후 응답 구현
+          return;
+        }
+      }
+
+      if (isUpdated) {
+        client.nsp.to('landing').emit('landing', {
+          domain: 'memo',
+          action: 'colorUpdate',
+          content: {
+            id: content.id,
+            color: content.color,
           },
         });
       }
