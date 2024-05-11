@@ -27,7 +27,6 @@ const useLandingSocket = (socket: Socket) => {
   const inviteLinkIdRef = useRef<string>("");
 
   const handleInitEvent = (content: LandingDTO) => {
-    console.log(content);
     const { project, myInfo, member, sprint, memoList, link, inviteLinkId } =
       content as LandingDTO;
     setProject(project);
@@ -68,7 +67,6 @@ const useLandingSocket = (socket: Socket) => {
   };
 
   const handleOnLanding = ({ domain, action, content }: LandingSocketData) => {
-    console.log(domain, action, content);
     switch (domain) {
       case LandingSocketDomain.INIT:
         handleInitEvent(content);
