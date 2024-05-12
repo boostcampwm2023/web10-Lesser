@@ -9,18 +9,11 @@ import {
   LandingSprintDTO,
 } from "../../../types/DTO/landingDTO";
 import { DEFAULT_VALUE } from "../../../constants/landing";
-
-interface SocketData {
-  action: LandingSocketEvent;
-  content: LandingDTO;
-}
-
-enum LandingSocketEvent {
-  INIT = "init",
-  MEMBER_UPDATE = "memberUpdate",
-  MEMBER_CREATE = "memberCreate",
-  MEMBER_DELETE = "memberDelete",
-}
+import {
+  LandingSocketData,
+  LandingSocketDomain,
+  LandingSocketMemoAction,
+} from "../../../types/common/landing";
 
 const useLandingSocket = (socket: Socket) => {
   const [project, setProject] = useState<LandingProjectDTO>(
@@ -33,25 +26,53 @@ const useLandingSocket = (socket: Socket) => {
   const [link, setLink] = useState<LandingLinkDTO[]>([]);
   const inviteLinkIdRef = useRef<string>("");
 
-  const handleOnLanding = ({ action, content }: SocketData) => {
+  const handleInitEvent = (content: LandingDTO) => {
+    const { project, myInfo, member, sprint, memoList, link, inviteLinkId } =
+      content as LandingDTO;
+    setProject(project);
+    setMyInfo(myInfo);
+    setMember(member);
+    setSprint(sprint);
+    setMemoList(memoList);
+    setLink(link);
+    inviteLinkIdRef.current = inviteLinkId;
+  };
+
+  const handleMemoEvent = (
+    action: LandingSocketMemoAction,
+    content: LandingMemoDTO
+  ) => {
     switch (action) {
-      case LandingSocketEvent.INIT:
-        const {
-          project,
-          myInfo,
-          member,
-          sprint,
-          memoList,
-          link,
-          inviteLinkId,
-        } = content as LandingDTO;
-        setProject(project);
-        setMyInfo(myInfo);
-        setMember(member);
-        setSprint(sprint);
-        setMemoList(memoList);
-        setLink(link);
-        inviteLinkIdRef.current = inviteLinkId;
+      case LandingSocketMemoAction.CREATE:
+        setMemoList((memoList: LandingMemoDTO[]) => {
+          return [content, ...memoList];
+        });
+        break;
+      case LandingSocketMemoAction.DELETE:
+        setMemoList((memoList: LandingMemoDTO[]) => {
+          return memoList.filter(
+            (memo: LandingMemoDTO) => memo.id !== content.id
+          );
+        });
+        break;
+      case LandingSocketMemoAction.COLOR_UPDATE:
+        setMemoList((memoList: LandingMemoDTO[]) => {
+          return memoList.map((memo: LandingMemoDTO) => {
+            if (memo.id !== content.id) return memo;
+            memo.color = content.color;
+            return memo;
+          });
+        });
+    }
+  };
+
+  const handleOnLanding = ({ domain, action, content }: LandingSocketData) => {
+    switch (domain) {
+      case LandingSocketDomain.INIT:
+        handleInitEvent(content);
+        break;
+      case LandingSocketDomain.MEMO:
+        handleMemoEvent(action, content);
         break;
     }
   };
@@ -65,7 +86,15 @@ const useLandingSocket = (socket: Socket) => {
     };
   }, [socket]);
 
-  return { project, myInfo, member, sprint, memoList, link, inviteLinkIdRef };
+  return {
+    project,
+    myInfo,
+    member,
+    sprint,
+    memoList,
+    link,
+    inviteLinkIdRef,
+  };
 };
 
 export default useLandingSocket;

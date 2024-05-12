@@ -1,9 +1,22 @@
 import MemoEditor from "./MemoEditor";
 import { LandingMemoDTO } from "../../../types/DTO/landingDTO";
-import { MemoColorStyle } from "../../../types/common/landing";
+import { MemoColorStyle, MemoColorType } from "../../../types/common/landing";
 import useLandingMemo from "../../../hooks/common/landing/useLandingMemo";
 
-const MemoBlock = ({ title, content, author, color }: LandingMemoDTO) => {
+interface MemoBlockProps extends LandingMemoDTO {
+  emitMemoDeleteEvent: (id: number) => void;
+  emitMemoColorUpdateEvent: (id: number, color: MemoColorType) => void;
+}
+
+const MemoBlock = ({
+  id,
+  title,
+  content,
+  author,
+  color,
+  emitMemoColorUpdateEvent,
+  emitMemoDeleteEvent,
+}: MemoBlockProps) => {
   const {
     editorOpened,
     memoTitle,
@@ -39,7 +52,13 @@ const MemoBlock = ({ title, content, author, color }: LandingMemoDTO) => {
       <div className="flex justify-between items-center">
         <p className="text-xxxs h-5 font-bold">{author}</p>
         {editorOpened && (
-          <MemoEditor color={memoColor} changeMemoColor={changeMemoColor} />
+          <MemoEditor
+            id={id}
+            color={memoColor}
+            changeMemoColor={changeMemoColor}
+            emitMemoDeleteEvent={emitMemoDeleteEvent}
+            emitMemoColorUpdateEvent={emitMemoColorUpdateEvent}
+          />
         )}
       </div>
     </div>
