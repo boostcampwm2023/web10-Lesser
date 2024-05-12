@@ -10,7 +10,6 @@ import useWheelUp from "../../hooks/pages/account/useWheelUp";
 interface TechStackInputProps {
   currentStepNumber: number;
   techValueRef: React.MutableRefObject<null | string[]>;
-  techStackElementRef: React.MutableRefObject<HTMLDivElement | null>;
   setCurrentStep: React.Dispatch<
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;
@@ -20,7 +19,6 @@ interface TechStackInputProps {
 const TechStackInput = ({
   currentStepNumber,
   techValueRef,
-  techStackElementRef,
   setCurrentStep,
   onSignupButtonClick,
 }: TechStackInputProps) => {
@@ -46,10 +44,7 @@ const TechStackInput = ({
   });
 
   return (
-    <div
-      ref={techStackElementRef}
-      className="h-[90%] flex items-center gap-[4.375rem]"
-    >
+    <div className="h-[90%] flex items-center gap-[4.375rem]">
       <div className="w-[80%]">
         <p className="mb-3 text-3xl font-semibold text-dark-gray">
           저의 주요 기술 스택은

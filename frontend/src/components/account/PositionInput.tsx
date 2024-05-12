@@ -11,12 +11,14 @@ interface JobInputProps {
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;
   positionValueRef: React.MutableRefObject<string | null>;
+  positionElementRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 const PositionInput = ({
   currentStepNumber,
   setCurrentStep,
   positionValueRef,
+  positionElementRef,
 }: JobInputProps) => {
   const { Dropdown, selectedOption } = useDropdown({
     placeholder: JOB_INPUT_INFO.PLACEHOLDER,
@@ -62,6 +64,7 @@ const PositionInput = ({
       <div
         id="position-input-box"
         className="min-w-[567px] flex gap-4 items-center"
+        ref={positionElementRef}
       >
         <span className="text-3xl font-semibold text-dark-gray">
           저의 주요 직무는

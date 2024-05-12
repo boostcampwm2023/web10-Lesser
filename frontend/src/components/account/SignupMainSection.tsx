@@ -23,7 +23,7 @@ const SignupMainSection = ({
   const positionValueRef = useRef<null | string>(null);
   const techValueRef = useRef<null | string[]>(null);
   const inputElementRef = useRef<HTMLInputElement | null>(null);
-  const techStackElementRef = useRef<HTMLDivElement | null>(null);
+  const positionElementRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -58,7 +58,7 @@ const SignupMainSection = ({
   };
 
   useEffect(() => {
-    document.documentElement.style.overflow = "hidden";
+    document.documentElement.style.overflowY = "hidden";
     switch (currentStepNumber) {
       case SIGNUP_STEP.STEP1.NUMBER:
         inputElementRef.current?.scrollIntoView({
@@ -75,15 +75,15 @@ const SignupMainSection = ({
         break;
 
       case SIGNUP_STEP.STEP3.NUMBER:
-        techStackElementRef.current?.scrollIntoView({
+        positionElementRef.current?.scrollIntoView({
           behavior: "smooth",
-          block: "center",
+          block: "start",
         });
         break;
     }
 
     return () => {
-      document.documentElement.style.overflow = "visible";
+      document.documentElement.style.overflowY = "visible";
     };
   }, [currentStepNumber]);
 
@@ -105,13 +105,17 @@ const SignupMainSection = ({
           }}
         />
         <PositionInput
-          {...{ currentStepNumber, setCurrentStep, positionValueRef }}
+          {...{
+            currentStepNumber,
+            setCurrentStep,
+            positionValueRef,
+            positionElementRef,
+          }}
         />
         <TechStackInput
           {...{
             setCurrentStep,
             techValueRef,
-            techStackElementRef,
             currentStepNumber,
           }}
           onSignupButtonClick={handleSignupButtonClick}
