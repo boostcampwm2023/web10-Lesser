@@ -83,7 +83,7 @@ const SignupMainSection = ({
     }
 
     return () => {
-      document.documentElement.style.overflow = "auto";
+      document.documentElement.style.overflowY = "visible";
     };
   }, [currentStepNumber]);
 
