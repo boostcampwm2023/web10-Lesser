@@ -2,26 +2,26 @@ import { TECH_STACK_INFO } from "../../constants/account";
 
 interface TechStackModalProps {
   close: () => void;
-  techRef: React.MutableRefObject<null | string[]>;
+  techValueRef: React.MutableRefObject<null | string[]>;
   setTechStackList: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const TechStackModal = ({
   close,
-  techRef,
+  techValueRef,
   setTechStackList,
 }: TechStackModalProps) => {
   const handleTechStackClick = (techStack: string) => {
     setTechStackList((techStackList) => {
-      if (!techRef.current) {
+      if (!techValueRef.current) {
         const newTechStackList = [techStack];
-        techRef.current = [techStack];
+        techValueRef.current = [techStack];
         return newTechStackList;
       }
 
       const newTechStackList = [...techStackList];
       if (techStackList.indexOf(techStack) < 0) {
-        techRef.current.push(techStack);
+        techValueRef.current.push(techStack);
         newTechStackList.push(techStack);
       }
 

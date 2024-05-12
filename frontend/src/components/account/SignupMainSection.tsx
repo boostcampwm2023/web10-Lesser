@@ -19,9 +19,11 @@ const SignupMainSection = ({
   currentStepNumber,
   setCurrentStep,
 }: SignupMainSectionProps) => {
-  const nicknameRef = useRef<string>("");
-  const positionRef = useRef<null | string>(null);
-  const techRef = useRef<null | string[]>(null);
+  const nicknameValueRef = useRef<string>("");
+  const positionValueRef = useRef<null | string>(null);
+  const techValueRef = useRef<null | string[]>(null);
+  const inputElementRef = useRef<HTMLInputElement | null>(null);
+  const positionElementRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,9 +43,9 @@ const SignupMainSection = ({
 
   const handleSignupButtonClick = async () => {
     const status = await postSignup({
-      username: nicknameRef.current,
-      position: positionRef.current,
-      techStack: techRef.current,
+      username: nicknameValueRef.current,
+      position: positionValueRef.current,
+      techStack: techValueRef.current,
       tempIdToken: location.state.tempIdToken,
     });
     const redirectURL = sessionStorage.getItem(STORAGE_KEY.REDIRECT);
@@ -56,26 +58,33 @@ const SignupMainSection = ({
   };
 
   useEffect(() => {
-    const nicknameInput = document.getElementById("nickname");
-    const nicknameInputElement = document.getElementById("nickname-input-box");
-    const techStackInput = document.getElementById("tech");
-
+    document.documentElement.style.overflowY = "hidden";
     switch (currentStepNumber) {
       case SIGNUP_STEP.STEP1.NUMBER:
-        nicknameInput?.scrollIntoView({ behavior: "smooth", block: "center" });
+        inputElementRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
         break;
 
       case SIGNUP_STEP.STEP2.NUMBER:
-        nicknameInputElement?.scrollIntoView({
+        inputElementRef.current?.scrollIntoView({
           behavior: "smooth",
           block: "start",
         });
         break;
 
       case SIGNUP_STEP.STEP3.NUMBER:
-        techStackInput?.scrollIntoView({ behavior: "smooth", block: "center" });
+        positionElementRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
         break;
     }
+
+    return () => {
+      document.documentElement.style.overflowY = "visible";
+    };
   }, [currentStepNumber]);
 
   return (
@@ -88,13 +97,27 @@ const SignupMainSection = ({
       ></div>
       <section className="h-[100%] overflow-y-hidden">
         <NicknameInput
-          {...{ currentStepNumber, setCurrentStep, nicknameRef }}
+          {...{
+            currentStepNumber,
+            setCurrentStep,
+            nicknameValueRef,
+            inputElementRef,
+          }}
         />
         <PositionInput
-          {...{ currentStepNumber, setCurrentStep, positionRef }}
+          {...{
+            currentStepNumber,
+            setCurrentStep,
+            positionValueRef,
+            positionElementRef,
+          }}
         />
         <TechStackInput
-          {...{ setCurrentStep, techRef }}
+          {...{
+            setCurrentStep,
+            techValueRef,
+            currentStepNumber,
+          }}
           onSignupButtonClick={handleSignupButtonClick}
         />
       </section>

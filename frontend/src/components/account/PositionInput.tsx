@@ -2,35 +2,56 @@ import { useEffect } from "react";
 import useDropdown from "../../hooks/common/dropdown/useDropdown";
 import NextStepButton from "../common/NextStepButton";
 import { JOB_INPUT_INFO, SIGNUP_STEP } from "../../constants/account";
+import useWheelDown from "../../hooks/pages/account/useWheelDown";
+import useWheelUp from "../../hooks/pages/account/useWheelUp";
 
 interface JobInputProps {
   currentStepNumber: number;
   setCurrentStep: React.Dispatch<
     React.SetStateAction<{ NUMBER: number; NAME: string }>
   >;
-  positionRef: React.MutableRefObject<string | null>;
+  positionValueRef: React.MutableRefObject<string | null>;
+  positionElementRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 const PositionInput = ({
   currentStepNumber,
   setCurrentStep,
-  positionRef,
+  positionValueRef,
+  positionElementRef,
 }: JobInputProps) => {
   const { Dropdown, selectedOption } = useDropdown({
     placeholder: JOB_INPUT_INFO.PLACEHOLDER,
     options: JOB_INPUT_INFO.OPTIONS,
   });
 
-  const handleNextButtonClick = () => {
+  const goToNextStep = () => {
     setCurrentStep(SIGNUP_STEP.STEP3);
   };
 
+  const goToPrevStep = () => {
+    setCurrentStep(SIGNUP_STEP.STEP1);
+  };
+
   useEffect(() => {
-    positionRef.current = selectedOption;
+    positionValueRef.current = selectedOption;
     if (selectedOption) {
       setCurrentStep(SIGNUP_STEP.STEP3);
     }
   }, [selectedOption]);
+
+  useWheelDown({
+    currentStepNumber,
+    targetStepNumber: SIGNUP_STEP.STEP2.NUMBER,
+    dependency: selectedOption,
+    goToNextStep,
+  });
+
+  useWheelUp({
+    currentStepNumber,
+    targetStepNumber: SIGNUP_STEP.STEP2.NUMBER,
+    goToPrevStep,
+  });
 
   return (
     <div
@@ -43,6 +64,7 @@ const PositionInput = ({
       <div
         id="position-input-box"
         className="min-w-[567px] flex gap-4 items-center"
+        ref={positionElementRef}
       >
         <span className="text-3xl font-semibold text-dark-gray">
           저의 주요 직무는
@@ -58,9 +80,7 @@ const PositionInput = ({
       </div>
       <div className="min-w-[6.875rem] self-end">
         {currentStepNumber !== SIGNUP_STEP.STEP3.NUMBER && selectedOption && (
-          <NextStepButton onNextButtonClick={handleNextButtonClick}>
-            Next
-          </NextStepButton>
+          <NextStepButton onNextButtonClick={goToNextStep}>Next</NextStepButton>
         )}
       </div>
     </div>
