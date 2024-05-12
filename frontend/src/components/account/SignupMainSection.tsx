@@ -58,7 +58,7 @@ const SignupMainSection = ({
   };
 
   useEffect(() => {
-    document.documentElement.style.overflow = "hidden";
+    document.documentElement.style.overflowY = "hidden";
     switch (currentStepNumber) {
       case SIGNUP_STEP.STEP1.NUMBER:
         inputElementRef.current?.scrollIntoView({
