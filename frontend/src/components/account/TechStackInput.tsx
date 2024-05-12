@@ -41,7 +41,7 @@ const TechStackInput = ({
 
   useWheelUp({
     currentStepNumber,
-    targetStepNumber: SIGNUP_STEP.STEP1.NUMBER,
+    targetStepNumber: SIGNUP_STEP.STEP3.NUMBER,
     goToPrevStep,
   });
 

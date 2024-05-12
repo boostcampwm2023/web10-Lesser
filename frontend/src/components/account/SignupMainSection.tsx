@@ -58,7 +58,7 @@ const SignupMainSection = ({
   };
 
   useEffect(() => {
-    document.documentElement.style.overflowY = "hidden";
+    document.documentElement.style.overflow = "hidden";
     switch (currentStepNumber) {
       case SIGNUP_STEP.STEP1.NUMBER:
         inputElementRef.current?.scrollIntoView({
@@ -83,7 +83,7 @@ const SignupMainSection = ({
     }
 
     return () => {
-      document.documentElement.style.overflowY = "visible";
+      document.documentElement.style.overflow = "visible";
     };
   }, [currentStepNumber]);
 
@@ -95,7 +95,7 @@ const SignupMainSection = ({
         }`}
         onClick={handlePrevStepAreaClick}
       ></div>
-      <form className="h-[100%] overflow-y-hidden">
+      <section className="h-[100%] overflow-y-hidden">
         <NicknameInput
           {...{
             currentStepNumber,
@@ -116,7 +116,7 @@ const SignupMainSection = ({
           }}
           onSignupButtonClick={handleSignupButtonClick}
         />
-      </form>
+      </section>
     </main>
   );
 };

@@ -4,14 +4,12 @@ import useDebounce from "../../common/useDebounce";
 interface Params {
   currentStepNumber: number;
   targetStepNumber: number;
-  dependency?: unknown;
   goToPrevStep: () => void;
 }
 
 const useWheelUp = ({
   currentStepNumber,
   targetStepNumber,
-  dependency,
   goToPrevStep,
 }: Params) => {
   const debounce = useDebounce();
@@ -22,9 +20,9 @@ const useWheelUp = ({
       }
 
       debounce(100, () => {
-        const upScrolled = event.deltaY > 0;
+        const upScrolled = event.deltaY < 0;
 
-        if (upScrolled && dependency) {
+        if (upScrolled) {
           goToPrevStep();
         }
       });
@@ -35,7 +33,7 @@ const useWheelUp = ({
     return () => {
       window.removeEventListener("wheel", handleWheelEvent);
     };
-  }, [dependency, currentStepNumber]);
+  }, [currentStepNumber]);
 };
 
 export default useWheelUp;

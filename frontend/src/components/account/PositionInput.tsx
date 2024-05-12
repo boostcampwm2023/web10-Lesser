@@ -40,14 +40,14 @@ const PositionInput = ({
 
   useWheelDown({
     currentStepNumber,
-    targetStepNumber: SIGNUP_STEP.STEP1.NUMBER,
+    targetStepNumber: SIGNUP_STEP.STEP2.NUMBER,
     dependency: selectedOption,
     goToNextStep,
   });
 
   useWheelUp({
     currentStepNumber,
-    targetStepNumber: SIGNUP_STEP.STEP1.NUMBER,
+    targetStepNumber: SIGNUP_STEP.STEP2.NUMBER,
     goToPrevStep,
   });
 

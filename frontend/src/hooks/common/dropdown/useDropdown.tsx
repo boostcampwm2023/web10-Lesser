@@ -62,6 +62,7 @@ const useDropdown = ({
     return (
       <div className="relative">
         <button
+          type="button"
           ref={dropdownRef}
           onClick={handleButtonClick}
           className={`${buttonClassName} ${open && "shadow-none"}`}
