@@ -2,25 +2,33 @@ import { USER_STATUS_WORD, USER_WORD_STATUS } from "../../../constants/landing";
 import UserBlock from "./UserBlock";
 import useDropdown from "../../../hooks/common/dropdown/useDropdown";
 import { memberResponse } from "../../../types/DTO/authDTO";
-import { LandingMemberDTO } from "../../../types/DTO/landingDTO";
+import { LandingMemberDTO, MemberStatus } from "../../../types/DTO/landingDTO";
 import { DEFAULT_MEMBER } from "../../../constants/projects";
+import { useEffect } from "react";
+
+interface LandingMemberProps {
+  member: LandingMemberDTO[];
+  myInfo: LandingMemberDTO;
+  inviteLinkIdRef: React.MutableRefObject<string>;
+  projectTitle: string;
+  memberSocketEvent: {
+    emitMemberStatusUpdate: (content: LandingMemberDTO) => void;
+  };
+}
 
 const LandingMember = ({
   member,
   myInfo,
   inviteLinkIdRef,
   projectTitle,
-}: {
-  member: LandingMemberDTO[];
-  myInfo: LandingMemberDTO;
-  inviteLinkIdRef: React.MutableRefObject<string>;
-  projectTitle: string;
-}) => {
+  memberSocketEvent,
+}: LandingMemberProps) => {
   const { Dropdown, selectedOption } = useDropdown({
     placeholder: "내 상태",
     options: ["접속 중", "부재 중", "자리비움"],
     defaultOption: USER_STATUS_WORD[myInfo.status],
   });
+  const { emitMemberStatusUpdate } = memberSocketEvent;
 
   const userData: memberResponse = JSON.parse(
     window.localStorage.getItem("member") ?? DEFAULT_MEMBER
@@ -40,6 +48,13 @@ const LandingMember = ({
         alert("초대링크가 복사되었습니다.");
       });
   };
+
+  useEffect(() => {
+    emitMemberStatusUpdate({
+      ...myInfo,
+      status: selectedOption as MemberStatus,
+    });
+  }, [selectedOption]);
 
   return (
     <div className="w-full px-6 py-6 overflow-y-scroll rounded-lg shadow-box bg-gradient-to-tr to-light-green-linear-from from-light-green scrollbar-thin scrollbar-thumb-light-green scrollbar-track-transparent scrollbar-thumb-rounded-full">

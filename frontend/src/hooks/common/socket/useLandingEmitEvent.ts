@@ -1,5 +1,9 @@
 import { Socket } from "socket.io-client";
-import { MemoColorType } from "../../../types/common/landing";
+import {
+  LandingSocketMemberAction,
+  MemoColorType,
+} from "../../../types/common/landing";
+import { LandingMemberDTO } from "../../../types/DTO/landingDTO";
 
 const useLandingEmitEvent = (socket: Socket) => {
   const memoSocketEvent = {
@@ -14,7 +18,16 @@ const useLandingEmitEvent = (socket: Socket) => {
     },
   };
 
-  return { memoSocketEvent };
+  const memberSocketEvent = {
+    emitMemberStatusUpdate: (content: LandingMemberDTO) => {
+      socket.emit("member", {
+        action: LandingSocketMemberAction.UPDATE,
+        content,
+      });
+    },
+  };
+
+  return { memoSocketEvent, memberSocketEvent };
 };
 
 export default useLandingEmitEvent;
