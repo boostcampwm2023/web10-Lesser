@@ -1,52 +1,40 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { SIGNUP_STEP } from "../../constants/account";
 import NextStepButton from "../common/NextStepButton";
 import {
   getGithubUsername,
   getNicknameAvailability,
 } from "../../apis/api/signupAPI";
-import useWheelDown from "../../hooks/pages/account/useWheelDown";
 import useDebounce from "../../hooks/common/useDebounce";
+import { SIGNUP_STEP_NUMBER } from "../../constants/account";
 
 interface NicknameInputProps {
   currentStepNumber: number;
-  setCurrentStep: React.Dispatch<
-    React.SetStateAction<{ NUMBER: number; NAME: string }>
-  >;
-  nicknameValueRef: React.MutableRefObject<string>;
-  inputElementRef: React.MutableRefObject<HTMLInputElement | null>;
+  username: string;
+  onUsernameChange: ({ target }: ChangeEvent<HTMLInputElement>) => void;
+  onGoNextStep: () => void;
 }
 
 const NicknameInput = ({
   currentStepNumber,
-  setCurrentStep,
-  nicknameValueRef,
-  inputElementRef,
+  username,
+  onUsernameChange,
+  onGoNextStep,
 }: NicknameInputProps) => {
-  const [inputValue, setInputValue] = useState<string>("");
   const [validated, setValidated] = useState<boolean | null>(null);
   const debounce = useDebounce();
   const location = useLocation();
 
   const goToNextStep = () => {
-    inputElementRef.current?.blur;
-    setCurrentStep(SIGNUP_STEP.STEP2);
+    onGoNextStep();
   };
 
-  useWheelDown({
-    currentStepNumber,
-    targetStepNumber: SIGNUP_STEP.STEP1.NUMBER,
-    dependency: validated,
-    goToNextStep,
-  });
-
   const nicknameAvailabilityCheck = async () => {
-    if (!inputValue) {
+    if (!username) {
       return;
     }
 
-    const available = await getNicknameAvailability(inputValue);
+    const available = await getNicknameAvailability(username);
     if (available) {
       setValidated(true);
     } else {
@@ -54,44 +42,40 @@ const NicknameInput = ({
     }
   };
 
-  const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    const value = target.value.trim();
-    setInputValue(value);
-    nicknameValueRef.current = value;
-  };
-
   const handleEnterDown = ({ key }: React.KeyboardEvent) => {
     if (key === "Enter" && validated) {
-      goToNextStep();
+      onGoNextStep();
     }
   };
-
-  useEffect(() => {
-    setValidated(null);
-    debounce(1000, nicknameAvailabilityCheck);
-  }, [inputValue]);
 
   useEffect(() => {
     const getUsername = async () => {
       const githubUsername = await getGithubUsername(
         location.state.tempIdToken
       );
-      setInputValue(githubUsername);
-      nicknameValueRef.current = githubUsername;
+
+      onUsernameChange(githubUsername);
     };
 
     getUsername();
   }, []);
 
+  useEffect(() => {
+    setValidated(null);
+    debounce(1000, nicknameAvailabilityCheck);
+  }, [username]);
+
   return (
     <div
-      className={`flex gap-[4.375rem] h-[100%] ${
-        currentStepNumber === SIGNUP_STEP.STEP1.NUMBER
-          ? "items-center"
-          : "items-end"
-      }`}
+      className={`w-[100%] flex flex-col justify-end gap-[4.375rem] h-[100%] `}
     >
-      <div className="w-[80%]">
+      <div
+        className={` transition-all ease-in-out duration-1000 ${
+          currentStepNumber === SIGNUP_STEP_NUMBER.STEP1
+            ? "mb-[30%]"
+            : "mb-[-15%]"
+        }`}
+      >
         <label
           className="text-3xl font-semibold text-dark-gray"
           htmlFor="nickname"
@@ -105,13 +89,12 @@ const NicknameInput = ({
               type="text"
               name="nickname"
               id="nickname"
-              ref={inputElementRef}
-              value={inputValue}
+              value={username}
               autoComplete="off"
-              onChange={handleInputChange}
+              onChange={onUsernameChange}
               onKeyDown={handleEnterDown}
               className={`w-[27.5rem] h-[3rem] border-b-2 focus:outline-none focus:border-b-3 font-semibold text-3xl ${
-                inputValue && validated && "border-b-3 border-middle-green "
+                username && validated && "border-b-3 border-middle-green "
               } 
               ${
                 validated !== null && !validated
@@ -128,10 +111,14 @@ const NicknameInput = ({
           <span className="text-3xl font-semibold text-dark-gray">입니다</span>
         </div>
       </div>
-      <div className="min-w-[6.875rem] self-end">
-        {validated && currentStepNumber !== SIGNUP_STEP.STEP2.NUMBER && (
-          <NextStepButton onNextButtonClick={goToNextStep}>Next</NextStepButton>
-        )}
+      <div
+        className={`self-end ${
+          validated && currentStepNumber === SIGNUP_STEP_NUMBER.STEP1
+            ? "visible"
+            : "invisible"
+        }`}
+      >
+        <NextStepButton onNextButtonClick={goToNextStep}>Next</NextStepButton>
       </div>
     </div>
   );
