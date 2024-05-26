@@ -11,6 +11,8 @@ export const SIGNUP_STEP_TEXT = [
   "기술 스택 선택",
 ];
 
+export const MAX_STEP_NUMBER = 3;
+
 export const JOB_INPUT_INFO = {
   PLACEHOLDER: "직업 선택하기",
   OPTIONS: [

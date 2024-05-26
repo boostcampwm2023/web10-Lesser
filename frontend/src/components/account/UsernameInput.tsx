@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import NextStepButton from "../common/NextStepButton";
 import {
@@ -11,22 +11,33 @@ import { SIGNUP_STEP_NUMBER } from "../../constants/account";
 interface NicknameInputProps {
   currentStepNumber: number;
   username: string;
-  onUsernameChange: ({ target }: ChangeEvent<HTMLInputElement>) => void;
+  onUsernameChange: (username: string) => void;
   onGoNextStep: () => void;
+  wheelDownActiveChange: (active: boolean) => void;
 }
 
-const NicknameInput = ({
+const UsernameInput = ({
   currentStepNumber,
   username,
   onUsernameChange,
   onGoNextStep,
+  wheelDownActiveChange,
 }: NicknameInputProps) => {
   const [validated, setValidated] = useState<boolean | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const debounce = useDebounce();
   const location = useLocation();
 
   const goToNextStep = () => {
+    inputRef.current?.blur();
+    wheelDownActiveChange(false);
     onGoNextStep();
+  };
+
+  const handleUsernameChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    wheelDownActiveChange(false);
+    const value = target.value.trim();
+    onUsernameChange(value);
   };
 
   const nicknameAvailabilityCheck = async () => {
@@ -37,6 +48,7 @@ const NicknameInput = ({
     const available = await getNicknameAvailability(username);
     if (available) {
       setValidated(true);
+      wheelDownActiveChange(true);
     } else {
       setValidated(false);
     }
@@ -90,8 +102,9 @@ const NicknameInput = ({
               name="nickname"
               id="nickname"
               value={username}
+              ref={inputRef}
               autoComplete="off"
-              onChange={onUsernameChange}
+              onChange={handleUsernameChange}
               onKeyDown={handleEnterDown}
               className={`w-[27.5rem] h-[3rem] border-b-2 focus:outline-none focus:border-b-3 font-semibold text-3xl ${
                 username && validated && "border-b-3 border-middle-green "
@@ -124,4 +137,4 @@ const NicknameInput = ({
   );
 };
 
-export default NicknameInput;
+export default UsernameInput;

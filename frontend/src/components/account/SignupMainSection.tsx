@@ -1,13 +1,11 @@
-import { ChangeEvent, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { postSignup } from "../../apis/api/signupAPI";
-import NicknameInput from "./NicknameInput";
+import { WheelEvent, useState } from "react";
+import UsernameInput from "./UsernameInput";
 import PositionInput from "./PositionInput";
 import TechStackInput from "./TechStackInput";
-import { ROUTER_URL } from "../../constants/path";
-import { STORAGE_KEY } from "../../constants/storageKey";
 import CreateMainSection from "../common/CreateMainSection";
-import { SignupDTO } from "../../types/DTO/authDTO";
+import { MAX_STEP_NUMBER } from "../../constants/account";
+import useDebounce from "../../hooks/common/useDebounce";
+import useSignupForm from "../../hooks/pages/account/useSignupForm";
 
 interface SignupMainSectionProps {
   currentStepNumber: number;
@@ -20,61 +18,21 @@ const SignupMainSection = ({
   onGoNextStep,
   onGoPrevStep,
 }: SignupMainSectionProps) => {
-  const [signupData, setSignupData] = useState<SignupDTO>({
-    username: "",
-    position: null,
-    techStack: null,
-  });
-  const navigate = useNavigate();
-  const location = useLocation();
-  const MAX_STEP_NUMBER = 3;
+  const {
+    signupData,
+    handleUsernameChange,
+    handlePositionChange,
+    handleAddTechStack,
+    handleDeleteTechStack,
+    handleSignupButtonClick,
+  } = useSignupForm();
+  const [wheelDownActive, setWheelDownActive] = useState(false);
+  const debounce = useDebounce();
 
-  const handlePrevStepAreaClick = () => {
+  const handleGoPrevStep = () => {
     if (currentStepNumber > 1) {
+      setWheelDownActive(true);
       onGoPrevStep();
-    }
-  };
-
-  const handleUsernameChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    const value = target.value.trim();
-    setSignupData({ ...signupData, username: value });
-  };
-
-  const handlePositionChange = (position: string) => {
-    setSignupData({ ...signupData, position });
-  };
-
-  const handleAddTechStack = (techStack: string) => {
-    if (!signupData.techStack) {
-      setSignupData({ ...signupData, techStack: [techStack] });
-      return;
-    }
-
-    if (signupData.techStack.indexOf(techStack) < 0) {
-      const newTechStack = [...signupData.techStack, techStack];
-      setSignupData({ ...signupData, techStack: newTechStack });
-      return;
-    }
-  };
-
-  const handleDeleteTechStack = (techStack: string) => {
-    const newTechStack = [...(signupData.techStack as string[])];
-    const targetIndex = newTechStack.indexOf(techStack);
-    newTechStack.splice(targetIndex, 1);
-    setSignupData({ ...signupData, techStack: newTechStack });
-  };
-
-  const handleSignupButtonClick = async () => {
-    const status = await postSignup({
-      ...signupData,
-      tempIdToken: location.state.tempIdToken,
-    });
-    const redirectURL = sessionStorage.getItem(STORAGE_KEY.REDIRECT);
-
-    if (status === 201) {
-      redirectURL
-        ? navigate(redirectURL, { replace: true })
-        : navigate(ROUTER_URL.PROJECTS, { replace: true });
     }
   };
 
@@ -84,18 +42,39 @@ const SignupMainSection = ({
     }
   };
 
+  const handleWheelUpDown = (event: WheelEvent) => {
+    const direction: "UP" | "DOWN" = event.deltaY > 0 ? "DOWN" : "UP";
+
+    debounce(100, () => {
+      if (direction === "UP") {
+        handleGoPrevStep();
+        return;
+      }
+
+      if (wheelDownActive) {
+        handleGoNextStep();
+      }
+    });
+  };
+
+  const wheelDownActiveChange = (active: boolean) => {
+    setWheelDownActive(active);
+  };
+
   return (
     <CreateMainSection
-      currentStepNumber={currentStepNumber}
-      onPrevStepAreaClick={handlePrevStepAreaClick}
+      {...{ currentStepNumber, wheelDownActive }}
+      onGoPrevStep={handleGoPrevStep}
+      onWheelUpDown={handleWheelUpDown}
     >
-      <NicknameInput
+      <UsernameInput
         {...{
           currentStepNumber,
         }}
         username={signupData.username}
         onUsernameChange={handleUsernameChange}
         onGoNextStep={handleGoNextStep}
+        wheelDownActiveChange={wheelDownActiveChange}
       />
       <PositionInput
         {...{
@@ -103,6 +82,7 @@ const SignupMainSection = ({
         }}
         onPositionChange={handlePositionChange}
         onGoNextStep={handleGoNextStep}
+        wheelDownActiveChange={wheelDownActiveChange}
       />
       <TechStackInput
         {...{

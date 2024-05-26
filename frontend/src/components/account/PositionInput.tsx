@@ -7,12 +7,14 @@ interface JobInputProps {
   currentStepNumber: number;
   onPositionChange: (position: string) => void;
   onGoNextStep: () => void;
+  wheelDownActiveChange: (active: boolean) => void;
 }
 
 const PositionInput = ({
   currentStepNumber,
   onPositionChange,
   onGoNextStep,
+  wheelDownActiveChange,
 }: JobInputProps) => {
   const { Dropdown, selectedOption } = useDropdown({
     placeholder: JOB_INPUT_INFO.PLACEHOLDER,
@@ -20,11 +22,26 @@ const PositionInput = ({
   });
 
   useEffect(() => {
-    onPositionChange(selectedOption);
     if (selectedOption) {
+      onPositionChange(selectedOption);
+      wheelDownActiveChange(true);
       onGoNextStep();
+    } else {
+      wheelDownActiveChange(false);
     }
   }, [selectedOption]);
+
+  useEffect(() => {
+    if (currentStepNumber !== SIGNUP_STEP_NUMBER.STEP2) {
+      return;
+    }
+
+    if (selectedOption) {
+      wheelDownActiveChange(true);
+    } else {
+      wheelDownActiveChange(false);
+    }
+  }, [currentStepNumber]);
 
   return (
     <div

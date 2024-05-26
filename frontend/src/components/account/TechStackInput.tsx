@@ -3,6 +3,7 @@ import TechStackModal from "./TechStackModal";
 import plus from "../../assets/icons/plus.svg";
 import NextStepButton from "../common/NextStepButton";
 import CategoryButton from "../common/CategoryButton";
+import { WheelEvent } from "react";
 
 interface TechStackInputProps {
   currentStepNumber: number;
@@ -22,11 +23,16 @@ const TechStackInput = ({
 
   return (
     <div className="w-[100%] h-[90%] flex flex-col justify-between gap-[4.375rem]">
-      <div className="w-[80%] mt-[20%]">
+      <div className="w-[80%] mt-[23%]">
         <p className="mb-3 text-3xl font-semibold text-dark-gray">
           저의 주요 기술 스택은
         </p>
-        <div className="max-w-[42.5rem] max-h-[10rem] flex flex-wrap gap-3 mb-3 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-track-rounded-full">
+        <div
+          onWheel={(event: WheelEvent) => {
+            event.stopPropagation();
+          }}
+          className="max-w-[42.5rem] max-h-[10rem] flex flex-wrap gap-3 mb-3 overflow-y-auto scrollbar-hide"
+        >
           {techStack?.map((techStack) => (
             <CategoryButton
               category={techStack}
