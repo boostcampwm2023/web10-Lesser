@@ -18,7 +18,7 @@ const CreateMainSection = ({
     className="relative ml-10 pl-7 min-w-[720px] h-[40.5rem] overflow-hidden"
   >
     <div
-      className={`absolute top-0 bg-gradient-to-b from-white to-90% min-w-[100%] min-h-[9.25rem] z-10 ${
+      className={`absolute top-0 bg-gradient-to-b from-white to-99% min-w-[100%] min-h-[6rem] z-10 ${
         currentStepNumber > 1 && "hover:cursor-pointer hover:to-0%"
       }`}
       onClick={onGoPrevStep}
