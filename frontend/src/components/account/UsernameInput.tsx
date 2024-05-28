@@ -13,7 +13,7 @@ interface NicknameInputProps {
   username: string;
   onUsernameChange: (username: string) => void;
   onGoNextStep: () => void;
-  wheelDownActiveChange: (active: boolean) => void;
+  changeWheelDownActive: (active: boolean) => void;
 }
 
 const UsernameInput = ({
@@ -21,7 +21,7 @@ const UsernameInput = ({
   username,
   onUsernameChange,
   onGoNextStep,
-  wheelDownActiveChange,
+  changeWheelDownActive,
 }: NicknameInputProps) => {
   const [validated, setValidated] = useState<boolean | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -30,12 +30,12 @@ const UsernameInput = ({
 
   const goToNextStep = () => {
     inputRef.current?.blur();
-    wheelDownActiveChange(false);
+    changeWheelDownActive(false);
     onGoNextStep();
   };
 
   const handleUsernameChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    wheelDownActiveChange(false);
+    changeWheelDownActive(false);
     const value = target.value.trim();
     onUsernameChange(value);
   };
@@ -48,7 +48,7 @@ const UsernameInput = ({
     const available = await getNicknameAvailability(username);
     if (available) {
       setValidated(true);
-      wheelDownActiveChange(true);
+      changeWheelDownActive(true);
     } else {
       setValidated(false);
     }

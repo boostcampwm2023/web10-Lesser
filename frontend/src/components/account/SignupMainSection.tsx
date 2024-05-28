@@ -1,4 +1,4 @@
-import { WheelEvent, useState } from "react";
+import { WheelEvent } from "react";
 import UsernameInput from "./UsernameInput";
 import PositionInput from "./PositionInput";
 import TechStackInput from "./TechStackInput";
@@ -6,6 +6,7 @@ import CreateMainSection from "../common/CreateMainSection";
 import { MAX_STEP_NUMBER } from "../../constants/account";
 import useDebounce from "../../hooks/common/useDebounce";
 import useSignupForm from "../../hooks/pages/account/useSignupForm";
+import useWheelDownActive from "../../hooks/common/useWheelDownActive";
 
 interface SignupMainSectionProps {
   currentStepNumber: number;
@@ -19,19 +20,19 @@ const SignupMainSection = ({
   onGoPrevStep,
 }: SignupMainSectionProps) => {
   const {
-    signupData,
+    signupData: { username, techStack },
     handleUsernameChange,
     handlePositionChange,
     handleAddTechStack,
     handleDeleteTechStack,
     handleSignupButtonClick,
   } = useSignupForm();
-  const [wheelDownActive, setWheelDownActive] = useState(false);
+  const { wheelDownActive, changeWheelDownActive } = useWheelDownActive();
   const debounce = useDebounce();
 
   const handleGoPrevStep = () => {
     if (currentStepNumber > 1) {
-      setWheelDownActive(true);
+      changeWheelDownActive(true);
       onGoPrevStep();
     }
   };
@@ -57,10 +58,6 @@ const SignupMainSection = ({
     });
   };
 
-  const wheelDownActiveChange = (active: boolean) => {
-    setWheelDownActive(active);
-  };
-
   return (
     <CreateMainSection
       {...{ currentStepNumber, wheelDownActive }}
@@ -68,27 +65,17 @@ const SignupMainSection = ({
       onWheelUpDown={handleWheelUpDown}
     >
       <UsernameInput
-        {...{
-          currentStepNumber,
-        }}
-        username={signupData.username}
+        {...{ username, currentStepNumber, changeWheelDownActive }}
         onUsernameChange={handleUsernameChange}
         onGoNextStep={handleGoNextStep}
-        wheelDownActiveChange={wheelDownActiveChange}
       />
       <PositionInput
-        {...{
-          currentStepNumber,
-        }}
+        {...{ currentStepNumber, changeWheelDownActive }}
         onPositionChange={handlePositionChange}
         onGoNextStep={handleGoNextStep}
-        wheelDownActiveChange={wheelDownActiveChange}
       />
       <TechStackInput
-        {...{
-          currentStepNumber,
-        }}
-        techStack={signupData.techStack}
+        {...{ currentStepNumber, techStack }}
         onAddTechStack={handleAddTechStack}
         onDeleteTechStack={handleDeleteTechStack}
         onSignupButtonClick={handleSignupButtonClick}
