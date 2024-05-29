@@ -19,11 +19,14 @@ import { MemoCreateRequestDto } from './dto/MemoCreateRequest.dto';
 import { MemoDeleteRequestDto } from './dto/MemoDeleteRequest.dto';
 import { InitLandingResponseDto } from './dto/InitLandingResponse.dto';
 import { MemoColorUpdateRequestDto } from './dto/MemoColorUpdateRequest.dto';
+import { MemberUpdateRequestDto } from './dto/MemberUpdateRequest.dto';
+import { MemberStatus } from './enum/MemberStatus.enum';
 
 interface ClientSocket extends Socket {
   projectId?: number;
   project: Project;
   member: Member;
+  status: MemberStatus;
 }
 
 @WebSocketGateway({
@@ -56,13 +59,21 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
 
   @SubscribeMessage('joinLanding')
   async handleJoinLandingEvent(@ConnectedSocket() client: ClientSocket) {
+    client.status = MemberStatus.ON;
     client.join('landing');
-    const [project, memoListWithMember] = await Promise.all([
+    const [project, projectMemberList, memoListWithMember] = await Promise.all([
       this.projectService.getProject(client.projectId),
+      this.projectService.getProjectMemberList(client.project),
       this.projectService.getProjectMemoListWithMember(client.project.id),
     ]);
-    const response = InitLandingResponseDto.of(project, memoListWithMember);
+    const response = InitLandingResponseDto.of(
+      project,
+      client.member,
+      projectMemberList,
+      memoListWithMember,
+    );
     client.emit('landing', response);
+	this.sendMemberStatusUpdate(client);
   }
 
   @SubscribeMessage('memo')
@@ -154,6 +165,34 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
         });
       }
     }
+  }
+
+  @SubscribeMessage('member')
+  async handleMemberEvent(
+    @ConnectedSocket() client: ClientSocket,
+    @MessageBody() data: MemberUpdateRequestDto,
+  ) {
+    const errors = await validate(plainToClass(MemberUpdateRequestDto, data));
+    if (errors.length > 0) {
+      const errorList = this.getRecursiveErrorMsgList(errors);
+      client.emit('error', { errorList });
+      return;
+    }
+    const status = data.content.status;
+    if (status === client.status) return;
+    client.status = status;
+    this.sendMemberStatusUpdate(client);
+  }
+
+  private sendMemberStatusUpdate(client: ClientSocket) {
+    client.nsp.to('landing').emit('landing', {
+      domain: 'member',
+      action: 'update',
+      content: {
+        id: client.member.id,
+        status: client.status,
+      },
+    });
   }
 
   private getRecursiveErrorMsgList(errors: ValidationError[]) {

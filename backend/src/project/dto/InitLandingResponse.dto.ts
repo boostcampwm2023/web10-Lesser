@@ -1,3 +1,4 @@
+import { Member } from 'src/member/entity/member.entity';
 import { Memo, memoColor } from '../entity/memo.entity';
 import { Project } from '../entity/project.entity';
 
@@ -34,19 +35,41 @@ class ProjectDto {
   }
 }
 
+class MemberInfo {
+  id: number;
+  username: string;
+  imageUrl: string;
+  status: string;
+  static of(member: Member, status: string) {
+    const newMemberInfo = new MemberInfo();
+    newMemberInfo.id = member.id;
+    newMemberInfo.username = member.username;
+    newMemberInfo.imageUrl = member.github_image_url;
+    newMemberInfo.status = status;
+    return newMemberInfo;
+  }
+}
+
 class ProjectLandingPageContentDto {
   project: ProjectDto;
-  myInfo: {};
-  member: [];
+  myInfo: MemberInfo;
+  member: MemberInfo[];
   sprint: null;
   memoList: MemoDto[];
   link: [];
   inviteLinkId: string;
-  static of(project: Project, memoListWithMember: Memo[]) {
+  static of(
+    project: Project,
+    myInfo: Member,
+    projectMemberList: Member[],
+    memoListWithMember: Memo[],
+  ) {
     const dto = new ProjectLandingPageContentDto();
     dto.project = ProjectDto.of(project);
-    dto.myInfo = {};
-    dto.member = [];
+    dto.myInfo = MemberInfo.of(myInfo, 'off');
+    dto.member = projectMemberList
+      .filter((member) => member.id !== myInfo.id)
+      .map((member) => MemberInfo.of(member, 'off'));
     dto.sprint = null;
     const memoList = memoListWithMember.map((memo) => MemoDto.of(memo));
     dto.memoList = memoList;
@@ -61,11 +84,21 @@ export class InitLandingResponseDto {
   action: string;
   content: ProjectLandingPageContentDto;
 
-  static of(project: Project, memoListWithMember: Memo[]) {
+  static of(
+    project: Project,
+    myInfo: Member,
+    projectMemberList: Member[],
+    memoListWithMember: Memo[],
+  ) {
     const dto = new InitLandingResponseDto();
     dto.domain = 'landing';
     dto.action = 'init';
-    dto.content = ProjectLandingPageContentDto.of(project, memoListWithMember);
+    dto.content = ProjectLandingPageContentDto.of(
+      project,
+      myInfo,
+      projectMemberList,
+      memoListWithMember,
+    );
     return dto;
   }
 }
