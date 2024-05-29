@@ -2,6 +2,7 @@ import MemoEditor from "./MemoEditor";
 import { LandingMemoDTO } from "../../../types/DTO/landingDTO";
 import { MemoColorStyle, MemoColorType } from "../../../types/common/landing";
 import useLandingMemo from "../../../hooks/common/landing/useLandingMemo";
+import { useEffect } from "react";
 
 interface MemoBlockProps extends LandingMemoDTO {
   emitMemoDeleteEvent: (id: number) => void;
@@ -29,6 +30,10 @@ const MemoBlock = ({
     handleTitleChange,
   } = useLandingMemo(title, content, color);
   const colorStyle = MemoColorStyle[memoColor];
+
+  useEffect(() => {
+    console.log(color);
+  }, [color]);
 
   return (
     <div
