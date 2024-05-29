@@ -31,6 +31,10 @@ export class ProjectService {
     await this.projectRepository.addProjectMember(project, member);
   }
 
+  async getProjectMemberList(project: Project) {
+    return this.projectRepository.getProjectMemberList(project);
+  }
+
   async isProjectMember(project: Project, member: Member): Promise<boolean> {
     const projectToMember: ProjectToMember | null =
       await this.projectRepository.getProjectToMember(project, member);
