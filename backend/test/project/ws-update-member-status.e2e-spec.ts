@@ -1,4 +1,3 @@
-import { Socket } from 'socket.io-client';
 import {
   app,
   appInit,
@@ -40,12 +39,12 @@ describe('WS update member status', () => {
       await joinProject(accessToken2, projectLinkId);
 
       socket1 = connectServer(project.id, accessToken);
-	  handleConnectErrorWithReject(socket1, reject);
+      handleConnectErrorWithReject(socket1, reject);
       await emitJoinLanding(socket1);
       const memberId = await initLandingAndReturnId(socket1);
 
       socket2 = connectServer(project.id, accessToken2);
-	  handleConnectErrorWithReject(socket2, reject);
+      handleConnectErrorWithReject(socket2, reject);
       await emitJoinLanding(socket2);
       const memberId2 = await initLandingAndReturnId(socket2);
       await expectUpdatedMemberStatus(socket1, 'on', memberId2);
