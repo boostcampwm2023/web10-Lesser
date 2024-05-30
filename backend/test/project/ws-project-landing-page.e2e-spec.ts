@@ -40,6 +40,10 @@ describe('WS landing', () => {
         expect(content.project.subject).toBe(projectPayload.subject);
         expect(content.project.createdAt).toBeDefined();
         expect(content.myInfo).toBeDefined();
+		expect(content.myInfo.id).toBeDefined();
+		expect(content.myInfo.username).toBe(memberFixture.username);
+		expect(content.myInfo.imageUrl).toBe(memberFixture.github_image_url);
+		expect(content.myInfo.status).toBe('off');
         expect(content.member).toBeDefined();
         expect(content.sprint).toBeDefined();
         expect(content.memoList).toBeDefined();

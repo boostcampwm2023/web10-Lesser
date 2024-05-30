@@ -27,6 +27,7 @@ describe('ProjectService', () => {
             getProjectMemoListWithMember: jest.fn(),
             updateMemoColor: jest.fn(),
             findMemoById: jest.fn(),
+            getProjectMemberList: jest.fn(),
           },
         },
       ],
@@ -115,6 +116,18 @@ describe('ProjectService', () => {
       await expect(
         async () => await projectService.addMember(project, member),
       ).rejects.toThrow('already joined member');
+    });
+  });
+
+  describe('Get project member list', () => {
+    it('should return project member', async () => {
+      jest
+        .spyOn(projectRepository, 'getProjectMemberList')
+        .mockResolvedValue([member]);
+      const [title, subject] = ['title', 'subject'];
+      const project = Project.of(title, subject);
+      const memberList = await projectService.getProjectMemberList(project);
+      expect(memberList[0]).toEqual(member);
     });
   });
 

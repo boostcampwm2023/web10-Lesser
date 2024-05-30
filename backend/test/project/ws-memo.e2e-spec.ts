@@ -11,6 +11,7 @@ import {
   memberFixture2,
   projectPayload,
 } from 'test/setup';
+import { emitJoinLanding, initLanding } from './ws-common';
 
 describe('WS memo', () => {
   beforeEach(async () => {
@@ -167,8 +168,12 @@ describe('WS memo', () => {
 
     const expectCreateMemo = (socket, author, color) => {
       return new Promise<void>((res) => {
-        socket.on('landing', (data) => {
+        socket.on('landing', async (data) => {
           const { content, action, domain } = data;
+          if (domain !== 'memo' || action !== 'create') {
+            res(await expectCreateMemo(socket, author, color));
+            return;
+          }
           expect(domain).toBe('memo');
           expect(action).toBe('create');
           expect(content).toBeDefined();
@@ -222,6 +227,7 @@ describe('WS memo', () => {
           getCreatedMemoId(socket1),
           getCreatedMemoId(socket2),
         ]);
+
         const deleteMemoId = id1;
 
         // 메모 삭제 테스트
@@ -229,6 +235,7 @@ describe('WS memo', () => {
           action: 'delete',
           content: { id: deleteMemoId },
         };
+
         socket1.emit('memo', deleteRequestData);
         await Promise.all([
           expectDeleteMemo(socket1, deleteMemoId),
@@ -269,8 +276,12 @@ describe('WS memo', () => {
 
     const expectDeleteMemo = (socket, deleteMemoId) => {
       return new Promise<void>((resolve) => {
-        socket.on('landing', (data) => {
+        socket.on('landing', async (data) => {
           const { domain, action, content } = data;
+          if (domain !== 'memo' || action !== 'delete') {
+            resolve(await expectDeleteMemo(socket, deleteMemoId));
+            return;
+          }
           expect(domain).toBe('memo');
           expect(action).toBe('delete');
           expect(content).toBeDefined();
@@ -341,8 +352,18 @@ describe('WS memo', () => {
 
     const expectUpdateColorMemo = (socket, updateColorMemoId, updateColor) => {
       return new Promise<void>((resolve) => {
-        socket.on('landing', (data) => {
+        socket.on('landing', async (data) => {
           const { domain, action, content } = data;
+          if (domain !== 'memo' || action !== 'colorUpdate') {
+            resolve(
+              await expectUpdateColorMemo(
+                socket,
+                updateColorMemoId,
+                updateColor,
+              ),
+            );
+            return;
+          }
           expect(domain).toBe('memo');
           expect(action).toBe('colorUpdate');
           expect(content).toBeDefined();
@@ -382,32 +403,14 @@ describe('WS memo', () => {
   });
   const getCreatedMemoId = (socket) => {
     return new Promise<number>((resolve) => {
-      socket.on('landing', (data) => {
-        const { content } = data;
+      socket.on('landing', async (data) => {
+        const { action, content, domain } = data;
+        if (action !== 'create' || domain !== 'memo') {
+          resolve(await getCreatedMemoId(socket));
+          return;
+        }
         socket.off('landing');
         resolve(content.id);
-      });
-    });
-  };
-
-  const emitJoinLanding = (socket) => {
-    return new Promise<void>((res, rej) => {
-      socket.on('connect', () => {
-        socket.emit('joinLanding');
-        socket.off('connect');
-        res();
-      });
-    });
-  };
-
-  const initLanding = (socket) => {
-    return new Promise<void>((res, rej) => {
-      socket.on('landing', (data) => {
-        const { action, content, domain } = data;
-        if (action === 'init') {
-          socket.off('landing');
-          res();
-        }
       });
     });
   };
