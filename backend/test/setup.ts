@@ -96,7 +96,7 @@ export const getProjectLinkId = async (
     });
     socket.on('landing', (data) => {
       const { content } = data;
-      projectLinkId = projectLinkId = content.inviteLinkId;
+      projectLinkId = content.inviteLinkId;
       resolve();
     });
   });
