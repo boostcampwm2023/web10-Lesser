@@ -60,7 +60,6 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
   @SubscribeMessage('joinLanding')
   async handleJoinLandingEvent(@ConnectedSocket() client: ClientSocket) {
     client.status = MemberStatus.ON;
-    client.join('landing');
     const [project, projectMemberList, memoListWithMember] = await Promise.all([
       this.projectService.getProject(client.projectId),
       this.projectService.getProjectMemberList(client.project),
@@ -73,7 +72,8 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
       memoListWithMember,
     );
     client.emit('landing', response);
-	this.sendMemberStatusUpdate(client);
+    this.sendMemberStatusUpdate(client);
+    client.join('landing');
   }
 
   @SubscribeMessage('memo')
