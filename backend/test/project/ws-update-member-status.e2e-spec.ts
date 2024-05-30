@@ -1,4 +1,3 @@
-import { Socket } from 'socket.io-client';
 import {
   app,
   appInit,
@@ -13,8 +12,9 @@ import {
 } from 'test/setup';
 import {
   emitJoinLanding,
-  waitLandingAndStatusMsgAndReturnId,
-  waitStatusMsg,
+  initLandingAndReturnId,
+  expectUpdatedMemberStatus,
+  handleConnectErrorWithReject,
 } from './ws-common';
 
 describe('WS update member status', () => {
@@ -39,22 +39,15 @@ describe('WS update member status', () => {
       await joinProject(accessToken2, projectLinkId);
 
       socket1 = connectServer(project.id, accessToken);
+      handleConnectErrorWithReject(socket1, reject);
       await emitJoinLanding(socket1);
-      const memberId = await waitLandingAndStatusMsgAndReturnId(
-        socket1,
-        false,
-        false,
-      );
+      const memberId = await initLandingAndReturnId(socket1);
 
       socket2 = connectServer(project.id, accessToken2);
-
+      handleConnectErrorWithReject(socket2, reject);
       await emitJoinLanding(socket2);
-      const memberId2 = await waitLandingAndStatusMsgAndReturnId(
-        socket2,
-        false,
-        false,
-      );
-      await waitStatusMsg(socket1, memberId2);
+      const memberId2 = await initLandingAndReturnId(socket2);
+      await expectUpdatedMemberStatus(socket1, 'on', memberId2);
 
       const status = 'away';
       const requestData = {
@@ -80,23 +73,6 @@ describe('WS update member status', () => {
       socket2.close();
     });
   });
-
-  const expectUpdatedMemberStatus = (socket, status, memberId) => {
-    return new Promise<void>((resolve) => {
-      socket.on('landing', async (data) => {
-        const { content, action, domain } = data;
-        if (domain === 'member' && action === 'update') {
-          expect(domain).toBe('member');
-          expect(action).toBe('update');
-          expect(content).toBeDefined();
-          expect(content.id).toBe(memberId);
-          expect(content.status).toBe(status);
-          socket.off('landing');
-          resolve();
-        }
-      });
-    });
-  };
 
   //이미 접속중인 경우 update를 하지 않고 무시함
   //데이터의 형식이 잘못됨
