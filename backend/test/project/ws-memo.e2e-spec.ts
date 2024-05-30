@@ -11,7 +11,13 @@ import {
   memberFixture2,
   projectPayload,
 } from 'test/setup';
-import { emitJoinLanding, initLanding } from './ws-common';
+import {
+  emitJoinLanding,
+  expectUpdatedMemberStatus,
+  handleConnectErrorWithReject,
+  initLanding,
+  initLandingAndReturnId,
+} from './ws-common';
 
 describe('WS memo', () => {
   beforeEach(async () => {
@@ -36,12 +42,15 @@ describe('WS memo', () => {
         await joinProject(accessToken2, projectLinkId);
 
         socket1 = connectServer(project.id, accessToken);
+		handleConnectErrorWithReject(socket1, reject);
         await emitJoinLanding(socket1);
         await initLanding(socket1);
 
         socket2 = connectServer(project.id, accessToken2);
+		handleConnectErrorWithReject(socket2, reject);
         await emitJoinLanding(socket2);
-        await initLanding(socket2);
+        const memberId2 = await initLandingAndReturnId(socket2);
+        await expectUpdatedMemberStatus(socket1, 'on', memberId2);
 
         const requestData = {
           action: 'create',
@@ -167,24 +176,25 @@ describe('WS memo', () => {
     });
 
     const expectCreateMemo = (socket, author, color) => {
-      return new Promise<void>((res) => {
+      return new Promise<void>((resolve, reject) => {
         socket.on('landing', async (data) => {
           const { content, action, domain } = data;
-          if (domain !== 'memo' || action !== 'create') {
-            res(await expectCreateMemo(socket, author, color));
+          if (domain === 'memo' && action === 'create') {
+            expect(domain).toBe('memo');
+            expect(action).toBe('create');
+            expect(content).toBeDefined();
+            expect(content.id).toBeDefined();
+            expect(content.title).toBeDefined();
+            expect(content.content).toBeDefined();
+            expect(content.createdAt).toBeDefined();
+            expect(content.author).toBe(author);
+            expect(content.color).toBe(color);
+            socket.off('landing');
+            resolve();
             return;
+          } else {
+            reject();
           }
-          expect(domain).toBe('memo');
-          expect(action).toBe('create');
-          expect(content).toBeDefined();
-          expect(content.id).toBeDefined();
-          expect(content.title).toBeDefined();
-          expect(content.content).toBeDefined();
-          expect(content.createdAt).toBeDefined();
-          expect(content.author).toBe(author);
-          expect(content.color).toBe(color);
-          socket.off('landing');
-          res();
         });
       });
     };
@@ -401,6 +411,7 @@ describe('WS memo', () => {
       });
     });
   });
+
   const getCreatedMemoId = (socket) => {
     return new Promise<number>((resolve) => {
       socket.on('landing', async (data) => {

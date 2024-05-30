@@ -8,6 +8,11 @@ import {
   memberFixture,
   projectPayload,
 } from 'test/setup';
+import {
+  emitJoinLanding,
+  handleConnectErrorWithReject,
+  initLanding,
+} from './ws-common';
 
 describe('WS landing', () => {
   let socket: Socket;
@@ -32,6 +37,8 @@ describe('WS landing', () => {
         socket.emit('joinLanding');
       });
 
+      handleConnectErrorWithReject(socket, reject);
+
       socket.on('landing', (data) => {
         const { action, domain, content } = data;
         expect(domain).toBe('landing');
@@ -40,10 +47,10 @@ describe('WS landing', () => {
         expect(content.project.subject).toBe(projectPayload.subject);
         expect(content.project.createdAt).toBeDefined();
         expect(content.myInfo).toBeDefined();
-		expect(content.myInfo.id).toBeDefined();
-		expect(content.myInfo.username).toBe(memberFixture.username);
-		expect(content.myInfo.imageUrl).toBe(memberFixture.github_image_url);
-		expect(content.myInfo.status).toBe('off');
+        expect(content.myInfo.id).toBeDefined();
+        expect(content.myInfo.username).toBe(memberFixture.username);
+        expect(content.myInfo.imageUrl).toBe(memberFixture.github_image_url);
+        expect(content.myInfo.status).toBe('off');
         expect(content.member).toBeDefined();
         expect(content.sprint).toBeDefined();
         expect(content.memoList).toBeDefined();
@@ -51,8 +58,6 @@ describe('WS landing', () => {
         expect(content.inviteLinkId).toBeDefined();
         resolve();
       });
-
-      handleConnectErrorWithReject(socket, reject);
     });
   });
 
@@ -64,6 +69,7 @@ describe('WS landing', () => {
       //메모 생성
       socket = connectServer(project.id, accessToken);
       handleConnectErrorWithReject(socket, reject);
+
       await emitJoinLanding(socket);
       await initLanding(socket);
       const requestData = {
@@ -98,34 +104,6 @@ describe('WS landing', () => {
     });
   });
 });
-
-const handleConnectErrorWithReject = (socket, reject) => {
-  socket.on('connect_error', () => {
-    reject('connect_error fail');
-  });
-};
-
-const emitJoinLanding = (socket) => {
-  return new Promise<void>((res, rej) => {
-    socket.on('connect', () => {
-      socket.emit('joinLanding');
-      socket.off('connect');
-      res();
-    });
-  });
-};
-
-const initLanding = (socket) => {
-  return new Promise<void>((res, rej) => {
-    socket.on('landing', (data) => {
-      const { action } = data;
-      if (action === 'init') {
-        socket.off('landing');
-        res();
-      }
-    });
-  });
-};
 
 const getCreateMemoMsg = (socket) => {
   return new Promise<void>((res) => {
