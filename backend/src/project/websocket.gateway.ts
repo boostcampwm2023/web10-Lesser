@@ -72,8 +72,18 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
       memoListWithMember,
     );
     client.emit('landing', response);
-    this.sendMemberStatusUpdate(client);
     client.join('landing');
+    client.nsp
+      .to('landing')
+      .except(client.id)
+      .emit('landing', {
+        domain: 'member',
+        action: 'update',
+        content: {
+          id: client.member.id,
+          status: client.status,
+        },
+      });
   }
 
   @SubscribeMessage('memo')
