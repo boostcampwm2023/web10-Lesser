@@ -15,24 +15,25 @@ import {
   LandingSocketMemberAction,
   LandingSocketMemoAction,
 } from "../../../types/common/landing";
+import useMemberStore from "../../../stores/useMemberStore";
 
 const useLandingSocket = (socket: Socket) => {
   const [project, setProject] = useState<LandingProjectDTO>(
     DEFAULT_VALUE.PROJECT
   );
-  const [myInfo, setMyInfo] = useState<LandingMemberDTO>(DEFAULT_VALUE.MY_INFO);
-  const [member, setMember] = useState<LandingMemberDTO[]>([]);
   const [sprint, setSprint] = useState<LandingSprintDTO | null>(null);
   const [memoList, setMemoList] = useState<LandingMemoDTO[]>([]);
   const [link, setLink] = useState<LandingLinkDTO[]>([]);
+  const { myInfo, memberList, updateMyInfo, updateMemberList, addMember } =
+    useMemberStore();
   const inviteLinkIdRef = useRef<string>("");
 
   const handleInitEvent = (content: LandingDTO) => {
     const { project, myInfo, member, sprint, memoList, link, inviteLinkId } =
       content as LandingDTO;
     setProject(project);
-    setMyInfo(myInfo);
-    setMember(member);
+    updateMyInfo(myInfo);
+    updateMemberList(member);
     setSprint(sprint);
     setMemoList(memoList);
     setLink(link);
@@ -71,12 +72,12 @@ const useLandingSocket = (socket: Socket) => {
   ) => {
     switch (action) {
       case LandingSocketMemberAction.CREATE: {
-        setMember((memberList) => [...memberList, content as LandingMemberDTO]);
+        addMember(content as LandingMemberDTO);
 
         break;
       }
       case LandingSocketMemberAction.UPDATE: {
-        setMember((memberList) =>
+        updateMemberList(
           memberList.map((member) => {
             if (member.id === content.id) {
               member.status = (content as LandingMemberDTO).status;
@@ -89,9 +90,7 @@ const useLandingSocket = (socket: Socket) => {
         break;
       }
       case LandingSocketMemberAction.DELETE: {
-        setMember((memberList) =>
-          memberList.filter(({ id }) => id !== content.id)
-        );
+        updateMemberList(memberList.filter(({ id }) => id !== content.id));
 
         break;
       }
@@ -124,7 +123,7 @@ const useLandingSocket = (socket: Socket) => {
   return {
     project,
     myInfo,
-    member,
+    memberList,
     sprint,
     memoList,
     link,

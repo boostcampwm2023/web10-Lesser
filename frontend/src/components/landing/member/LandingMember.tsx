@@ -7,7 +7,7 @@ import { DEFAULT_MEMBER } from "../../../constants/projects";
 import { useEffect } from "react";
 
 interface LandingMemberProps {
-  member: LandingMemberDTO[];
+  memberList: LandingMemberDTO[];
   myInfo: LandingMemberDTO;
   inviteLinkIdRef: React.MutableRefObject<string>;
   projectTitle: string;
@@ -17,7 +17,7 @@ interface LandingMemberProps {
 }
 
 const LandingMember = ({
-  member,
+  memberList,
   myInfo,
   inviteLinkIdRef,
   projectTitle,
@@ -83,7 +83,7 @@ const LandingMember = ({
             초대링크 복사
           </button>
         </div>
-        {member.map((memberData: LandingMemberDTO) => (
+        {memberList.map((memberData: LandingMemberDTO) => (
           <UserBlock {...memberData} key={memberData.id} />
         ))}
       </div>
