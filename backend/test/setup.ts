@@ -91,10 +91,10 @@ export const getProjectLinkId = async (
   let projectLinkId;
   const socket = connectServer(projectId, accessToken);
   await new Promise<void>((resolve) => {
-    socket.on('connect', () => {
+    socket.once('connect', () => {
       socket.emit('joinLanding');
     });
-    socket.on('landing', (data) => {
+    socket.once('landing', (data) => {
       const { content } = data;
       projectLinkId = content.inviteLinkId;
       resolve();
