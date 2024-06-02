@@ -23,7 +23,7 @@ import { MemoColorUpdateRequestDto } from './dto/MemoColorUpdateRequest.dto';
 import { MemberUpdateRequestDto } from './dto/MemberUpdateRequest.dto';
 import { MemberStatus } from './enum/MemberStatus.enum';
 
-interface ClientSocket extends Socket {
+export interface ClientSocket extends Socket {
   projectId?: number;
   project: Project;
   member: Member;
@@ -73,9 +73,14 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
       this.projectService.getProjectMemberList(client.project),
       this.projectService.getProjectMemoListWithMember(client.project.id),
     ]);
+    const projectSocketList: ClientSocket[] =
+      (await client.nsp.fetchSockets()) as unknown as ClientSocket[];
+
     const response = InitLandingResponseDto.of(
       project,
       client.member,
+      MemberStatus.ON,
+      projectSocketList,
       projectMemberList,
       memoListWithMember,
     );

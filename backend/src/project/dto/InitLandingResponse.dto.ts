@@ -1,6 +1,8 @@
 import { Member } from 'src/member/entity/member.entity';
 import { Memo, memoColor } from '../entity/memo.entity';
 import { Project } from '../entity/project.entity';
+import { MemberStatus } from '../enum/MemberStatus.enum';
+import { ClientSocket } from '../websocket.gateway';
 
 class MemoDto {
   id: number;
@@ -26,6 +28,7 @@ class ProjectDto {
   title: string;
   subject: string;
   createdAt: Date;
+
   static of(project: Project) {
     const dto = new ProjectDto();
     dto.title = project.title;
@@ -39,8 +42,9 @@ class MemberInfo {
   id: number;
   username: string;
   imageUrl: string;
-  status: string;
-  static of(member: Member, status: string) {
+  status: MemberStatus;
+
+  static of(member: Member, status: MemberStatus) {
     const newMemberInfo = new MemberInfo();
     newMemberInfo.id = member.id;
     newMemberInfo.username = member.username;
@@ -58,18 +62,27 @@ class ProjectLandingPageContentDto {
   memoList: MemoDto[];
   link: [];
   inviteLinkId: string;
+
   static of(
     project: Project,
     myInfo: Member,
+    status: MemberStatus,
+    projectSocketList: ClientSocket[],
     projectMemberList: Member[],
     memoListWithMember: Memo[],
   ) {
     const dto = new ProjectLandingPageContentDto();
     dto.project = ProjectDto.of(project);
-    dto.myInfo = MemberInfo.of(myInfo, 'off');
+    dto.myInfo = MemberInfo.of(myInfo, status);
     dto.member = projectMemberList
       .filter((member) => member.id !== myInfo.id)
-      .map((member) => MemberInfo.of(member, 'off'));
+      .map((member) => {
+        const socket = projectSocketList.find(
+          (socket) => socket.member.id === member.id,
+        );
+        if (socket) return MemberInfo.of(member, socket.status);
+        else return MemberInfo.of(member, MemberStatus.OFF);
+      });
     dto.sprint = null;
     const memoList = memoListWithMember.map((memo) => MemoDto.of(memo));
     dto.memoList = memoList;
@@ -87,6 +100,8 @@ export class InitLandingResponseDto {
   static of(
     project: Project,
     myInfo: Member,
+    status: MemberStatus,
+    projectSocketList: ClientSocket[],
     projectMemberList: Member[],
     memoListWithMember: Memo[],
   ) {
@@ -96,6 +111,8 @@ export class InitLandingResponseDto {
     dto.content = ProjectLandingPageContentDto.of(
       project,
       myInfo,
+      status,
+      projectSocketList,
       projectMemberList,
       memoListWithMember,
     );
