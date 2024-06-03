@@ -204,7 +204,6 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
   }
 
   notifyJoinToConnectedMembers(projectId: number, member: Member) {
-    if (!this.namespaceMap.has(projectId)) return;
     const projectNamespace = this.namespaceMap.get(projectId);
     if (!projectNamespace) return;
     const requestMsg = {
