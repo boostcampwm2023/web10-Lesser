@@ -1,17 +1,25 @@
 import { Socket } from 'socket.io-client';
 
-export const handleConnectErrorWithReject = (socket, reject) => {
+export const handleConnectErrorWithReject = (
+  socket: Socket,
+  reject: Function,
+) => {
   socket.on('connect_error', () => {
     reject('connect_error fail');
+  });
+};
+
+export const handleErrorWithReject = (socket: Socket, reject: Function) => {
+  socket.on('error', (e) => {
+    reject(e);
   });
 };
 
 //웹소켓 연결시 랜딩페이지 접속
 export const emitJoinLanding = (socket: Socket) => {
   return new Promise<void>((resolve) => {
-    socket.on('connect', () => {
+    socket.once('connect', () => {
       socket.emit('joinLanding');
-      socket.off('connect');
       resolve();
     });
   });
@@ -20,10 +28,9 @@ export const emitJoinLanding = (socket: Socket) => {
 //랜딩페이지 메시지
 export const initLanding = (socket: Socket) => {
   return new Promise<void>((resolve, reject) => {
-    socket.on('landing', async (data) => {
+    socket.once('landing', async (data) => {
       const { action, domain } = data;
       if (action === 'init' && domain === 'landing') {
-        socket.off('landing');
         resolve();
       } else reject();
     });
@@ -33,12 +40,49 @@ export const initLanding = (socket: Socket) => {
 //랜딩페이지 메시지
 export const initLandingAndReturnId = (socket: Socket) => {
   return new Promise<number>((resolve, reject) => {
-    socket.on('landing', async (data) => {
+    socket.once('landing', async (data) => {
       const { action, content, domain } = data;
       if (action === 'init' && domain === 'landing') {
-        socket.off('landing');
         const id = content.myInfo.id;
         resolve(id);
+      } else reject(data);
+    });
+  });
+};
+
+export const expectProjectJoinMsgAndReturnJoinedId = (
+  socket: Socket,
+  username: string,
+  imageUrl: string,
+) => {
+  return new Promise<number>((resolve, reject) => {
+    socket.once('landing', async (data) => {
+      const { action, content, domain } = data;
+      if (action === 'create' && domain === 'member') {
+        expect(content.username).toBe(username);
+        expect(content.imageUrl).toBe(imageUrl);
+        expect(content.status).toBe('off');
+        const joinedMemberId = content.id;
+        resolve(joinedMemberId);
+      } else reject();
+    });
+  });
+};
+
+export const returnJoinedIdAndJoinProject = (
+  socket: Socket,
+  username: string,
+  imageUrl: string,
+) => {
+  return new Promise<number>((resolve, reject) => {
+    socket.once('landing', async (data) => {
+      const { action, content, domain } = data;
+      if (action === 'create' && domain === 'member') {
+        expect(content.username).toBe(username);
+        expect(content.imageUrl).toBe(imageUrl);
+        expect(content.status).toBe('off');
+        const joinedMemberId = content.id;
+        resolve(joinedMemberId);
       } else reject();
     });
   });
@@ -50,7 +94,7 @@ export const expectUpdatedMemberStatus = (
   memberId: number,
 ) => {
   return new Promise<void>((resolve, reject) => {
-    socket.on('landing', async (data) => {
+    socket.once('landing', async (data) => {
       const { content, action, domain } = data;
       if (domain === 'member' && action === 'update') {
         expect(domain).toBe('member');
@@ -58,7 +102,6 @@ export const expectUpdatedMemberStatus = (
         expect(content).toBeDefined();
         expect(content.id).toBe(memberId);
         expect(content.status).toBe(status);
-        socket.off('landing');
         resolve();
       } else {
         reject();
@@ -73,8 +116,7 @@ export const waitLandingAndStatusMsgAndReturnId = (
   isUpdateStatusMsg: boolean,
 ) => {
   return new Promise<void>((resolve, reject) => {
-    socket.on('landing', async (data) => {
-      socket.off('landing');
+    socket.once('landing', async (data) => {
       const { action, content, domain } = data;
       if (action === 'init' && domain === 'landing') {
         if (!isUpdateStatusMsg) {

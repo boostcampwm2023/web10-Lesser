@@ -8,7 +8,8 @@ import {
 } from '@nestjs/websockets';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { Server, Socket } from 'socket.io';
+import { Namespace, Socket } from 'socket.io';
+
 import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { Member } from 'src/member/entity/member.entity';
 import { Project } from './entity/project.entity';
@@ -39,13 +40,20 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
     private readonly lesserJwtService: LesserJwtService,
     private readonly memberRepository: MemberRepository,
     private readonly memberService: MemberService,
-  ) {}
+  ) {
+    this.namespaceMap = new Map();
+  }
 
-  afterInit(server: Server) {
-    server.use(async (client: ClientSocket, next) => {
+  namespaceMap: Map<number, Namespace>;
+
+  afterInit(parentNamespace: any) {
+    parentNamespace.use(async (client: ClientSocket, next) => {
       try {
         await this.authentication(client);
         await this.projectAuthorization(client);
+
+        if (!this.namespaceMap.has(client.projectId))
+          this.namespaceMap.set(client.projectId, client.nsp);
       } catch (error) {
         if (error.message === 'Failed to verify token: access')
           error.message = 'Expired:accessToken';
@@ -73,6 +81,7 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
     );
     client.emit('landing', response);
     client.join('landing');
+
     client.nsp
       .to('landing')
       .except(client.id)
@@ -192,6 +201,22 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
     if (status === client.status) return;
     client.status = status;
     this.sendMemberStatusUpdate(client);
+  }
+
+  notifyJoinToConnectedMembers(projectId: number, member: Member) {
+    const projectNamespace = this.namespaceMap.get(projectId);
+    if (!projectNamespace) return;
+    const requestMsg = {
+      domain: 'member',
+      action: 'create',
+      content: {
+        id: member.id,
+        username: member.username,
+        imageUrl: member.github_image_url,
+        status: 'off',
+      },
+    };
+    projectNamespace.to('landing').emit('landing', requestMsg);
   }
 
   private sendMemberStatusUpdate(client: ClientSocket) {
