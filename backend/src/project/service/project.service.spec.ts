@@ -100,6 +100,10 @@ describe('ProjectService', () => {
         .spyOn(projectRepository, 'getProjectToMember')
         .mockResolvedValue(null);
 
+      jest
+        .spyOn(projectRepository, 'getProjectMemberList')
+        .mockResolvedValue([]);
+
       await projectService.addMember(project, member);
 
       expect(projectRepository.addProjectMember).toHaveBeenCalledWith(
@@ -113,9 +117,23 @@ describe('ProjectService', () => {
         .spyOn(projectRepository, 'getProjectToMember')
         .mockResolvedValue(ProjectToMember.of(project, member));
 
+      jest
+        .spyOn(projectRepository, 'getProjectMemberList')
+        .mockResolvedValue([member]);
+
       await expect(
         async () => await projectService.addMember(project, member),
       ).rejects.toThrow('already joined member');
+    });
+
+    it('should throw when Project is full', async () => {
+      jest
+        .spyOn(projectRepository, 'getProjectMemberList')
+        .mockResolvedValue(new Array(10).fill(member));
+
+      await expect(
+        async () => await projectService.addMember(project, member),
+      ).rejects.toThrow('Project is full');
     });
   });
 

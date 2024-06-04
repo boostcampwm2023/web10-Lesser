@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Get,
   NotFoundException,
@@ -66,7 +67,13 @@ export class ProjectController {
     if (isProjectMember)
       return response.status(200).send({ projectId: project.id });
 
-    await this.projectService.addMember(project, request.member);
+    try {
+      await this.projectService.addMember(project, request.member);
+    } catch (err) {
+      if (err.message === 'Project is full')
+        throw new ConflictException('Project is full');
+      throw err;
+    }
     this.projectWebsocketGateway.notifyJoinToConnectedMembers(
       project.id,
       request.member,
