@@ -1,127 +1,86 @@
-import { useEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { postSignup } from "../../apis/api/signupAPI";
-import NicknameInput from "./NicknameInput";
+import { WheelEvent } from "react";
+import UsernameInput from "./UsernameInput";
 import PositionInput from "./PositionInput";
 import TechStackInput from "./TechStackInput";
-import { SIGNUP_STEP } from "../../constants/account";
-import { ROUTER_URL } from "../../constants/path";
-import { STORAGE_KEY } from "../../constants/storageKey";
+import CreateMainSection from "../common/CreateMainSection";
+import { MAX_STEP_NUMBER } from "../../constants/account";
+import useDebounce from "../../hooks/common/useDebounce";
+import useSignupForm from "../../hooks/pages/account/useSignupForm";
+import useWheelDownActive from "../../hooks/common/useWheelDownActive";
 
 interface SignupMainSectionProps {
   currentStepNumber: number;
-  setCurrentStep: React.Dispatch<
-    React.SetStateAction<{ NUMBER: number; NAME: string }>
-  >;
+  onGoNextStep: () => void;
+  onGoPrevStep: () => void;
 }
 
 const SignupMainSection = ({
   currentStepNumber,
-  setCurrentStep,
+  onGoNextStep,
+  onGoPrevStep,
 }: SignupMainSectionProps) => {
-  const nicknameValueRef = useRef<string>("");
-  const positionValueRef = useRef<null | string>(null);
-  const techValueRef = useRef<null | string[]>(null);
-  const inputElementRef = useRef<HTMLInputElement | null>(null);
-  const positionElementRef = useRef<HTMLDivElement | null>(null);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const {
+    signupData: { username, techStack },
+    handleUsernameChange,
+    handlePositionChange,
+    handleAddTechStack,
+    handleDeleteTechStack,
+    handleSignupButtonClick,
+  } = useSignupForm();
+  const { wheelDownActive, changeWheelDownActive } = useWheelDownActive();
+  const debounce = useDebounce();
 
-  const handlePrevStepAreaClick = () => {
-    setCurrentStep((prevStep) => {
-      if (prevStep.NUMBER === SIGNUP_STEP.STEP3.NUMBER) {
-        return SIGNUP_STEP.STEP2;
-      }
-
-      if (prevStep.NUMBER === SIGNUP_STEP.STEP2.NUMBER) {
-        return SIGNUP_STEP.STEP1;
-      }
-
-      return prevStep;
-    });
-  };
-
-  const handleSignupButtonClick = async () => {
-    const status = await postSignup({
-      username: nicknameValueRef.current,
-      position: positionValueRef.current,
-      techStack: techValueRef.current,
-      tempIdToken: location.state.tempIdToken,
-    });
-    const redirectURL = sessionStorage.getItem(STORAGE_KEY.REDIRECT);
-
-    if (status === 201) {
-      redirectURL
-        ? navigate(redirectURL, { replace: true })
-        : navigate(ROUTER_URL.PROJECTS, { replace: true });
+  const handleGoPrevStep = () => {
+    if (currentStepNumber > 1) {
+      changeWheelDownActive(true);
+      onGoPrevStep();
     }
   };
 
-  useEffect(() => {
-    document.documentElement.style.overflowY = "hidden";
-    switch (currentStepNumber) {
-      case SIGNUP_STEP.STEP1.NUMBER:
-        inputElementRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-        break;
-
-      case SIGNUP_STEP.STEP2.NUMBER:
-        inputElementRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-        break;
-
-      case SIGNUP_STEP.STEP3.NUMBER:
-        positionElementRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-        break;
+  const handleGoNextStep = () => {
+    if (currentStepNumber < MAX_STEP_NUMBER) {
+      onGoNextStep();
     }
+  };
 
-    return () => {
-      document.documentElement.style.overflowY = "visible";
-    };
-  }, [currentStepNumber]);
+  const handleWheelUpDown = (event: WheelEvent) => {
+    const direction: "UP" | "DOWN" = event.deltaY > 0 ? "DOWN" : "UP";
+
+    debounce(100, () => {
+      if (direction === "UP") {
+        handleGoPrevStep();
+        return;
+      }
+
+      if (wheelDownActive) {
+        handleGoNextStep();
+      }
+    });
+  };
 
   return (
-    <main className="relative ml-10 pl-7 min-w-[720] h-[40.5rem]">
-      <div
-        className={`absolute top-0 bg-gradient-to-b from-white to-90% min-w-[90%] min-h-[9.25rem] z-10 ${
-          currentStepNumber > 1 && "hover:cursor-pointer hover:to-0%"
-        }`}
-        onClick={handlePrevStepAreaClick}
-      ></div>
-      <section className="h-[100%] overflow-y-hidden">
-        <NicknameInput
-          {...{
-            currentStepNumber,
-            setCurrentStep,
-            nicknameValueRef,
-            inputElementRef,
-          }}
-        />
-        <PositionInput
-          {...{
-            currentStepNumber,
-            setCurrentStep,
-            positionValueRef,
-            positionElementRef,
-          }}
-        />
-        <TechStackInput
-          {...{
-            setCurrentStep,
-            techValueRef,
-            currentStepNumber,
-          }}
-          onSignupButtonClick={handleSignupButtonClick}
-        />
-      </section>
-    </main>
+    <CreateMainSection
+      {...{ currentStepNumber, wheelDownActive }}
+      onGoPrevStep={handleGoPrevStep}
+      onWheelUpDown={handleWheelUpDown}
+    >
+      <UsernameInput
+        {...{ username, currentStepNumber, changeWheelDownActive }}
+        onUsernameChange={handleUsernameChange}
+        onGoNextStep={handleGoNextStep}
+      />
+      <PositionInput
+        {...{ currentStepNumber, changeWheelDownActive }}
+        onPositionChange={handlePositionChange}
+        onGoNextStep={handleGoNextStep}
+      />
+      <TechStackInput
+        {...{ currentStepNumber, techStack }}
+        onAddTechStack={handleAddTechStack}
+        onDeleteTechStack={handleDeleteTechStack}
+        onSignupButtonClick={handleSignupButtonClick}
+      />
+    </CreateMainSection>
   );
 };
 
