@@ -28,6 +28,9 @@ export class ProjectService {
     const isProjectMember = await this.isProjectMember(project, member);
     if (isProjectMember) throw new Error('already joined member');
 
+    if ((await this.getProjectMemberList(project)).length >= 10)
+      throw new Error('Project is full');
+
     await this.projectRepository.addProjectMember(project, member);
   }
 
