@@ -29,7 +29,7 @@ export class ProjectService {
     if (isProjectMember) throw new Error('already joined member');
 
     if ((await this.getProjectMemberList(project)).length >= 10)
-      throw new Error('Project is full');
+      throw new Error('Project reached its maximum member capacity');
 
     await this.projectRepository.addProjectMember(project, member);
   }

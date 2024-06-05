@@ -126,14 +126,14 @@ describe('ProjectService', () => {
       ).rejects.toThrow('already joined member');
     });
 
-    it('should throw when Project is full', async () => {
+    it('should throw when Project reached its maximum member capacity', async () => {
       jest
         .spyOn(projectRepository, 'getProjectMemberList')
         .mockResolvedValue(new Array(10).fill(member));
 
       await expect(
         async () => await projectService.addMember(project, member),
-      ).rejects.toThrow('Project is full');
+      ).rejects.toThrow('Project reached its maximum member capacity');
     });
   });
 

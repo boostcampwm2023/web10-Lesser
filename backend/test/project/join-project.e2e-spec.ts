@@ -126,11 +126,10 @@ describe('Join Project', () => {
     expect(response.status).toBe(404);
   });
 
-  it('should return 409 when project is full', async () => {
+  it('should return 409 when Project reached its maximum member capacity', async () => {
     const MAX_CAPACITY = 10;
     const memberList = [];
 
-    //Promise.all로 리팩토링
     for (let i = 0; i < MAX_CAPACITY; i++) {
       const member = {
         ...memberFixture,
@@ -173,6 +172,6 @@ describe('Join Project', () => {
       .send({ inviteLinkId: projectLinkId });
 
     expect(response.status).toBe(409);
-    expect(response.body.message).toBe('Project is full');
+    expect(response.body.message).toBe('Project reached its maximum member capacity');
   });
 });
