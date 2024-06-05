@@ -15,7 +15,7 @@ const LandingPage = () => {
   }
 
   const { socket }: { socket: Socket } = useOutletContext();
-  const { project, myInfo, member, link, memoList, inviteLinkIdRef } =
+  const { project, myInfo, member, memoList, inviteLinkIdRef } =
     useLandingSocket(socket);
   const { memoSocketEvent } = useLandingEmitEvent(socket);
 
@@ -31,7 +31,7 @@ const LandingPage = () => {
           {...{ member, myInfo, inviteLinkIdRef }}
           projectTitle={project.title}
         />
-        <LandingLink {...{ link }} />
+        <LandingLink />
       </div>
     </div>
   );
