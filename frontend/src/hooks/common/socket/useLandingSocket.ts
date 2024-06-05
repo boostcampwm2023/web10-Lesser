@@ -59,8 +59,7 @@ const useLandingSocket = (socket: Socket) => {
         setMemoList((memoList: LandingMemoDTO[]) => {
           return memoList.map((memo: LandingMemoDTO) => {
             if (memo.id !== content.id) return memo;
-            memo.color = content.color;
-            return memo;
+            return { ...memo, color: content.color };
           });
         });
     }
