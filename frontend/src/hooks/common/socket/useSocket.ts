@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 import { BASE_URL } from "../../../constants/path";
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAccessToken } from "../../../apis/utils/authAPI";
 
 const useSocket = (projectId: string) => {
@@ -12,8 +12,6 @@ const useSocket = (projectId: string) => {
     },
   });
   const [connected, setConnected] = useState<boolean>(false);
-
-  const SocketContext = createContext(socket);
 
   useEffect(() => {
     const handleOnConnect = () => {
@@ -32,7 +30,7 @@ const useSocket = (projectId: string) => {
     };
   }, []);
 
-  return { socket, connected, SocketContext };
+  return { socket, connected };
 };
 
 export default useSocket;
