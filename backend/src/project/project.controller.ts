@@ -70,8 +70,8 @@ export class ProjectController {
     try {
       await this.projectService.addMember(project, request.member);
     } catch (err) {
-      if (err.message === 'Project is full')
-        throw new ConflictException('Project is full');
+      if (err.message === 'Project reached its maximum member capacity')
+        throw new ConflictException('Project reached its maximum member capacity');
       throw err;
     }
     this.projectWebsocketGateway.notifyJoinToConnectedMembers(
