@@ -1,9 +1,34 @@
-import { LandingSprintDTO } from "../../../types/DTO/landingDTO";
+import { useEffect, useState } from "react";
+import { LandingDTO, LandingSprintDTO } from "../../../types/DTO/landingDTO";
 import diffBetweenDate from "../../../utils/diffBetweenDate";
 import formatDate from "../../../utils/formatDate";
 import LandingSprintBar from "./LandingSprintBar";
+import {
+  LandingSocketData,
+  LandingSocketDomain,
+} from "../../../types/common/landing";
+import { Socket } from "socket.io-client";
+import { useOutletContext } from "react-router-dom";
 
-const LandingSprint = ({ sprint }: { sprint: LandingSprintDTO | null }) => {
+const LandingSprint = () => {
+  const { socket }: { socket: Socket } = useOutletContext();
+  const [sprint, setSprint] = useState<LandingSprintDTO | null>(null);
+  const handleInitEvent = (content: LandingDTO) => {
+    const { sprint } = content as LandingDTO;
+    setSprint(sprint);
+  };
+  const handleOnLanding = ({ domain, content }: LandingSocketData) => {
+    if (domain !== LandingSocketDomain.INIT) return;
+    handleInitEvent(content);
+  };
+  useEffect(() => {
+    socket.on("landing", handleOnLanding);
+
+    return () => {
+      socket.off("landing");
+    };
+  });
+
   return (
     <div className="w-full shadow-box rounded-lg p-6 flex flex-col justify-between">
       <p className="text-l text-middle-green font-bold">| 스프린트 정보</p>

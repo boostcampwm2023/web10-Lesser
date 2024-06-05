@@ -11,7 +11,6 @@ import {
 } from "../../../types/common/landing";
 
 interface LandingProjectProps {
-  // project: LandingProjectDTO;
   projectId: string;
 }
 
@@ -26,7 +25,7 @@ const LandingProject = ({ projectId }: LandingProjectProps) => {
     setProject(project);
   };
 
-  const handleOnLanding = ({ domain, action, content }: LandingSocketData) => {
+  const handleOnLanding = ({ domain, content }: LandingSocketData) => {
     if (domain !== LandingSocketDomain.INIT) return;
     handleInitEvent(content);
   };
