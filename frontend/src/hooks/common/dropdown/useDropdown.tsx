@@ -13,6 +13,7 @@ interface DropdownProps {
   containerClassName?: string;
   itemClassName?: string;
   iconSize?: string;
+  selectOption?: (option: string) => void;
 }
 
 const useDropdown = ({
@@ -33,6 +34,7 @@ const useDropdown = ({
     containerClassName = "",
     itemClassName = "",
     iconSize = "24",
+    selectOption,
   }: DropdownProps) => {
     const [open, setOpen] = useState<boolean>(false);
 
@@ -41,6 +43,9 @@ const useDropdown = ({
     };
 
     const handleOptionClick = (option: string) => {
+      if (selectOption) {
+        selectOption(option);
+      }
       handleChangeSelectedOption(option);
       setOpen(false);
     };

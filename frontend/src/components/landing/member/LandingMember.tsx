@@ -1,7 +1,6 @@
-import { useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Socket } from "socket.io-client";
-import { USER_WORD_STATUS } from "../../../constants/landing";
+import { USER_STATUS_WORD, USER_WORD_STATUS } from "../../../constants/landing";
 import UserBlock from "./UserBlock";
 import useDropdown from "../../../hooks/common/dropdown/useDropdown";
 import { LandingMemberDTO } from "../../../types/DTO/landingDTO";
@@ -16,11 +15,23 @@ interface LandingMemberProps {
   };
 }
 
+interface useOutletContextValues {
+  socket: Socket;
+  addUserStatusEventListener: () => void;
+  removeUserStatusEventListener: () => void;
+  handleCanAddStatusEventListener: (havePurpose: boolean) => void;
+}
+
 const LandingMember = ({
   projectTitle,
   memberSocketEvent,
 }: LandingMemberProps) => {
-  const { socket }: { socket: Socket } = useOutletContext();
+  const {
+    socket,
+    addUserStatusEventListener,
+    removeUserStatusEventListener,
+    handleCanAddStatusEventListener,
+  }: useOutletContextValues = useOutletContext();
   const { Dropdown, selectedOption, handleChangeSelectedOption } = useDropdown({
     placeholder: "내 상태",
     options: ["접속 중", "부재 중", "자리비움"],
@@ -51,12 +62,20 @@ const LandingMember = ({
       });
   };
 
-  useEffect(() => {
+  function selectStatusOption(option: string) {
     emitMemberStatusUpdate({
       ...myInfo,
-      status: USER_WORD_STATUS[selectedOption],
+      status: USER_WORD_STATUS[option],
     });
-  }, [selectedOption]);
+
+    if (option === USER_STATUS_WORD.away || option === USER_STATUS_WORD.off) {
+      handleCanAddStatusEventListener(false);
+      removeUserStatusEventListener();
+    } else {
+      handleCanAddStatusEventListener(true);
+      addUserStatusEventListener();
+    }
+  }
 
   return (
     <div className="w-full px-6 py-6 overflow-y-scroll rounded-lg shadow-box bg-gradient-to-tr to-light-green-linear-from from-light-green scrollbar-thin scrollbar-thumb-light-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
@@ -69,6 +88,7 @@ const LandingMember = ({
             containerClassName="w-[6rem] bg-white rounded-b-lg overflow-hidden"
             itemClassName="w-full text-xxxs text-center font-semibold py-2 hover:bg-middle-green hover:text-white hover:font-semibold"
             iconSize="w-[12px] h-[12px]"
+            selectOption={selectStatusOption}
           />
         </div>
         <UserBlock
