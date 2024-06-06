@@ -1,33 +1,13 @@
-import { useEffect, useState } from "react";
-import { LandingDTO, LandingSprintDTO } from "../../../types/DTO/landingDTO";
 import diffBetweenDate from "../../../utils/diffBetweenDate";
 import formatDate from "../../../utils/formatDate";
 import LandingSprintBar from "./LandingSprintBar";
-import {
-  LandingSocketData,
-  LandingSocketDomain,
-} from "../../../types/common/landing";
 import { Socket } from "socket.io-client";
 import { useOutletContext } from "react-router-dom";
+import useLandingSprintSocket from "../../../hooks/common/landing/useLandingSprintSocket";
 
 const LandingSprint = () => {
   const { socket }: { socket: Socket } = useOutletContext();
-  const [sprint, setSprint] = useState<LandingSprintDTO | null>(null);
-  const handleInitEvent = (content: LandingDTO) => {
-    const { sprint } = content as LandingDTO;
-    setSprint(sprint);
-  };
-  const handleOnLanding = ({ domain, content }: LandingSocketData) => {
-    if (domain !== LandingSocketDomain.INIT) return;
-    handleInitEvent(content);
-  };
-  useEffect(() => {
-    socket.on("landing", handleOnLanding);
-
-    return () => {
-      socket.off("landing");
-    };
-  });
+  const { sprint } = useLandingSprintSocket(socket);
 
   return (
     <div className="w-full shadow-box rounded-lg p-6 flex flex-col justify-between">

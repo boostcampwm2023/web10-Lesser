@@ -1,14 +1,9 @@
 import { Socket } from "socket.io-client";
-import { LandingDTO, LandingProjectDTO } from "../../../types/DTO/landingDTO";
 import formatDate from "../../../utils/formatDate";
 import LandingProjectLink from "./LandingProjectLink";
 import { useOutletContext } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { DEFAULT_VALUE } from "../../../constants/landing";
-import {
-  LandingSocketData,
-  LandingSocketDomain,
-} from "../../../types/common/landing";
+
+import useLandingProjectSocket from "../../../hooks/common/landing/useLandingProjectSocket";
 
 interface LandingProjectProps {
   projectId: string;
@@ -16,27 +11,7 @@ interface LandingProjectProps {
 
 const LandingProject = ({ projectId }: LandingProjectProps) => {
   const { socket }: { socket: Socket } = useOutletContext();
-  const [project, setProject] = useState<LandingProjectDTO>(
-    DEFAULT_VALUE.PROJECT
-  );
-
-  const handleInitEvent = (content: LandingDTO) => {
-    const { project } = content as LandingDTO;
-    setProject(project);
-  };
-
-  const handleOnLanding = ({ domain, content }: LandingSocketData) => {
-    if (domain !== LandingSocketDomain.INIT) return;
-    handleInitEvent(content);
-  };
-
-  useEffect(() => {
-    socket.on("landing", handleOnLanding);
-
-    return () => {
-      socket.off("landing");
-    };
-  });
+  const { project } = useLandingProjectSocket(socket);
 
   return (
     <div className="flex flex-col justify-between w-full p-6 rounded-lg shadow-box">
