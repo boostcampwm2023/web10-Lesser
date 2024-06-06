@@ -2,6 +2,7 @@ import MemoEditor from "./MemoEditor";
 import { LandingMemoDTO } from "../../../types/DTO/landingDTO";
 import { MemoColorStyle, MemoColorType } from "../../../types/common/landing";
 import useLandingMemo from "../../../hooks/common/landing/useLandingMemo";
+import React from "react";
 
 interface MemoBlockProps extends LandingMemoDTO {
   emitMemoDeleteEvent: (id: number) => void;
@@ -57,4 +58,4 @@ const MemoBlock = ({
   );
 };
 
-export default MemoBlock;
+export default React.memo(MemoBlock);

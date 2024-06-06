@@ -9,7 +9,7 @@ import {
 import LandingTitleUI from "../common/LandingTitleUI";
 import MemoBlock from "./MemoBlock";
 import { useOutletContext } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const LandingMemoList = () => {
   const { socket }: { socket: Socket } = useOutletContext();
@@ -60,15 +60,21 @@ const LandingMemoList = () => {
         break;
     }
   };
-  const emitMemoCreateEvent = () => {
+  const emitMemoCreateEvent = useCallback(() => {
     socket.emit("memo", { action: "create", content: { color: "yellow" } });
-  };
-  const emitMemoDeleteEvent = (id: number) => {
-    socket.emit("memo", { action: "delete", content: { id } });
-  };
-  const emitMemoColorUpdateEvent = (id: number, color: MemoColorType) => {
-    socket.emit("memo", { action: "colorUpdate", content: { id, color } });
-  };
+  }, [socket]);
+  const emitMemoDeleteEvent = useCallback(
+    (id: number) => {
+      socket.emit("memo", { action: "delete", content: { id } });
+    },
+    [socket]
+  );
+  const emitMemoColorUpdateEvent = useCallback(
+    (id: number, color: MemoColorType) => {
+      socket.emit("memo", { action: "colorUpdate", content: { id, color } });
+    },
+    [socket]
+  );
 
   useEffect(() => {
     socket.on("landing", handleOnMemoLanding);

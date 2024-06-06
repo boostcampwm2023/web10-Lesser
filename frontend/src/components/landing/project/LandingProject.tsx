@@ -31,7 +31,6 @@ const LandingProject = ({ projectId }: LandingProjectProps) => {
   };
 
   useEffect(() => {
-    socket.emit("joinLanding");
     socket.on("landing", handleOnLanding);
 
     return () => {
