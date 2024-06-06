@@ -13,16 +13,18 @@ const useLandingSprintSocket = (socket: Socket) => {
     setSprint(sprint);
   };
   const handleOnLanding = ({ domain, content }: LandingSocketData) => {
-    if (domain !== LandingSocketDomain.INIT) return;
+    if (domain !== LandingSocketDomain.INIT) {
+      return;
+    }
     handleInitEvent(content);
   };
   useEffect(() => {
     socket.on("landing", handleOnLanding);
 
     return () => {
-      socket.off("landing");
+      socket.off("landing", handleOnLanding);
     };
-  });
+  }, []);
   return { sprint };
 };
 

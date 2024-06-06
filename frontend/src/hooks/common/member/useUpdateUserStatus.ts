@@ -90,7 +90,7 @@ const useUpdateUserStatus = (
     return () => {
       socket.off("landing", handleOnLanding);
     };
-  });
+  }, [myInfo, memberList]);
 
   return { myInfo, memberList, inviteLinkIdRef };
 };
