@@ -7,6 +7,7 @@ import { LandingMemberDTO } from "../../../types/DTO/landingDTO";
 import useUpdateUserStatus from "../../../hooks/common/member/useUpdateUserStatus";
 import { DEFAULT_MEMBER } from "../../../constants/projects";
 import { memberResponse } from "../../../types/DTO/authDTO";
+import emitMemberStatusUpdate from "../../../utils/emitMemberStatusUpdate";
 
 interface LandingMemberProps {
   projectTitle: string;
@@ -31,8 +32,10 @@ const LandingMember = ({ projectTitle }: LandingMemberProps) => {
     options: ["접속 중", "부재 중", "자리비움"],
     defaultOption: "접속 중",
   });
-  const { myInfo, memberList, inviteLinkIdRef, emitMemberStatusUpdate } =
-    useUpdateUserStatus(socket, handleChangeSelectedOption);
+  const { myInfo, memberList, inviteLinkIdRef } = useUpdateUserStatus(
+    socket,
+    handleChangeSelectedOption
+  );
 
   const userData: memberResponse = JSON.parse(
     window.localStorage.getItem("member") ?? DEFAULT_MEMBER
@@ -53,7 +56,7 @@ const LandingMember = ({ projectTitle }: LandingMemberProps) => {
   };
 
   function selectStatusOption(option: string) {
-    emitMemberStatusUpdate({
+    emitMemberStatusUpdate(socket, {
       ...myInfo,
       status: USER_WORD_STATUS[option],
     });

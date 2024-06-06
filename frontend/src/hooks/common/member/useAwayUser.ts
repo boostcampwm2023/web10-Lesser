@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
-import useLandingEmitEvent from "../socket/useLandingEmitEvent";
 import useMemberStore from "../../../stores/useMemberStore";
 import useThrottle from "../throttle/useThrottle";
+import emitMemberStatusUpdate from "../../../utils/emitMemberStatusUpdate";
 
 const useAwayUser = (socket: Socket) => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -10,7 +10,6 @@ const useAwayUser = (socket: Socket) => {
   const [canAddStatusEventListener, setCanAddStatusEventListener] =
     useState(true);
   const throttle = useThrottle();
-  const { memberSocketEvent } = useLandingEmitEvent(socket);
   const TIME = 1000 * 60 * 10;
   const THROTTLE_TIME = 3000;
 
@@ -22,7 +21,7 @@ const useAwayUser = (socket: Socket) => {
 
   const resetTimer = () => {
     timerRef.current = setTimeout(() => {
-      memberSocketEvent.emitMemberStatusUpdate({
+      emitMemberStatusUpdate(socket, {
         ...myInfo,
         status: "away",
       });
@@ -36,7 +35,7 @@ const useAwayUser = (socket: Socket) => {
       clearTimer();
 
       if (myInfo.status === "away") {
-        memberSocketEvent.emitMemberStatusUpdate({
+        emitMemberStatusUpdate(socket, {
           ...myInfo,
           status: "on",
         });
