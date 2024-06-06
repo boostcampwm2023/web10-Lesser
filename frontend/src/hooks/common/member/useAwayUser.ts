@@ -1,13 +1,12 @@
 import { useEffect, useRef } from "react";
 import { Socket } from "socket.io-client";
-import useLandingEmitEvent from "./socket/useLandingEmitEvent";
-import useMemberStore from "../../stores/useMemberStore";
-import useThrottle from "./throttle/useThrottle";
+import useLandingEmitEvent from "../socket/useLandingEmitEvent";
+import useMemberStore from "../../../stores/useMemberStore";
+import useThrottle from "../throttle/useThrottle";
 
 const useAwayUser = (socket: Socket) => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const myInfo = useMemberStore((state) => state.myInfo);
-  const updateMemberList = useMemberStore((state) => state.updateMemberList);
   const throttle = useThrottle();
   const { memberSocketEvent } = useLandingEmitEvent(socket);
   const TIME = 1000 * 60 * 10;
@@ -69,13 +68,6 @@ const useAwayUser = (socket: Socket) => {
       removeUserStatusEventListener();
     };
   }, [myInfo]);
-
-  useEffect(
-    () => () => {
-      updateMemberList([]);
-    },
-    []
-  );
 
   return { addUserStatusEventListener, removeUserStatusEventListener };
 };
