@@ -20,7 +20,7 @@ const useAwayUser = (socket: Socket) => {
     }
   };
 
-  const rsetTimer = () => {
+  const resetTimer = () => {
     timerRef.current = setTimeout(() => {
       memberSocketEvent.emitMemberStatusUpdate({
         ...myInfo,
@@ -42,7 +42,7 @@ const useAwayUser = (socket: Socket) => {
         });
       }
 
-      rsetTimer();
+      resetTimer();
     });
   };
 
@@ -55,7 +55,7 @@ const useAwayUser = (socket: Socket) => {
     window.addEventListener("keydown", handleUserStatus);
     window.addEventListener("scroll", handleUserStatus);
     window.addEventListener("click", handleUserStatus);
-    rsetTimer();
+    resetTimer();
   };
 
   const removeUserStatusEventListener = () => {
