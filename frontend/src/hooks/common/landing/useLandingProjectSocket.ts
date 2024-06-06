@@ -18,7 +18,9 @@ const useLandingProjectSocket = (socket: Socket) => {
   };
 
   const handleOnLanding = ({ domain, content }: LandingSocketData) => {
-    if (domain !== LandingSocketDomain.INIT) return;
+    if (domain !== LandingSocketDomain.INIT) {
+      return;
+    }
     handleInitEvent(content);
   };
 
@@ -26,9 +28,9 @@ const useLandingProjectSocket = (socket: Socket) => {
     socket.on("landing", handleOnLanding);
 
     return () => {
-      socket.off("landing");
+      socket.off("landing", handleOnLanding);
     };
-  });
+  }, []);
   return { project };
 };
 

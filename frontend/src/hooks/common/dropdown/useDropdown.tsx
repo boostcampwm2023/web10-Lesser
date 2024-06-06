@@ -13,6 +13,7 @@ interface DropdownProps {
   containerClassName?: string;
   itemClassName?: string;
   iconSize?: string;
+  selectOption?: (option: string) => void;
 }
 
 const useDropdown = ({
@@ -24,12 +25,16 @@ const useDropdown = ({
     defaultOption ? defaultOption : ""
   );
   const dropdownRef = useRef<HTMLButtonElement>(null);
+  const handleChangeSelectedOption = (option: string) => {
+    setSelectedOption(option);
+  };
 
   const Dropdown = ({
     buttonClassName = "",
     containerClassName = "",
     itemClassName = "",
     iconSize = "24",
+    selectOption,
   }: DropdownProps) => {
     const [open, setOpen] = useState<boolean>(false);
 
@@ -38,7 +43,10 @@ const useDropdown = ({
     };
 
     const handleOptionClick = (option: string) => {
-      setSelectedOption(option);
+      if (selectOption) {
+        selectOption(option);
+      }
+      handleChangeSelectedOption(option);
       setOpen(false);
     };
 
@@ -106,7 +114,7 @@ const useDropdown = ({
     );
   };
 
-  return { Dropdown, selectedOption };
+  return { Dropdown, selectedOption, handleChangeSelectedOption };
 };
 
 export default useDropdown;

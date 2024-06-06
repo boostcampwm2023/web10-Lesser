@@ -1,32 +1,46 @@
+import { useOutletContext } from "react-router-dom";
+import { Socket } from "socket.io-client";
 import { USER_STATUS_WORD, USER_WORD_STATUS } from "../../../constants/landing";
 import UserBlock from "./UserBlock";
 import useDropdown from "../../../hooks/common/dropdown/useDropdown";
-import { memberResponse } from "../../../types/DTO/authDTO";
 import { LandingMemberDTO } from "../../../types/DTO/landingDTO";
+import useUpdateUserStatus from "../../../hooks/common/member/useUpdateUserStatus";
 import { DEFAULT_MEMBER } from "../../../constants/projects";
+import { memberResponse } from "../../../types/DTO/authDTO";
+import emitMemberStatusUpdate from "../../../utils/emitMemberStatusUpdate";
 
-const LandingMember = ({
-  member,
-  myInfo,
-  inviteLinkIdRef,
-  projectTitle,
-}: {
-  member: LandingMemberDTO[];
-  myInfo: LandingMemberDTO;
-  inviteLinkIdRef: React.MutableRefObject<string>;
+interface LandingMemberProps {
   projectTitle: string;
-}) => {
-  const { Dropdown, selectedOption } = useDropdown({
+}
+
+interface useOutletContextValues {
+  socket: Socket;
+  addUserStatusEventListener: () => void;
+  removeUserStatusEventListener: () => void;
+  handleCanAddStatusEventListener: (havePurpose: boolean) => void;
+}
+
+const LandingMember = ({ projectTitle }: LandingMemberProps) => {
+  const {
+    socket,
+    addUserStatusEventListener,
+    removeUserStatusEventListener,
+    handleCanAddStatusEventListener,
+  }: useOutletContextValues = useOutletContext();
+  const { Dropdown, selectedOption, handleChangeSelectedOption } = useDropdown({
     placeholder: "내 상태",
     options: ["접속 중", "부재 중", "자리비움"],
-    defaultOption: USER_STATUS_WORD[myInfo.status],
+    defaultOption: "접속 중",
   });
+  const { myInfo, memberList, inviteLinkIdRef } = useUpdateUserStatus(
+    socket,
+    handleChangeSelectedOption
+  );
 
   const userData: memberResponse = JSON.parse(
     window.localStorage.getItem("member") ?? DEFAULT_MEMBER
   );
-  const imageUrl = myInfo.imageUrl ?? userData.imageUrl;
-  const username = myInfo.username ?? userData.username;
+  const { imageUrl, username } = myInfo.imageUrl ? myInfo : userData;
 
   const handleInviteButtonClick = () => {
     window.navigator.clipboard
@@ -41,6 +55,21 @@ const LandingMember = ({
       });
   };
 
+  function selectStatusOption(option: string) {
+    emitMemberStatusUpdate(socket, {
+      ...myInfo,
+      status: USER_WORD_STATUS[option],
+    });
+
+    if (option === USER_STATUS_WORD.away || option === USER_STATUS_WORD.off) {
+      handleCanAddStatusEventListener(false);
+      removeUserStatusEventListener();
+    } else {
+      handleCanAddStatusEventListener(true);
+      addUserStatusEventListener();
+    }
+  }
+
   return (
     <div className="w-full px-6 py-6 overflow-y-scroll rounded-lg shadow-box bg-gradient-to-tr to-light-green-linear-from from-light-green scrollbar-thin scrollbar-thumb-light-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
       <div className="flex flex-col gap-3">
@@ -52,6 +81,7 @@ const LandingMember = ({
             containerClassName="w-[6rem] bg-white rounded-b-lg overflow-hidden"
             itemClassName="w-full text-xxxs text-center font-semibold py-2 hover:bg-middle-green hover:text-white hover:font-semibold"
             iconSize="w-[12px] h-[12px]"
+            selectOption={selectStatusOption}
           />
         </div>
         <UserBlock
@@ -68,7 +98,7 @@ const LandingMember = ({
             초대링크 복사
           </button>
         </div>
-        {member.map((memberData: LandingMemberDTO) => (
+        {memberList.map((memberData: LandingMemberDTO) => (
           <UserBlock {...memberData} key={memberData.id} />
         ))}
       </div>
