@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { WheelEvent, useEffect, useRef, useState } from "react";
 import chevronDownIcon from "../../../assets/icons/chevron-down.svg";
 import chevronUpIcon from "../../../assets/icons/chevron-up.svg";
 
@@ -70,6 +70,7 @@ const useDropdown = ({
     return (
       <div className="relative">
         <button
+          type="button"
           ref={dropdownRef}
           onClick={handleButtonClick}
           className={`${buttonClassName} ${open && "shadow-none"}`}
@@ -87,7 +88,12 @@ const useDropdown = ({
           )}
         </button>
         {open && (
-          <ul className={`${containerClassName} absolute`}>
+          <ul
+            className={`${containerClassName} absolute`}
+            onWheel={(event: WheelEvent) => {
+              event.stopPropagation();
+            }}
+          >
             {options.map((option, index) => (
               <li
                 key={index}

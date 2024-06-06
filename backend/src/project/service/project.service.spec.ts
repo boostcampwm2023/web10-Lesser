@@ -27,6 +27,7 @@ describe('ProjectService', () => {
             getProjectMemoListWithMember: jest.fn(),
             updateMemoColor: jest.fn(),
             findMemoById: jest.fn(),
+            getProjectMemberList: jest.fn(),
           },
         },
       ],
@@ -99,6 +100,10 @@ describe('ProjectService', () => {
         .spyOn(projectRepository, 'getProjectToMember')
         .mockResolvedValue(null);
 
+      jest
+        .spyOn(projectRepository, 'getProjectMemberList')
+        .mockResolvedValue([]);
+
       await projectService.addMember(project, member);
 
       expect(projectRepository.addProjectMember).toHaveBeenCalledWith(
@@ -112,9 +117,35 @@ describe('ProjectService', () => {
         .spyOn(projectRepository, 'getProjectToMember')
         .mockResolvedValue(ProjectToMember.of(project, member));
 
+      jest
+        .spyOn(projectRepository, 'getProjectMemberList')
+        .mockResolvedValue([member]);
+
       await expect(
         async () => await projectService.addMember(project, member),
       ).rejects.toThrow('already joined member');
+    });
+
+    it('should throw when Project reached its maximum member capacity', async () => {
+      jest
+        .spyOn(projectRepository, 'getProjectMemberList')
+        .mockResolvedValue(new Array(10).fill(member));
+
+      await expect(
+        async () => await projectService.addMember(project, member),
+      ).rejects.toThrow('Project reached its maximum member capacity');
+    });
+  });
+
+  describe('Get project member list', () => {
+    it('should return project member', async () => {
+      jest
+        .spyOn(projectRepository, 'getProjectMemberList')
+        .mockResolvedValue([member]);
+      const [title, subject] = ['title', 'subject'];
+      const project = Project.of(title, subject);
+      const memberList = await projectService.getProjectMemberList(project);
+      expect(memberList[0]).toEqual(member);
     });
   });
 

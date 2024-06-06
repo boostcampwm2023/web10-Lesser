@@ -1,8 +1,17 @@
-export const SIGNUP_STEP = {
-  STEP1: { NUMBER: 1, NAME: "닉네임 입력" },
-  STEP2: { NUMBER: 2, NAME: "직업 입력" },
-  STEP3: { NUMBER: 3, NAME: "기술 스택 선택" },
+export const SIGNUP_STEP_NUMBER = {
+  STEP1: 1,
+  STEP2: 2,
+  STEP3: 3,
 };
+
+export const SIGNUP_STEP_TEXT = [
+  "",
+  "닉네임 입력",
+  "직업 입력",
+  "기술 스택 선택",
+];
+
+export const MAX_STEP_NUMBER = 3;
 
 export const JOB_INPUT_INFO = {
   PLACEHOLDER: "직업 선택하기",

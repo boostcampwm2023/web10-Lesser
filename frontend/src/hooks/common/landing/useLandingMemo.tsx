@@ -32,6 +32,10 @@ const useLandingMemo = (
   };
 
   useEffect(() => {
+    changeMemoColor(color);
+  }, [color]);
+
+  useEffect(() => {
     const handleClickOutside = ({ target }: MouseEvent) => {
       if (memoRef.current && !memoRef.current.contains(target as Node)) {
         closeEditor();

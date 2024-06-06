@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Get,
   NotFoundException,
@@ -12,10 +13,14 @@ import { CreateProjectRequestDto } from './dto/CreateProjectRequest.dto';
 import { MemberRequest } from 'src/common/guard/authentication.guard';
 import { JoinProjectRequestDto } from './dto/JoinProjectRequest.dto';
 import { Response } from 'express';
+import { ProjectWebsocketGateway } from './websocket.gateway';
 
 @Controller('project')
 export class ProjectController {
-  constructor(private readonly projectService: ProjectService) {}
+  constructor(
+    private readonly projectService: ProjectService,
+    private readonly projectWebsocketGateway: ProjectWebsocketGateway,
+  ) {}
   @Get('/')
   async getProjectList(@Req() request: MemberRequest) {
     const projectList = await this.projectService.getProjectList(
@@ -62,7 +67,17 @@ export class ProjectController {
     if (isProjectMember)
       return response.status(200).send({ projectId: project.id });
 
-    await this.projectService.addMember(project, request.member);
+    try {
+      await this.projectService.addMember(project, request.member);
+    } catch (err) {
+      if (err.message === 'Project reached its maximum member capacity')
+        throw new ConflictException('Project reached its maximum member capacity');
+      throw err;
+    }
+    this.projectWebsocketGateway.notifyJoinToConnectedMembers(
+      project.id,
+      request.member,
+    );
     return response.status(201).send();
   }
 }
