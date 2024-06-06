@@ -1,15 +1,15 @@
-import { USER_STATUS_WORD, USER_WORD_STATUS } from "../../../constants/landing";
+import { useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
+import { Socket } from "socket.io-client";
+import { USER_WORD_STATUS } from "../../../constants/landing";
 import UserBlock from "./UserBlock";
 import useDropdown from "../../../hooks/common/dropdown/useDropdown";
-import { memberResponse } from "../../../types/DTO/authDTO";
-import { LandingMemberDTO, MemberStatus } from "../../../types/DTO/landingDTO";
+import { LandingMemberDTO } from "../../../types/DTO/landingDTO";
+import useUpdateUserStatus from "../../../hooks/common/member/useUpdateUserStatus";
 import { DEFAULT_MEMBER } from "../../../constants/projects";
-import { useEffect } from "react";
+import { memberResponse } from "../../../types/DTO/authDTO";
 
 interface LandingMemberProps {
-  memberList: LandingMemberDTO[];
-  myInfo: LandingMemberDTO;
-  inviteLinkIdRef: React.MutableRefObject<string>;
   projectTitle: string;
   memberSocketEvent: {
     emitMemberStatusUpdate: (content: LandingMemberDTO) => void;
@@ -17,24 +17,26 @@ interface LandingMemberProps {
 }
 
 const LandingMember = ({
-  memberList,
-  myInfo,
-  inviteLinkIdRef,
   projectTitle,
   memberSocketEvent,
 }: LandingMemberProps) => {
-  const { Dropdown, selectedOption } = useDropdown({
+  const { socket }: { socket: Socket } = useOutletContext();
+  const { Dropdown, selectedOption, handleChangeSelectedOption } = useDropdown({
     placeholder: "내 상태",
     options: ["접속 중", "부재 중", "자리비움"],
-    defaultOption: USER_STATUS_WORD[myInfo.status],
+    defaultOption: "접속 중",
   });
+  const { myInfo, memberList, inviteLinkIdRef } = useUpdateUserStatus(
+    socket,
+    handleChangeSelectedOption
+  );
+
   const { emitMemberStatusUpdate } = memberSocketEvent;
 
   const userData: memberResponse = JSON.parse(
     window.localStorage.getItem("member") ?? DEFAULT_MEMBER
   );
-  const imageUrl = myInfo.imageUrl ?? userData.imageUrl;
-  const username = myInfo.username ?? userData.username;
+  const { imageUrl, username } = myInfo.imageUrl ? myInfo : userData;
 
   const handleInviteButtonClick = () => {
     window.navigator.clipboard
@@ -52,7 +54,7 @@ const LandingMember = ({
   useEffect(() => {
     emitMemberStatusUpdate({
       ...myInfo,
-      status: selectedOption as MemberStatus,
+      status: USER_WORD_STATUS[selectedOption],
     });
   }, [selectedOption]);
 

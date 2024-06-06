@@ -24,6 +24,9 @@ const useDropdown = ({
     defaultOption ? defaultOption : ""
   );
   const dropdownRef = useRef<HTMLButtonElement>(null);
+  const handleChangeSelectedOption = (option: string) => {
+    setSelectedOption(option);
+  };
 
   const Dropdown = ({
     buttonClassName = "",
@@ -38,7 +41,7 @@ const useDropdown = ({
     };
 
     const handleOptionClick = (option: string) => {
-      setSelectedOption(option);
+      handleChangeSelectedOption(option);
       setOpen(false);
     };
 
@@ -100,7 +103,7 @@ const useDropdown = ({
     );
   };
 
-  return { Dropdown, selectedOption };
+  return { Dropdown, selectedOption, handleChangeSelectedOption };
 };
 
 export default useDropdown;

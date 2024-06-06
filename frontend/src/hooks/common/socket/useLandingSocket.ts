@@ -1,9 +1,8 @@
 import { Socket } from "socket.io-client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LandingDTO,
   LandingLinkDTO,
-  LandingMemberDTO,
   LandingMemoDTO,
   LandingProjectDTO,
   LandingSprintDTO,
@@ -12,10 +11,8 @@ import { DEFAULT_VALUE } from "../../../constants/landing";
 import {
   LandingSocketData,
   LandingSocketDomain,
-  LandingSocketMemberAction,
   LandingSocketMemoAction,
 } from "../../../types/common/landing";
-import useMemberStore from "../../../stores/useMemberStore";
 
 const useLandingSocket = (socket: Socket) => {
   const [project, setProject] = useState<LandingProjectDTO>(
@@ -24,20 +21,13 @@ const useLandingSocket = (socket: Socket) => {
   const [sprint, setSprint] = useState<LandingSprintDTO | null>(null);
   const [memoList, setMemoList] = useState<LandingMemoDTO[]>([]);
   const [link, setLink] = useState<LandingLinkDTO[]>([]);
-  const { myInfo, memberList, updateMyInfo, updateMemberList, addMember } =
-    useMemberStore();
-  const inviteLinkIdRef = useRef<string>("");
 
   const handleInitEvent = (content: LandingDTO) => {
-    const { project, myInfo, member, sprint, memoList, link, inviteLinkId } =
-      content as LandingDTO;
+    const { project, sprint, memoList, link } = content as LandingDTO;
     setProject(project);
-    updateMyInfo(myInfo);
-    updateMemberList(member);
     setSprint(sprint);
     setMemoList(memoList);
     setLink(link);
-    inviteLinkIdRef.current = inviteLinkId;
   };
 
   const handleMemoEvent = (
@@ -66,37 +56,6 @@ const useLandingSocket = (socket: Socket) => {
     }
   };
 
-  const handleMemberEvent = (
-    action: LandingSocketMemberAction,
-    content: LandingMemberDTO | { id: number }
-  ) => {
-    switch (action) {
-      case LandingSocketMemberAction.CREATE: {
-        addMember(content as LandingMemberDTO);
-
-        break;
-      }
-      case LandingSocketMemberAction.UPDATE: {
-        updateMemberList(
-          memberList.map((member) => {
-            if (member.id === content.id) {
-              member.status = (content as LandingMemberDTO).status;
-            }
-
-            return member;
-          })
-        );
-
-        break;
-      }
-      case LandingSocketMemberAction.DELETE: {
-        updateMemberList(memberList.filter(({ id }) => id !== content.id));
-
-        break;
-      }
-    }
-  };
-
   const handleOnLanding = ({ domain, action, content }: LandingSocketData) => {
     switch (domain) {
       case LandingSocketDomain.INIT:
@@ -104,9 +63,6 @@ const useLandingSocket = (socket: Socket) => {
         break;
       case LandingSocketDomain.MEMO:
         handleMemoEvent(action, content);
-        break;
-      case LandingSocketDomain.MEMBER:
-        handleMemberEvent(action, content);
         break;
     }
   };
@@ -122,12 +78,9 @@ const useLandingSocket = (socket: Socket) => {
 
   return {
     project,
-    myInfo,
-    memberList,
     sprint,
     memoList,
     link,
-    inviteLinkIdRef,
   };
 };
 
