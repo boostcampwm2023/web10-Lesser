@@ -1,3 +1,4 @@
+import React from "react";
 import Plus from "../../../assets/icons/plus.svg?react";
 
 interface LandingTitleUIProps {
@@ -16,4 +17,4 @@ const LandingTitleUI = ({ handleClick, title }: LandingTitleUIProps) => {
   );
 };
 
-export default LandingTitleUI;
+export default React.memo(LandingTitleUI);

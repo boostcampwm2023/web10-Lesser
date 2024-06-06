@@ -4,7 +4,7 @@ interface MemoColorButtonProps {
   id: number;
   active: Boolean;
   color: MemoColorType;
-  changeMemoColor: (color: MemoColorType) => void;
+
   emitMemoColorUpdateEvent: (id: number, color: MemoColorType) => void;
 }
 
@@ -12,7 +12,7 @@ const MemoColorButton = ({
   id,
   active,
   color,
-  changeMemoColor,
+
   emitMemoColorUpdateEvent,
 }: MemoColorButtonProps) => {
   const borderStyle = active
@@ -20,7 +20,6 @@ const MemoColorButton = ({
     : "border-white border hover:border-blue-500 hover:border-2";
 
   const handleOnClick = () => {
-    changeMemoColor(color);
     emitMemoColorUpdateEvent(id, color);
   };
 

@@ -1,23 +1,18 @@
-import { LandingMemoDTO } from "../../../types/DTO/landingDTO";
-import { MemoColorType } from "../../../types/common/landing";
-import LandingTitleUI from "../common/LandingTitleUI";
 import MemoBlock from "./MemoBlock";
+import { Socket } from "socket.io-client";
+import { useOutletContext } from "react-router-dom";
+import LandingTitleUI from "../common/LandingTitleUI";
+import { LandingMemoDTO } from "../../../types/DTO/landingDTO";
+import useLandingMemoSocket from "../../../hooks/common/landing/useLandingMemoSocket";
 
-interface LandingMemoListProps {
-  memoList: LandingMemoDTO[];
-  memoSocketEvent: {
-    emitMemoCreateEvent: () => void;
-    emitMemoDeleteEvent: (id: number) => void;
-    emitMemoColorUpdateEvent: (id: number, color: MemoColorType) => void;
-  };
-}
-
-const LandingMemoList = ({
-  memoList,
-  memoSocketEvent,
-}: LandingMemoListProps) => {
-  const { emitMemoCreateEvent, emitMemoDeleteEvent, emitMemoColorUpdateEvent } =
-    memoSocketEvent;
+const LandingMemoList = () => {
+  const { socket }: { socket: Socket } = useOutletContext();
+  const {
+    memoList,
+    emitMemoCreateEvent,
+    emitMemoDeleteEvent,
+    emitMemoColorUpdateEvent,
+  } = useLandingMemoSocket(socket);
   return (
     <div className="w-full rounded-lg shadow-box bg-gradient-to-tr from-dark-green-linear-from to-dark-green-linear-to">
       <div className="py-6 ps-6 pe-3 w-[32rem]">
