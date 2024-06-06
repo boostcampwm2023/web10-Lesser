@@ -49,8 +49,7 @@ const useLandingSocket = (socket: Socket) => {
             if (memo.id !== content.id) {
               return memo;
             }
-            memo.color = content.color;
-            return memo;
+            return { ...memo, color: content.color };
           })
         );
     }

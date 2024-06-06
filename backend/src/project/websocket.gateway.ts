@@ -5,10 +5,12 @@ import {
   ConnectedSocket,
   OnGatewayInit,
   MessageBody,
+  OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { Server, Socket } from 'socket.io';
+import { Namespace, Socket } from 'socket.io';
+
 import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { Member } from 'src/member/entity/member.entity';
 import { Project } from './entity/project.entity';
@@ -19,30 +21,42 @@ import { MemoCreateRequestDto } from './dto/MemoCreateRequest.dto';
 import { MemoDeleteRequestDto } from './dto/MemoDeleteRequest.dto';
 import { InitLandingResponseDto } from './dto/InitLandingResponse.dto';
 import { MemoColorUpdateRequestDto } from './dto/MemoColorUpdateRequest.dto';
+import { MemberUpdateRequestDto } from './dto/MemberUpdateRequest.dto';
+import { MemberStatus } from './enum/MemberStatus.enum';
 
-interface ClientSocket extends Socket {
+export interface ClientSocket extends Socket {
   projectId?: number;
   project: Project;
   member: Member;
+  status: MemberStatus;
 }
 
 @WebSocketGateway({
   namespace: /project-\d+/,
   path: '/api/socket.io',
 })
-export class ProjectWebsocketGateway implements OnGatewayInit {
+export class ProjectWebsocketGateway
+  implements OnGatewayInit, OnGatewayDisconnect
+{
   constructor(
     private readonly projectService: ProjectService,
     private readonly lesserJwtService: LesserJwtService,
     private readonly memberRepository: MemberRepository,
     private readonly memberService: MemberService,
-  ) {}
+  ) {
+    this.namespaceMap = new Map();
+  }
 
-  afterInit(server: Server) {
-    server.use(async (client: ClientSocket, next) => {
+  namespaceMap: Map<number, Namespace>;
+
+  afterInit(parentNamespace: any) {
+    parentNamespace.use(async (client: ClientSocket, next) => {
       try {
         await this.authentication(client);
         await this.projectAuthorization(client);
+
+        if (!this.namespaceMap.has(client.projectId))
+          this.namespaceMap.set(client.projectId, client.nsp);
       } catch (error) {
         if (error.message === 'Failed to verify token: access')
           error.message = 'Expired:accessToken';
@@ -54,15 +68,70 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
     });
   }
 
+  async handleDisconnect(client: ClientSocket) {
+    if (!client.member) return;
+
+    const projectSocketList: ClientSocket[] =
+      (await client.nsp.fetchSockets()) as unknown as ClientSocket[];
+    const sameMember = projectSocketList.find(
+      (socket) =>
+        socket.member.id === client.member.id && socket.id !== client.id,
+    );
+    if (sameMember) return;
+    client.nsp
+      .to('landing')
+      .except(client.id)
+      .emit('landing', {
+        domain: 'member',
+        action: 'update',
+        content: {
+          id: client.member.id,
+          status: MemberStatus.OFF,
+        },
+      });
+  }
+
   @SubscribeMessage('joinLanding')
   async handleJoinLandingEvent(@ConnectedSocket() client: ClientSocket) {
-    client.join('landing');
-    const [project, memoListWithMember] = await Promise.all([
+    const [project, projectMemberList, memoListWithMember] = await Promise.all([
       this.projectService.getProject(client.projectId),
+      this.projectService.getProjectMemberList(client.project),
       this.projectService.getProjectMemoListWithMember(client.project.id),
     ]);
-    const response = InitLandingResponseDto.of(project, memoListWithMember);
+    const projectSocketList: ClientSocket[] =
+      (await client.nsp.fetchSockets()) as unknown as ClientSocket[];
+
+    const sameMemberSocket = projectSocketList.find(
+      (socket) =>
+        socket.member.id === client.member.id && socket.id !== client.id,
+    );
+
+    if (sameMemberSocket) client.status = sameMemberSocket.status;
+    else client.status = MemberStatus.ON;
+
+    const response = InitLandingResponseDto.of(
+      project,
+      client.member,
+      client.status,
+      projectSocketList,
+      projectMemberList,
+      memoListWithMember,
+    );
     client.emit('landing', response);
+    client.join('landing');
+
+    if (sameMemberSocket) return;
+    client.nsp
+      .to('landing')
+      .except(client.id)
+      .emit('landing', {
+        domain: 'member',
+        action: 'update',
+        content: {
+          id: client.member.id,
+          status: client.status,
+        },
+      });
   }
 
   @SubscribeMessage('memo')
@@ -154,6 +223,60 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
         });
       }
     }
+  }
+
+  @SubscribeMessage('member')
+  async handleMemberEvent(
+    @ConnectedSocket() client: ClientSocket,
+    @MessageBody() data: MemberUpdateRequestDto,
+  ) {
+    const errors = await validate(plainToClass(MemberUpdateRequestDto, data));
+    if (errors.length > 0) {
+      const errorList = this.getRecursiveErrorMsgList(errors);
+      client.emit('error', { errorList });
+      return;
+    }
+
+    const status = data.content.status;
+    if (status === client.status) return;
+    client.status = status;
+
+    const projectSocketList: ClientSocket[] =
+      (await client.nsp.fetchSockets()) as unknown as ClientSocket[];
+    projectSocketList.forEach((socket) => {
+      if (socket.member.id === client.member.id) {
+        socket.status = status;
+      }
+    });
+
+    this.sendMemberStatusUpdate(client);
+  }
+
+  notifyJoinToConnectedMembers(projectId: number, member: Member) {
+    const projectNamespace = this.namespaceMap.get(projectId);
+    if (!projectNamespace) return;
+    const requestMsg = {
+      domain: 'member',
+      action: 'create',
+      content: {
+        id: member.id,
+        username: member.username,
+        imageUrl: member.github_image_url,
+        status: 'off',
+      },
+    };
+    projectNamespace.to('landing').emit('landing', requestMsg);
+  }
+
+  private sendMemberStatusUpdate(client: ClientSocket) {
+    client.nsp.to('landing').emit('landing', {
+      domain: 'member',
+      action: 'update',
+      content: {
+        id: client.member.id,
+        status: client.status,
+      },
+    });
   }
 
   private getRecursiveErrorMsgList(errors: ValidationError[]) {

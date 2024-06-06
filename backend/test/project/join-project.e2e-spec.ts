@@ -125,4 +125,53 @@ describe('Join Project', () => {
 
     expect(response.status).toBe(404);
   });
+
+  it('should return 409 when Project reached its maximum member capacity', async () => {
+    const MAX_CAPACITY = 10;
+    const memberList = [];
+
+    for (let i = 0; i < MAX_CAPACITY; i++) {
+      const member = {
+        ...memberFixture,
+        github_id: i,
+        username: `username${i}`,
+      };
+      const { accessToken } = await createMember(member, app);
+      memberList.push({ member, accessToken });
+    }
+
+    const { id: projectId } = await createProject(
+      memberList[0].accessToken,
+      projectPayload,
+      app,
+    );
+    const projectLinkId = await getProjectLinkId(
+      memberList[0].accessToken,
+      projectId,
+    );
+    for (let i = 1; i < MAX_CAPACITY; i++) {
+      await request(app.getHttpServer())
+        .post('/api/project/join')
+        .set('Authorization', `Bearer ${memberList[i].accessToken}`)
+        .send({ inviteLinkId: projectLinkId });
+    }
+
+    const exceedMemberFixture = {
+      ...memberFixture,
+      github_id: MAX_CAPACITY + 1,
+      username: `username${MAX_CAPACITY + 1}`,
+    };
+    const { accessToken: exceedMemberAccessToken } = await createMember(
+      exceedMemberFixture,
+      app,
+    );
+
+    const response = await request(app.getHttpServer())
+      .post('/api/project/join')
+      .set('Authorization', `Bearer ${exceedMemberAccessToken}`)
+      .send({ inviteLinkId: projectLinkId });
+
+    expect(response.status).toBe(409);
+    expect(response.body.message).toBe('Project reached its maximum member capacity');
+  });
 });

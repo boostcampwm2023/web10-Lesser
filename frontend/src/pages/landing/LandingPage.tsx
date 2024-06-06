@@ -6,7 +6,6 @@ import LandingLink from "../../components/landing/link/LandingLink";
 import { Socket } from "socket.io-client";
 import useLandingSocket from "../../hooks/common/socket/useLandingSocket";
 import LandingMemoList from "../../components/landing/memo/LandingMemoList";
-import useLandingEmitEvent from "../../hooks/common/socket/useLandingEmitEvent";
 
 const LandingPage = () => {
   const { projectId } = useParams();
@@ -15,19 +14,18 @@ const LandingPage = () => {
   }
 
   const { socket }: { socket: Socket } = useOutletContext();
-  const { project, sprint, link, memoList } = useLandingSocket(socket);
-  const { memoSocketEvent } = useLandingEmitEvent(socket);
+  const { project } = useLandingSocket(socket);
 
   return (
     <div className="flex flex-col justify-between w-full h-full">
       <div className="h-[17.6875rem] w-full shrink-0 flex gap-9">
-        <LandingProject {...{ project, projectId }} />
-        <LandingMemoList {...{ memoList, memoSocketEvent }} />
+        <LandingProject {...{ projectId }} />
+        <LandingMemoList />
       </div>
       <div className="h-[20.5625rem] w-full shrink-0 flex gap-9">
-        <LandingSprint {...{ sprint }} />
+        <LandingSprint />
         <LandingMember projectTitle={project.title} />
-        <LandingLink {...{ link }} />
+        <LandingLink />
       </div>
     </div>
   );

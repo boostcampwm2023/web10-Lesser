@@ -5,6 +5,7 @@ import { Project } from './entity/project.entity';
 import { ProjectToMember } from './entity/project-member.entity';
 import { Member } from 'src/member/entity/member.entity';
 import { Memo, memoColor } from './entity/memo.entity';
+import { MemberRepository } from 'src/member/repository/member.repository';
 
 @Injectable()
 export class ProjectRepository {
@@ -13,6 +14,8 @@ export class ProjectRepository {
     private readonly projectRepository: Repository<Project>,
     @InjectRepository(ProjectToMember)
     private readonly projectToMemberRepository: Repository<ProjectToMember>,
+    @InjectRepository(Member)
+    private readonly memberRepository: Repository<Member>,
     @InjectRepository(Memo)
     private readonly memoRepository: Repository<Memo>,
   ) {}
@@ -44,6 +47,13 @@ export class ProjectRepository {
     });
   }
 
+  getProjectMemberList(project: Project) {
+    return this.memberRepository.find({
+      where: { projectToMember: { project: { id: project.id } } },
+      relations: { projectToMember: true },
+    });
+  }
+
   getProjectToMember(
     project: Project,
     member: Member,
@@ -54,7 +64,10 @@ export class ProjectRepository {
   }
 
   getProjectMemoListWithMember(projectId: number): Promise<Memo[]> {
-    return this.memoRepository.find({ where: { projectId }, relations: ["member"] });
+    return this.memoRepository.find({
+      where: { projectId },
+      relations: ['member'],
+    });
   }
 
   createMemo(memo: Memo): Promise<Memo> {

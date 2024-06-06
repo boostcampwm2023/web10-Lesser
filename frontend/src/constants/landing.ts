@@ -12,6 +12,7 @@ import discordLogo from "../assets/logo/Tech Logos/discord.svg";
 import youtubeLogo from "../assets/logo/Tech Logos/youtube.svg";
 import naverLogo from "../assets/logo/Tech Logos/naver.png";
 import { MemberStatus } from "../types/DTO/landingDTO";
+import { MemoColorType } from "../types/common/landing";
 
 export const DEFAULT_VALUE = {
   PROJECT: {
@@ -124,4 +125,15 @@ export const USER_WORD_STATUS: MyMap = {
   "접속 중": "on",
   "부재 중": "off",
   자리비움: "away",
+};
+
+type MemoColorMap = {
+  [key: string]: MemoColorType;
+};
+
+export const MEMO_COLOR: MemoColorMap = {
+  YELLOW: "yellow",
+  BLUE: "blue",
+  RED: "red",
+  GRAY: "gray",
 };

@@ -3,8 +3,14 @@ import { LandingLinkDTO } from "../../../types/DTO/landingDTO";
 import LandingLinkBlock from "./LandingLinkBlock";
 import LandingLinkModal from "./LandingLinkModal";
 import LandingTitleUI from "../common/LandingTitleUI";
+import { Socket } from "socket.io-client";
+import { useOutletContext } from "react-router-dom";
+import useLandingLinkSocket from "../../../hooks/common/landing/useLandingLinkSocket";
 
-const LandingLink = ({ link }: { link: LandingLinkDTO[] }) => {
+const LandingLink = () => {
+  const { socket }: { socket: Socket } = useOutletContext();
+  const { link } = useLandingLinkSocket(socket);
+
   const { open, close } = useModal(true);
   const handleCreateLinkClick = () => {
     open(<LandingLinkModal close={close} />);

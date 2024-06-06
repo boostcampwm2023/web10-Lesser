@@ -1,7 +1,8 @@
 import MemoEditor from "./MemoEditor";
 import { LandingMemoDTO } from "../../../types/DTO/landingDTO";
 import { MemoColorStyle, MemoColorType } from "../../../types/common/landing";
-import useLandingMemo from "../../../hooks/common/landing/useLandingMemo";
+import useLandingMemo from "../../../hooks/common/landing/useLandingMemoEditor";
+import React from "react";
 
 interface MemoBlockProps extends LandingMemoDTO {
   emitMemoDeleteEvent: (id: number) => void;
@@ -17,18 +18,8 @@ const MemoBlock = ({
   emitMemoColorUpdateEvent,
   emitMemoDeleteEvent,
 }: MemoBlockProps) => {
-  const {
-    editorOpened,
-    memoTitle,
-    memoContent,
-    memoColor,
-    memoRef,
-    openEditor,
-    changeMemoColor,
-    handleContentChange,
-    handleTitleChange,
-  } = useLandingMemo(title, content, color);
-  const colorStyle = MemoColorStyle[memoColor];
+  const { editorOpened, memoRef, openEditor } = useLandingMemo();
+  const colorStyle = MemoColorStyle[color];
 
   return (
     <div
@@ -39,25 +30,27 @@ const MemoBlock = ({
       <input
         placeholder="제목을 작성하세요"
         className="text-xs font-bold bg-transparent focus:outline-none"
-        value={memoTitle}
-        onChange={handleTitleChange}
+        value={title}
+        readOnly
+        // onChange={handleTitleChange}
       />
       <textarea
         placeholder="내용을 작성하세요"
         className="text-xxs bg-transparent focus:outline-none h-full resize-none scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-dark-gray scrollbar-track-transparent"
         spellCheck="false"
-        value={memoContent}
-        onChange={handleContentChange}
+        value={content}
+        // onChange={handleContentChange}
       />
       <div className="flex justify-between items-center">
         <p className="text-xxxs h-5 font-bold">{author}</p>
         {editorOpened && (
           <MemoEditor
-            id={id}
-            color={memoColor}
-            changeMemoColor={changeMemoColor}
-            emitMemoDeleteEvent={emitMemoDeleteEvent}
-            emitMemoColorUpdateEvent={emitMemoColorUpdateEvent}
+            {...{
+              id,
+              color,
+              emitMemoColorUpdateEvent,
+              emitMemoDeleteEvent,
+            }}
           />
         )}
       </div>
@@ -65,4 +58,4 @@ const MemoBlock = ({
   );
 };
 
-export default MemoBlock;
+export default React.memo(MemoBlock);

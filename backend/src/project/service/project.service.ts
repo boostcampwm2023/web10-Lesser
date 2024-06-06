@@ -28,7 +28,14 @@ export class ProjectService {
     const isProjectMember = await this.isProjectMember(project, member);
     if (isProjectMember) throw new Error('already joined member');
 
+    if ((await this.getProjectMemberList(project)).length >= 10)
+      throw new Error('Project reached its maximum member capacity');
+
     await this.projectRepository.addProjectMember(project, member);
+  }
+
+  async getProjectMemberList(project: Project) {
+    return this.projectRepository.getProjectMemberList(project);
   }
 
   async isProjectMember(project: Project, member: Member): Promise<boolean> {

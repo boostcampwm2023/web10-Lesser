@@ -9,10 +9,12 @@ import { Project } from 'src/project/entity/project.entity';
 import { CreateProjectRequestDto } from 'src/project/dto/CreateProjectRequest.dto';
 import { io } from 'socket.io-client';
 import { Member } from 'src/member/entity/member.entity';
+import { MemberService } from 'src/member/service/member.service';
 
 export let app: INestApplication;
 export let githubApiService: GithubApiService;
 export let lesserJwtService: LesserJwtService;
+export let memberService: MemberService;
 export let dataSource: DataSource;
 export const jwtTokenPattern =
   /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
@@ -68,6 +70,15 @@ export const createMember = async (
   return { accessToken: signupResponse.body.accessToken, refreshToken };
 };
 
+export const getMemberByAccessToken = async (
+  accessToken: string,
+): Promise<Member> => {
+  const {
+    sub: { id },
+  } = await lesserJwtService.getPayload(accessToken, 'access');
+  return await memberService.getMember(id);
+};
+
 export const createProject = async (
   accessToken: String,
   projectPayload: CreateProjectRequestDto,
@@ -91,12 +102,12 @@ export const getProjectLinkId = async (
   let projectLinkId;
   const socket = connectServer(projectId, accessToken);
   await new Promise<void>((resolve) => {
-    socket.on('connect', () => {
+    socket.once('connect', () => {
       socket.emit('joinLanding');
     });
-    socket.on('landing', (data) => {
+    socket.once('landing', (data) => {
       const { content } = data;
-      projectLinkId = projectLinkId = content.inviteLinkId;
+      projectLinkId = content.inviteLinkId;
       resolve();
     });
   });
@@ -138,6 +149,7 @@ export const appInit = async () => {
     .compile();
   githubApiService = moduleFixture.get<GithubApiService>(GithubApiService);
   lesserJwtService = moduleFixture.get<LesserJwtService>(LesserJwtService);
+  memberService = moduleFixture.get<MemberService>(MemberService);
 
   app = moduleFixture.createNestApplication();
   app.setGlobalPrefix('api');

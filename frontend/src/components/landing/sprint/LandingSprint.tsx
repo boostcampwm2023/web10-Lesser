@@ -1,9 +1,14 @@
-import { LandingSprintDTO } from "../../../types/DTO/landingDTO";
 import diffBetweenDate from "../../../utils/diffBetweenDate";
 import formatDate from "../../../utils/formatDate";
 import LandingSprintBar from "./LandingSprintBar";
+import { Socket } from "socket.io-client";
+import { useOutletContext } from "react-router-dom";
+import useLandingSprintSocket from "../../../hooks/common/landing/useLandingSprintSocket";
 
-const LandingSprint = ({ sprint }: { sprint: LandingSprintDTO | null }) => {
+const LandingSprint = () => {
+  const { socket }: { socket: Socket } = useOutletContext();
+  const { sprint } = useLandingSprintSocket(socket);
+
   return (
     <div className="w-full shadow-box rounded-lg p-6 flex flex-col justify-between">
       <p className="text-l text-middle-green font-bold">| 스프린트 정보</p>
