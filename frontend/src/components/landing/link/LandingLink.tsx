@@ -35,7 +35,7 @@ const LandingLink = () => {
     return () => {
       socket.off("landing");
     };
-  }, [socket]);
+  });
 
   return (
     <div className="w-full shadow-box rounded-lg flex flex-col pt-6 pl-6 pr-3 bg-gradient-to-tr to-middle-green-linear-from from-middle-green">

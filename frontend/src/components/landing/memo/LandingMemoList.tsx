@@ -78,7 +78,7 @@ const LandingMemoList = () => {
     return () => {
       socket.off("landing");
     };
-  }, [socket]);
+  });
 
   return (
     <div className="w-full rounded-lg shadow-box bg-gradient-to-tr from-dark-green-linear-from to-dark-green-linear-to">

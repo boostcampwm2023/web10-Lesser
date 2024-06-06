@@ -37,7 +37,7 @@ const LandingProject = ({ projectId }: LandingProjectProps) => {
     return () => {
       socket.off("landing");
     };
-  }, [socket]);
+  });
 
   return (
     <div className="flex flex-col justify-between w-full p-6 rounded-lg shadow-box">
