@@ -5,7 +5,6 @@ import MemoColorButton from "./MemoColorButton";
 interface MemoEditorProps {
   id: number;
   color: MemoColorType;
-  changeMemoColor: (color: MemoColorType) => void;
   emitMemoDeleteEvent: (id: number) => void;
   emitMemoColorUpdateEvent: (id: number, color: MemoColorType) => void;
 }
@@ -13,7 +12,6 @@ interface MemoEditorProps {
 const MemoEditor = ({
   id,
   color,
-  changeMemoColor,
   emitMemoDeleteEvent,
   emitMemoColorUpdateEvent,
 }: MemoEditorProps) => {
@@ -27,28 +25,24 @@ const MemoEditor = ({
         id={id}
         active={color === "yellow"}
         color={"yellow"}
-        changeMemoColor={changeMemoColor}
         emitMemoColorUpdateEvent={emitMemoColorUpdateEvent}
       />
       <MemoColorButton
         id={id}
         active={color === "blue"}
         color={"blue"}
-        changeMemoColor={changeMemoColor}
         emitMemoColorUpdateEvent={emitMemoColorUpdateEvent}
       />
       <MemoColorButton
         id={id}
         active={color === "red"}
         color={"red"}
-        changeMemoColor={changeMemoColor}
         emitMemoColorUpdateEvent={emitMemoColorUpdateEvent}
       />
       <MemoColorButton
         id={id}
         active={color === "gray"}
         color={"gray"}
-        changeMemoColor={changeMemoColor}
         emitMemoColorUpdateEvent={emitMemoColorUpdateEvent}
       />
       <button

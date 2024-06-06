@@ -51,13 +51,11 @@ const LandingMemoList = () => {
     action,
     content,
   }: LandingSocketData) => {
-    console.log(domain, action, content);
     switch (domain) {
       case LandingSocketDomain.INIT:
         handleInitEvent(content);
         break;
       case LandingSocketDomain.MEMO:
-        console.log("memo editing");
         handleMemoEvent(action, content);
         break;
     }
