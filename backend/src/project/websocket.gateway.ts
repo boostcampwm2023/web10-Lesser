@@ -5,6 +5,7 @@ import {
   ConnectedSocket,
   OnGatewayInit,
   MessageBody,
+  OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
@@ -34,7 +35,9 @@ export interface ClientSocket extends Socket {
   namespace: /project-\d+/,
   path: '/api/socket.io',
 })
-export class ProjectWebsocketGateway implements OnGatewayInit {
+export class ProjectWebsocketGateway
+  implements OnGatewayInit, OnGatewayDisconnect
+{
   constructor(
     private readonly projectService: ProjectService,
     private readonly lesserJwtService: LesserJwtService,
@@ -65,9 +68,31 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
     });
   }
 
+  async handleDisconnect(client: ClientSocket) {
+    if (!client.member) return;
+
+    const projectSocketList: ClientSocket[] =
+      (await client.nsp.fetchSockets()) as unknown as ClientSocket[];
+    const sameMember = projectSocketList.find(
+      (socket) =>
+        socket.member.id === client.member.id && socket.id !== client.id,
+    );
+    if (sameMember) return;
+    client.nsp
+      .to('landing')
+      .except(client.id)
+      .emit('landing', {
+        domain: 'member',
+        action: 'update',
+        content: {
+          id: client.member.id,
+          status: MemberStatus.OFF,
+        },
+      });
+  }
+
   @SubscribeMessage('joinLanding')
   async handleJoinLandingEvent(@ConnectedSocket() client: ClientSocket) {
-    client.status = MemberStatus.ON;
     const [project, projectMemberList, memoListWithMember] = await Promise.all([
       this.projectService.getProject(client.projectId),
       this.projectService.getProjectMemberList(client.project),
@@ -76,10 +101,18 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
     const projectSocketList: ClientSocket[] =
       (await client.nsp.fetchSockets()) as unknown as ClientSocket[];
 
+    const sameMemberSocket = projectSocketList.find(
+      (socket) =>
+        socket.member.id === client.member.id && socket.id !== client.id,
+    );
+
+    if (sameMemberSocket) client.status = sameMemberSocket.status;
+    else client.status = MemberStatus.ON;
+
     const response = InitLandingResponseDto.of(
       project,
       client.member,
-      MemberStatus.ON,
+      client.status,
       projectSocketList,
       projectMemberList,
       memoListWithMember,
@@ -87,6 +120,7 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
     client.emit('landing', response);
     client.join('landing');
 
+    if (sameMemberSocket) return;
     client.nsp
       .to('landing')
       .except(client.id)
@@ -202,9 +236,19 @@ export class ProjectWebsocketGateway implements OnGatewayInit {
       client.emit('error', { errorList });
       return;
     }
+
     const status = data.content.status;
     if (status === client.status) return;
     client.status = status;
+
+    const projectSocketList: ClientSocket[] =
+      (await client.nsp.fetchSockets()) as unknown as ClientSocket[];
+    projectSocketList.forEach((socket) => {
+      if (socket.member.id === client.member.id) {
+        socket.status = status;
+      }
+    });
+
     this.sendMemberStatusUpdate(client);
   }
 
