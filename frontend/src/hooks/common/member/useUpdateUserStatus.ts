@@ -84,6 +84,13 @@ const useUpdateUserStatus = (
     }
   };
 
+  const emitMemberStatusUpdate = (content: LandingMemberDTO) => {
+    socket.emit("member", {
+      action: "update",
+      content,
+    });
+  };
+
   useEffect(() => {
     socket.on("landing", handleOnLanding);
 
@@ -92,7 +99,7 @@ const useUpdateUserStatus = (
     };
   }, [socket, myInfo, memberList]);
 
-  return { myInfo, memberList, inviteLinkIdRef };
+  return { myInfo, memberList, inviteLinkIdRef, emitMemberStatusUpdate };
 };
 
 export default useUpdateUserStatus;

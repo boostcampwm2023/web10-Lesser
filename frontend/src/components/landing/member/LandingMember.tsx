@@ -10,9 +10,6 @@ import { memberResponse } from "../../../types/DTO/authDTO";
 
 interface LandingMemberProps {
   projectTitle: string;
-  memberSocketEvent: {
-    emitMemberStatusUpdate: (content: LandingMemberDTO) => void;
-  };
 }
 
 interface useOutletContextValues {
@@ -22,10 +19,7 @@ interface useOutletContextValues {
   handleCanAddStatusEventListener: (havePurpose: boolean) => void;
 }
 
-const LandingMember = ({
-  projectTitle,
-  memberSocketEvent,
-}: LandingMemberProps) => {
+const LandingMember = ({ projectTitle }: LandingMemberProps) => {
   const {
     socket,
     addUserStatusEventListener,
@@ -37,12 +31,8 @@ const LandingMember = ({
     options: ["접속 중", "부재 중", "자리비움"],
     defaultOption: "접속 중",
   });
-  const { myInfo, memberList, inviteLinkIdRef } = useUpdateUserStatus(
-    socket,
-    handleChangeSelectedOption
-  );
-
-  const { emitMemberStatusUpdate } = memberSocketEvent;
+  const { myInfo, memberList, inviteLinkIdRef, emitMemberStatusUpdate } =
+    useUpdateUserStatus(socket, handleChangeSelectedOption);
 
   const userData: memberResponse = JSON.parse(
     window.localStorage.getItem("member") ?? DEFAULT_MEMBER
