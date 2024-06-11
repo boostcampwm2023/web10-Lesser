@@ -65,6 +65,10 @@ const ProjectCreateInput = ({
   useEffect(() => {
     if (!targetStepIsCurrentStep) {
       inputRef.current?.blur();
+    } else {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 1000);
     }
   }, [targetStepIsCurrentStep]);
 
