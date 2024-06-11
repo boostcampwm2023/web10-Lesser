@@ -73,9 +73,8 @@ const ProjectCreateInput = ({
       className={`w-[100%] flex flex-col justify-end gap-[4.375rem] h-[${HEIGHT}%]`}
     >
       <div
-        className={`transition-all ease-in-out duration-1000 ${
-          targetStepIsCurrentStep ? `mb-[${MB}%]` : "mb-[-15%]"
-        }`}
+        className={`transition-all ease-in-out duration-1000`}
+        style={{ marginBottom: targetStepIsCurrentStep ? `${MB}%` : "-15%" }}
       >
         <label
           className="text-3xl font-semibold text-dark-gray"
