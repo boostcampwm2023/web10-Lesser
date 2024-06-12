@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Socket } from "socket.io-client";
 import {
   LandingSocketData,
@@ -6,8 +7,8 @@ import {
 } from "../../../types/common/landing";
 import { LandingDTO, LandingMemberDTO } from "../../../types/DTO/landingDTO";
 import useMemberStore from "../../../stores/useMemberStore";
-import { useEffect, useRef } from "react";
 import { USER_STATUS_WORD } from "../../../constants/landing";
+import sortMemberByStatus from "../../../utils/sortMemberByStatus";
 
 const useUpdateUserStatus = (
   socket: Socket,
@@ -22,11 +23,11 @@ const useUpdateUserStatus = (
     addMember,
   } = useMemberStore();
   const inviteLinkIdRef = useRef<string>("");
-
   const handleInitEvent = (content: LandingDTO) => {
     const { myInfo, member: memberList, inviteLinkId } = content;
     updateMyInfo(myInfo);
-    updateMemberList(memberList);
+    handleChangeStatus(USER_STATUS_WORD[myInfo.status]);
+    updateMemberList(memberList.sort(sortMemberByStatus));
     inviteLinkIdRef.current = inviteLinkId;
   };
 
@@ -51,16 +52,18 @@ const useUpdateUserStatus = (
         }
 
         updateMemberList(
-          memberList.map((member) => {
-            if (member.id === content.id) {
-              return {
-                ...member,
-                status: (content as LandingMemberDTO).status,
-              };
-            }
+          memberList
+            .map((member) => {
+              if (member.id === content.id) {
+                return {
+                  ...member,
+                  status: (content as LandingMemberDTO).status,
+                };
+              }
 
-            return member;
-          })
+              return member;
+            })
+            .sort(sortMemberByStatus)
         );
 
         break;
