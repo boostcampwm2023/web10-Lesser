@@ -4,6 +4,7 @@ import { Member } from 'src/member/entity/member.entity';
 import { Project } from '../entity/project.entity';
 import { ProjectToMember } from '../entity/project-member.entity';
 import { Memo, memoColor } from '../entity/memo.entity';
+import { Link } from '../entity/link.entity.';
 
 @Injectable()
 export class ProjectService {
@@ -75,5 +76,10 @@ export class ProjectService {
       throw new Error('project does not have this memo');
     await this.projectRepository.updateMemoColor(id, color);
     return true;
+  }
+
+  createLink(project: Project, url: string, description: string) {
+    const newLink = Link.of(project, url, description);
+    return this.projectRepository.createLink(newLink);
   }
 }
