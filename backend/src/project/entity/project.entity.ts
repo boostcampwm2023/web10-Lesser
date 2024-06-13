@@ -8,6 +8,7 @@ import {
   Generated,
   JoinColumn,
 } from 'typeorm';
+import { Link } from './link.entity.';
 import { Memo } from './memo.entity';
 import { ProjectToMember } from './project-member.entity';
 
@@ -40,6 +41,9 @@ export class Project {
 
   @OneToMany(() => Memo, (memo) => memo.id)
   memoList: Memo[];
+
+  @OneToMany(() => Link, (link) => link.id)
+  linkList: Link[];
 
   static of(title: string, subject: string) {
     const newProject = new Project();

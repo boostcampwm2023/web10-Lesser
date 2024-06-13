@@ -28,6 +28,7 @@ import { ErrorExceptionFilter } from './common/exception-filter/exception.filter
 import { AuthenticationGuard } from './common/guard/authentication.guard';
 import { MemberRepository } from './member/repository/member.repository';
 import { Memo } from './project/entity/memo.entity';
+import { Link } from './project/entity/link.entity.';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { Memo } from './project/entity/memo.entity';
           Project,
           ProjectToMember,
           Memo,
+          Link,
         ],
         synchronize: ConfigService.get('NODE_ENV') == 'PROD' ? false : true,
       }),
