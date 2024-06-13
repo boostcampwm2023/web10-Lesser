@@ -7,11 +7,7 @@ interface UserBlockProps {
   status: "on" | "off" | "away";
 }
 
-const UserStateDisplay = ({
-  status = "off",
-}: {
-  status: "on" | "off" | "away";
-}) => {
+const UserStateDisplay = ({ status }: { status: "on" | "off" | "away" }) => {
   const { bgColor, text } = USER_STATE_DISPLAY[status];
   return (
     <div className="flex gap-2 items-center w-[4.0625rem]">
