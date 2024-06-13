@@ -5,6 +5,7 @@ import { Member } from 'src/member/entity/member.entity';
 import { Project } from '../entity/project.entity';
 import { ProjectToMember } from '../entity/project-member.entity';
 import { Memo, memoColor } from '../entity/memo.entity';
+import { Link } from '../entity/link.entity.';
 
 describe('ProjectService', () => {
   let projectService: ProjectService;
@@ -28,6 +29,7 @@ describe('ProjectService', () => {
             updateMemoColor: jest.fn(),
             findMemoById: jest.fn(),
             getProjectMemberList: jest.fn(),
+            createLink: jest.fn(),
           },
         },
       ],
@@ -261,6 +263,26 @@ describe('ProjectService', () => {
         async () =>
           await projectService.updateMemoColor(myProject, memo.id, color),
       ).rejects.toThrow('project does not have this memo');
+    });
+  });
+
+  describe('Create link', () => {
+    const [title, subject] = ['title', 'subject'];
+    const project = Project.of(title, subject);
+    it('should return created link', async () => {
+      const url = 'url';
+      const description = 'description';
+      jest
+        .spyOn(projectRepository, 'createLink')
+        .mockResolvedValue(Link.of(project, url, description));
+
+      const link: Link = await projectService.createLink(
+        project,
+        url,
+        description,
+      );
+      expect(link.url).toBe(url);
+      expect(link.description).toBe(description);
     });
   });
 });

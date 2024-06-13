@@ -6,6 +6,7 @@ import { ProjectToMember } from './entity/project-member.entity';
 import { Member } from 'src/member/entity/member.entity';
 import { Memo, memoColor } from './entity/memo.entity';
 import { MemberRepository } from 'src/member/repository/member.repository';
+import { Link } from './entity/link.entity.';
 
 @Injectable()
 export class ProjectRepository {
@@ -18,6 +19,8 @@ export class ProjectRepository {
     private readonly memberRepository: Repository<Member>,
     @InjectRepository(Memo)
     private readonly memoRepository: Repository<Memo>,
+    @InjectRepository(Link)
+    private readonly linkRepository: Repository<Link>,
   ) {}
 
   create(project: Project): Promise<Project> {
@@ -88,5 +91,9 @@ export class ProjectRepository {
     return this.memoRepository.findOne({
       where: { id },
     });
+  }
+
+  createLink(link: Link): Promise<Link> {
+    return this.linkRepository.save(link);
   }
 }
