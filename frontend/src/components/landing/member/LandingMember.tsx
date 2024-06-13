@@ -8,6 +8,7 @@ import useUpdateUserStatus from "../../../hooks/common/member/useUpdateUserStatu
 import { DEFAULT_MEMBER } from "../../../constants/projects";
 import { memberResponse } from "../../../types/DTO/authDTO";
 import emitMemberStatusUpdate from "../../../utils/emitMemberStatusUpdate";
+import { STORAGE_KEY } from "../../../constants/storageKey";
 
 interface LandingMemberProps {
   projectTitle: string;
@@ -56,18 +57,20 @@ const LandingMember = ({ projectTitle }: LandingMemberProps) => {
   };
 
   function selectStatusOption(option: string) {
+    if (option === USER_STATUS_WORD.away || option === USER_STATUS_WORD.off) {
+      handleCanAddStatusEventListener(false);
+      localStorage.setItem(STORAGE_KEY.UPDATE_STATUS_WITH_INTENTION, "true");
+      removeUserStatusEventListener();
+    } else {
+      handleCanAddStatusEventListener(true);
+      localStorage.removeItem(STORAGE_KEY.UPDATE_STATUS_WITH_INTENTION);
+      addUserStatusEventListener();
+    }
+
     emitMemberStatusUpdate(socket, {
       ...myInfo,
       status: USER_WORD_STATUS[option],
     });
-
-    if (option === USER_STATUS_WORD.away || option === USER_STATUS_WORD.off) {
-      handleCanAddStatusEventListener(false);
-      removeUserStatusEventListener();
-    } else {
-      handleCanAddStatusEventListener(true);
-      addUserStatusEventListener();
-    }
   }
 
   return (

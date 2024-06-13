@@ -3,6 +3,7 @@ import { Socket } from "socket.io-client";
 import useMemberStore from "../../../stores/useMemberStore";
 import useThrottle from "../throttle/useThrottle";
 import emitMemberStatusUpdate from "../../../utils/emitMemberStatusUpdate";
+import { STORAGE_KEY } from "../../../constants/storageKey";
 
 const useAwayUser = (socket: Socket) => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -68,6 +69,13 @@ const useAwayUser = (socket: Socket) => {
   useEffect(() => {
     if (canAddStatusEventListener) {
       addUserStatusEventListener();
+    }
+
+    if (
+      localStorage.getItem(STORAGE_KEY.UPDATE_STATUS_WITH_INTENTION) === "true"
+    ) {
+      removeUserStatusEventListener();
+      return;
     }
 
     return () => {
