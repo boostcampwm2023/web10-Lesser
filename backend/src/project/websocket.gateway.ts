@@ -23,6 +23,7 @@ import { InitLandingResponseDto } from './dto/InitLandingResponse.dto';
 import { MemoColorUpdateRequestDto } from './dto/MemoColorUpdateRequest.dto';
 import { MemberUpdateRequestDto } from './dto/MemberUpdateRequest.dto';
 import { MemberStatus } from './enum/MemberStatus.enum';
+import { LinkCreateRequestDto } from './dto/LinkCreateRequest.dto';
 
 export interface ClientSocket extends Socket {
   projectId?: number;
@@ -250,6 +251,36 @@ export class ProjectWebsocketGateway
     });
 
     this.sendMemberStatusUpdate(client);
+  }
+
+  @SubscribeMessage('link')
+  async handleLinkEvent(
+    @ConnectedSocket() client: ClientSocket,
+    @MessageBody() data: LinkCreateRequestDto,
+  ) {
+    if (data.action === 'create') {
+      const errors = await validate(plainToClass(LinkCreateRequestDto, data));
+      if (errors.length > 0) {
+        const errorList = this.getRecursiveErrorMsgList(errors);
+        client.emit('error', { errorList });
+        return;
+      }
+      const { content } = data as LinkCreateRequestDto;
+      const createLink = await this.projectService.createLink(
+        client.project,
+        content.url,
+        content.description,
+      );
+      client.nsp.to('landing').emit('landing', {
+        domain: 'link',
+        action: 'create',
+        content: {
+          id: createLink.id,
+          url: createLink.url,
+          description: createLink.description,
+        },
+      });
+    }
   }
 
   notifyJoinToConnectedMembers(projectId: number, member: Member) {
