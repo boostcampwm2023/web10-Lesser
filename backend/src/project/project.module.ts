@@ -11,11 +11,12 @@ import { MemberRepository } from 'src/member/repository/member.repository';
 import { ProjectWebsocketGateway } from './websocket.gateway';
 import { Memo } from './entity/memo.entity';
 import { MemberService } from 'src/member/service/member.service';
+import { Link } from './entity/link.entity.';
 
 @Module({
   imports: [
     LesserJwtModule,
-    TypeOrmModule.forFeature([Project, ProjectToMember, Member, Memo]),
+    TypeOrmModule.forFeature([Project, ProjectToMember, Member, Memo, Link]),
   ],
   controllers: [ProjectController],
   providers: [
