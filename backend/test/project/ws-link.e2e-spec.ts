@@ -54,7 +54,7 @@ describe('WS link', () => {
         const memberId2 = await initLandingAndReturnId(socket2);
         await expectUpdatedMemberStatus(socket1, 'on', memberId2);
 
-        const url = '유효한 url';
+        const url = 'https://www.urldecoder.org/ko/';
         const description = '피그마';
         const requestData = {
           action: 'create',
@@ -87,5 +87,37 @@ describe('WS link', () => {
         });
       });
     };
+
+    it('should return error when URL format is invalid', () => {
+      let socket;
+      return new Promise<void>(async (resolve, reject) => {
+        const accessToken = (await createMember(memberFixture, app))
+          .accessToken;
+        const project = await createProject(accessToken, projectPayload, app);
+
+        socket = connectServer(project.id, accessToken);
+        await emitJoinLanding(socket);
+        await initLanding(socket);
+
+        const url = '유효하지 않은 URL';
+        const description = '피그마';
+        const requestData = {
+          action: 'create',
+          content: { url, description },
+        };
+        socket.emit('link', requestData);
+        socket.on('error', (data) => {
+          expect(data.errorList).toBeDefined();
+          expect(data.errorList.length).toBeGreaterThan(0);
+          expect(data.errorList).toContain('invalid url format');
+          resolve();
+        });
+        socket.on('exception', (data) => {
+          reject(data);
+        });
+      }).finally(() => {
+        socket.close();
+      });
+    });
   });
 });
