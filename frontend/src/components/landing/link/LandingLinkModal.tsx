@@ -1,5 +1,6 @@
 import { ChangeEvent, MouseEventHandler, useState } from "react";
 import isValidURL from "../../../utils/isValidURL";
+import addSchemeToURL from "../../../utils/addSchemeToURL";
 
 interface LandingLinkModalProps {
   close: () => void;
@@ -27,12 +28,13 @@ const LandingLinkModal = ({
   const handleConfirmClick = () => {
     const { url, description } = linkData;
     const errorTextList = [];
+    const urlWithScheme = addSchemeToURL(url);
 
-    if (!isValidURL(url)) {
+    if (!isValidURL(urlWithScheme)) {
       errorTextList.push("유효하지 않은 URL입니다.");
     }
 
-    if (url.trim().length > 255 || description.trim().length > 255) {
+    if (urlWithScheme.trim().length > 255 || description.trim().length > 255) {
       errorTextList.push("링크 주소와 이름은 255자 이하여야 합니다.");
     }
 
@@ -45,7 +47,7 @@ const LandingLinkModal = ({
       return;
     }
 
-    emitLinkCreateEvent(linkData);
+    emitLinkCreateEvent({ ...linkData, url: urlWithScheme });
     close();
   };
 
