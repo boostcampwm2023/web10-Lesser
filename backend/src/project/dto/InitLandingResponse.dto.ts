@@ -1,4 +1,5 @@
 import { Member } from 'src/member/entity/member.entity';
+import { Link } from '../entity/link.entity.';
 import { Memo, memoColor } from '../entity/memo.entity';
 import { Project } from '../entity/project.entity';
 import { MemberStatus } from '../enum/MemberStatus.enum';
@@ -20,6 +21,20 @@ class MemoDto {
     dto.author = memoWithMember.member.username;
     dto.createdAt = memoWithMember.created_at;
     dto.color = memoWithMember.color;
+    return dto;
+  }
+}
+
+class LinkDto {
+  id: number;
+  url: string;
+  description: string;
+
+  static of(link: Link) {
+    const dto = new LinkDto();
+    dto.id = link.id;
+    dto.url = link.url;
+    dto.description = link.description;
     return dto;
   }
 }
@@ -60,7 +75,7 @@ class ProjectLandingPageContentDto {
   member: MemberInfo[];
   sprint: null;
   memoList: MemoDto[];
-  link: [];
+  linkList: LinkDto[];
   inviteLinkId: string;
 
   static of(
@@ -70,6 +85,7 @@ class ProjectLandingPageContentDto {
     projectSocketList: ClientSocket[],
     projectMemberList: Member[],
     memoListWithMember: Memo[],
+    linkList: Link[],
   ) {
     const dto = new ProjectLandingPageContentDto();
     dto.project = ProjectDto.of(project);
@@ -86,7 +102,10 @@ class ProjectLandingPageContentDto {
     dto.sprint = null;
     const memoList = memoListWithMember.map((memo) => MemoDto.of(memo));
     dto.memoList = memoList;
-    dto.link = [];
+
+    const linkDtoList = linkList.map((link) => LinkDto.of(link));
+    dto.linkList = linkDtoList;
+
     dto.inviteLinkId = project.inviteLinkId;
     return dto;
   }
@@ -104,6 +123,7 @@ export class InitLandingResponseDto {
     projectSocketList: ClientSocket[],
     projectMemberList: Member[],
     memoListWithMember: Memo[],
+    linkList: Link[],
   ) {
     const dto = new InitLandingResponseDto();
     dto.domain = 'landing';
@@ -115,6 +135,7 @@ export class InitLandingResponseDto {
       projectSocketList,
       projectMemberList,
       memoListWithMember,
+      linkList,
     );
     return dto;
   }
