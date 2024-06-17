@@ -178,11 +178,10 @@ describe('WS landing', () => {
 
 const getCreateMemoMsg = (socket) => {
   return new Promise<void>((res) => {
-    socket.on('landing', (data) => {
+    socket.once('landing', (data) => {
       const { action, domain } = data;
       expect(domain).toBe('memo');
       expect(action).toBe('create');
-      socket.off('landing');
       res();
     });
   });
