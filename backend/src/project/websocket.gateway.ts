@@ -94,11 +94,13 @@ export class ProjectWebsocketGateway
 
   @SubscribeMessage('joinLanding')
   async handleJoinLandingEvent(@ConnectedSocket() client: ClientSocket) {
-    const [project, projectMemberList, memoListWithMember] = await Promise.all([
-      this.projectService.getProject(client.projectId),
-      this.projectService.getProjectMemberList(client.project),
-      this.projectService.getProjectMemoListWithMember(client.project.id),
-    ]);
+    const [project, projectMemberList, memoListWithMember, linkList] =
+      await Promise.all([
+        this.projectService.getProject(client.projectId),
+        this.projectService.getProjectMemberList(client.project),
+        this.projectService.getProjectMemoListWithMember(client.project.id),
+        this.projectService.getProjectLinkList(client.project),
+      ]);
     const projectSocketList: ClientSocket[] =
       (await client.nsp.fetchSockets()) as unknown as ClientSocket[];
 
@@ -117,6 +119,7 @@ export class ProjectWebsocketGateway
       projectSocketList,
       projectMemberList,
       memoListWithMember,
+      linkList,
     );
     client.emit('landing', response);
     client.join('landing');
