@@ -89,7 +89,6 @@ export class ProjectService {
 
   async deleteLink(project: Project, linkId: number) {
     const result = await this.projectRepository.deleteLink(project, linkId);
-    if (result) return true;
-    else return false;
+    return result ? true : false;
   }
 }

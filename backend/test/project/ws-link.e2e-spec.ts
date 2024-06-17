@@ -74,7 +74,7 @@ describe('WS link', () => {
 
     const expectCreateLink = (socket, url, description) => {
       return new Promise<void>((resolve, reject) => {
-        socket.on('landing', async (data) => {
+        socket.once('landing', async (data) => {
           const { content, action, domain } = data;
           expect(domain).toBe('link');
           expect(action).toBe('create');
@@ -82,7 +82,6 @@ describe('WS link', () => {
           expect(content?.id).toBeDefined();
           expect(content?.url).toBe(url);
           expect(content?.description).toBe(description);
-          socket.off('landing');
           resolve(content.id);
         });
       });
@@ -170,11 +169,10 @@ describe('WS link', () => {
     });
     const getCreateLinkMsg = (socket) => {
       return new Promise<void>((res) => {
-        socket.on('landing', (data) => {
+        socket.once('landing', (data) => {
           const { action, domain } = data;
           expect(domain).toBe('link');
           expect(action).toBe('create');
-          socket.off('landing');
           res();
         });
       });
@@ -241,7 +239,7 @@ describe('WS link', () => {
     });
     const expectCreateLinkAndReturnFirstLinkId = (socket, url, description) => {
       return new Promise<void>((resolve, reject) => {
-        socket.on('landing', async (data) => {
+        socket.once('landing', async (data) => {
           const { content, action, domain } = data;
           expect(domain).toBe('link');
           expect(action).toBe('create');
@@ -249,7 +247,6 @@ describe('WS link', () => {
           expect(content?.id).toBeDefined();
           expect(content?.url).toBe(url);
           expect(content?.description).toBe(description);
-          socket.off('landing');
           resolve(content.id);
         });
       });
@@ -257,12 +254,11 @@ describe('WS link', () => {
 
     const expectDeleteLink = (socket, linkId) => {
       return new Promise<void>((resolve, reject) => {
-        socket.on('landing', async (data) => {
+        socket.once('landing', async (data) => {
           const { content, action, domain } = data;
           expect(domain).toBe('link');
           expect(action).toBe('delete');
           expect(content?.id).toBe(linkId);
-          socket.off('landing');
           resolve();
         });
       });
