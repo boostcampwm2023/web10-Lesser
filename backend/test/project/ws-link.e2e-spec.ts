@@ -83,7 +83,7 @@ describe('WS link', () => {
           expect(content?.url).toBe(url);
           expect(content?.description).toBe(description);
           socket.off('landing');
-          resolve();
+          resolve(content.id);
         });
       });
     };
@@ -176,6 +176,94 @@ describe('WS link', () => {
           expect(action).toBe('create');
           socket.off('landing');
           res();
+        });
+      });
+    };
+  });
+  describe('link delete', () => {
+    it('should return delete link data when received delete link request', async () => {
+      let socket1;
+      let socket2;
+      return new Promise<void>(async (resolve, reject) => {
+        // 회원1 회원가입 + 프로젝트 생성
+        const accessToken = (await createMember(memberFixture, app))
+          .accessToken;
+        const project = await createProject(accessToken, projectPayload, app);
+        const projectLinkId = await getProjectLinkId(accessToken, project.id);
+
+        // 회원2 회원가입 + 프로젝트 참여
+        const accessToken2 = (await createMember(memberFixture2, app))
+          .accessToken;
+        await joinProject(accessToken2, projectLinkId);
+
+        socket1 = connectServer(project.id, accessToken);
+        handleConnectErrorWithReject(socket1, reject);
+        handleErrorWithReject(socket1, reject);
+        await emitJoinLanding(socket1);
+        await initLanding(socket1);
+
+        const url = 'https://www.urldecoder.org/ko/';
+        const description = '피그마';
+        const requestData = {
+          action: 'create',
+          content: { url, description },
+        };
+        socket1.emit('link', requestData);
+        const linkId = await expectCreateLinkAndReturnFirstLinkId(
+          socket1,
+          url,
+          description,
+        );
+
+        socket2 = connectServer(project.id, accessToken2);
+        handleConnectErrorWithReject(socket2, reject);
+        handleErrorWithReject(socket2, reject);
+        await emitJoinLanding(socket2);
+        const memberId2 = await initLandingAndReturnId(socket2);
+        await expectUpdatedMemberStatus(socket1, 'on', memberId2);
+
+        const deleteRequestData = {
+          action: 'delete',
+          content: {
+            id: linkId,
+          },
+        };
+        socket1.emit('link', deleteRequestData);
+        await Promise.all([
+          expectDeleteLink(socket1, linkId),
+          expectDeleteLink(socket2, linkId),
+        ]);
+        resolve();
+      }).finally(() => {
+        socket1.close();
+        socket2.close();
+      });
+    });
+    const expectCreateLinkAndReturnFirstLinkId = (socket, url, description) => {
+      return new Promise<void>((resolve, reject) => {
+        socket.on('landing', async (data) => {
+          const { content, action, domain } = data;
+          expect(domain).toBe('link');
+          expect(action).toBe('create');
+          expect(content?.description).toBe(description);
+          expect(content?.id).toBeDefined();
+          expect(content?.url).toBe(url);
+          expect(content?.description).toBe(description);
+          socket.off('landing');
+          resolve(content.id);
+        });
+      });
+    };
+
+    const expectDeleteLink = (socket, linkId) => {
+      return new Promise<void>((resolve, reject) => {
+        socket.on('landing', async (data) => {
+          const { content, action, domain } = data;
+          expect(domain).toBe('link');
+          expect(action).toBe('delete');
+          expect(content?.id).toBe(linkId);
+          socket.off('landing');
+          resolve();
         });
       });
     };
