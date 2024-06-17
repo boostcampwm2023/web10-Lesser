@@ -31,6 +31,7 @@ describe('ProjectService', () => {
             getProjectMemberList: jest.fn(),
             createLink: jest.fn(),
             getProjectLinkList: jest.fn(),
+            deleteLink: jest.fn(),
           },
         },
       ],
@@ -301,6 +302,28 @@ describe('ProjectService', () => {
       const linkList = await projectService.getProjectLinkList(project);
 
       expect(linkList).toEqual(newLinkList);
+    });
+  });
+
+  describe('Delete link', () => {
+    const [title, subject] = ['title', 'subject'];
+    const project = Project.of(title, subject);
+    it('should return 1 when deleted a link', async () => {
+      jest.spyOn(projectRepository, 'deleteLink').mockResolvedValue(1);
+
+      const deletedLinkId = 1;
+      const result = await projectService.deleteLink(project, deletedLinkId);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return 0 when link is not found', async () => {
+      jest.spyOn(projectRepository, 'deleteLink').mockResolvedValue(0);
+
+      const notFoundLinkId = 1;
+      const result = await projectService.deleteLink(project, notFoundLinkId);
+
+      expect(result).toBe(false);
     });
   });
 });

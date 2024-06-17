@@ -100,4 +100,12 @@ export class ProjectRepository {
   getProjectLinkList(project: Project): Promise<Link[]> {
     return this.linkRepository.find({ where: { project: { id: project.id } } });
   }
+
+  async deleteLink(project: Project, id: number): Promise<number> {
+    const result = await this.linkRepository.delete({
+      project: { id: project.id },
+      id,
+    });
+    return result.affected ? result.affected : 0;
+  }
 }

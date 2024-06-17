@@ -86,4 +86,10 @@ export class ProjectService {
   getProjectLinkList(project: Project) {
     return this.projectRepository.getProjectLinkList(project);
   }
+
+  async deleteLink(project: Project, linkId: number) {
+    const result = await this.projectRepository.deleteLink(project, linkId);
+    if (result) return true;
+    else return false;
+  }
 }
