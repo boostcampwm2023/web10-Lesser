@@ -82,4 +82,8 @@ export class ProjectService {
     const newLink = Link.of(project, url, description);
     return this.projectRepository.createLink(newLink);
   }
+
+  getProjectLinkList(project: Project) {
+    return this.projectRepository.getProjectLinkList(project);
+  }
 }
