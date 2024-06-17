@@ -1,18 +1,16 @@
-import { LINK_LOGO_URL } from "../../../constants/landing";
 import { LandingLinkDTO } from "../../../types/DTO/landingDTO";
-import getLinkType from "../../../utils/getLinkType";
 import ProfileImage from "../../common/ProfileImage";
 
 const LandingLinkBlock = ({ description, url }: LandingLinkDTO) => {
-  const linkLogoUrl = LINK_LOGO_URL[getLinkType(url)];
+  const linkLogoUrl = `${new URL(url).origin}/favicon.ico`;
   return (
     <a
-      className="w-full flex justify-start items-center gap-4 p-3 bg-white rounded-lg shadow-box hover:bg-light-gray"
+      className="flex items-center justify-start w-full gap-4 p-3 bg-white rounded-lg shadow-box hover:bg-light-gray"
       href={url}
       target="_blank"
     >
       <ProfileImage imageUrl={linkLogoUrl} pxSize={40} />
-      <p className="text-dark-green text-xs font-bold truncate">
+      <p className="text-xs font-bold truncate text-dark-green">
         {description}
       </p>
     </a>
