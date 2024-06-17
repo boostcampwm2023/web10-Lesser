@@ -30,6 +30,7 @@ describe('ProjectService', () => {
             findMemoById: jest.fn(),
             getProjectMemberList: jest.fn(),
             createLink: jest.fn(),
+            getProjectLinkList: jest.fn(),
           },
         },
       ],
@@ -283,6 +284,23 @@ describe('ProjectService', () => {
       );
       expect(link.url).toBe(url);
       expect(link.description).toBe(description);
+    });
+  });
+
+  describe('Get project link list', () => {
+    it('should return linkList', async () => {
+      const [title, subject] = ['title', 'subject'];
+      const project = Project.of(title, subject);
+      const link = Link.of(project, 'url', 'description');
+      const newLinkList = [link];
+
+      jest
+        .spyOn(projectRepository, 'getProjectLinkList')
+        .mockResolvedValue(newLinkList);
+
+      const linkList = await projectService.getProjectLinkList(project);
+
+      expect(linkList).toEqual(newLinkList);
     });
   });
 });

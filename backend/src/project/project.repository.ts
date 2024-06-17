@@ -96,4 +96,8 @@ export class ProjectRepository {
   createLink(link: Link): Promise<Link> {
     return this.linkRepository.save(link);
   }
+
+  getProjectLinkList(project: Project): Promise<Link[]> {
+    return this.linkRepository.find({ where: { project: { id: project.id } } });
+  }
 }
