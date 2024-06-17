@@ -1,7 +1,15 @@
 import { ChangeEvent, MouseEventHandler, useState } from "react";
 import isValidURL from "../../../utils/isValidURL";
 
-const LandingLinkModal = ({ close }: { close: () => void }) => {
+interface LandingLinkModalProps {
+  close: () => void;
+  emitLinkCreateEvent: (content: { url: string; description: string }) => void;
+}
+
+const LandingLinkModal = ({
+  close,
+  emitLinkCreateEvent,
+}: LandingLinkModalProps) => {
   const [linkData, setLinkData] = useState({
     url: "",
     description: "",
@@ -36,6 +44,9 @@ const LandingLinkModal = ({ close }: { close: () => void }) => {
       alert(errorTextList.join("\n"));
       return;
     }
+
+    emitLinkCreateEvent(linkData);
+    close();
   };
 
   const handleCloseClick: MouseEventHandler<

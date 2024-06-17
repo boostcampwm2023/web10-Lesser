@@ -4,6 +4,7 @@ import { LandingDTO, LandingLinkDTO } from "../../../types/DTO/landingDTO";
 import {
   LandingSocketData,
   LandingSocketDomain,
+  LandingSocketLinkAction,
 } from "../../../types/common/landing";
 
 const useLandingLinkSocket = (socket: Socket) => {
@@ -13,11 +14,33 @@ const useLandingLinkSocket = (socket: Socket) => {
     setLink(link);
   };
 
-  const handleOnLanding = ({ domain, content }: LandingSocketData) => {
-    if (domain !== LandingSocketDomain.INIT) {
-      return;
+  const handleLinkEvent = (
+    action: LandingSocketLinkAction,
+    content: LandingLinkDTO
+  ) => {
+    switch (action) {
+      case LandingSocketLinkAction.CREATE:
+        setLink([...link, content]);
+        break;
     }
-    handleInitEvent(content);
+  };
+
+  const handleOnLanding = ({ domain, action, content }: LandingSocketData) => {
+    switch (domain) {
+      case LandingSocketDomain.INIT:
+        handleInitEvent(content);
+        break;
+      case LandingSocketDomain.LINK:
+        handleLinkEvent(action, content);
+        break;
+    }
+  };
+
+  const emitLinkCreateEvent = (content: {
+    url: string;
+    description: string;
+  }) => {
+    socket.emit("link", { action: "create", content });
   };
 
   useEffect(() => {
@@ -28,7 +51,7 @@ const useLandingLinkSocket = (socket: Socket) => {
     };
   }, []);
 
-  return { link };
+  return { link, emitLinkCreateEvent };
 };
 
 export default useLandingLinkSocket;

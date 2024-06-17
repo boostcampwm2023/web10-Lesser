@@ -1,5 +1,6 @@
 import {
   LandingDTO,
+  LandingLinkDTO,
   LandingMemberDTO,
   LandingMemoDTO,
 } from "../DTO/landingDTO";
@@ -8,6 +9,7 @@ export enum LandingSocketDomain {
   INIT = "landing",
   MEMO = "memo",
   MEMBER = "member",
+  LINK = "link",
 }
 
 export enum LandingSocketMemoAction {
@@ -17,6 +19,12 @@ export enum LandingSocketMemoAction {
 }
 
 export enum LandingSocketMemberAction {
+  CREATE = "create",
+  UPDATE = "update",
+  DELETE = "delete",
+}
+
+export enum LandingSocketLinkAction {
   CREATE = "create",
   UPDATE = "update",
   DELETE = "delete",
@@ -40,10 +48,17 @@ interface LandingSocketMemberData {
   content: LandingMemberDTO | { id: number };
 }
 
+interface LandingSocketLinkData {
+  domain: LandingSocketDomain.LINK;
+  action: LandingSocketLinkAction;
+  content: LandingLinkDTO;
+}
+
 export type LandingSocketData =
   | LandingSocketInitData
   | LandingSocketMemoData
-  | LandingSocketMemberData;
+  | LandingSocketMemberData
+  | LandingSocketLinkData;
 
 export enum MemoColorStyle {
   yellow = "bg-[#FFD966]",
