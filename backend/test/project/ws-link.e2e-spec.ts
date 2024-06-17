@@ -119,5 +119,65 @@ describe('WS link', () => {
         socket.close();
       });
     });
+
+    it('should return created linkList in landing page data when project member has already created external link', async () => {
+      let socket;
+
+      return await new Promise<void>(async (resolve, reject) => {
+        const accessToken = (await createMember(memberFixture, app))
+          .accessToken;
+        const project = await createProject(accessToken, projectPayload, app);
+
+        //메모 생성
+        socket = connectServer(project.id, accessToken);
+        handleConnectErrorWithReject(socket, reject);
+        handleErrorWithReject(socket, reject);
+
+        await emitJoinLanding(socket);
+        await initLanding(socket);
+
+        const url = 'https://www.urldecoder.org/ko/';
+        const description = '피그마';
+        const requestData = {
+          action: 'create',
+          content: { url, description },
+        };
+        socket.emit('link', requestData);
+
+        await getCreateLinkMsg(socket);
+        socket.close();
+
+        socket = connectServer(project.id, accessToken);
+        handleConnectErrorWithReject(socket, reject);
+        handleErrorWithReject(socket, reject);
+        await emitJoinLanding(socket);
+
+        socket.on('landing', (data) => {
+          const { action, domain, content } = data;
+          const { linkList } = content;
+          if (action === 'init' && domain === 'landing') {
+            expect(linkList.length).toBe(1);
+            const link = linkList[0];
+            expect(link.id).toBeDefined();
+            expect(link.description).toBe(description);
+            expect(link.url).toBe(url);
+            resolve();
+          }
+        });
+      }).finally(() => {
+        socket.close();
+      });
+    });
+    const getCreateLinkMsg = (socket) => {
+      return new Promise<void>((res) => {
+        socket.on('landing', (data) => {
+          const { action, domain } = data;
+          expect(domain).toBe('link');
+          expect(action).toBe('create');
+          socket.off('landing');
+          res();
+        });
+      });
+    };
   });
 });
