@@ -24,6 +24,7 @@ import { MemoColorUpdateRequestDto } from './dto/MemoColorUpdateRequest.dto';
 import { MemberUpdateRequestDto } from './dto/MemberUpdateRequest.dto';
 import { MemberStatus } from './enum/MemberStatus.enum';
 import { LinkCreateRequestDto } from './dto/LinkCreateRequest.dto';
+import { LinkDeleteRequestDto } from './dto/LinkDeleteRequest.dto';
 
 export interface ClientSocket extends Socket {
   projectId?: number;
@@ -259,7 +260,7 @@ export class ProjectWebsocketGateway
   @SubscribeMessage('link')
   async handleLinkEvent(
     @ConnectedSocket() client: ClientSocket,
-    @MessageBody() data: LinkCreateRequestDto,
+    @MessageBody() data: LinkCreateRequestDto | LinkDeleteRequestDto,
   ) {
     if (data.action === 'create') {
       const errors = await validate(plainToClass(LinkCreateRequestDto, data));
@@ -283,6 +284,29 @@ export class ProjectWebsocketGateway
           description: createLink.description,
         },
       });
+    }
+
+    if (data.action === 'delete') {
+      const errors = await validate(plainToClass(LinkDeleteRequestDto, data));
+      if (errors.length > 0) {
+        const errorList = this.getRecursiveErrorMsgList(errors);
+        client.emit('error', { errorList });
+        return;
+      }
+      const { content } = data as LinkDeleteRequestDto;
+      const isDeleted = await this.projectService.deleteLink(
+        client.project,
+        content.id,
+      );
+      if (isDeleted) {
+        client.nsp.to('landing').emit('landing', {
+          domain: 'link',
+          action: 'delete',
+          content: {
+            id: content.id,
+          },
+        });
+      }
     }
   }
 
