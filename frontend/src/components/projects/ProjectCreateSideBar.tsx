@@ -1,10 +1,12 @@
-import { Step } from "../../types/common/common";
-
 interface ProjectCreateSideBarProps {
-  currentStep: Step;
+  currentStepNumber: number;
+  currentStepName: string;
 }
 
-const ProjectCreateSideBar = ({ currentStep }: ProjectCreateSideBarProps) => (
+const ProjectCreateSideBar = ({
+  currentStepNumber,
+  currentStepName,
+}: ProjectCreateSideBarProps) => (
   <div className="w-[24.75rem] h-[40.5rem] bg-gradient-to-bl from-white-transparent to-70% bg-middle-green px-12 shadow-box">
     <h2 className="mt-40 text-4xl font-black text-white">
       프로젝트
@@ -19,8 +21,8 @@ const ProjectCreateSideBar = ({ currentStep }: ProjectCreateSideBarProps) => (
       생성해보세요
     </p>
     <div className="text-white w-[18.5rem] h-[6.75rem] p-5 text-lg rounded-2xl mt-32 bg-white bg-opacity-20">
-      <p className="opacity-80">회원 가입 {currentStep.NUMBER}단계</p>
-      <p className="mt-2 font-bold">{currentStep.NAME}</p>
+      <p className="opacity-80">회원 가입 {currentStepNumber}단계</p>
+      <p className="mt-2 font-bold">{currentStepName}</p>
     </div>
   </div>
 );

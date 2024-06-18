@@ -9,7 +9,12 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
   const { title, currentSprint } = project;
   return (
     <div className="w-[21.25rem] p-9 bg-gradient-to-bl from-white-transparent to-95% bg-middle-green">
-      <p className="mb-[1.125rem] text-xl font-bold text-white">{title}</p>
+      <p
+        title={title}
+        className="overflow-hidden text-xl font-bold text-white text-ellipsis whitespace-nowrap"
+      >
+        {title}
+      </p>
       <div className="h-[3.9rem]">
         <p className="mb-2.5 text-xs font-bold text-white">
           {currentSprint && currentSprint.title}
@@ -27,16 +32,18 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
             <div className="flex flex-col items-center gap-3 font-bold text-middle-green">
               <p className="text-m">
                 <span className="text-[2.25rem]">
-                  {currentSprint.progressPercentage.toString().padStart(2, '0')}
-                </span>%
+                  {currentSprint.progressPercentage.toString().padStart(2, "0")}
+                </span>
+                %
               </p>
               <p>진행률</p>
             </div>
             <div className="flex flex-col items-center gap-3 font-bold text-middle-green">
               <p className="text-m">
                 <span className="text-[2.25rem]">
-                  {currentSprint.myTasksLeft.toString().padStart(2, '0')}
-                </span>건
+                  {currentSprint.myTasksLeft.toString().padStart(2, "0")}
+                </span>
+                건
               </p>
               <p>내 업무</p>
             </div>

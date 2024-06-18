@@ -1,60 +1,55 @@
-import { useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import NextStepButton from "../common/NextStepButton";
 import {
   MAX_INPUT_LENGTH,
   PROJECT_NAME_INPUT_ID,
 } from "../../constants/projects";
-import { Step } from "../../types/common/common";
 
 interface ProjectCreateInputProps {
   elementId: string;
+  inputValue: string;
+  onInputValueChange: (value: string) => void;
   targetStepIsCurrentStep: boolean;
-  setCurrentStep: React.Dispatch<React.SetStateAction<Step>>;
   onNextButtonClick: () => void;
+  changeWheelDownActive: (active: boolean) => void;
   label: string;
-  inputRef: React.MutableRefObject<string>;
   buttonContent: string;
-  containerHeight: number;
 }
 
 const ProjectCreateInput = ({
   elementId,
+  inputValue,
+  onInputValueChange,
   targetStepIsCurrentStep,
   onNextButtonClick,
+  changeWheelDownActive,
   label,
-  inputRef,
   buttonContent,
-  containerHeight,
 }: ProjectCreateInputProps) => {
   const [valid, setValid] = useState<boolean | null>(null);
-  const inputElement = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const targetStepIsProjectName = elementId === PROJECT_NAME_INPUT_ID;
+  const HEIGHT = targetStepIsProjectName ? 100 : 90;
+  const MB = targetStepIsProjectName ? 30 : 20;
 
-  const handleInputChange = () => {
-    const value = inputElement.current?.value.trim();
+  const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    const { value } = target;
+    onInputValueChange(value);
 
     if (value && value.length <= MAX_INPUT_LENGTH) {
       setValid(true);
+      changeWheelDownActive(true);
       return;
     }
 
     if (!value) {
       setValid(null);
+      changeWheelDownActive(false);
       return;
     }
 
     setValid(false);
-  };
-
-  const handleNextButtonClick = () => {
-    const value = inputElement.current?.value.trim();
-
-    if (value && inputElement.current) {
-      inputElement.current.value = value;
-      inputRef.current = value;
-    }
-
-    onNextButtonClick();
+    changeWheelDownActive(false);
   };
 
   const handleEnterDown = (event: React.KeyboardEvent) => {
@@ -63,17 +58,28 @@ const ProjectCreateInput = ({
     }
 
     if (event.key === "Enter" && valid) {
-      handleNextButtonClick();
+      onNextButtonClick();
     }
   };
 
+  useEffect(() => {
+    if (!targetStepIsCurrentStep) {
+      inputRef.current?.blur();
+    } else {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 1000);
+    }
+  }, [targetStepIsCurrentStep]);
+
   return (
     <div
-      className={`flex gap-[4.375rem] h-[${containerHeight}%] ${
-        targetStepIsCurrentStep ? "items-center" : "items-end"
-      }`}
+      className={`w-[100%] flex flex-col justify-end gap-[4.375rem] h-[${HEIGHT}%]`}
     >
-      <div className="w-[80%]">
+      <div
+        className={`transition-all ease-in-out duration-1000`}
+        style={{ marginBottom: targetStepIsCurrentStep ? `${MB}%` : "-15%" }}
+      >
         <label
           className="text-3xl font-semibold text-dark-gray"
           htmlFor={elementId}
@@ -82,7 +88,6 @@ const ProjectCreateInput = ({
         </label>
         <br />
         <div
-          id={`${elementId}-input-box`}
           className={`${
             targetStepIsProjectName ? "flex" : "w-[525px] flex flex-col"
           }`}
@@ -92,7 +97,8 @@ const ProjectCreateInput = ({
               type="text"
               name={elementId}
               id={elementId}
-              ref={inputElement}
+              value={inputValue}
+              ref={inputRef}
               autoComplete="off"
               onChange={handleInputChange}
               onKeyDown={handleEnterDown}
@@ -112,17 +118,19 @@ const ProjectCreateInput = ({
               </p>
             )}
           </div>
-          <p className="self-start mt-3 ml-[2px] text-3xl font-semibold w-fit text-dark-gray">
+          <p className="self-end mt-3 ml-[2px] text-3xl font-semibold w-fit text-dark-gray">
             입니다
           </p>
         </div>
       </div>
-      <div className="min-w-[6.875rem] self-end">
-        {valid && targetStepIsCurrentStep && (
-          <NextStepButton onNextButtonClick={handleNextButtonClick}>
-            {buttonContent}
-          </NextStepButton>
-        )}
+      <div
+        className={`self-end ${
+          valid && targetStepIsCurrentStep ? "visible" : "invisible"
+        }`}
+      >
+        <NextStepButton {...{ onNextButtonClick }}>
+          {buttonContent}
+        </NextStepButton>
       </div>
     </div>
   );
