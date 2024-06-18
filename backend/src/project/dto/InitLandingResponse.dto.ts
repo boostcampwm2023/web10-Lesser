@@ -3,7 +3,7 @@ import { Link } from '../entity/link.entity.';
 import { Memo, memoColor } from '../entity/memo.entity';
 import { Project } from '../entity/project.entity';
 import { MemberStatus } from '../enum/MemberStatus.enum';
-import { ClientSocket } from '../websocket.gateway';
+import { ClientSocket } from '../type/ClientSocket.type';
 
 class MemoDto {
   id: number;

@@ -12,6 +12,10 @@ import { ProjectWebsocketGateway } from './websocket.gateway';
 import { Memo } from './entity/memo.entity';
 import { MemberService } from 'src/member/service/member.service';
 import { Link } from './entity/link.entity.';
+import { WsProjectMemoController } from './ws-controller/ws-project-memo.controller';
+import { WsProjectMemberController } from './ws-controller/ws-project-member.controller';
+import { WsProjectLinkController } from './ws-controller/ws-project-link.controller';
+import { WsProjectController } from './ws-controller/ws-project.controller';
 
 @Module({
   imports: [
@@ -22,9 +26,13 @@ import { Link } from './entity/link.entity.';
   providers: [
     ProjectService,
     ProjectRepository,
-	MemberService,
+    MemberService,
     MemberRepository,
     ProjectWebsocketGateway,
+    WsProjectMemoController,
+    WsProjectMemberController,
+    WsProjectLinkController,
+    WsProjectController,
   ],
 })
 export class ProjectModule {}

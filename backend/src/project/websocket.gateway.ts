@@ -1,4 +1,3 @@
-import { ValidationError } from '@nestjs/common';
 import {
   SubscribeMessage,
   WebSocketGateway,
@@ -7,31 +6,18 @@ import {
   MessageBody,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
-import { plainToClass } from 'class-transformer';
-import { validate } from 'class-validator';
-import { Namespace, Socket } from 'socket.io';
+import { Namespace } from 'socket.io';
 
 import { LesserJwtService } from 'src/lesser-jwt/lesser-jwt.service';
 import { Member } from 'src/member/entity/member.entity';
-import { Project } from './entity/project.entity';
 import { MemberRepository } from 'src/member/repository/member.repository';
-import { MemberService } from 'src/member/service/member.service';
 import { ProjectService } from 'src/project/service/project.service';
-import { MemoCreateRequestDto } from './dto/MemoCreateRequest.dto';
-import { MemoDeleteRequestDto } from './dto/MemoDeleteRequest.dto';
-import { InitLandingResponseDto } from './dto/InitLandingResponse.dto';
-import { MemoColorUpdateRequestDto } from './dto/MemoColorUpdateRequest.dto';
-import { MemberUpdateRequestDto } from './dto/MemberUpdateRequest.dto';
 import { MemberStatus } from './enum/MemberStatus.enum';
-import { LinkCreateRequestDto } from './dto/LinkCreateRequest.dto';
-import { LinkDeleteRequestDto } from './dto/LinkDeleteRequest.dto';
-
-export interface ClientSocket extends Socket {
-  projectId?: number;
-  project: Project;
-  member: Member;
-  status: MemberStatus;
-}
+import { WsProjectMemoController } from './ws-controller/ws-project-memo.controller';
+import { WsProjectMemberController } from './ws-controller/ws-project-member.controller';
+import { WsProjectLinkController } from './ws-controller/ws-project-link.controller';
+import { WsProjectController } from './ws-controller/ws-project.controller';
+import { ClientSocket } from './type/ClientSocket.type';
 
 @WebSocketGateway({
   namespace: /project-\d+/,
@@ -44,7 +30,10 @@ export class ProjectWebsocketGateway
     private readonly projectService: ProjectService,
     private readonly lesserJwtService: LesserJwtService,
     private readonly memberRepository: MemberRepository,
-    private readonly memberService: MemberService,
+    private readonly wsProjectMemoController: WsProjectMemoController,
+    private readonly wsProjectMemberController: WsProjectMemberController,
+    private readonly wsProjectLinkController: WsProjectLinkController,
+    private readonly wsProjectController: WsProjectController,
   ) {
     this.namespaceMap = new Map();
   }
@@ -95,218 +84,43 @@ export class ProjectWebsocketGateway
 
   @SubscribeMessage('joinLanding')
   async handleJoinLandingEvent(@ConnectedSocket() client: ClientSocket) {
-    const [project, projectMemberList, memoListWithMember, linkList] =
-      await Promise.all([
-        this.projectService.getProject(client.projectId),
-        this.projectService.getProjectMemberList(client.project),
-        this.projectService.getProjectMemoListWithMember(client.project.id),
-        this.projectService.getProjectLinkList(client.project),
-      ]);
-    const projectSocketList: ClientSocket[] =
-      (await client.nsp.fetchSockets()) as unknown as ClientSocket[];
-
-    const sameMemberSocket = projectSocketList.find(
-      (socket) =>
-        socket.member.id === client.member.id && socket.id !== client.id,
-    );
-
-    if (sameMemberSocket) client.status = sameMemberSocket.status;
-    else client.status = MemberStatus.ON;
-
-    const response = InitLandingResponseDto.of(
-      project,
-      client.member,
-      client.status,
-      projectSocketList,
-      projectMemberList,
-      memoListWithMember,
-      linkList,
-    );
-    client.emit('landing', response);
-    client.join('landing');
-
-    if (sameMemberSocket) return;
-    client.nsp
-      .to('landing')
-      .except(client.id)
-      .emit('landing', {
-        domain: 'member',
-        action: 'update',
-        content: {
-          id: client.member.id,
-          status: client.status,
-        },
-      });
+    this.wsProjectController.joinLandingPage(client);
   }
 
   @SubscribeMessage('memo')
   async handleMemoEvent(
     @ConnectedSocket() client: ClientSocket,
     @MessageBody()
-    data:
-      | MemoCreateRequestDto
-      | MemoDeleteRequestDto
-      | MemoColorUpdateRequestDto,
+    data,
   ) {
     if (data.action === 'create') {
-      const errors = await validate(plainToClass(MemoCreateRequestDto, data));
-      if (errors.length > 0) {
-        const errorList = this.getRecursiveErrorMsgList(errors);
-        client.emit('error', { errorList });
-        return;
-      }
-      const { content } = data as MemoCreateRequestDto;
-      const createdMemo = await this.projectService.createMemo(
-        client.project,
-        client.member,
-        content.color,
-      );
-      const { username } = await this.memberService.getMember(client.member.id);
-      client.nsp.to('landing').emit('landing', {
-        domain: 'memo',
-        action: 'create',
-        content: {
-          id: createdMemo.id,
-          title: createdMemo.title,
-          content: createdMemo.content,
-          createdAt: createdMemo.created_at,
-          author: username,
-          color: createdMemo.color,
-        },
-      });
+      this.wsProjectMemoController.createMemo(client, data);
     } else if (data.action === 'delete') {
-      const errors = await validate(plainToClass(MemoDeleteRequestDto, data));
-      if (errors.length > 0) {
-        const errorList = this.getRecursiveErrorMsgList(errors);
-        client.emit('error', { errorList });
-        return;
-      }
-      const { content } = data as MemoDeleteRequestDto;
-      const isDeleted = await this.projectService.deleteMemo(content.id);
-      if (isDeleted) {
-        client.nsp.to('landing').emit('landing', {
-          domain: 'memo',
-          action: 'delete',
-          content: {
-            id: content.id,
-          },
-        });
-      }
+      this.wsProjectMemoController.deleteMemo(client, data);
     } else if (data.action === 'colorUpdate') {
-      const errors = await validate(
-        plainToClass(MemoColorUpdateRequestDto, data),
-      );
-      if (errors.length > 0) {
-        const errorList = this.getRecursiveErrorMsgList(errors);
-        client.emit('error', { errorList });
-        return;
-      }
-      const { content } = data as MemoColorUpdateRequestDto;
-
-      let isUpdated;
-      try {
-        isUpdated = await this.projectService.updateMemoColor(
-          client.project,
-          content.id,
-          content.color,
-        );
-      } catch (error) {
-        if (error.message === 'project does not have this memo') {
-          //ToDo: 에러상황 정의 후 응답 구현
-          return;
-        }
-      }
-
-      if (isUpdated) {
-        client.nsp.to('landing').emit('landing', {
-          domain: 'memo',
-          action: 'colorUpdate',
-          content: {
-            id: content.id,
-            color: content.color,
-          },
-        });
-      }
+      this.wsProjectMemoController.updateColor(client, data);
     }
   }
 
   @SubscribeMessage('member')
   async handleMemberEvent(
     @ConnectedSocket() client: ClientSocket,
-    @MessageBody() data: MemberUpdateRequestDto,
+    @MessageBody() data: any,
   ) {
-    const errors = await validate(plainToClass(MemberUpdateRequestDto, data));
-    if (errors.length > 0) {
-      const errorList = this.getRecursiveErrorMsgList(errors);
-      client.emit('error', { errorList });
-      return;
+    if (data.action === 'update') {
+      this.wsProjectMemberController.updateMemberState(client, data);
     }
-
-    const status = data.content.status;
-    if (status === client.status) return;
-    client.status = status;
-
-    const projectSocketList: ClientSocket[] =
-      (await client.nsp.fetchSockets()) as unknown as ClientSocket[];
-    projectSocketList.forEach((socket) => {
-      if (socket.member.id === client.member.id) {
-        socket.status = status;
-      }
-    });
-
-    this.sendMemberStatusUpdate(client);
   }
 
   @SubscribeMessage('link')
   async handleLinkEvent(
     @ConnectedSocket() client: ClientSocket,
-    @MessageBody() data: LinkCreateRequestDto | LinkDeleteRequestDto,
+    @MessageBody() data: any,
   ) {
     if (data.action === 'create') {
-      const errors = await validate(plainToClass(LinkCreateRequestDto, data));
-      if (errors.length > 0) {
-        const errorList = this.getRecursiveErrorMsgList(errors);
-        client.emit('error', { errorList });
-        return;
-      }
-      const { content } = data as LinkCreateRequestDto;
-      const createLink = await this.projectService.createLink(
-        client.project,
-        content.url,
-        content.description,
-      );
-      client.nsp.to('landing').emit('landing', {
-        domain: 'link',
-        action: 'create',
-        content: {
-          id: createLink.id,
-          url: createLink.url,
-          description: createLink.description,
-        },
-      });
-    }
-
-    if (data.action === 'delete') {
-      const errors = await validate(plainToClass(LinkDeleteRequestDto, data));
-      if (errors.length > 0) {
-        const errorList = this.getRecursiveErrorMsgList(errors);
-        client.emit('error', { errorList });
-        return;
-      }
-      const { content } = data as LinkDeleteRequestDto;
-      const isDeleted = await this.projectService.deleteLink(
-        client.project,
-        content.id,
-      );
-      if (isDeleted) {
-        client.nsp.to('landing').emit('landing', {
-          domain: 'link',
-          action: 'delete',
-          content: {
-            id: content.id,
-          },
-        });
-      }
+      this.wsProjectLinkController.createLink(client, data);
+    } else if (data.action === 'delete') {
+      this.wsProjectLinkController.deleteLink(client, data);
     }
   }
 
@@ -324,27 +138,6 @@ export class ProjectWebsocketGateway
       },
     };
     projectNamespace.to('landing').emit('landing', requestMsg);
-  }
-
-  private sendMemberStatusUpdate(client: ClientSocket) {
-    client.nsp.to('landing').emit('landing', {
-      domain: 'member',
-      action: 'update',
-      content: {
-        id: client.member.id,
-        status: client.status,
-      },
-    });
-  }
-
-  private getRecursiveErrorMsgList(errors: ValidationError[]) {
-    return errors.reduce((acc, error) => {
-      if (error.children.length) {
-        acc = acc.concat(this.getRecursiveErrorMsgList(error.children));
-      }
-      if (!error.constraints) return acc;
-      return acc.concat(Object.values(error.constraints));
-    }, []);
   }
 
   private async authentication(client: ClientSocket) {
