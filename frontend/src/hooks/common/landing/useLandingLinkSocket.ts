@@ -8,10 +8,10 @@ import {
 } from "../../../types/common/landing";
 
 const useLandingLinkSocket = (socket: Socket) => {
-  const [link, setLink] = useState<LandingLinkDTO[]>([]);
+  const [linkList, setLinkList] = useState<LandingLinkDTO[]>([]);
   const handleInitEvent = (content: LandingDTO) => {
-    const { link } = content as LandingDTO;
-    setLink(link);
+    const { linkList } = content as LandingDTO;
+    setLinkList(linkList);
   };
 
   const handleLinkEvent = (
@@ -20,7 +20,10 @@ const useLandingLinkSocket = (socket: Socket) => {
   ) => {
     switch (action) {
       case LandingSocketLinkAction.CREATE:
-        setLink([...link, content]);
+        setLinkList([...linkList, content]);
+        break;
+      case LandingSocketLinkAction.DELETE:
+        setLinkList(linkList.filter(({ id }) => id !== content.id));
         break;
     }
   };
@@ -43,6 +46,10 @@ const useLandingLinkSocket = (socket: Socket) => {
     socket.emit("link", { action: "create", content });
   };
 
+  const emitLinkDeleteEvent = (content: { id: number }) => {
+    socket.emit("link", { action: "delete", content });
+  };
+
   useEffect(() => {
     socket.on("landing", handleOnLanding);
 
@@ -51,7 +58,7 @@ const useLandingLinkSocket = (socket: Socket) => {
     };
   }, []);
 
-  return { link, emitLinkCreateEvent };
+  return { linkList, emitLinkCreateEvent, emitLinkDeleteEvent };
 };
 
 export default useLandingLinkSocket;

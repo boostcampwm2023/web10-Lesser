@@ -46,6 +46,6 @@ export interface LandingDTO {
   myInfo: LandingMemberDTO;
   sprint: LandingSprintDTO | null;
   memoList: LandingMemoDTO[];
-  link: LandingLinkDTO[];
+  linkList: LandingLinkDTO[];
   inviteLinkId: string;
 }
