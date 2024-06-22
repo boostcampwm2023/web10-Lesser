@@ -8,7 +8,7 @@ import {
   Matches,
   ValidateNested,
 } from 'class-validator';
-import { MemberStatus } from '../enum/MemberStatus.enum';
+import { MemberStatus } from '../../enum/MemberStatus.enum';
 
 class Content {
   @IsNumber()

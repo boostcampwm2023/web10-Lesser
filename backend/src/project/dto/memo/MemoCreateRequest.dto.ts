@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, Matches, ValidateNested } from 'class-validator';
-import { memoColor } from '../entity/memo.entity';
+import { memoColor } from '../../entity/memo.entity';
 
 class Color {
   @IsEnum(memoColor)

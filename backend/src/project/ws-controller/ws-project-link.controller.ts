@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { LinkCreateRequestDto } from '../dto/LinkCreateRequest.dto';
-import { LinkDeleteRequestDto } from '../dto/LinkDeleteRequest.dto';
+import { LinkCreateNotifyDto } from '../dto/link/LinkCreateNotify.dto';
+import { LinkCreateRequestDto } from '../dto/link/LinkCreateRequest.dto';
+import { LinkDeleteNotifyDto } from '../dto/link/LinkDeleteNotify.dto';
+import { LinkDeleteRequestDto } from '../dto/link/LinkDeleteRequest.dto';
 import { ProjectService } from '../service/project.service';
 import { ClientSocket } from '../type/ClientSocket.type';
 import { getRecursiveErrorMsgList } from '../util/validation.util';
-
 
 @Injectable()
 export class WsProjectLinkController {
@@ -24,15 +25,16 @@ export class WsProjectLinkController {
       content.url,
       content.description,
     );
-    client.nsp.to('landing').emit('landing', {
-      domain: 'link',
-      action: 'create',
-      content: {
-        id: createLink.id,
-        url: createLink.url,
-        description: createLink.description,
-      },
-    });
+    client.nsp
+      .to('landing')
+      .emit(
+        'landing',
+        LinkCreateNotifyDto.of(
+          createLink.id,
+          createLink.url,
+          createLink.description,
+        ),
+      );
   }
 
   async deleteLink(client: ClientSocket, data: any) {
@@ -48,13 +50,9 @@ export class WsProjectLinkController {
       content.id,
     );
     if (isDeleted) {
-      client.nsp.to('landing').emit('landing', {
-        domain: 'link',
-        action: 'delete',
-        content: {
-          id: content.id,
-        },
-      });
+      client.nsp
+        .to('landing')
+        .emit('landing', LinkDeleteNotifyDto.of(content.id));
     }
   }
 }

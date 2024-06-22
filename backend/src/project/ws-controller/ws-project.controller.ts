@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InitLandingResponseDto } from '../dto/InitLandingResponse.dto';
+import { MemberUpdateNotifyDto } from '../dto/member/MemberUpdateNotify.dto';
 import { MemberStatus } from '../enum/MemberStatus.enum';
 import { ProjectService } from '../service/project.service';
 import { ClientSocket } from '../type/ClientSocket.type';
@@ -43,13 +44,9 @@ export class WsProjectController {
     client.nsp
       .to('landing')
       .except(client.id)
-      .emit('landing', {
-        domain: 'member',
-        action: 'update',
-        content: {
-          id: client.member.id,
-          status: client.status,
-        },
-      });
+      .emit(
+        'landing',
+        MemberUpdateNotifyDto.of(client.member.id, client.status),
+      );
   }
 }
