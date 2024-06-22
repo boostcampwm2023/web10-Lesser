@@ -6,7 +6,7 @@ import {
   Matches,
   ValidateNested,
 } from 'class-validator';
-import { memoColor } from '../entity/memo.entity';
+import { memoColor } from '../../entity/memo.entity';
 
 class Content {
   @IsNumber()

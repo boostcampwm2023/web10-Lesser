@@ -2,9 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { MemberService } from 'src/member/service/member.service';
-import { MemoColorUpdateRequestDto } from '../dto/MemoColorUpdateRequest.dto';
-import { MemoCreateRequestDto } from '../dto/MemoCreateRequest.dto';
-import { MemoDeleteRequestDto } from '../dto/MemoDeleteRequest.dto';
+import { MemoColorUpdateNotifyDto } from '../dto/memo/MemoColorUpdateNotify.dto';
+import { MemoColorUpdateRequestDto } from '../dto/memo/MemoColorUpdateRequest.dto';
+import { MemoCreateNotifyDto } from '../dto/memo/MemoCreateNotify.dto';
+import { MemoCreateRequestDto } from '../dto/memo/MemoCreateRequest.dto';
+import { MemoDeleteNotifyDto } from '../dto/memo/MemoDeleteNotify.dto';
+import { MemoDeleteRequestDto } from '../dto/memo/MemoDeleteRequest.dto';
 import { ProjectService } from '../service/project.service';
 import { ClientSocket } from '../type/ClientSocket.type';
 import { getRecursiveErrorMsgList } from '../util/validation.util';
@@ -29,18 +32,9 @@ export class WsProjectMemoController {
       content.color,
     );
     const { username } = await this.memberService.getMember(client.member.id);
-    client.nsp.to('landing').emit('landing', {
-      domain: 'memo',
-      action: 'create',
-      content: {
-        id: createdMemo.id,
-        title: createdMemo.title,
-        content: createdMemo.content,
-        createdAt: createdMemo.created_at,
-        author: username,
-        color: createdMemo.color,
-      },
-    });
+    client.nsp
+      .to('landing')
+      .emit('landing', MemoCreateNotifyDto.of(createdMemo, username));
   }
 
   async deleteMemo(client: ClientSocket, data: any) {
@@ -53,13 +47,9 @@ export class WsProjectMemoController {
     const { content } = data as MemoDeleteRequestDto;
     const isDeleted = await this.projectService.deleteMemo(content.id);
     if (isDeleted) {
-      client.nsp.to('landing').emit('landing', {
-        domain: 'memo',
-        action: 'delete',
-        content: {
-          id: content.id,
-        },
-      });
+      client.nsp
+        .to('landing')
+        .emit('landing', MemoDeleteNotifyDto.of(content.id));
     }
   }
 
@@ -89,14 +79,12 @@ export class WsProjectMemoController {
     }
 
     if (isUpdated) {
-      client.nsp.to('landing').emit('landing', {
-        domain: 'memo',
-        action: 'colorUpdate',
-        content: {
-          id: content.id,
-          color: content.color,
-        },
-      });
+      client.nsp
+        .to('landing')
+        .emit(
+          'landing',
+          MemoColorUpdateNotifyDto.of(content.id, content.color),
+        );
     }
   }
 }

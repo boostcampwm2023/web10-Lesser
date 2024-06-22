@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { MemberUpdateRequestDto } from '../dto/MemberUpdateRequest.dto';
+import { MemberUpdateNotifyDto } from '../dto/member/MemberUpdateNotify.dto';
+import { MemberUpdateRequestDto } from '../dto/member/MemberUpdateRequest.dto';
 import { ClientSocket } from '../type/ClientSocket.type';
 import { getRecursiveErrorMsgList } from '../util/validation.util';
 
@@ -31,13 +32,11 @@ export class WsProjectMemberController {
   }
 
   private sendMemberStatusUpdate(client: ClientSocket) {
-    client.nsp.to('landing').emit('landing', {
-      domain: 'member',
-      action: 'update',
-      content: {
-        id: client.member.id,
-        status: client.status,
-      },
-    });
+    client.nsp
+      .to('landing')
+      .emit(
+        'landing',
+        MemberUpdateNotifyDto.of(client.member.id, client.status),
+      );
   }
 }
