@@ -22,6 +22,10 @@ const InvitePage = () => {
         alert("이미 참여한 프로젝트입니다.");
         navigate(`/projects/${response.data.projectId}`);
         break;
+      case 409:
+        alert("정원 초과로 참여할 수 없습니다.");
+        navigate(`/projects`);
+        break;
     }
   };
 
