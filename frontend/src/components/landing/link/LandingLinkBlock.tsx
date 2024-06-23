@@ -1,21 +1,43 @@
-import { LINK_LOGO_URL } from "../../../constants/landing";
 import { LandingLinkDTO } from "../../../types/DTO/landingDTO";
-import getLinkType from "../../../utils/getLinkType";
 import ProfileImage from "../../common/ProfileImage";
+import TrashCan from "../../../assets/icons/trash-can.svg?react";
 
-const LandingLinkBlock = ({ description, url }: LandingLinkDTO) => {
-  const linkLogoUrl = LINK_LOGO_URL[getLinkType(url)];
+interface LandingLinkBlockProps extends LandingLinkDTO {
+  emitLinkDeleteEvent: ({ id }: { id: number }) => void;
+}
+
+const LandingLinkBlock = ({
+  id,
+  description,
+  url,
+  emitLinkDeleteEvent,
+}: LandingLinkBlockProps) => {
+  const linkLogoUrl = `${new URL(url).origin}/favicon.ico`;
+
+  const handleDeleteClick = () => {
+    emitLinkDeleteEvent({ id });
+  };
+
   return (
-    <a
-      className="w-full flex justify-start items-center gap-4 p-3 bg-white rounded-lg shadow-box hover:bg-light-gray"
-      href={url}
-      target="_blank"
-    >
-      <ProfileImage imageUrl={linkLogoUrl} pxSize={40} />
-      <p className="text-dark-green text-xs font-bold truncate">
-        {description}
-      </p>
-    </a>
+    <div className="flex items-center justify-between w-full p-3 bg-white rounded-lg group shadow-box hover:bg-light-gray">
+      <a
+        className="flex items-center justify-start w-full gap-4"
+        href={url}
+        target="_blank"
+      >
+        <ProfileImage imageUrl={linkLogoUrl} pxSize={40} />
+        <p className="text-xs font-bold truncate text-dark-green">
+          {description}
+        </p>
+      </a>
+      <button
+        className="invisible p-1 rounded-md group-hover:visible hover:bg-white"
+        type="button"
+        onClick={handleDeleteClick}
+      >
+        <TrashCan width={24} fill="#E33535" />
+      </button>
+    </div>
   );
 };
 
