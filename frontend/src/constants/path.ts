@@ -21,7 +21,11 @@ export const ROUTER_URL = {
   PROJECTS: "/projects",
   PROJECTS_CREATE: "projects/create",
   MAIN: "/projects/:projectId",
-  BACKLOG: "/projects/:projectId/backlog",
+  BACKLOG: {
+    BASE: "/projects/:projectId/backlog",
+    EPIC: "/projects/:projectId/backlog/epic",
+    COMPLETED: "/projects/:projectId/backlog/completed",
+  },
   SPRINT: "/projects/:projectId/sprint",
   SPRINT_CREATE: "/projects/:projectId/sprint/create",
   SETTINGS: "/projects/:projectId/settings",

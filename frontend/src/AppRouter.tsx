@@ -19,6 +19,7 @@ import PublicRoute from "./components/common/route/PublicRoute";
 import MainPage from "./pages/main/MainPage";
 import LandingPage from "./pages/landing/LandingPage";
 import InvitePage from "./pages/invite/InvitePage";
+import UncompletedStoryPage from "./pages/backlog/UncompletedStoryPage";
 
 type RouteType = "PRIVATE" | "PUBLIC";
 
@@ -74,7 +75,23 @@ const router = createBrowserRouter([
           element: <MainPage />,
           children: [
             { index: true, element: <LandingPage /> },
-            { path: ROUTER_URL.BACKLOG, element: <div>backlog Page</div> },
+            {
+              path: ROUTER_URL.BACKLOG.BASE,
+              children: [
+                {
+                  index: true,
+                  element: <UncompletedStoryPage />,
+                },
+                {
+                  path: ROUTER_URL.BACKLOG.EPIC,
+                  element: <div>backlog epic Page</div>,
+                },
+                {
+                  path: ROUTER_URL.BACKLOG.COMPLETED,
+                  element: <div>backlog completed story Page</div>,
+                },
+              ],
+            },
             { path: ROUTER_URL.SPRINT, element: <div>sprint Page</div> },
             { path: ROUTER_URL.SETTINGS, element: <div>setting Page</div> },
           ],
