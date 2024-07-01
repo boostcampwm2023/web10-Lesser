@@ -5,7 +5,6 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  Index,
   OneToMany,
 } from 'typeorm';
 
@@ -14,7 +13,6 @@ export class Member {
   @PrimaryGeneratedColumn('increment', { type: 'int' })
   id: number;
 
-  @Index()
   @Column({ type: 'int', unique: true, nullable: false })
   github_id: number;
 
@@ -24,7 +22,6 @@ export class Member {
   @Column({ type: 'varchar', length: 256, nullable: false })
   github_image_url: string;
 
-  @Index()
   @Column({ type: 'varchar', length: 39, unique: true, nullable: false })
   username: string;
 
