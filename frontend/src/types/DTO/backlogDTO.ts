@@ -16,7 +16,7 @@ export interface TaskDTO {
   expectedTime: number | null;
   actualTime: number | null;
   status: BacklogStatusType;
-  assignedMemberId: number;
+  assignedMemberId: number | null;
 }
 
 export interface StoryDTO {
@@ -27,9 +27,12 @@ export interface StoryDTO {
   taskList: TaskDTO[];
 }
 
-export interface EpicDTO {
+export interface EpicCategoryDTO {
   id: number;
   name: string;
   color: EpicColor;
+}
+
+export interface EpicDTO extends EpicCategoryDTO {
   storyList: StoryDTO[];
 }
