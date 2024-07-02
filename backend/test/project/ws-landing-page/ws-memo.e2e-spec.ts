@@ -17,7 +17,7 @@ import {
   handleConnectErrorWithReject,
   initLanding,
   initLandingAndReturnId,
-} from './ws-common';
+} from '../ws-common';
 
 describe('WS memo', () => {
   beforeEach(async () => {

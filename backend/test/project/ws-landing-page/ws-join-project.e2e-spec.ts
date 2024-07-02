@@ -17,7 +17,7 @@ import {
   handleConnectErrorWithReject,
   handleErrorWithReject,
   expectProjectJoinMsgAndReturnJoinedId,
-} from './ws-common';
+} from '../ws-common';
 
 describe('WS join project', () => {
   beforeEach(async () => {

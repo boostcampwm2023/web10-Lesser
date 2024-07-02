@@ -17,7 +17,7 @@ import {
   handleErrorWithReject,
   initLanding,
   initLandingAndReturnId,
-} from './ws-common';
+} from '../ws-common';
 
 describe('WS link', () => {
   beforeEach(async () => {
