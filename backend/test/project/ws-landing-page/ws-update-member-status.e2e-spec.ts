@@ -17,7 +17,7 @@ import {
   handleConnectErrorWithReject,
   handleErrorWithReject,
   initLanding,
-} from './ws-common';
+} from '../ws-common';
 import { Socket } from 'socket.io-client';
 
 describe('WS update member status', () => {

@@ -16,7 +16,7 @@ import {
   emitJoinLanding,
   handleConnectErrorWithReject,
   initLanding,
-} from './ws-common';
+} from '../ws-common';
 
 describe('WS landing', () => {
   beforeEach(async () => {
