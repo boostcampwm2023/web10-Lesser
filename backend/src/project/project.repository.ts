@@ -7,6 +7,7 @@ import { Member } from 'src/member/entity/member.entity';
 import { Memo, memoColor } from './entity/memo.entity';
 import { MemberRepository } from 'src/member/repository/member.repository';
 import { Link } from './entity/link.entity.';
+import { Epic, EpicColor } from './entity/epic.entity';
 
 @Injectable()
 export class ProjectRepository {
@@ -21,6 +22,8 @@ export class ProjectRepository {
     private readonly memoRepository: Repository<Memo>,
     @InjectRepository(Link)
     private readonly linkRepository: Repository<Link>,
+    @InjectRepository(Epic)
+    private readonly epicRepository: Repository<Epic>,
   ) {}
 
   create(project: Project): Promise<Project> {
@@ -107,5 +110,39 @@ export class ProjectRepository {
       id,
     });
     return result.affected ? result.affected : 0;
+  }
+
+  createEpic(epic: Epic): Promise<Epic> {
+    return this.epicRepository.save(epic);
+  }
+
+  async deleteEpic(project: Project, epicId: number): Promise<number> {
+    const result = await this.epicRepository.delete({
+      project: { id: project.id },
+      id: epicId,
+    });
+    return result.affected ? result.affected : 0;
+  }
+
+  async updateEpic(
+    project: Project,
+    id: number,
+    name?: string,
+    color?: EpicColor,
+  ): Promise<boolean> {
+    const updateData: any = {};
+
+    if (name !== undefined) {
+      updateData.name = name;
+    }
+    if (color !== undefined) {
+      updateData.color = color;
+    }
+
+    const result = await this.epicRepository.update(
+      { id, project: { id: project.id } },
+      updateData,
+    );
+    return !!result.affected;
   }
 }

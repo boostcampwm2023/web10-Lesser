@@ -16,11 +16,20 @@ import { WsProjectMemoController } from './ws-controller/ws-project-memo.control
 import { WsProjectMemberController } from './ws-controller/ws-project-member.controller';
 import { WsProjectLinkController } from './ws-controller/ws-project-link.controller';
 import { WsProjectController } from './ws-controller/ws-project.controller';
+import { WsProjectEpicController } from './ws-controller/ws-project-epic.controller';
+import { Epic } from './entity/epic.entity';
 
 @Module({
   imports: [
     LesserJwtModule,
-    TypeOrmModule.forFeature([Project, ProjectToMember, Member, Memo, Link]),
+    TypeOrmModule.forFeature([
+      Project,
+      ProjectToMember,
+      Member,
+      Memo,
+      Link,
+      Epic,
+    ]),
   ],
   controllers: [ProjectController],
   providers: [
@@ -33,6 +42,7 @@ import { WsProjectController } from './ws-controller/ws-project.controller';
     WsProjectMemberController,
     WsProjectLinkController,
     WsProjectController,
+    WsProjectEpicController,
   ],
 })
 export class ProjectModule {}
