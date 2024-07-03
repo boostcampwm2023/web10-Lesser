@@ -165,11 +165,13 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   dataSource = app.get(DataSource);
+  await dataSource.query('SET FOREIGN_KEY_CHECKS = 0');
   const entities = dataSource.entityMetadatas;
   for (const entity of entities) {
     const repository = dataSource.getRepository(entity.name);
     await repository.query(`DELETE FROM \`${entity.tableName}\``);
   }
+  await dataSource.query('SET FOREIGN_KEY_CHECKS = 1');
 });
 
 afterAll(async () => {
