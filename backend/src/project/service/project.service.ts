@@ -5,6 +5,7 @@ import { Project } from '../entity/project.entity';
 import { ProjectToMember } from '../entity/project-member.entity';
 import { Memo, memoColor } from '../entity/memo.entity';
 import { Link } from '../entity/link.entity.';
+import { Epic, EpicColor } from '../entity/epic.entity';
 
 @Injectable()
 export class ProjectService {
@@ -90,5 +91,24 @@ export class ProjectService {
   async deleteLink(project: Project, linkId: number) {
     const result = await this.projectRepository.deleteLink(project, linkId);
     return result ? true : false;
+  }
+
+  createEpic(project: Project, name: string, color: EpicColor) {
+    const newEpic = Epic.of(project, name, color);
+    return this.projectRepository.createEpic(newEpic);
+  }
+
+  async deleteEpic(project: Project, epicId: number) {
+    const result = await this.projectRepository.deleteEpic(project, epicId);
+    return result ? true : false;
+  }
+
+  updateEpic(
+    project: Project,
+    id: number,
+    name?: string,
+    color?: EpicColor,
+  ): Promise<boolean> {
+    return this.projectRepository.updateEpic(project, id, name, color);
   }
 }

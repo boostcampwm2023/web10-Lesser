@@ -29,6 +29,7 @@ import { AuthenticationGuard } from './common/guard/authentication.guard';
 import { MemberRepository } from './member/repository/member.repository';
 import { Memo } from './project/entity/memo.entity';
 import { Link } from './project/entity/link.entity.';
+import { Epic } from './project/entity/epic.entity';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { Link } from './project/entity/link.entity.';
           ProjectToMember,
           Memo,
           Link,
+          Epic,
         ],
         synchronize: ConfigService.get('NODE_ENV') == 'PROD' ? false : true,
       }),
