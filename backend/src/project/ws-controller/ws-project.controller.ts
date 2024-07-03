@@ -49,4 +49,14 @@ export class WsProjectController {
         MemberUpdateNotifyDto.of(client.member.id, client.status),
       );
   }
+
+  async joinBacklogPage(client: ClientSocket) {
+    client.leave('landing');
+    client.join('backlog');
+    client.emit('backlog', {
+      domain: 'backlog',
+      action: 'init',
+      content: {},
+    });
+  }
 }
