@@ -13,8 +13,6 @@ const useDropdownState = () => {
   };
 
   const handleOutsideClick = ({ target }: MouseEvent) => {
-    console.log(dropdownRef.current);
-
     if (dropdownRef.current && !dropdownRef.current.contains(target as Node)) {
       setOpen(false);
     }
