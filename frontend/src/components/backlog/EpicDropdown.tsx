@@ -7,6 +7,7 @@ import useEpicEmitEvent from "../../hooks/pages/backlog/useEpicEmitEvent";
 import { CATEGORY_COLOR } from "../../constants/backlog";
 import getRandomNumber from "../../utils/getRandomNumber";
 import { BacklogCategoryColor } from "../../types/common/backlog";
+import EpicDropdownOption from "./EpicDropdownOption";
 
 interface EpicDropdownProps {
   selectedEpic?: EpicCategoryDTO;
@@ -40,7 +41,7 @@ const EpicDropdown = ({ selectedEpic, epicList }: EpicDropdownProps) => {
   };
 
   return (
-    <div className="p-1 rounded-md w-72 shadow-box">
+    <div className="relative p-1 rounded-md w-72 shadow-box">
       <div className="flex p-1 border-b-2">
         {selectedEpic && (
           <div className="min-w-[5rem]">
@@ -61,12 +62,7 @@ const EpicDropdown = ({ selectedEpic, epicList }: EpicDropdownProps) => {
       </div>
       <ul className="pt-1">
         {...epicList.map((epic) => (
-          <li
-            className="flex justify-between px-1 py-1 rounded-md hover:cursor-pointer hover:bg-gray-100"
-            key={epic.id}
-          >
-            <CategoryChip content={epic.name} bgColor={epic.color} />
-          </li>
+          <EpicDropdownOption key={epic.id} epic={epic} />
         ))}
       </ul>
     </div>

@@ -23,6 +23,7 @@ export default {
         "sidebar-linear-from": "#032809",
         "sidebar-linear-to": "#3C5826",
         "confirm-green": "#14AE5C",
+        "confirm-blue": "#0191F2",
       },
       fontFamily: {
         pretendard: ["pretendard"],
