@@ -36,3 +36,7 @@ export interface EpicCategoryDTO {
 export interface EpicDTO extends EpicCategoryDTO {
   storyList: StoryDTO[];
 }
+
+export interface BacklogDTO {
+  epicList: EpicDTO[];
+}
