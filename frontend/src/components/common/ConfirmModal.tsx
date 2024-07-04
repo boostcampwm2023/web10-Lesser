@@ -28,6 +28,7 @@ const ConfirmModal = ({
           className={`w-fit py-1 px-2 rounded-md bg-[${cancelColor}]`}
           onClick={onCancelButtonClick}
           type="button"
+          style={{ backgroundColor: cancelColor }}
         >
           {cancelText}
         </button>
@@ -35,6 +36,7 @@ const ConfirmModal = ({
           className={`w-fit py-1 px-2 rounded-md bg-[${confirmColor}]`}
           onClick={onConfirmButtonClick}
           type="button"
+          style={{ backgroundColor: confirmColor }}
         >
           {confirmText}
         </button>
