@@ -20,10 +20,12 @@ const useLandingLinkSocket = (socket: Socket) => {
   ) => {
     switch (action) {
       case LandingSocketLinkAction.CREATE:
-        setLinkList([...linkList, content]);
+        setLinkList((prevLinkList) => [...prevLinkList, content]);
         break;
       case LandingSocketLinkAction.DELETE:
-        setLinkList(linkList.filter(({ id }) => id !== content.id));
+        setLinkList((prevLinkList) =>
+          prevLinkList.filter(({ id }) => id !== content.id)
+        );
         break;
     }
   };

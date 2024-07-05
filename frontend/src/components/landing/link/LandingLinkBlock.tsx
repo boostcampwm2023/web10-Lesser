@@ -1,6 +1,8 @@
 import { LandingLinkDTO } from "../../../types/DTO/landingDTO";
 import ProfileImage from "../../common/ProfileImage";
 import TrashCan from "../../../assets/icons/trash-can.svg?react";
+import getLinkType from "../../../utils/getLinkType";
+import { LINK_LOGO_URL } from "../../../constants/landing";
 
 interface LandingLinkBlockProps extends LandingLinkDTO {
   emitLinkDeleteEvent: ({ id }: { id: number }) => void;
@@ -12,7 +14,7 @@ const LandingLinkBlock = ({
   url,
   emitLinkDeleteEvent,
 }: LandingLinkBlockProps) => {
-  const linkLogoUrl = `${new URL(url).origin}/favicon.ico`;
+  const linkLogoUrl = LINK_LOGO_URL[getLinkType(url)];
 
   const handleDeleteClick = () => {
     emitLinkDeleteEvent({ id });
@@ -26,7 +28,10 @@ const LandingLinkBlock = ({
         target="_blank"
       >
         <ProfileImage imageUrl={linkLogoUrl} pxSize={40} />
-        <p className="text-xs font-bold truncate text-dark-green">
+        <p
+          title={description}
+          className="max-w-[8.5rem] overflow-hidden text-xs font-bold truncate whitespace-nowrap text-ellipsis text-dark-green"
+        >
           {description}
         </p>
       </a>
