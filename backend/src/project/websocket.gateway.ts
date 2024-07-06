@@ -19,6 +19,7 @@ import { WsProjectLinkController } from './ws-controller/ws-project-link.control
 import { WsProjectController } from './ws-controller/ws-project.controller';
 import { ClientSocket } from './type/ClientSocket.type';
 import { WsProjectEpicController } from './ws-controller/ws-project-epic.controller';
+import { WsProjectStoryController } from './ws-controller/ws-project-story.controller';
 
 @WebSocketGateway({
   namespace: /project-\d+/,
@@ -36,6 +37,7 @@ export class ProjectWebsocketGateway
     private readonly wsProjectLinkController: WsProjectLinkController,
     private readonly wsProjectController: WsProjectController,
     private readonly wsProjectEpicController: WsProjectEpicController,
+    private readonly wsProjectStoryController: WsProjectStoryController,
   ) {
     this.namespaceMap = new Map();
   }
@@ -142,6 +144,21 @@ export class ProjectWebsocketGateway
       this.wsProjectEpicController.deleteEpic(client, data);
     } else if (data.action === 'update') {
       this.wsProjectEpicController.updateEpic(client, data);
+    }
+  }
+
+  @SubscribeMessage('story')
+  async handleStoryEvent(
+    @ConnectedSocket() client: ClientSocket,
+    @MessageBody() data: any,
+  ) {
+    if (data.action === 'create') {
+      this.wsProjectStoryController.createStory(client, data);
+    } else if (data.action === 'delete') {
+      this.wsProjectStoryController.deleteStory(client, data);
+    }
+    else if (data.action === 'update') {
+      this.wsProjectStoryController.updateStory(client, data);
     }
   }
 
