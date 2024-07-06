@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
-  IsNumber,
+  IsInt,
   IsOptional,
   IsString,
   Matches,
@@ -12,7 +12,7 @@ import { EpicColor } from 'src/project/entity/epic.entity';
 
 class Epic {
   @IsNotEmpty()
-  @IsNumber()
+  @IsInt()
   id: number;
 
   @IsOptional()

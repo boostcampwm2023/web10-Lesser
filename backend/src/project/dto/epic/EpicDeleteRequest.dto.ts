@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, Matches, ValidateNested } from 'class-validator';
+import { IsInt, IsNotEmpty, Matches, ValidateNested } from 'class-validator';
 
 class Epic {
-  @IsNumber()
+  @IsInt()
   id: number;
 }
 
