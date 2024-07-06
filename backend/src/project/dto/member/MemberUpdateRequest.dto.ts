@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
-  IsNumber,
+  IsInt,
   IsOptional,
   IsString,
   Matches,
@@ -11,7 +11,7 @@ import {
 import { MemberStatus } from '../../enum/MemberStatus.enum';
 
 class Content {
-  @IsNumber()
+  @IsInt()
   id: number;
 
   @IsString()

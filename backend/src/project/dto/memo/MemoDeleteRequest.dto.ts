@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, Matches, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsInt, Matches, ValidateNested } from 'class-validator';
 
 class MemoId {
-  @IsNumber()
+  @IsInt()
   id: number;
 }
 

@@ -2,14 +2,14 @@ import { Type } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
-  IsNumber,
+  IsInt,
   Matches,
   ValidateNested,
 } from 'class-validator';
 import { memoColor } from '../../entity/memo.entity';
 
 class Content {
-  @IsNumber()
+  @IsInt()
   id: number;
 
   @IsEnum(memoColor)
