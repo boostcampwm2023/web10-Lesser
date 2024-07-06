@@ -18,6 +18,8 @@ import { WsProjectLinkController } from './ws-controller/ws-project-link.control
 import { WsProjectController } from './ws-controller/ws-project.controller';
 import { WsProjectEpicController } from './ws-controller/ws-project-epic.controller';
 import { Epic } from './entity/epic.entity';
+import { Story } from './entity/story.entity';
+import { WsProjectStoryController } from './ws-controller/ws-project-story.controller';
 
 @Module({
   imports: [
@@ -29,6 +31,7 @@ import { Epic } from './entity/epic.entity';
       Memo,
       Link,
       Epic,
+	  Story
     ]),
   ],
   controllers: [ProjectController],
@@ -43,6 +46,7 @@ import { Epic } from './entity/epic.entity';
     WsProjectLinkController,
     WsProjectController,
     WsProjectEpicController,
+	WsProjectStoryController,
   ],
 })
 export class ProjectModule {}
