@@ -30,6 +30,7 @@ import { MemberRepository } from './member/repository/member.repository';
 import { Memo } from './project/entity/memo.entity';
 import { Link } from './project/entity/link.entity.';
 import { Epic } from './project/entity/epic.entity';
+import { Story } from './project/entity/story.entity';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { Epic } from './project/entity/epic.entity';
           Memo,
           Link,
           Epic,
+          Story,
         ],
         synchronize: ConfigService.get('NODE_ENV') == 'PROD' ? false : true,
       }),

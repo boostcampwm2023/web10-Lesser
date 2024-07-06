@@ -6,6 +6,7 @@ import { ProjectToMember } from '../entity/project-member.entity';
 import { Memo, memoColor } from '../entity/memo.entity';
 import { Link } from '../entity/link.entity.';
 import { Epic, EpicColor } from '../entity/epic.entity';
+import { Story, StoryStatus } from '../entity/story.entity';
 
 @Injectable()
 export class ProjectService {
@@ -110,5 +111,45 @@ export class ProjectService {
     color?: EpicColor,
   ): Promise<boolean> {
     return this.projectRepository.updateEpic(project, id, name, color);
+  }
+
+  createStory(
+    project: Project,
+    epicId: number,
+    title: string,
+    point: number,
+    status: StoryStatus,
+  ) {
+    const epic = this.projectRepository.getEpicById(project, epicId);
+    if (!epic) throw new Error('epic id is not found');
+    const newStory = Story.of(project, epicId, title, point, status);
+    return this.projectRepository.createStory(newStory);
+  }
+
+  async deleteStory(project: Project, storyId: number) {
+    const result = await this.projectRepository.deleteStory(project, storyId);
+    return result ? true : false;
+  }
+
+  updateStory(
+    project: Project,
+    id: number,
+    epicId: number | undefined,
+    title: string | undefined,
+    point: number | undefined,
+    status: StoryStatus | undefined,
+  ): Promise<boolean> {
+    if (epicId !== undefined) {
+      const epic = this.projectRepository.getEpicById(project, epicId);
+      if (!epic) throw new Error('epic id is not found');
+    }
+    return this.projectRepository.updateStory(
+      project,
+      id,
+      epicId,
+      title,
+      point,
+      status,
+    );
   }
 }

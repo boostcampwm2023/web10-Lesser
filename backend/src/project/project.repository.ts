@@ -8,6 +8,7 @@ import { Memo, memoColor } from './entity/memo.entity';
 import { MemberRepository } from 'src/member/repository/member.repository';
 import { Link } from './entity/link.entity.';
 import { Epic, EpicColor } from './entity/epic.entity';
+import { Story, StoryStatus } from './entity/story.entity';
 
 @Injectable()
 export class ProjectRepository {
@@ -24,6 +25,8 @@ export class ProjectRepository {
     private readonly linkRepository: Repository<Link>,
     @InjectRepository(Epic)
     private readonly epicRepository: Repository<Epic>,
+    @InjectRepository(Story)
+    private readonly storyRepository: Repository<Story>,
   ) {}
 
   create(project: Project): Promise<Project> {
@@ -140,6 +143,54 @@ export class ProjectRepository {
     }
 
     const result = await this.epicRepository.update(
+      { id, project: { id: project.id } },
+      updateData,
+    );
+    return !!result.affected;
+  }
+
+  getEpicById(project: Project, id: number) {
+    return this.epicRepository.findOne({
+      where: { id: id, projectId: project.id },
+    });
+  }
+
+  createStory(story: Story): Promise<Story> {
+    return this.storyRepository.save(story);
+  }
+
+  async deleteStory(project: Project, storyId: number): Promise<number> {
+    const result = await this.storyRepository.delete({
+      project: { id: project.id },
+      id: storyId,
+    });
+    return result.affected ? result.affected : 0;
+  }
+
+  async updateStory(
+    project: Project,
+    id: number,
+    epicId: number | undefined,
+    title: string | undefined,
+    point: number | undefined,
+    status: StoryStatus | undefined,
+  ): Promise<boolean> {
+    const updateData: any = {};
+
+    if (epicId !== undefined) {
+      updateData.epicId = epicId;
+    }
+    if (title !== undefined) {
+      updateData.title = title;
+    }
+    if (point !== undefined) {
+      updateData.point = point;
+    }
+    if (status !== undefined) {
+      updateData.status = status;
+    }
+
+    const result = await this.storyRepository.update(
       { id, project: { id: project.id } },
       updateData,
     );
