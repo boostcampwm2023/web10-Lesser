@@ -25,6 +25,7 @@ export interface StoryDTO {
   point: number | null;
   status: BacklogStatusType;
   taskList: TaskDTO[];
+  epicId: number;
 }
 
 export interface EpicCategoryDTO {
