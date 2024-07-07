@@ -13,18 +13,32 @@ const UnfinishedStoryPage = () => {
   const { showDetail, handleShowDetail } = useShowDetail();
   const storyList = useMemo(
     () => changeEpicListToStoryList(backlog.epicList),
-    []
+    [backlog.epicList]
+  );
+  const epicCategoryList = useMemo(
+    () => backlog.epicList.map(({ id, name, color }) => ({ id, name, color })),
+    [backlog.epicList]
   );
 
   return (
-    <div>
-      {...storyList.map(({ epic, title, point, status, taskList }) => (
-        <StoryBlock {...{ title, point, status }} epic={epic.name} progress={2}>
-          {...taskList.map((task) => <TaskBlock {...task} />)}
-        </StoryBlock>
-      ))}
+    <div className="flex flex-col items-center gap-4">
+      <div className="w-full border-b">
+        {...storyList.map(({ epic, title, point, status, taskList }) => (
+          <StoryBlock
+            {...{ title, point, status }}
+            epic={epic.name}
+            progress={2}
+            taskExist={taskList.length > 0}
+          >
+            {...taskList.map((task) => <TaskBlock {...task} />)}
+          </StoryBlock>
+        ))}
+      </div>
       {showDetail ? (
-        <StoryCreateForm onCloseClick={() => handleShowDetail(false)} />
+        <StoryCreateForm
+          epicList={epicCategoryList}
+          onCloseClick={() => handleShowDetail(false)}
+        />
       ) : (
         <StoryCreateButton onClick={() => handleShowDetail(true)} />
       )}

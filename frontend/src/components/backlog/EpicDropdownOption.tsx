@@ -19,10 +19,7 @@ const EpicDropdownOption = ({ epic }: EpicDropdownOptionProps) => {
 
   return (
     <>
-      <li
-        className="flex justify-between px-1 py-1 rounded-md group hover:cursor-pointer hover:bg-gray-100"
-        key={epic.id}
-      >
+      <div className="flex justify-between px-1 py-1 rounded-md group hover:cursor-pointer hover:bg-gray-100">
         <CategoryChip content={epic.name} bgColor={epic.color} />
         <button
           className="invisible px-1 rounded-md group-hover:visible hover:bg-gray-300"
@@ -32,7 +29,7 @@ const EpicDropdownOption = ({ epic }: EpicDropdownOptionProps) => {
         >
           <MenuKebab width={20} height={20} stroke="#696969" />
         </button>
-      </li>
+      </div>
       {open && (
         <EpicUpdateBox
           epic={epic}

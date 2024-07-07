@@ -1,7 +1,7 @@
 import Plus from "../../assets/icons/plus.svg?react";
 
 const TaskCreateButton = () => (
-  <div className="py-1 border-b text-dark-gray">
+  <div className="py-1 text-dark-gray">
     <button
       className="flex items-center justify-center w-full gap-1"
       type="button"

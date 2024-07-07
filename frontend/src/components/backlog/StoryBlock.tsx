@@ -15,6 +15,7 @@ interface StoryBlockProps {
   progress: number;
   status: BacklogStatusType;
   children: React.ReactNode;
+  taskExist: boolean;
 }
 
 const StoryBlock = ({
@@ -23,6 +24,7 @@ const StoryBlock = ({
   point,
   progress,
   status,
+  taskExist,
   children,
 }: StoryBlockProps) => {
   const { showDetail, handleShowDetail } = useShowDetail();
@@ -40,9 +42,17 @@ const StoryBlock = ({
             onClick={() => handleShowDetail(!showDetail)}
           >
             {showDetail ? (
-              <ChevronDown width={16} height={16} fill="black" />
+              <ChevronDown
+                width={16}
+                height={16}
+                fill={taskExist ? "black" : "#C5C5C5"}
+              />
             ) : (
-              <ChevronRight width={16} height={16} fill="black" />
+              <ChevronRight
+                width={16}
+                height={16}
+                fill={taskExist ? "black" : "#C5C5C5"}
+              />
             )}
           </button>
           <p>{title}</p>

@@ -12,9 +12,14 @@ import EpicDropdownOption from "./EpicDropdownOption";
 interface EpicDropdownProps {
   selectedEpic?: EpicCategoryDTO;
   epicList: EpicCategoryDTO[];
+  onEpicSelect: (epicId: number) => void;
 }
 
-const EpicDropdown = ({ selectedEpic, epicList }: EpicDropdownProps) => {
+const EpicDropdown = ({
+  selectedEpic,
+  epicList,
+  onEpicSelect,
+}: EpicDropdownProps) => {
   const { socket }: { socket: Socket } = useOutletContext();
   const { emitEpicCreateEvent } = useEpicEmitEvent(socket);
   const [value, setValue] = useState("");
@@ -40,8 +45,12 @@ const EpicDropdown = ({ selectedEpic, epicList }: EpicDropdownProps) => {
     }
   };
 
+  const handleEpicSelect = (epicId: number) => {
+    onEpicSelect(epicId);
+  };
+
   return (
-    <div className="relative p-1 rounded-md w-72 shadow-box">
+    <div className="absolute p-1 bg-white rounded-md w-72 shadow-box">
       <div className="flex p-1 border-b-2">
         {selectedEpic && (
           <div className="min-w-[5rem]">
@@ -62,7 +71,9 @@ const EpicDropdown = ({ selectedEpic, epicList }: EpicDropdownProps) => {
       </div>
       <ul className="pt-1">
         {...epicList.map((epic) => (
-          <EpicDropdownOption key={epic.id} epic={epic} />
+          <li key={epic.id} onClick={() => handleEpicSelect(epic.id)}>
+            <EpicDropdownOption key={epic.id} epic={epic} />
+          </li>
         ))}
       </ul>
     </div>

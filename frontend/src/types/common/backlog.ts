@@ -20,6 +20,13 @@ export interface UnfinishedStory extends StoryDTO {
   epic: EpicCategoryDTO;
 }
 
+export interface StoryForm {
+  epicId: number | undefined;
+  title: string;
+  point: number | undefined;
+  status: "시작전";
+}
+
 export enum BacklogSocketDomain {
   BACKLOG = "backlog",
   EPIC = "epic",
@@ -28,6 +35,12 @@ export enum BacklogSocketDomain {
 }
 
 export enum BacklogSocketEpicAction {
+  CREATE = "create",
+  DELETE = "delete",
+  UPDATE = "update",
+}
+
+export enum BacklogSocketStoryAction {
   CREATE = "create",
   DELETE = "delete",
   UPDATE = "update",
@@ -45,4 +58,13 @@ export interface BacklogSocketEpicData {
   content: EpicDTO;
 }
 
-export type BacklogSocketData = BacklogSocketInitData | BacklogSocketEpicData;
+export interface BacklogSocketStoryData {
+  domain: BacklogSocketDomain.STORY;
+  action: BacklogSocketStoryAction;
+  content: StoryDTO;
+}
+
+export type BacklogSocketData =
+  | BacklogSocketInitData
+  | BacklogSocketEpicData
+  | BacklogSocketStoryData;
