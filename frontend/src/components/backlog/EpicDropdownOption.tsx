@@ -3,7 +3,7 @@ import MenuKebab from "../../assets/icons/menu-kebab.svg?react";
 import { EpicCategoryDTO } from "../../types/DTO/backlogDTO";
 import useDropdownState from "../../hooks/common/dropdown/useDropdownState";
 import EpicUpdateBox from "./EpicUpdateBox";
-import { useRef } from "react";
+import { MouseEvent, useRef } from "react";
 
 interface EpicDropdownOptionProps {
   epic: EpicCategoryDTO;
@@ -13,7 +13,8 @@ const EpicDropdownOption = ({ epic }: EpicDropdownOptionProps) => {
   const { open, handleOpen, handleClose } = useDropdownState();
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  const handleMenuButtonClick = () => {
+  const handleMenuButtonClick = (event: MouseEvent) => {
+    event.stopPropagation();
     handleOpen();
   };
 
