@@ -1,4 +1,9 @@
-import { BacklogDTO, EpicDTO } from "../DTO/backlogDTO";
+import {
+  BacklogDTO,
+  EpicCategoryDTO,
+  EpicDTO,
+  StoryDTO,
+} from "../DTO/backlogDTO";
 
 export type BacklogPath = "backlog" | "epic" | "completed";
 
@@ -10,6 +15,10 @@ export type BacklogCategoryColor =
   | "blue"
   | "purple"
   | "gray";
+
+export interface UnfinishedStory extends StoryDTO {
+  epic: EpicCategoryDTO;
+}
 
 export enum BacklogSocketDomain {
   BACKLOG = "backlog",
