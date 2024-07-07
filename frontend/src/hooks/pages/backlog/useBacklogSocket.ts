@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { BacklogDTO, EpicDTO } from "../../../types/DTO/backlogDTO";
+import { BacklogDTO, EpicDTO, StoryDTO } from "../../../types/DTO/backlogDTO";
 import {
   BacklogSocketData,
   BacklogSocketDomain,
   BacklogSocketEpicAction,
+  BacklogSocketStoryAction,
 } from "../../../types/common/backlog";
 
 const useBacklogSocket = (socket: Socket) => {
@@ -46,6 +47,27 @@ const useBacklogSocket = (socket: Socket) => {
     }
   };
 
+  const handleStoryEvent = (
+    action: BacklogSocketStoryAction,
+    content: StoryDTO
+  ) => {
+    switch (action) {
+      case BacklogSocketStoryAction.CREATE:
+        setBacklog((prevBacklog) => {
+          const newEpicList = prevBacklog.epicList.map((epic) => {
+            if (epic.id === content.epicId) {
+              const newStoryList = [...epic.storyList, content];
+              return { ...epic, storyList: newStoryList };
+            }
+
+            return epic;
+          });
+          return { epicList: newEpicList };
+        });
+        break;
+    }
+  };
+
   const handleOnBacklog = ({ domain, action, content }: BacklogSocketData) => {
     switch (domain) {
       case BacklogSocketDomain.BACKLOG:
@@ -53,6 +75,9 @@ const useBacklogSocket = (socket: Socket) => {
         break;
       case BacklogSocketDomain.EPIC:
         handleEpicEvent(action, content);
+        break;
+      case BacklogSocketDomain.STORY:
+        handleStoryEvent(action, content);
         break;
     }
   };

@@ -8,8 +8,7 @@ const BacklogPage = () => {
   const { backlog } = useBacklogSocket(socket);
 
   return (
-    <div>
-      {JSON.stringify(backlog)}
+    <div className="w-full h-full">
       <BacklogHeader />
       <Outlet context={{ socket, backlog }} />
     </div>

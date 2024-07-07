@@ -11,7 +11,7 @@ const TaskBlock = ({
   status,
 }: TaskDTO) => (
   <div className="flex items-center justify-between py-1 border-b">
-    <p className="w-12">Task-{displayId}</p>
+    <p className="w-[4rem]">Task-{displayId}</p>
     <p className="w-[25rem]">{title}</p>
     <div className="w-12">
       {assignedMemberId && (

@@ -47,5 +47,21 @@ export default {
       },
     },
   },
-  plugins: [require("tailwind-scrollbar-hide"), require("tailwind-scrollbar")],
+  plugins: [
+    require("tailwind-scrollbar-hide"),
+    require("tailwind-scrollbar"),
+    function ({ addUtilities }) {
+      addUtilities({
+        ".no-arrows": {
+          "&::-webkit-inner-spin-button, &::-webkit-outer-spin-button": {
+            "-webkit-appearance": "none",
+            margin: "0",
+          },
+          "&[type=number]": {
+            "-moz-appearance": "textfield",
+          },
+        },
+      });
+    },
+  ],
 };
