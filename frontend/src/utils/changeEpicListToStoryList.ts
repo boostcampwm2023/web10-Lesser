@@ -6,6 +6,9 @@ const changeEpicListToStoryList = (epicList: EpicDTO[]) => {
   epicList.forEach(({ id, name, color, storyList }) => {
     storyList.forEach((story) => {
       const newStory = { ...story, epic: { id, name, color } };
+      if (!newStory.taskList) {
+        newStory.taskList = [];
+      }
       newStoryList.push(newStory);
     });
   });
