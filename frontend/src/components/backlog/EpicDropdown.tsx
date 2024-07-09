@@ -36,6 +36,11 @@ const EpicDropdown = ({
     }
 
     if (event.key === "Enter" && value) {
+      if (value.length > 10) {
+        alert("에픽 이름은 10자 이하여야 합니다.");
+        return;
+      }
+
       setValue("");
       const colors = Object.keys(CATEGORY_COLOR);
       const color = colors[
