@@ -8,7 +8,8 @@ interface CategoryChipProps {
 
 const CategoryChip = ({ content, bgColor }: CategoryChipProps) => (
   <div
-    className={`w-fit max-w-[4.5rem] rounded-md ${CATEGORY_COLOR[bgColor]} px-2 py-[2px]`}
+    title={content}
+    className={`w-fit max-w-[4.5rem] rounded-md ${CATEGORY_COLOR[bgColor]} px-2 py-[2px] overflow-hidden text-ellipsis whitespace-nowrap`}
   >
     {content}
   </div>
