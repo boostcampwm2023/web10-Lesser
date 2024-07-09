@@ -13,10 +13,14 @@ import { BacklogCategoryColor } from "../../types/common/backlog";
 interface EpicUpdateBoxProps {
   epic: EpicCategoryDTO;
   onBoxClose: () => void;
-  buttonRef: React.MutableRefObject<HTMLButtonElement | null>;
+  onEpicChange: (epicId: number | undefined) => void;
 }
 
-const EpicUpdateBox = ({ epic, onBoxClose, buttonRef }: EpicUpdateBoxProps) => {
+const EpicUpdateBox = ({
+  epic,
+  onBoxClose,
+  onEpicChange,
+}: EpicUpdateBoxProps) => {
   const { open, close } = useModal();
   const { socket }: { socket: Socket } = useOutletContext();
   const { emitEpicDeleteEvent, emitEpicUpdateEvent } = useEpicEmitEvent(socket);
@@ -26,6 +30,7 @@ const EpicUpdateBox = ({ epic, onBoxClose, buttonRef }: EpicUpdateBoxProps) => {
 
   const handleConfirmButtonClick = (event?: React.MouseEvent) => {
     event?.stopPropagation();
+    onEpicChange(undefined);
     emitEpicDeleteEvent({ id: epic.id });
     onBoxClose();
     close();
@@ -70,10 +75,6 @@ const EpicUpdateBox = ({ epic, onBoxClose, buttonRef }: EpicUpdateBoxProps) => {
   };
 
   const handleOutsideClick = ({ target }: MouseEvent) => {
-    if (buttonRef.current && buttonRef.current.contains(target as Node)) {
-      return;
-    }
-
     if (boxRef.current && !boxRef.current.contains(target as Node)) {
       onBoxClose();
     }

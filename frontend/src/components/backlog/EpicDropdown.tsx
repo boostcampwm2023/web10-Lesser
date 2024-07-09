@@ -8,21 +8,24 @@ import { CATEGORY_COLOR } from "../../constants/backlog";
 import getRandomNumber from "../../utils/getRandomNumber";
 import { BacklogCategoryColor } from "../../types/common/backlog";
 import EpicDropdownOption from "./EpicDropdownOption";
+import EpicUpdateBox from "./EpicUpdateBox";
+import useDropdownState from "../../hooks/common/dropdown/useDropdownState";
 
 interface EpicDropdownProps {
   selectedEpic?: EpicCategoryDTO;
   epicList: EpicCategoryDTO[];
-  onEpicSelect: (epicId: number) => void;
+  onEpicChange: (epicId: number | undefined) => void;
 }
 
 const EpicDropdown = ({
   selectedEpic,
   epicList,
-  onEpicSelect,
+  onEpicChange,
 }: EpicDropdownProps) => {
   const { socket }: { socket: Socket } = useOutletContext();
   const { emitEpicCreateEvent } = useEpicEmitEvent(socket);
   const [value, setValue] = useState("");
+  const { open, handleOpen, handleClose } = useDropdownState();
 
   const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const { value } = target;
@@ -50,8 +53,8 @@ const EpicDropdown = ({
     }
   };
 
-  const handleEpicSelect = (epicId: number) => {
-    onEpicSelect(epicId);
+  const handleEpicChange = (epicId: number | undefined) => {
+    onEpicChange(epicId);
   };
 
   return (
@@ -76,8 +79,20 @@ const EpicDropdown = ({
       </div>
       <ul className="pt-1">
         {...epicList.map((epic) => (
-          <li key={epic.id} onClick={() => handleEpicSelect(epic.id)}>
-            <EpicDropdownOption key={epic.id} epic={epic} />
+          <li
+            key={epic.id}
+            onClick={() => {
+              handleEpicChange(epic.id);
+            }}
+          >
+            <EpicDropdownOption key={epic.id} epic={epic} onOpen={handleOpen} />
+            {open && (
+              <EpicUpdateBox
+                epic={epic}
+                onBoxClose={handleClose}
+                onEpicChange={handleEpicChange}
+              />
+            )}
           </li>
         ))}
       </ul>
