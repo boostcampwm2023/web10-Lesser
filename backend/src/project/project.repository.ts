@@ -5,10 +5,10 @@ import { Project } from './entity/project.entity';
 import { ProjectToMember } from './entity/project-member.entity';
 import { Member } from 'src/member/entity/member.entity';
 import { Memo, memoColor } from './entity/memo.entity';
-import { MemberRepository } from 'src/member/repository/member.repository';
 import { Link } from './entity/link.entity.';
 import { Epic, EpicColor } from './entity/epic.entity';
 import { Story, StoryStatus } from './entity/story.entity';
+import { Task, TaskStatus } from './entity/task.entity';
 
 @Injectable()
 export class ProjectRepository {
@@ -27,6 +27,8 @@ export class ProjectRepository {
     private readonly epicRepository: Repository<Epic>,
     @InjectRepository(Story)
     private readonly storyRepository: Repository<Story>,
+    @InjectRepository(Task)
+    private readonly taskRepository: Repository<Task>,
   ) {}
 
   create(project: Project): Promise<Project> {
@@ -191,6 +193,72 @@ export class ProjectRepository {
     }
 
     const result = await this.storyRepository.update(
+      { id, project: { id: project.id } },
+      updateData,
+    );
+    return !!result.affected;
+  }
+
+  getStoryById(project: Project, id: number) {
+    return this.storyRepository.findOne({
+      where: { id: id, projectId: project.id },
+    });
+  }
+
+  async getAndIncrementDisplayIdCount(project: Project) {
+    const targetProject = await this.projectRepository.findOne({
+      where: { id: project.id },
+    });
+    await this.projectRepository.update(project.id, {
+      displayIdCount: targetProject.displayIdCount + 1,
+    });
+    return targetProject.displayIdCount;
+  }
+
+  async createTask(task: Task) {
+    return this.taskRepository.save(task);
+  }
+
+  async deleteTask(project: Project, taskId: number): Promise<number> {
+    const result = await this.taskRepository.delete({
+      project: { id: project.id },
+      id: taskId,
+    });
+    return result.affected ? result.affected : 0;
+  }
+
+  async updateTask(
+    project: Project,
+    id: number,
+    storyId: number | undefined,
+    title: string | undefined,
+    expectedTime: number | undefined,
+    actualTime: number | undefined,
+    status: TaskStatus | undefined,
+    assignedMemberId: number | undefined,
+  ): Promise<boolean> {
+    const updateData: any = {};
+
+    if (storyId !== undefined) {
+      updateData.storyId = storyId;
+    }
+    if (title !== undefined) {
+      updateData.title = title;
+    }
+    if (expectedTime !== undefined) {
+      updateData.expectedTime = expectedTime;
+    }
+    if (actualTime !== undefined) {
+      updateData.actualTime = actualTime;
+    }
+    if (status !== undefined) {
+      updateData.status = status;
+    }
+    if (assignedMemberId !== undefined) {
+      updateData.assignedMemberId = assignedMemberId;
+    }
+
+    const result = await this.taskRepository.update(
       { id, project: { id: project.id } },
       updateData,
     );
