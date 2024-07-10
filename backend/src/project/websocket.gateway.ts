@@ -20,6 +20,7 @@ import { WsProjectController } from './ws-controller/ws-project.controller';
 import { ClientSocket } from './type/ClientSocket.type';
 import { WsProjectEpicController } from './ws-controller/ws-project-epic.controller';
 import { WsProjectStoryController } from './ws-controller/ws-project-story.controller';
+import { WsProjectTaskController } from './ws-controller/ws-project-task.controller';
 
 @WebSocketGateway({
   namespace: /project-\d+/,
@@ -38,6 +39,7 @@ export class ProjectWebsocketGateway
     private readonly wsProjectController: WsProjectController,
     private readonly wsProjectEpicController: WsProjectEpicController,
     private readonly wsProjectStoryController: WsProjectStoryController,
+    private readonly wsProjectTaskController: WsProjectTaskController,
   ) {
     this.namespaceMap = new Map();
   }
@@ -156,9 +158,22 @@ export class ProjectWebsocketGateway
       this.wsProjectStoryController.createStory(client, data);
     } else if (data.action === 'delete') {
       this.wsProjectStoryController.deleteStory(client, data);
-    }
-    else if (data.action === 'update') {
+    } else if (data.action === 'update') {
       this.wsProjectStoryController.updateStory(client, data);
+    }
+  }
+
+  @SubscribeMessage('task')
+  async handleTaskEvent(
+    @ConnectedSocket() client: ClientSocket,
+    @MessageBody() data: any,
+  ) {
+    if (data.action === 'create') {
+      this.wsProjectTaskController.createTask(client, data);
+    } else if (data.action === 'delete') {
+      this.wsProjectTaskController.deleteTask(client, data);
+    } else if (data.action === 'update') {
+      this.wsProjectTaskController.updateTask(client, data);
     }
   }
 
