@@ -150,7 +150,6 @@ describe('WS story', () => {
     const expectTitleUpdateStory = (socket, id, title) => {
       return new Promise<void>((resolve) => {
         socket.once('backlog', async (data) => {
-          console.log(data);
           const { content, action, domain } = data;
           expect(domain).toBe('story');
           expect(action).toBe('update');
