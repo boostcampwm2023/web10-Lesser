@@ -7,6 +7,7 @@ import { Memo, memoColor } from '../entity/memo.entity';
 import { Link } from '../entity/link.entity.';
 import { Epic, EpicColor } from '../entity/epic.entity';
 import { Story, StoryStatus } from '../entity/story.entity';
+import { Task, TaskStatus } from '../entity/task.entity';
 
 @Injectable()
 export class ProjectService {
@@ -113,15 +114,15 @@ export class ProjectService {
     return this.projectRepository.updateEpic(project, id, name, color);
   }
 
-  createStory(
+  async createStory(
     project: Project,
     epicId: number,
     title: string,
     point: number,
     status: StoryStatus,
   ) {
-    const epic = this.projectRepository.getEpicById(project, epicId);
-    if (!epic) throw new Error('epic id is not found');
+    const epic = await this.projectRepository.getEpicById(project, epicId);
+    if (!epic) throw new Error('epic id not found');
     const newStory = Story.of(project, epicId, title, point, status);
     return this.projectRepository.createStory(newStory);
   }
@@ -131,7 +132,7 @@ export class ProjectService {
     return result ? true : false;
   }
 
-  updateStory(
+  async updateStory(
     project: Project,
     id: number,
     epicId: number | undefined,
@@ -140,8 +141,8 @@ export class ProjectService {
     status: StoryStatus | undefined,
   ): Promise<boolean> {
     if (epicId !== undefined) {
-      const epic = this.projectRepository.getEpicById(project, epicId);
-      if (!epic) throw new Error('epic id is not found');
+      const epic = await this.projectRepository.getEpicById(project, epicId);
+      if (!epic) throw new Error('epic id not found');
     }
     return this.projectRepository.updateStory(
       project,
@@ -150,6 +151,64 @@ export class ProjectService {
       title,
       point,
       status,
+    );
+  }
+
+  async createTask(
+    project: Project,
+    title: string,
+    expectedTime: number,
+    actualTime: number,
+    status: TaskStatus,
+    assignedMemberId: number,
+    storyId: number,
+  ) {
+    const story = await this.projectRepository.getStoryById(project, storyId);
+    if (!story) throw new Error('Story id not found');
+    const displayIdCount =
+      await this.projectRepository.getAndIncrementDisplayIdCount(project);
+
+    const newTask = Task.of(
+      project,
+      storyId,
+      title,
+      displayIdCount,
+      expectedTime,
+      actualTime,
+      assignedMemberId,
+      status,
+    );
+    return this.projectRepository.createTask(newTask);
+  }
+
+  async deleteTask(project: Project, taskId: number) {
+    const result = await this.projectRepository.deleteTask(project, taskId);
+    return result ? true : false;
+  }
+
+  async updateTask(
+    project: Project,
+    id: number,
+    storyId: number | undefined,
+    title: string | undefined,
+    expectedTime: number | undefined,
+    actualTime: number | undefined,
+    status: TaskStatus | undefined,
+    assignedMemberId: number | undefined,
+  ): Promise<boolean> {
+    if (storyId !== undefined) {
+      const story = await this.projectRepository.getStoryById(project, storyId);
+      if (!story) throw new Error('story id not found');
+    }
+    return this.projectRepository.updateTask(
+      project,
+      id,
+      storyId,
+      title,
+      expectedTime,
+      actualTime,
+      status,
+      assignedMemberId,
     );
   }
 }

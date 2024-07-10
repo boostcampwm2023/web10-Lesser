@@ -45,10 +45,14 @@ export class Project {
   @OneToMany(() => Link, (link) => link.id)
   linkList: Link[];
 
+  @Column({type: 'int', nullable: false})
+  displayIdCount: number;
+
   static of(title: string, subject: string) {
     const newProject = new Project();
     newProject.title = title;
     newProject.subject = subject;
+	newProject.displayIdCount = 0;
     return newProject;
   }
 }
