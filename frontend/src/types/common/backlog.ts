@@ -16,6 +16,8 @@ export type BacklogCategoryColor =
   | "purple"
   | "gray";
 
+export type BacklogInputField = "title" | "point";
+
 export interface UnfinishedStory extends StoryDTO {
   epic: EpicCategoryDTO;
 }
