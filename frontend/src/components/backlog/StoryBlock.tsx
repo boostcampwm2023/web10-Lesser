@@ -206,7 +206,12 @@ const StoryBlock = ({
               defaultValue={title}
             />
           ) : (
-            <span className="w-full hover:cursor-pointer">{title}</span>
+            <span
+              title={title}
+              className="w-full overflow-hidden hover:cursor-pointer text-ellipsis whitespace-nowrap"
+            >
+              {title}
+            </span>
           )}
         </div>
         <div
