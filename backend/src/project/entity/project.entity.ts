@@ -8,6 +8,7 @@ import {
   Generated,
   JoinColumn,
 } from 'typeorm';
+import { Epic } from './epic.entity';
 import { Link } from './link.entity.';
 import { Memo } from './memo.entity';
 import { ProjectToMember } from './project-member.entity';
@@ -45,14 +46,17 @@ export class Project {
   @OneToMany(() => Link, (link) => link.id)
   linkList: Link[];
 
-  @Column({type: 'int', nullable: false})
+  @Column({ type: 'int', nullable: false })
   displayIdCount: number;
+
+  @OneToMany(() => Epic, (epic) => epic.project)
+  epicList: Epic[];
 
   static of(title: string, subject: string) {
     const newProject = new Project();
     newProject.title = title;
     newProject.subject = subject;
-	newProject.displayIdCount = 0;
+    newProject.displayIdCount = 0;
     return newProject;
   }
 }
