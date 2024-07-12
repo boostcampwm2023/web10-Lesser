@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { InitBacklogResponseDto } from '../dto/InitBacklogResponse.dto';
 import { InitLandingResponseDto } from '../dto/InitLandingResponse.dto';
 import { MemberUpdateNotifyDto } from '../dto/member/MemberUpdateNotify.dto';
 import { MemberStatus } from '../enum/MemberStatus.enum';
@@ -53,10 +54,8 @@ export class WsProjectController {
   async joinBacklogPage(client: ClientSocket) {
     client.leave('landing');
     client.join('backlog');
-    client.emit('backlog', {
-      domain: 'backlog',
-      action: 'init',
-      content: {},
-    });
+    const backlog = await this.projectService.getProjectBacklog(client.project);
+
+    client.emit('backlog', InitBacklogResponseDto.of(backlog));
   }
 }
