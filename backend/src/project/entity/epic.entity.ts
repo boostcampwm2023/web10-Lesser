@@ -4,10 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Project } from './project.entity';
+import { Story } from './story.entity';
 
 export enum EpicColor {
   YELLOW = 'yellow',
@@ -27,7 +29,7 @@ export class Epic {
   @Column({ type: 'int', name: 'project_id' })
   projectId: number;
 
-  @ManyToOne(() => Project, (project) => project.id, { nullable: false })
+  @ManyToOne(() => Project, (project) => project.epicList, { nullable: false })
   @JoinColumn({ name: 'project_id' })
   project: Project;
 
@@ -42,6 +44,9 @@ export class Epic {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
+
+  @OneToMany(() => Story, (story) => story.epic)
+  storyList: Story[];
 
   static of(project: Project, name: string, color: EpicColor) {
     const newEpic = new Epic();

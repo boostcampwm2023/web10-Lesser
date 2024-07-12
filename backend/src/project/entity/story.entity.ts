@@ -3,10 +3,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Epic } from './epic.entity';
 import { Project } from './project.entity';
+import { Task } from './task.entity';
 
 export enum StoryStatus {
   NotStarted = '시작전',
@@ -22,14 +24,14 @@ export class Story {
   @Column({ type: 'int', name: 'project_id' })
   projectId: number;
 
-  @ManyToOne(() => Project, (project) => project.id, { nullable: false })
+  @ManyToOne(() => Project, { nullable: false })
   @JoinColumn({ name: 'project_id' })
   project: Project;
 
   @Column({ type: 'int', name: 'epic_id' })
   epicId: number;
 
-  @ManyToOne(() => Epic, (epic) => epic.id, { nullable: false })
+  @ManyToOne(() => Epic, (epic) => epic.storyList, { nullable: false })
   @JoinColumn({ name: 'epic_id' })
   epic: Epic;
 
@@ -41,6 +43,9 @@ export class Story {
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   status: StoryStatus;
+
+  @OneToMany(()=>Task, (task)=>task.story)
+  taskList: Task[];
 
   static of(
     project: Project,

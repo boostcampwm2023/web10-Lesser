@@ -23,14 +23,14 @@ export class Task {
   @Column({ type: 'int', name: 'project_id', nullable: false })
   projectId: number;
 
-  @ManyToOne(() => Project, (project) => project.id, { nullable: false })
+  @ManyToOne(() => Project, { nullable: false })
   @JoinColumn({ name: 'project_id' })
   project: Project;
 
   @Column({ type: 'int', name: 'story_id', nullable: false })
   storyId: number;
 
-  @ManyToOne(() => Story, (story) => story.id, { nullable: false })
+  @ManyToOne(() => Story, (story) => story.taskList, { nullable: false })
   @JoinColumn({ name: 'story_id' })
   story: Story;
 
