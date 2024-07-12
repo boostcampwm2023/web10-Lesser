@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { BacklogDTO, EpicDTO, StoryDTO } from "../../../types/DTO/backlogDTO";
+import {
+  BacklogDTO,
+  EpicDTO,
+  StoryDTO,
+  TaskDTO,
+} from "../../../types/DTO/backlogDTO";
 import {
   BacklogSocketData,
   BacklogSocketDomain,
   BacklogSocketEpicAction,
   BacklogSocketStoryAction,
+  BacklogSocketTaskAction,
 } from "../../../types/common/backlog";
 
 const useBacklogSocket = (socket: Socket) => {
@@ -96,6 +102,34 @@ const useBacklogSocket = (socket: Socket) => {
     }
   };
 
+  const handleTaskEvent = (
+    action: BacklogSocketTaskAction,
+    content: TaskDTO
+  ) => {
+    switch (action) {
+      case BacklogSocketTaskAction.CREATE:
+        setBacklog((prevBacklog) => {
+          const newEpicList = prevBacklog.epicList.map((epic) => {
+            if (
+              epic.storyList.filter(({ id }) => id === content.storyId).length
+            ) {
+              const newStoryList = epic.storyList.map((story) => {
+                if (story.id === content.storyId) {
+                  return { ...story, taskList: [...story.taskList, content] };
+                }
+                return story;
+              });
+
+              return { ...epic, storyList: newStoryList };
+            }
+            return epic;
+          });
+          return { epicList: newEpicList };
+        });
+        break;
+    }
+  };
+
   const handleOnBacklog = ({ domain, action, content }: BacklogSocketData) => {
     switch (domain) {
       case BacklogSocketDomain.BACKLOG:
@@ -106,6 +140,9 @@ const useBacklogSocket = (socket: Socket) => {
         break;
       case BacklogSocketDomain.STORY:
         handleStoryEvent(action, content);
+        break;
+      case BacklogSocketDomain.TASK:
+        handleTaskEvent(action, content);
         break;
     }
   };

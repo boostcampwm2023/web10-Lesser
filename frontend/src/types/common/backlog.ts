@@ -3,6 +3,7 @@ import {
   EpicCategoryDTO,
   EpicDTO,
   StoryDTO,
+  TaskDTO,
 } from "../DTO/backlogDTO";
 
 export type BacklogPath = "backlog" | "epic" | "completed";
@@ -29,6 +30,15 @@ export interface StoryForm {
   status: "시작전";
 }
 
+export interface TaskForm {
+  storyId: number;
+  title: string;
+  expectedTime: number | null | "";
+  actualTime: number | null | "";
+  status: "시작전";
+  assignedMemberId: null;
+}
+
 export enum BacklogSocketDomain {
   BACKLOG = "backlog",
   EPIC = "epic",
@@ -43,6 +53,12 @@ export enum BacklogSocketEpicAction {
 }
 
 export enum BacklogSocketStoryAction {
+  CREATE = "create",
+  DELETE = "delete",
+  UPDATE = "update",
+}
+
+export enum BacklogSocketTaskAction {
   CREATE = "create",
   DELETE = "delete",
   UPDATE = "update",
@@ -66,7 +82,14 @@ export interface BacklogSocketStoryData {
   content: StoryDTO;
 }
 
+export interface BacklogSocketTaskData {
+  domain: BacklogSocketDomain.TASK;
+  action: BacklogSocketTaskAction;
+  content: TaskDTO;
+}
+
 export type BacklogSocketData =
   | BacklogSocketInitData
   | BacklogSocketEpicData
-  | BacklogSocketStoryData;
+  | BacklogSocketStoryData
+  | BacklogSocketTaskData;
