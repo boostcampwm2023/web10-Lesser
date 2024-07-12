@@ -264,4 +264,11 @@ export class ProjectRepository {
     );
     return !!result.affected;
   }
+
+  getProjectBacklog(project: Project) {
+    return this.epicRepository.find({
+      where: { project: { id: project.id } },
+      relations: ['storyList', 'storyList.taskList'],
+    });
+  }
 }

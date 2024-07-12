@@ -211,4 +211,8 @@ export class ProjectService {
       assignedMemberId,
     );
   }
+  
+  getProjectBacklog(project: Project){
+	return this.projectRepository.getProjectBacklog(project);
+  }
 }
