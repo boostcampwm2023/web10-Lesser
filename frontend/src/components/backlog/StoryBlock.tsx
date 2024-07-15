@@ -182,7 +182,10 @@ const StoryBlock = ({
           <button
             className="flex items-center justify-center w-5 h-5 rounded-md hover:bg-dark-gray hover:bg-opacity-20"
             type="button"
-            onClick={() => handleShowDetail(!showDetail)}
+            onClick={(event) => {
+              event.stopPropagation();
+              handleShowDetail(!showDetail);
+            }}
           >
             {showDetail ? (
               <ChevronDown
