@@ -130,6 +130,27 @@ const useBacklogSocket = (socket: Socket) => {
           return { epicList: newEpicList };
         });
         break;
+      case BacklogSocketTaskAction.UPDATE:
+        setBacklog((prevBacklog) => {
+          const newEpicList = prevBacklog.epicList.map((epic) => {
+            const newStoryList = epic.storyList.map((story) => {
+              const newTaskList = story.taskList.map((task) => {
+                if (task.id === content.id) {
+                  return { ...task, ...content };
+                }
+
+                return task;
+              });
+
+              return { ...story, taskList: newTaskList };
+            });
+            return { ...epic, storyList: newStoryList };
+          });
+
+          return { epicList: newEpicList };
+        });
+
+        break;
     }
   };
 

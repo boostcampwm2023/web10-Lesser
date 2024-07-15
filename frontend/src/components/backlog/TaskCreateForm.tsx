@@ -41,7 +41,6 @@ const TaskCreateForm = ({ onCloseClick, storyId }: TaskCreateFormProps) => {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     let { title, actualTime, expectedTime } = taskFormData;
-    console.log(taskFormData);
 
     if (title.length > 100) {
       alert("제목은 100자 이내여야 합니다.");

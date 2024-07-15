@@ -13,11 +13,11 @@ const AssignedMemberDropdown = ({
   const memberList = [myInfo, ...partialMemberList];
 
   return (
-    <div className="rounded-md w-fit shadow-box">
+    <div className="absolute top-0 bg-white rounded-md w-fit shadow-box">
       <ul>
         {...memberList.map((member: LandingMemberDTO) => (
           <li
-            className="p-2 hover:cursor-pointer hover:bg-gray-100"
+            className="p-3 overflow-hidden rounded-md hover:cursor-pointer hover:bg-gray-100 text-ellipsis whitespace-nowrap"
             key={member.id}
             onClick={() => onOptionClick(member.id)}
           >
