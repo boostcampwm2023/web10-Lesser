@@ -1,3 +1,5 @@
+import { MouseEvent } from "react";
+
 interface ConfirmModalProps {
   title: string;
   body: string;
@@ -5,7 +7,7 @@ interface ConfirmModalProps {
   cancelText: string;
   confirmColor: string;
   cancelColor: string;
-  onConfirmButtonClick: () => void;
+  onConfirmButtonClick: (event?: MouseEvent) => void;
   onCancelButtonClick: () => void;
 }
 

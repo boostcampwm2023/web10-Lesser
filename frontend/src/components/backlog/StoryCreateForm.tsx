@@ -6,7 +6,6 @@ import { StoryForm } from "../../types/common/backlog";
 import useStoryEmitEvent from "../../hooks/pages/backlog/useStoryEmitEvent";
 import { Socket } from "socket.io-client";
 import { useOutletContext } from "react-router-dom";
-// import useShowDetail from "../../hooks/pages/backlog/useShowDetail";
 import EpicDropdown from "./EpicDropdown";
 import { EpicCategoryDTO } from "../../types/DTO/backlogDTO";
 import useDropdownState from "../../hooks/common/dropdown/useDropdownState";
@@ -59,7 +58,7 @@ const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
     onCloseClick();
   };
 
-  const handleEpicChange = (selectedEpicId: number) => {
+  const handleEpicChange = (selectedEpicId: number | undefined) => {
     setStoryFormData({ title, status, point, epicId: selectedEpicId });
     handleClose();
   };
@@ -72,8 +71,9 @@ const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
 
   const selectedEpic = useMemo(
     () => epicList.filter(({ id }) => id === epicId)[0],
-    [epicId]
+    [epicId, epicList]
   );
+
   return (
     <form
       className="flex items-center w-full py-1 border-t border-b"
@@ -94,7 +94,7 @@ const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
           <EpicDropdown
             selectedEpic={selectedEpic}
             epicList={epicList}
-            onEpicSelect={handleEpicChange}
+            onEpicChange={handleEpicChange}
           />
         )}
       </div>

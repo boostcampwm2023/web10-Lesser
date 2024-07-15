@@ -65,6 +65,34 @@ const useBacklogSocket = (socket: Socket) => {
           return { epicList: newEpicList };
         });
         break;
+      case BacklogSocketStoryAction.UPDATE:
+        setBacklog((prevBacklog) => {
+          const newEpicList = prevBacklog.epicList.map((epic) => {
+            const newStoryList = epic.storyList.map((story) => {
+              if (story.id === content.id) {
+                return { ...story, ...content };
+              }
+              return story;
+            });
+            return { ...epic, storyList: newStoryList };
+          });
+
+          return { epicList: newEpicList };
+        });
+
+        break;
+      case BacklogSocketStoryAction.DELETE:
+        setBacklog((prevBacklog) => {
+          const newEpicList = prevBacklog.epicList.map((epic) => {
+            const newStoryList = epic.storyList.filter(
+              ({ id }) => id !== content.id
+            );
+            return { ...epic, storyList: newStoryList };
+          });
+
+          return { epicList: newEpicList };
+        });
+        break;
     }
   };
 

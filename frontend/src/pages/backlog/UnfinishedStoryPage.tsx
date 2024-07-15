@@ -23,12 +23,13 @@ const UnfinishedStoryPage = () => {
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="w-full border-b">
-        {...storyList.map(({ epic, title, point, status, taskList }) => (
+        {...storyList.map(({ id, epic, title, point, status, taskList }) => (
           <StoryBlock
-            {...{ title, point, status }}
-            epic={epic.name}
+            {...{ id, title, point, status }}
+            epic={epic}
             progress={2}
             taskExist={taskList.length > 0}
+            epicList={epicCategoryList}
           >
             {...taskList.map((task) => <TaskBlock {...task} />)}
           </StoryBlock>
