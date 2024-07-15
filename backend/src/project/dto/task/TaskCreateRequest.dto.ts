@@ -41,7 +41,7 @@ export function IsOneDecimalPlace(validationOptions?: ValidationOptions) {
 
 class Task {
   @IsString()
-  @Length(0, 100, { message: 'Title must be 100 characters or less' })
+  @Length(1, 100, { message: 'Title must be 100 characters or less' })
   title: string;
 
   @IsOptional()

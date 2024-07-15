@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  Length,
   Matches,
   ValidateNested,
 } from 'class-validator';
@@ -21,6 +22,7 @@ class Task {
 
   @IsOptional()
   @IsString()
+  @Length(1, 100)
   title?: string;
 
   @IsOptional()

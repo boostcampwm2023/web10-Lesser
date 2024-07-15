@@ -34,7 +34,7 @@ export class Task {
   @JoinColumn({ name: 'story_id' })
   story: Story;
 
-  @Column({ type: 'varchar', length: 99, nullable: false })
+  @Column({ type: 'varchar', length: 100, nullable: false })
   title: string;
 
   @Column({ type: 'int', nullable: false })

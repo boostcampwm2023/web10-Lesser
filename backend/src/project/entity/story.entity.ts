@@ -35,7 +35,7 @@ export class Story {
   @JoinColumn({ name: 'epic_id' })
   epic: Epic;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 100, nullable: false })
   title: string;
 
   @Column({ type: 'int', nullable: false })
