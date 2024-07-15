@@ -62,7 +62,10 @@ const useBacklogSocket = (socket: Socket) => {
         setBacklog((prevBacklog) => {
           const newEpicList = prevBacklog.epicList.map((epic) => {
             if (epic.id === content.epicId) {
-              const newStoryList = [...epic.storyList, content];
+              const newStoryList = [
+                ...epic.storyList,
+                { ...content, taskList: [] },
+              ];
               return { ...epic, storyList: newStoryList };
             }
 
