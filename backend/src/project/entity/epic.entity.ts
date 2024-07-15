@@ -33,7 +33,7 @@ export class Epic {
   @JoinColumn({ name: 'project_id' })
   project: Project;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 10, nullable: false })
   name: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })

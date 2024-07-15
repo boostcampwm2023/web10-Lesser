@@ -7,6 +7,7 @@ import {
   IsString,
   Matches,
   ValidateNested,
+  Length,
 } from 'class-validator';
 import { EpicColor } from 'src/project/entity/epic.entity';
 
@@ -17,6 +18,7 @@ class Epic {
 
   @IsOptional()
   @IsString()
+  @Length(1, 10)
   name?: string;
 
   @IsOptional()
