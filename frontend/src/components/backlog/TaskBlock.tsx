@@ -1,14 +1,18 @@
+import { MouseEvent, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import useDropdownState from "../../hooks/common/dropdown/useDropdownState";
 import useBacklogInputChange from "../../hooks/pages/backlog/useBacklogInputChange";
 import useTaskEmitEvent from "../../hooks/pages/backlog/useTaskEmitEvent";
-import { BacklogStatusType, TaskDTO } from "../../types/DTO/backlogDTO";
 import AssignedMemberDropdown from "./AssignedMemberDropdown";
 import BacklogStatusChip from "./BacklogStatusChip";
 import BacklogStatusDropdown from "./BacklogStatusDropdown";
 import useMemberStore from "../../stores/useMemberStore";
-import { useMemo } from "react";
+import { BacklogStatusType, TaskDTO } from "../../types/DTO/backlogDTO";
+import { useModal } from "../../hooks/common/modal/useModal";
+import { MOUSE_KEY } from "../../constants/event";
+import ConfirmModal from "../common/ConfirmModal";
+import TrashCan from "../../assets/icons/trash-can.svg?react";
 
 const TaskBlock = ({
   id,
@@ -50,7 +54,14 @@ const TaskBlock = ({
   } = useDropdownState();
   const myInfo = useMemberStore((state) => state.myInfo);
   const partialMemberList = useMemberStore((state) => state.memberList);
-  const { emitTaskUpdateEvent } = useTaskEmitEvent(socket);
+  const { emitTaskUpdateEvent, emitTaskDeleteEvent } = useTaskEmitEvent(socket);
+  const {
+    open: deleteMenuOpen,
+    handleOpen: handleDeleteMenuOpen,
+
+    dropdownRef: blockRef,
+  } = useDropdownState();
+  const { open, close } = useModal();
 
   const assignedMemberName = useMemo(() => {
     if (assignedMemberId === null) {
@@ -130,80 +141,125 @@ const TaskBlock = ({
     emitTaskUpdateEvent({ id, status: data });
   }
 
+  const handleRightButtonClick = (event: MouseEvent) => {
+    if (event.button === MOUSE_KEY.RIGHT) {
+      handleDeleteMenuOpen();
+    }
+  };
+
+  const handleTaskDelete = () => {
+    emitTaskDeleteEvent({ id });
+    close();
+  };
+
+  const handleDeleteButtonClick = () => {
+    open(
+      <ConfirmModal
+        title="태스크 삭제"
+        body="태스크가 삭제됩니다."
+        confirmText="삭제"
+        cancelText="취소"
+        confirmColor="#E33535"
+        cancelColor="#C6C6C6"
+        onCancelButtonClick={close}
+        onConfirmButtonClick={handleTaskDelete}
+      />
+    );
+  };
+
   return (
-    <div className="flex items-center justify-between py-1 border-b">
-      <p className="w-[4rem]">Task-{displayId}</p>
+    <>
       <div
-        className="w-[25rem] min-h-[1.5rem] hover:cursor-pointer"
-        ref={titleRef}
-        onClick={() => handleTitleUpdating(true)}
+        className="flex items-center justify-between py-1 border-b"
+        onMouseUp={handleRightButtonClick}
+        onContextMenu={(event) => event.preventDefault()}
+        ref={blockRef}
       >
-        {titleUpdating ? (
-          <input
-            className="w-full min-w-[1rem] focus:outline-none rounded-sm bg-gray-200 hover:cursor-pointer"
-            ref={titleInputRef}
-            defaultValue={title}
-            type="text"
-          />
-        ) : (
-          <span>{title}</span>
-        )}
-      </div>
-      <div
-        className="w-12 min-h-[1.5rem] hover:cursor-pointer relative"
-        onClick={handleAssignedMemberUpdateOpen}
-      >
-        <div className="w-full min-h-[1.5rem]" ref={assignedMemberRef}>
-          {assignedMemberId && <p>{assignedMemberName}</p>}
+        <p className="w-[4rem]">Task-{displayId}</p>
+        <div
+          className="w-[25rem] min-h-[1.5rem] hover:cursor-pointer"
+          ref={titleRef}
+          onClick={() => handleTitleUpdating(true)}
+        >
+          {titleUpdating ? (
+            <input
+              className="w-full min-w-[1rem] focus:outline-none rounded-sm bg-gray-200 hover:cursor-pointer"
+              ref={titleInputRef}
+              defaultValue={title}
+              type="text"
+            />
+          ) : (
+            <span>{title}</span>
+          )}
         </div>
-        {assignedMemberUpdating && (
-          <AssignedMemberDropdown onOptionClick={updateAssignedMember} />
-        )}
-      </div>
-      <div
-        className="w-16 min-h-[1.5rem] hover:cursor-pointer"
-        ref={expectedTimeRef}
-        onClick={() => handleExpectedTimeUpdating(true)}
-      >
-        {expectedTimeUpdating ? (
-          <input
-            className="w-full min-w-[1rem] no-arrows text-right focus:outline-none rounded-sm bg-gray-200 hover:cursor-pointer"
-            ref={expectedTimeInputRef}
-            defaultValue={expectedTime === null ? "" : expectedTime}
-            type="number"
-          />
-        ) : (
-          <p className="max-w-full text-right">{expectedTime}</p>
-        )}
-      </div>
-      <div
-        className="w-16 min-h-[1.5rem] hover:cursor-pointer"
-        ref={actualTimeRef}
-        onClick={() => handleActualTimeUpdating(true)}
-      >
-        {actualTimeUpdating ? (
-          <input
-            className="w-full min-w-[1rem] no-arrows text-right focus:outline-none rounded-sm bg-gray-200 hover:cursor-pointer"
-            ref={actualTimeInputRef}
-            defaultValue={actualTime === null ? "" : actualTime}
-            type="number"
-          />
-        ) : (
-          <p className="min-w-full text-right">{actualTime}</p>
-        )}
-      </div>
-      <div
-        className="w-[6.25rem] hover:cursor-pointer relative"
-        onClick={handleStatusUpdateOpen}
-      >
-        <div ref={statusRef}>
-          <BacklogStatusChip status={status} />
+        <div
+          className="w-12 min-h-[1.5rem] hover:cursor-pointer relative"
+          onClick={handleAssignedMemberUpdateOpen}
+        >
+          <div className="w-full min-h-[1.5rem]" ref={assignedMemberRef}>
+            {assignedMemberId && <p>{assignedMemberName}</p>}
+          </div>
+          {assignedMemberUpdating && (
+            <AssignedMemberDropdown onOptionClick={updateAssignedMember} />
+          )}
         </div>
-        {statusUpdating && (
-          <BacklogStatusDropdown onOptionClick={updateStatus} />
-        )}
+        <div
+          className="w-16 min-h-[1.5rem] hover:cursor-pointer"
+          ref={expectedTimeRef}
+          onClick={() => handleExpectedTimeUpdating(true)}
+        >
+          {expectedTimeUpdating ? (
+            <input
+              className="w-full min-w-[1rem] no-arrows text-right focus:outline-none rounded-sm bg-gray-200 hover:cursor-pointer"
+              ref={expectedTimeInputRef}
+              defaultValue={expectedTime === null ? "" : expectedTime}
+              type="number"
+            />
+          ) : (
+            <p className="max-w-full text-right">{expectedTime}</p>
+          )}
+        </div>
+        <div
+          className="w-16 min-h-[1.5rem] hover:cursor-pointer"
+          ref={actualTimeRef}
+          onClick={() => handleActualTimeUpdating(true)}
+        >
+          {actualTimeUpdating ? (
+            <input
+              className="w-full min-w-[1rem] no-arrows text-right focus:outline-none rounded-sm bg-gray-200 hover:cursor-pointer"
+              ref={actualTimeInputRef}
+              defaultValue={actualTime === null ? "" : actualTime}
+              type="number"
+            />
+          ) : (
+            <p className="min-w-full text-right">{actualTime}</p>
+          )}
+        </div>
+        <div
+          className="w-[6.25rem] hover:cursor-pointer relative"
+          onClick={handleStatusUpdateOpen}
+        >
+          <div ref={statusRef}>
+            <BacklogStatusChip status={status} />
+          </div>
+          {statusUpdating && (
+            <BacklogStatusDropdown onOptionClick={updateStatus} />
+          )}
+        </div>
       </div>
-    </div>
+      {deleteMenuOpen && (
+        <div className="absolute px-2 py-1 bg-white rounded-md shadow-box">
+          <button
+            className="flex items-center w-full gap-3"
+            type="button"
+            onClick={handleDeleteButtonClick}
+          >
+            <TrashCan width={20} height={20} fill="red" />
+            <span>삭제</span>
+          </button>
+        </div>
+      )}
+    </>
   );
 };
 

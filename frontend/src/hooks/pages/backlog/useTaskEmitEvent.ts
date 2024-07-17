@@ -19,7 +19,11 @@ const useTaskEmitEvent = (socket: Socket) => {
     socket.emit("task", { action: "update", content });
   };
 
-  return { emitTaskCreateEvent, emitTaskUpdateEvent };
+  const emitTaskDeleteEvent = (content: {id: number}) => {
+    socket.emit("task", {action: "delete", content})
+  }
+
+  return { emitTaskCreateEvent, emitTaskUpdateEvent, emitTaskDeleteEvent };
 };
 
 export default useTaskEmitEvent;

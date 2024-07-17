@@ -151,6 +151,22 @@ const useBacklogSocket = (socket: Socket) => {
         });
 
         break;
+      case BacklogSocketTaskAction.DELETE:
+        setBacklog((prevBacklog) => {
+          const newEpicList = prevBacklog.epicList.map((epic) => {
+            const newStoryList = epic.storyList.map((story) => {
+              const newTaskList = story.taskList.filter(
+                ({ id }) => id !== content.id
+              );
+
+              return { ...story, taskList: newTaskList };
+            });
+            return { ...epic, storyList: newStoryList };
+          });
+
+          return { epicList: newEpicList };
+        });
+        break;
     }
   };
 
