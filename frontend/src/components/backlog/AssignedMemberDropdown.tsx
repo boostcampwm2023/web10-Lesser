@@ -13,7 +13,7 @@ const AssignedMemberDropdown = ({
   const memberList = [myInfo, ...partialMemberList];
 
   return (
-    <div className="absolute top-0 bg-white rounded-md w-fit shadow-box">
+    <div className="absolute top-0 z-10 bg-white rounded-md w-fit shadow-box">
       <ul>
         {...memberList.map((member: LandingMemberDTO) => (
           <li
