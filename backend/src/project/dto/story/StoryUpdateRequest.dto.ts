@@ -12,9 +12,16 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { StoryStatus } from 'src/project/entity/story.entity';
+import { AtLeastOneProperty } from 'src/project/util/validation.util';
 
 class Story {
   @IsInt()
+  @AtLeastOneProperty([
+	'epicId',
+	'title',
+	'point',
+	'status'
+  ])
   id: number;
 
   @IsOptional()

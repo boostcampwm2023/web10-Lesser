@@ -10,10 +10,12 @@ import {
   Length,
 } from 'class-validator';
 import { EpicColor } from 'src/project/entity/epic.entity';
+import { AtLeastOneProperty } from 'src/project/util/validation.util';
 
 class Epic {
   @IsNotEmpty()
   @IsInt()
+  @AtLeastOneProperty(['name', 'color'])
   id: number;
 
   @IsOptional()

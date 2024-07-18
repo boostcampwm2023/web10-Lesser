@@ -8,10 +8,12 @@ import {
   Matches,
   ValidateNested,
 } from 'class-validator';
+import { AtLeastOneProperty } from 'src/project/util/validation.util';
 import { MemberStatus } from '../../enum/MemberStatus.enum';
 
 class Content {
   @IsInt()
+  @AtLeastOneProperty(['username', 'imageUrl', 'status'])
   id: number;
 
   @IsString()
