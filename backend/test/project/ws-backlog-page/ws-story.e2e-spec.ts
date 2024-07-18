@@ -159,6 +159,43 @@ describe('WS story', () => {
         });
       });
     };
+
+    it('should return error when updated property is do not exist', async () => {
+      const socket = await getMemberJoinedLandingPage();
+      socket.emit('joinBacklog');
+      await initBacklog(socket);
+
+      const name = '회원';
+      const color = 'yellow';
+      let requestData: any = {
+        action: 'create',
+        content: { name, color },
+      };
+      socket.emit('epic', requestData);
+      const [epicId] = await Promise.all([getEpicId(socket)]);
+
+      const title = '타이틀';
+      const point = 2;
+      const status = '시작전';
+      requestData = {
+        action: 'create',
+        content: { title, point, status, epicId },
+      };
+      socket.emit('story', requestData);
+      const storyId = await getStoryId(socket);
+
+      requestData = {
+        action: 'update',
+        content: { id: storyId },
+      };
+      socket.emit('story', requestData);
+      await new Promise<void>((resolve) => {
+        socket.on('error', () => {
+          resolve();
+        });
+      });
+      socket.close();
+    });
   });
 });
 
