@@ -10,10 +10,19 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { TaskStatus } from 'src/project/entity/task.entity';
+import { AtLeastOneProperty } from 'src/project/util/validation.util';
 import { IsOneDecimalPlace } from './TaskCreateRequest.dto';
 
 class Task {
   @IsInt()
+  @AtLeastOneProperty([
+    'storyId',
+    'title',
+    'expectedTime',
+    'actualTime',
+    'assignedMemberId',
+    'status',
+  ])
   id: number;
 
   @IsOptional()
@@ -28,7 +37,7 @@ class Task {
   @IsOptional()
   @IsOneDecimalPlace()
   expectedTime?: number;
-  
+
   @IsOptional()
   @IsOneDecimalPlace()
   actualTime?: number;
