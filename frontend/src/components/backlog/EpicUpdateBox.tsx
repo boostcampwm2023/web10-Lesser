@@ -24,20 +24,19 @@ const EpicUpdateBox = ({
   const { open, close } = useModal();
   const { socket }: { socket: Socket } = useOutletContext();
   const { emitEpicDeleteEvent, emitEpicUpdateEvent } = useEpicEmitEvent(socket);
-  const boxRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const colorList = Object.entries(CATEGORY_COLOR);
 
-  const handleConfirmButtonClick = (event?: React.MouseEvent) => {
-    event?.stopPropagation();
+  const handleConfirmButtonClick = () => {
+    // event?.stopPropagation();
     onEpicChange(undefined);
     emitEpicDeleteEvent({ id: epic.id });
     onBoxClose();
     close();
   };
 
-  const handleDeleteButtonClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
+  const handleDeleteButtonClick = () => {
+    // event.stopPropagation();
     open(
       <ConfirmModal
         title="에픽을 삭제하시겠습니까?"
@@ -74,28 +73,14 @@ const EpicUpdateBox = ({
     emitEpicUpdateEvent({ id: epic.id, color });
   };
 
-  const handleOutsideClick = ({ target }: MouseEvent) => {
-    if (boxRef.current && !boxRef.current.contains(target as Node)) {
-      onBoxClose();
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("click", handleOutsideClick);
-
-    return () => {
-      window.removeEventListener("click", handleOutsideClick);
-    };
-  }, []);
-
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
   return (
     <div
-      ref={boxRef}
       className="absolute top-0 z-10 p-2 bg-white rounded-md left-3/4 w-fit shadow-box"
+      onClick={(event) => event.stopPropagation()}
     >
       <p className="text-xxs text-text-gray">에픽 수정</p>
       <input
