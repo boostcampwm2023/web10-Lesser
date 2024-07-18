@@ -24,14 +24,17 @@ export class Story {
   @Column({ type: 'int', name: 'project_id' })
   projectId: number;
 
-  @ManyToOne(() => Project, { nullable: false })
+  @ManyToOne(() => Project, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'project_id' })
   project: Project;
 
   @Column({ type: 'int', name: 'epic_id' })
   epicId: number;
 
-  @ManyToOne(() => Epic, (epic) => epic.storyList, { nullable: false })
+  @ManyToOne(() => Epic, (epic) => epic.storyList, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'epic_id' })
   epic: Epic;
 
@@ -44,7 +47,7 @@ export class Story {
   @Column({ type: 'varchar', length: 255, nullable: false })
   status: StoryStatus;
 
-  @OneToMany(()=>Task, (task)=>task.story)
+  @OneToMany(() => Task, (task) => task.story)
   taskList: Task[];
 
   static of(

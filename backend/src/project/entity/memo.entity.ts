@@ -25,7 +25,10 @@ export class Memo {
   @Column({ type: 'int', name: 'project_id' })
   projectId: number;
 
-  @ManyToOne(() => Project, (project) => project.id, { nullable: false })
+  @ManyToOne(() => Project, (project) => project.id, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'project_id' })
   project: Project;
 
@@ -41,7 +44,10 @@ export class Memo {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 
-  @ManyToOne(() => Member, (member) => member.id, { nullable: false })
+  @ManyToOne(() => Member, (member) => member.id, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'member_id' })
   member: Member;
 

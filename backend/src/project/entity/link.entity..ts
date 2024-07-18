@@ -17,7 +17,10 @@ export class Link {
   @Column({ type: 'int', name: 'project_id' })
   projectId: number;
 
-  @ManyToOne(() => Project, (project) => project.id, { nullable: false })
+  @ManyToOne(() => Project, (project) => project.id, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'project_id' })
   project: Project;
 
