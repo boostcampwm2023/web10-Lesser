@@ -111,7 +111,8 @@ const StoryBlock = ({
   }
 
   function updateEpic(data: number | undefined) {
-    if (data === epic.id) {
+    if (!data || data === epic.id) {
+      handleEpicUpdateClose();
       return;
     }
 
