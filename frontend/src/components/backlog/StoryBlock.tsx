@@ -4,7 +4,6 @@ import useShowDetail from "../../hooks/pages/backlog/useShowDetail";
 import { BacklogStatusType, EpicCategoryDTO } from "../../types/DTO/backlogDTO";
 import BacklogStatusChip from "./BacklogStatusChip";
 import CategoryChip from "./CategoryChip";
-import TaskCreateButton from "./TaskCreateButton";
 import ChevronDown from "../../assets/icons/chevron-down.svg?react";
 import ChevronRight from "../../assets/icons/chevron-right.svg?react";
 import TaskContainer from "./TaskContainer";
@@ -19,6 +18,7 @@ import TrashCan from "../../assets/icons/trash-can.svg?react";
 import { useModal } from "../../hooks/common/modal/useModal";
 import ConfirmModal from "../common/ConfirmModal";
 import EpicDropdown from "./EpicDropdown";
+import TaskCreateBlock from "./TaskCreateBlock";
 
 interface StoryBlockProps {
   id: number;
@@ -182,7 +182,10 @@ const StoryBlock = ({
           <button
             className="flex items-center justify-center w-5 h-5 rounded-md hover:bg-dark-gray hover:bg-opacity-20"
             type="button"
-            onClick={() => handleShowDetail(!showDetail)}
+            onClick={(event) => {
+              event.stopPropagation();
+              handleShowDetail(!showDetail);
+            }}
           >
             {showDetail ? (
               <ChevronDown
@@ -206,7 +209,12 @@ const StoryBlock = ({
               defaultValue={title}
             />
           ) : (
-            <span className="w-full hover:cursor-pointer">{title}</span>
+            <span
+              title={title}
+              className="w-full overflow-hidden hover:cursor-pointer text-ellipsis whitespace-nowrap"
+            >
+              {title}
+            </span>
           )}
         </div>
         <div
@@ -258,7 +266,7 @@ const StoryBlock = ({
         <TaskContainer>
           <TaskHeader />
           {children}
-          <TaskCreateButton />
+          <TaskCreateBlock storyId={id} />
         </TaskContainer>
       )}
     </>

@@ -17,6 +17,7 @@ export interface TaskDTO {
   actualTime: number | null;
   status: BacklogStatusType;
   assignedMemberId: number | null;
+  storyId: number;
 }
 
 export interface StoryDTO {

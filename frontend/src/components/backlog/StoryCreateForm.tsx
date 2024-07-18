@@ -39,6 +39,7 @@ const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
+
     if (epicId === undefined) {
       alert("에픽을 지정해주세요.");
       return;
@@ -51,6 +52,21 @@ const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
 
     if (point === undefined) {
       alert("포인트를 입력해주세요.");
+      return;
+    }
+
+    if (title.length > 100) {
+      alert("스토리 타이틀은 100자 이하여야 합니다.");
+      return;
+    }
+
+    if (point < 0 || point > 100) {
+      alert("포인트는 0이상 100이하여야 합니다.");
+      return;
+    }
+
+    if (!Number.isInteger(point)) {
+      alert("포인트는 정수여야 합니다.");
       return;
     }
 
