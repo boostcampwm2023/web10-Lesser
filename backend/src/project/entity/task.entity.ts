@@ -23,14 +23,17 @@ export class Task {
   @Column({ type: 'int', name: 'project_id', nullable: false })
   projectId: number;
 
-  @ManyToOne(() => Project, { nullable: false })
+  @ManyToOne(() => Project, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'project_id' })
   project: Project;
 
   @Column({ type: 'int', name: 'story_id', nullable: false })
   storyId: number;
 
-  @ManyToOne(() => Story, (story) => story.taskList, { nullable: false })
+  @ManyToOne(() => Story, (story) => story.taskList, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'story_id' })
   story: Story;
 
@@ -52,7 +55,10 @@ export class Task {
   @Column({ type: 'int', name: 'member_id', nullable: true })
   assignedMemberId: number;
 
-  @ManyToOne(() => Member, (member) => member.id, { nullable: true })
+  @ManyToOne(() => Member, (member) => member.id, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'member_id' })
   member: Member;
 
