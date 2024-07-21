@@ -62,7 +62,10 @@ const useBacklogSocket = (socket: Socket) => {
         setBacklog((prevBacklog) => {
           const newEpicList = prevBacklog.epicList.map((epic) => {
             if (epic.id === content.epicId) {
-              const newStoryList = [...epic.storyList, content];
+              const newStoryList = [
+                ...epic.storyList,
+                { ...content, taskList: [] },
+              ];
               return { ...epic, storyList: newStoryList };
             }
 
@@ -124,6 +127,43 @@ const useBacklogSocket = (socket: Socket) => {
             }
             return epic;
           });
+          return { epicList: newEpicList };
+        });
+        break;
+      case BacklogSocketTaskAction.UPDATE:
+        setBacklog((prevBacklog) => {
+          const newEpicList = prevBacklog.epicList.map((epic) => {
+            const newStoryList = epic.storyList.map((story) => {
+              const newTaskList = story.taskList.map((task) => {
+                if (task.id === content.id) {
+                  return { ...task, ...content };
+                }
+
+                return task;
+              });
+
+              return { ...story, taskList: newTaskList };
+            });
+            return { ...epic, storyList: newStoryList };
+          });
+
+          return { epicList: newEpicList };
+        });
+
+        break;
+      case BacklogSocketTaskAction.DELETE:
+        setBacklog((prevBacklog) => {
+          const newEpicList = prevBacklog.epicList.map((epic) => {
+            const newStoryList = epic.storyList.map((story) => {
+              const newTaskList = story.taskList.filter(
+                ({ id }) => id !== content.id
+              );
+
+              return { ...story, taskList: newTaskList };
+            });
+            return { ...epic, storyList: newStoryList };
+          });
+
           return { epicList: newEpicList };
         });
         break;
