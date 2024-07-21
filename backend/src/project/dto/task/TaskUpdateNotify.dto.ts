@@ -20,12 +20,12 @@ class Task {
   ) {
     const dto = new Task();
     dto.id = id;
-    if (storyId) dto.storyId = storyId;
-    if (title) dto.title = title;
-    if (expectedTime) dto.expectedTime = expectedTime;
-    if (actualTime) dto.actualTime = actualTime;
-    if (status) dto.status = status;
-    if (assignedMemberId) dto.assignedMemberId = assignedMemberId;
+    if (storyId !== undefined) dto.storyId = storyId;
+    if (title !== undefined) dto.title = title;
+    if (expectedTime !== undefined) dto.expectedTime = expectedTime;
+    if (actualTime !== undefined) dto.actualTime = actualTime;
+    if (status !== undefined) dto.status = status;
+    if (assignedMemberId !== undefined) dto.assignedMemberId = assignedMemberId;
     return dto;
   }
 }

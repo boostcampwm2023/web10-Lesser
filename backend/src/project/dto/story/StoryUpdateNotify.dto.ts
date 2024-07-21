@@ -16,10 +16,10 @@ class Story {
   ) {
     const dto = new Story();
     dto.id = id;
-    if (title) dto.title = title;
-    if (point) dto.point = point;
-    if (status) dto.status = status;
-    if (epicId) dto.epicId = epicId;
+    if (title !== undefined) dto.title = title;
+    if (point !== undefined) dto.point = point;
+    if (status !== undefined) dto.status = status;
+    if (epicId !== undefined) dto.epicId = epicId;
     return dto;
   }
 }
