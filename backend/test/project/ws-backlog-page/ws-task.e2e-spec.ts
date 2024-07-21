@@ -309,7 +309,6 @@ describe('WS task', () => {
         newActualTime,
         newStatus,
       );
-
       socket.close();
     });
 
@@ -346,6 +345,76 @@ describe('WS task', () => {
         });
       });
     };
+
+    it('should return updated task data when data is a falsy value', async () => {
+      const socket = await getMemberJoinedLandingPage();
+      socket.emit('joinBacklog');
+      await initBacklog(socket);
+
+      const name = '회원';
+      const color = 'yellow';
+      let requestData: any = {
+        action: 'create',
+        content: { name, color },
+      };
+      socket.emit('epic', requestData);
+      const [epicId] = await Promise.all([getEpicId(socket)]);
+
+      const title = '타이틀';
+      const point = 2;
+      const status = '시작전';
+      requestData = {
+        action: 'create',
+        content: { title, point, status, epicId },
+      };
+      socket.emit('story', requestData);
+      const storyId = await getStoryId(socket);
+
+      let taskTitle = '타이틀';
+      let taskStatus = '시작전';
+      let expectedTime = null;
+      let actualTime = null;
+      let assignedMemberId = null;
+      requestData = {
+        action: 'create',
+        content: {
+          title: taskTitle,
+          status: taskStatus,
+          storyId,
+          expectedTime,
+          actualTime,
+          assignedMemberId,
+        },
+      };
+      socket.emit('task', requestData);
+      const taskId = await getTaskId(socket);
+
+      const newActualTime = 0;
+      const newExpectedTime = 0;
+      requestData = {
+        action: 'update',
+        content: {
+          id: taskId,
+          actualTime: newActualTime,
+          expectedTime: newExpectedTime,
+        },
+      };
+      socket.emit('task', requestData);
+
+      await new Promise<void>((resolve) => {
+        socket.once('backlog', async (data) => {
+          const { content, action, domain } = data;
+          expect(domain).toBe('task');
+          expect(action).toBe('update');
+          expect(content?.id).toBe(taskId);
+          expect(content?.actualTime).toBe(newActualTime);
+          expect(content?.expectedTime).toBe(newExpectedTime);
+          resolve();
+        });
+      });
+
+      socket.close();
+    });
   });
 });
 
