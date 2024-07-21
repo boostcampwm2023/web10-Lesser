@@ -75,6 +75,44 @@ const useBacklogSocket = (socket: Socket) => {
         });
         break;
       case BacklogSocketStoryAction.UPDATE:
+        if (content.epicId) {
+          let targetStory: StoryDTO | null = null;
+          backlog.epicList.some((epic) => {
+            const foundStory = epic.storyList.find(
+              (story) => story.id === content.id
+            );
+            if (foundStory) {
+              targetStory = { ...foundStory };
+              return true;
+            }
+            return false;
+          });
+
+          if (!targetStory) {
+            break;
+          }
+
+          setBacklog((prevBacklog) => {
+            const newEpicList = prevBacklog.epicList.map((epic) => {
+              const newStoryList = epic.storyList.filter((story) => {
+                if (story.id === content.id) {
+                  targetStory = { ...story, epicId: content.epicId };
+                }
+                return story.id !== content.id;
+              });
+
+              if (epic.id === content.epicId) {
+                newStoryList.push(targetStory as StoryDTO);
+              }
+              return { ...epic, storyList: newStoryList };
+            });
+
+            return { epicList: newEpicList };
+          });
+
+          break;
+        }
+
         setBacklog((prevBacklog) => {
           const newEpicList = prevBacklog.epicList.map((epic) => {
             const newStoryList = epic.storyList.map((story) => {
@@ -85,7 +123,6 @@ const useBacklogSocket = (socket: Socket) => {
             });
             return { ...epic, storyList: newStoryList };
           });
-
           return { epicList: newEpicList };
         });
 

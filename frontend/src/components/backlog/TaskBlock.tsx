@@ -13,6 +13,7 @@ import { useModal } from "../../hooks/common/modal/useModal";
 import { MOUSE_KEY } from "../../constants/event";
 import ConfirmModal from "../common/ConfirmModal";
 import TrashCan from "../../assets/icons/trash-can.svg?react";
+import isIntegerOrOneDecimalPlace from "../../utils/isIntegerOrOneDecimalPlace";
 
 const TaskBlock = ({
   id,
@@ -64,7 +65,7 @@ const TaskBlock = ({
   const { open, close } = useModal();
 
   const assignedMemberName = useMemo(() => {
-    if (assignedMemberId === null) {
+    if (assignedMemberId === null || myInfo.id === -1) {
       return "";
     }
 
@@ -89,7 +90,10 @@ const TaskBlock = ({
     emitTaskUpdateEvent({ id, title: data as string });
   }
   function updateExpectedTime<T>(data: T) {
-    if (!data || data === String(expectedTime)) {
+    if (
+      data === String(expectedTime) ||
+      (data === "" && expectedTime === null)
+    ) {
       return;
     }
 
@@ -98,7 +102,12 @@ const TaskBlock = ({
       return;
     }
 
-    if (!isNaN(Number(data)) && (Number(data) >= 100 || Number(data) < 0)) {
+    if (
+      !isNaN(Number(data)) &&
+      (Number(data) >= 100 ||
+        Number(data) < 0 ||
+        !isIntegerOrOneDecimalPlace(Number(data)))
+    ) {
       alert(
         "예상 시간은 0이상, 100미만의 정수 또는 소수점 한 자릿수여야 합니다."
       );
@@ -108,7 +117,7 @@ const TaskBlock = ({
     emitTaskUpdateEvent({ id, expectedTime: Number(data) });
   }
   function updateActualTime<T>(data: T) {
-    if (!data || data === String(actualTime)) {
+    if (data === String(actualTime) || (data === "" && actualTime === null)) {
       return;
     }
 
@@ -117,7 +126,12 @@ const TaskBlock = ({
       return;
     }
 
-    if (!isNaN(Number(data)) && (Number(data) >= 100 || Number(data) < 0)) {
+    if (
+      !isNaN(Number(data)) &&
+      (Number(data) >= 100 ||
+        Number(data) < 0 ||
+        !isIntegerOrOneDecimalPlace(Number(data)))
+    ) {
       alert(
         "실제 시간은 0이상, 100미만의 정수 또는 소수점 한 자릿수여야 합니다."
       );
@@ -177,7 +191,7 @@ const TaskBlock = ({
       >
         <p className="w-[4rem]">Task-{displayId}</p>
         <div
-          className="w-[25rem] min-h-[1.5rem] hover:cursor-pointer"
+          className="w-[25rem] min-h-[1.5rem] hover:cursor-pointer truncate"
           ref={titleRef}
           onClick={() => handleTitleUpdating(true)}
         >
@@ -189,15 +203,19 @@ const TaskBlock = ({
               type="text"
             />
           ) : (
-            <span>{title}</span>
+            <span title={title}>{title}</span>
           )}
         </div>
         <div
           className="w-12 min-h-[1.5rem] hover:cursor-pointer relative"
           onClick={handleAssignedMemberUpdateOpen}
         >
-          <div className="w-full min-h-[1.5rem]" ref={assignedMemberRef}>
-            {assignedMemberId && <p>{assignedMemberName}</p>}
+          <div className="w-full min-h-[1.5rem] " ref={assignedMemberRef}>
+            {assignedMemberId && (
+              <p className="truncate" title={assignedMemberName}>
+                {assignedMemberName}
+              </p>
+            )}
           </div>
           {assignedMemberUpdating && (
             <AssignedMemberDropdown onOptionClick={updateAssignedMember} />
