@@ -7,8 +7,8 @@ class Epic {
   static of(id: number, name: string, color: EpicColor) {
     const dto = new Epic();
     dto.id = id;
-    if (name) dto.name = name;
-    if (color) dto.color = color;
+    if (name !== undefined) dto.name = name;
+    if (color !== undefined) dto.color = color;
     return dto;
   }
 }
