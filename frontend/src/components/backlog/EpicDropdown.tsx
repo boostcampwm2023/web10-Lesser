@@ -62,7 +62,7 @@ const EpicDropdown = ({
   }, []);
 
   return (
-    <div className="absolute p-1 bg-white rounded-md w-72 shadow-box">
+    <div className="absolute z-10 p-1 bg-white rounded-md w-72 shadow-box">
       <div className="flex p-1 border-b-2">
         {selectedEpic && (
           <div className="min-w-[5rem]">
