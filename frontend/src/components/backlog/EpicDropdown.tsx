@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import { EpicCategoryDTO } from "../../types/DTO/backlogDTO";
@@ -23,6 +23,13 @@ const EpicDropdown = ({
   const { socket }: { socket: Socket } = useOutletContext();
   const { emitEpicCreateEvent } = useEpicEmitEvent(socket);
   const [value, setValue] = useState("");
+  const inputElementRef = useRef<HTMLInputElement | null>(null);
+  const epicColor = useMemo(() => {
+    const colors = Object.keys(CATEGORY_COLOR);
+    return colors[
+      getRandomNumber(0, colors.length - 1)
+    ] as BacklogCategoryColor;
+  }, []);
 
   const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const { value } = target;
@@ -42,17 +49,17 @@ const EpicDropdown = ({
       }
 
       setValue("");
-      const colors = Object.keys(CATEGORY_COLOR);
-      const color = colors[
-        getRandomNumber(0, colors.length - 1)
-      ] as BacklogCategoryColor;
-      emitEpicCreateEvent({ name: value, color });
+      emitEpicCreateEvent({ name: value, color: epicColor });
     }
   };
 
   const handleEpicChange = (epicId: number | undefined) => {
     onEpicChange(epicId);
   };
+
+  useEffect(() => {
+    inputElementRef.current?.focus();
+  }, []);
 
   return (
     <div className="absolute p-1 bg-white rounded-md w-72 shadow-box">
@@ -72,6 +79,7 @@ const EpicDropdown = ({
           value={value}
           onChange={handleInputChange}
           onKeyDown={handleEnterKeydown}
+          ref={inputElementRef}
         />
       </div>
       <ul className="pt-1">
@@ -90,6 +98,12 @@ const EpicDropdown = ({
           </li>
         ))}
       </ul>
+      {value && (
+        <div className="flex items-center gap-2 p-1">
+          <span>생성</span>
+          <CategoryChip content={value} bgColor={epicColor} />
+        </div>
+      )}
     </div>
   );
 };
