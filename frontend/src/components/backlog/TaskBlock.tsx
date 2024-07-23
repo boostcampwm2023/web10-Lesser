@@ -30,18 +30,21 @@ const TaskBlock = ({
     inputElementRef: titleInputRef,
     updating: titleUpdating,
     handleUpdating: handleTitleUpdating,
+    handleEnterKeyup: handleTitleKeyup,
   } = useBacklogInputChange(updateTitle);
   const {
     inputContainerRef: expectedTimeRef,
     inputElementRef: expectedTimeInputRef,
     updating: expectedTimeUpdating,
     handleUpdating: handleExpectedTimeUpdating,
+    handleEnterKeyup: handleExpectedTimeKeyup,
   } = useBacklogInputChange(updateExpectedTime);
   const {
     inputContainerRef: actualTimeRef,
     inputElementRef: actualTimeInputRef,
     updating: actualTimeUpdating,
     handleUpdating: handleActualTimeUpdating,
+    handleEnterKeyup: handleActualTimeKeyup,
   } = useBacklogInputChange(updateActualTime);
   const {
     open: assignedMemberUpdating,
@@ -201,6 +204,7 @@ const TaskBlock = ({
               ref={titleInputRef}
               defaultValue={title}
               type="text"
+              onKeyUp={handleTitleKeyup}
             />
           ) : (
             <span title={title}>{title}</span>
@@ -232,6 +236,7 @@ const TaskBlock = ({
               ref={expectedTimeInputRef}
               defaultValue={expectedTime === null ? "" : expectedTime}
               type="number"
+              onKeyUp={handleExpectedTimeKeyup}
             />
           ) : (
             <p className="max-w-full text-right">{expectedTime}</p>
@@ -248,6 +253,7 @@ const TaskBlock = ({
               ref={actualTimeInputRef}
               defaultValue={actualTime === null ? "" : actualTime}
               type="number"
+              onKeyUp={handleActualTimeKeyup}
             />
           ) : (
             <p className="min-w-full text-right">{actualTime}</p>
