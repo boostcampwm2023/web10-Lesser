@@ -76,7 +76,7 @@ const TaskCreateForm = ({ onCloseClick, storyId }: TaskCreateFormProps) => {
   };
 
   return (
-    <form className="flex items-center justify-between px-1 py-1 border-b">
+    <form className="flex items-center justify-between py-1 border-b">
       <div className="w-[4rem]" />
       <input
         type="text"

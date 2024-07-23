@@ -81,7 +81,12 @@ const TaskBlock = ({
   }, [assignedMemberId, partialMemberList]);
 
   function updateTitle<T>(data: T) {
-    if (!data || data === title) {
+    if (data === title) {
+      return;
+    }
+
+    if (!data) {
+      alert("태스크 타이틀을 입력해주세요");
       return;
     }
 
@@ -192,7 +197,7 @@ const TaskBlock = ({
         onContextMenu={(event) => event.preventDefault()}
         ref={blockRef}
       >
-        <p className="w-[4rem]">Task-{displayId}</p>
+        <p className="w-[4rem] truncate">Task-{displayId}</p>
         <div
           className="w-[25rem] min-h-[1.5rem] hover:cursor-pointer truncate"
           ref={titleRef}
