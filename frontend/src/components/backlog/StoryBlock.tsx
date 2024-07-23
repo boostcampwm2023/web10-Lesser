@@ -93,16 +93,22 @@ const StoryBlock = ({
     emitStoryUpdateEvent({ id, title: data as string });
   }
   function updatePoint<T>(data: T) {
-    if ((!data && data !== 0) || data === point) {
+    const newPoint = Number(data);
+    if ((!data && data !== 0) || newPoint === point) {
       return;
     }
 
-    if ((data as number) < 0 || (data as number) > 100) {
+    if (newPoint < 0 || newPoint > 100) {
       alert("스토리 포인트는 0이상 100이하여야 합니다.");
       return;
     }
 
-    emitStoryUpdateEvent({ id, point: Number(data) });
+    if (!Number.isInteger(newPoint)) {
+      alert("포인트는 정수여야 합니다.");
+      return;
+    }
+
+    emitStoryUpdateEvent({ id, point: newPoint });
   }
 
   function updateStatus(data: BacklogStatusType) {
@@ -228,14 +234,14 @@ const StoryBlock = ({
         >
           {pointUpdating ? (
             <input
-              className={`w-fit min-w-[1rem] max-w-[3.5rem] no-arrows text-right focus:outline-none rounded-sm bg-gray-200 hover:cursor-pointer`}
+              className={`min-w-[1.75rem] no-arrows text-right focus:outline-none rounded-sm bg-gray-200 hover:cursor-pointer`}
               type="number"
               ref={pointInputRef}
               defaultValue={point !== 0 && !point ? 0 : point}
               onKeyUp={handlePointEnterKeyup}
             />
           ) : (
-            <span>{point}</span>
+            <span className="min-w-[1.75rem] text-right">{point}</span>
           )}
 
           <span> POINT</span>

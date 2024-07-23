@@ -23,17 +23,27 @@ const UnfinishedStoryPage = () => {
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="w-full border-b">
-        {...storyList.map(({ id, epic, title, point, status, taskList }) => (
-          <StoryBlock
-            {...{ id, title, point, status }}
-            epic={epic}
-            progress={2}
-            taskExist={taskList.length > 0}
-            epicList={epicCategoryList}
-          >
-            {...taskList.map((task) => <TaskBlock {...task} />)}
-          </StoryBlock>
-        ))}
+        {...storyList.map(({ id, epic, title, point, status, taskList }) => {
+          const progress = taskList.length
+            ? Math.round(
+                (taskList.filter(({ status }) => status === "완료").length /
+                  taskList.length) *
+                  100
+              )
+            : 0;
+
+          return (
+            <StoryBlock
+              {...{ id, title, point, status }}
+              epic={epic}
+              progress={progress}
+              taskExist={taskList.length > 0}
+              epicList={epicCategoryList}
+            >
+              {...taskList.map((task) => <TaskBlock {...task} />)}
+            </StoryBlock>
+          );
+        })}
       </div>
       {showDetail ? (
         <StoryCreateForm
