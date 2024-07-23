@@ -50,12 +50,14 @@ const StoryBlock = ({
     handleUpdating: handleTitleUpdatingOpen,
     inputContainerRef: titleRef,
     inputElementRef: titleInputRef,
+    handleEnterKeyup: handleTitleEnterKeyup,
   } = useBacklogInputChange(updateTitle);
   const {
     updating: pointUpdating,
     handleUpdating: handlePointUpdatingOpen,
     inputContainerRef: pointRef,
     inputElementRef: pointInputRef,
+    handleEnterKeyup: handlePointEnterKeyup,
   } = useBacklogInputChange(updatePoint);
   const {
     open: statusUpdating,
@@ -208,6 +210,7 @@ const StoryBlock = ({
               type="text"
               ref={titleInputRef}
               defaultValue={title}
+              onKeyUp={handleTitleEnterKeyup}
             />
           ) : (
             <span
@@ -229,6 +232,7 @@ const StoryBlock = ({
               type="number"
               ref={pointInputRef}
               defaultValue={point !== 0 && !point ? 0 : point}
+              onKeyUp={handlePointEnterKeyup}
             />
           ) : (
             <span>{point}</span>
