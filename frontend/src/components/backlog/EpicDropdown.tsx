@@ -6,7 +6,12 @@ import CategoryChip from "./CategoryChip";
 import useEpicEmitEvent from "../../hooks/pages/backlog/useEpicEmitEvent";
 import { CATEGORY_COLOR } from "../../constants/backlog";
 import getRandomNumber from "../../utils/getRandomNumber";
-import { BacklogCategoryColor } from "../../types/common/backlog";
+import {
+  BacklogCategoryColor,
+  BacklogSocketData,
+  BacklogSocketDomain,
+  BacklogSocketEpicAction,
+} from "../../types/common/backlog";
 import EpicDropdownOption from "./EpicDropdownOption";
 
 interface EpicDropdownProps {
@@ -57,8 +62,23 @@ const EpicDropdown = ({
     onEpicChange(epicId);
   };
 
+  const handleEpicEvent = ({ domain, action, content }: BacklogSocketData) => {
+    if (
+      domain === BacklogSocketDomain.EPIC &&
+      action === BacklogSocketEpicAction.CREATE &&
+      !selectedEpic
+    ) {
+      onEpicChange(content.id);
+    }
+  };
+
   useEffect(() => {
+    socket.on("backlog", handleEpicEvent);
     inputElementRef.current?.focus();
+
+    return () => {
+      socket.off("backlog", handleEpicEvent);
+    };
   }, []);
 
   return (
