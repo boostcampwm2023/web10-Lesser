@@ -30,6 +30,7 @@ interface StoryBlockProps {
   children: React.ReactNode;
   taskExist: boolean;
   epicList: EpicCategoryDTO[];
+  finished?: boolean;
 }
 
 const StoryBlock = ({
@@ -41,6 +42,7 @@ const StoryBlock = ({
   status,
   taskExist,
   epicList,
+  finished = false,
   children,
 }: StoryBlockProps) => {
   const { socket }: { socket: Socket } = useOutletContext();
@@ -277,7 +279,7 @@ const StoryBlock = ({
         <TaskContainer>
           <TaskHeader />
           {children}
-          <TaskCreateBlock storyId={id} />
+          {!finished && <TaskCreateBlock storyId={id} />}
         </TaskContainer>
       )}
     </>

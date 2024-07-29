@@ -38,6 +38,7 @@ const FinishedStoryPage = () => {
               progress={progress}
               taskExist={taskList.length > 0}
               epicList={epicCategoryList}
+              finished={true}
             >
               {...taskList.map((task) => <TaskBlock {...task} />)}
             </StoryBlock>
