@@ -21,6 +21,7 @@ import LandingPage from "./pages/landing/LandingPage";
 import InvitePage from "./pages/invite/InvitePage";
 import UnfinishedStoryPage from "./pages/backlog/UnfinishedStoryPage";
 import BacklogPage from "./pages/backlog/BacklogPage";
+import FinishedStoryPage from "./pages/backlog/FinishedStoryPage";
 
 type RouteType = "PRIVATE" | "PUBLIC";
 
@@ -89,7 +90,7 @@ const router = createBrowserRouter([
                 },
                 {
                   path: ROUTER_URL.BACKLOG.COMPLETED,
-                  element: <div>backlog completed story Page</div>,
+                  element: <FinishedStoryPage />,
                 },
               ],
               element: <BacklogPage />,
