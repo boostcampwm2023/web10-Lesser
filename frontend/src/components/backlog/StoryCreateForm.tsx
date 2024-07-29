@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import Check from "../../assets/icons/check.svg?react";
 import Closed from "../../assets/icons/closed.svg?react";
 import CategoryChip from "./CategoryChip";
@@ -34,7 +34,8 @@ const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
 
   const handlePointChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const { value } = target;
-    setStoryFormData({ title, point: Number(value), epicId, status });
+    const newPoint = value === "" ? undefined : Number(value);
+    setStoryFormData({ title, point: newPoint, epicId, status });
   };
 
   const handleSubmit = (event: FormEvent) => {
@@ -90,6 +91,12 @@ const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
     [epicId, epicList]
   );
 
+  useEffect(() => {
+    if (!epicList.filter(({ id }) => id === epicId).length) {
+      setStoryFormData({ title, point, status, epicId: undefined });
+    }
+  }, [epicList]);
+
   return (
     <form
       className="flex items-center w-full py-1 border-t border-b"
@@ -102,8 +109,8 @@ const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
       >
         {epicId && (
           <CategoryChip
-            content={selectedEpic.name}
-            bgColor={selectedEpic.color}
+            content={selectedEpic?.name}
+            bgColor={selectedEpic?.color}
           />
         )}
         {open && (
