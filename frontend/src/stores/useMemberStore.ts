@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { LandingMemberDTO, MemberStatus } from "../types/DTO/landingDTO";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 interface InitialMemberState {
   myInfo: LandingMemberDTO;
@@ -18,14 +19,19 @@ const initialState: InitialMemberState = {
   memberList: [],
 };
 
-const useMemberStore = create<MemberState>((set) => ({
-  ...initialState,
-  updateMyInfo: (newMyInfo) => set(() => ({ myInfo: newMyInfo })),
-  updateMyStatus: (status) =>
-    set((state) => ({ myInfo: { ...state.myInfo, status } })),
-  updateMemberList: (newMember) => set({ memberList: newMember }),
-  addMember: (member) =>
-    set((state) => ({ memberList: [...state.memberList, member] })),
-}));
+const useMemberStore = create<MemberState>()(
+  persist(
+    (set) => ({
+      ...initialState,
+      updateMyInfo: (newMyInfo) => set(() => ({ myInfo: newMyInfo })),
+      updateMyStatus: (status) =>
+        set((state) => ({ myInfo: { ...state.myInfo, status } })),
+      updateMemberList: (newMember) => set({ memberList: newMember }),
+      addMember: (member) =>
+        set((state) => ({ memberList: [...state.memberList, member] })),
+    }),
+    { name: "member-storage", storage: createJSONStorage(() => sessionStorage) }
+  )
+);
 
 export default useMemberStore;
