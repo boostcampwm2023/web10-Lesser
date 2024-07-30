@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { Project } from './project.entity';
@@ -22,6 +23,7 @@ export enum EpicColor {
 }
 
 @Entity()
+@Unique(['rankValue', 'projectId'])
 export class Epic {
   @PrimaryGeneratedColumn('increment', { type: 'int' })
   id: number;
@@ -51,11 +53,20 @@ export class Epic {
   @OneToMany(() => Story, (story) => story.epic)
   storyList: Story[];
 
-  static of(project: Project, name: string, color: EpicColor) {
+  @Column({ type: 'varchar', length: 255, nullable: false, name: 'rank_value' })
+  rankValue: string;
+
+  static of(
+    project: Project,
+    name: string,
+    color: EpicColor,
+    rankValue: string,
+  ) {
     const newEpic = new Epic();
     newEpic.project = project;
     newEpic.name = name;
     newEpic.color = color;
+    newEpic.rankValue = rankValue;
     return newEpic;
   }
 }

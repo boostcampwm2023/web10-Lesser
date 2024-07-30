@@ -1,3 +1,4 @@
+import { LexoRank } from 'lexorank';
 import { Socket } from 'socket.io-client';
 import { app, appInit } from 'test/setup';
 import {
@@ -21,9 +22,10 @@ describe('WS task', () => {
 
       const name = '회원';
       const color = 'yellow';
+      const rankValue = LexoRank.middle().toString();
       let requestData: any = {
         action: 'create',
-        content: { name, color },
+        content: { name, color, rankValue },
       };
       socket1.emit('epic', requestData);
       const [epicId] = await Promise.all([
@@ -178,9 +180,11 @@ describe('WS task', () => {
 
       const name = '회원';
       const color = 'yellow';
+	  const rankValue = LexoRank.middle().toString();
+
       let requestData: any = {
         action: 'create',
-        content: { name, color },
+        content: { name, color, rankValue },
       };
       socket.emit('epic', requestData);
       const [epicId] = await Promise.all([getEpicId(socket)]);
@@ -245,9 +249,10 @@ describe('WS task', () => {
 
       const name = '회원';
       const color = 'yellow';
+	  const rankValue = LexoRank.middle().toString();
       let requestData: any = {
         action: 'create',
-        content: { name, color },
+        content: { name, color, rankValue },
       };
       socket.emit('epic', requestData);
       const [epicId] = await Promise.all([getEpicId(socket)]);
@@ -353,9 +358,10 @@ describe('WS task', () => {
 
       const name = '회원';
       const color = 'yellow';
+	  const rankValue = LexoRank.middle().toString();
       let requestData: any = {
         action: 'create',
-        content: { name, color },
+        content: { name, color, rankValue },
       };
       socket.emit('epic', requestData);
       const [epicId] = await Promise.all([getEpicId(socket)]);

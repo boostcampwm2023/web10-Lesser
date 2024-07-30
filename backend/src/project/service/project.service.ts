@@ -95,8 +95,13 @@ export class ProjectService {
     return result ? true : false;
   }
 
-  createEpic(project: Project, name: string, color: EpicColor) {
-    const newEpic = Epic.of(project, name, color);
+  createEpic(
+    project: Project,
+    name: string,
+    color: EpicColor,
+    rankValue: string,
+  ) {
+    const newEpic = Epic.of(project, name, color, rankValue);
     return this.projectRepository.createEpic(newEpic);
   }
 
@@ -110,8 +115,15 @@ export class ProjectService {
     id: number,
     name?: string,
     color?: EpicColor,
+    rankValue?: string,
   ): Promise<boolean> {
-    return this.projectRepository.updateEpic(project, id, name, color);
+    return this.projectRepository.updateEpic(
+      project,
+      id,
+      name,
+      color,
+      rankValue,
+    );
   }
 
   async createStory(
@@ -211,8 +223,8 @@ export class ProjectService {
       assignedMemberId,
     );
   }
-  
-  getProjectBacklog(project: Project){
-	return this.projectRepository.getProjectBacklog(project);
+
+  getProjectBacklog(project: Project) {
+    return this.projectRepository.getProjectBacklog(project);
   }
 }

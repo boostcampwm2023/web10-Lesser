@@ -33,6 +33,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.6",
+    "lexorank": "^1.0.5",
     "mysql2": "^3.9.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",

@@ -1,8 +1,7 @@
+import { LexoRank } from 'lexorank';
 import { Socket } from 'socket.io-client';
 import { app, appInit } from 'test/setup';
-import {
-  getTwoMemberJoinedLandingPage,
-} from '../ws-common';
+import { getTwoMemberJoinedLandingPage } from '../ws-common';
 
 describe('WS epic', () => {
   beforeEach(async () => {
@@ -18,9 +17,10 @@ describe('WS epic', () => {
       await initBacklog(socket1);
       const epicName = '회원';
       const epicColor = 'yellow';
+      const epicRankValue = LexoRank.middle().toString();
       socket1.emit('epic', {
         action: 'create',
-        content: { name: epicName, color: epicColor },
+        content: { name: epicName, color: epicColor, rankValue: epicRankValue },
       });
       const epicId = await getEpicId(socket1);
       const storyTitle = '타이틀';

@@ -134,6 +134,7 @@ export class ProjectRepository {
     id: number,
     name?: string,
     color?: EpicColor,
+    rankValue?: string,
   ): Promise<boolean> {
     const updateData: any = {};
 
@@ -142,6 +143,10 @@ export class ProjectRepository {
     }
     if (color !== undefined) {
       updateData.color = color;
+    }
+
+    if (rankValue !== undefined) {
+      updateData.rankValue = rankValue;
     }
 
     const result = await this.epicRepository.update(
