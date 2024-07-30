@@ -6,6 +6,7 @@ class Story {
   title?: string;
   point?: number;
   status?: StoryStatus;
+  rankValue?: string;
 
   static of(
     id: number,
@@ -13,6 +14,7 @@ class Story {
     title: string | undefined,
     point: number | undefined,
     status: StoryStatus | undefined,
+    rankValue: string | undefined,
   ) {
     const dto = new Story();
     dto.id = id;
@@ -20,6 +22,7 @@ class Story {
     if (point !== undefined) dto.point = point;
     if (status !== undefined) dto.status = status;
     if (epicId !== undefined) dto.epicId = epicId;
+    if (rankValue !== undefined) dto.rankValue = rankValue;
     return dto;
   }
 }
@@ -35,11 +38,12 @@ export class StoryUpdateNotifyDto {
     title: string | undefined,
     point: number | undefined,
     status: StoryStatus | undefined,
+    rankValue: string | undefined,
   ) {
     const dto = new StoryUpdateNotifyDto();
     dto.domain = 'story';
     dto.action = 'update';
-    dto.content = Story.of(id, epicId, title, point, status);
+    dto.content = Story.of(id, epicId, title, point, status, rankValue);
     return dto;
   }
 }

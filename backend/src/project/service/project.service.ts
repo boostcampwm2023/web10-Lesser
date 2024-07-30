@@ -132,10 +132,11 @@ export class ProjectService {
     title: string,
     point: number,
     status: StoryStatus,
+    rankValue: string,
   ) {
     const epic = await this.projectRepository.getEpicById(project, epicId);
     if (!epic) throw new Error('epic id not found');
-    const newStory = Story.of(project, epicId, title, point, status);
+    const newStory = Story.of(project, epicId, title, point, status, rankValue);
     return this.projectRepository.createStory(newStory);
   }
 
@@ -151,6 +152,7 @@ export class ProjectService {
     title: string | undefined,
     point: number | undefined,
     status: StoryStatus | undefined,
+    rankValue: string | undefined,
   ): Promise<boolean> {
     if (epicId !== undefined) {
       const epic = await this.projectRepository.getEpicById(project, epicId);
@@ -163,6 +165,7 @@ export class ProjectService {
       title,
       point,
       status,
+      rankValue,
     );
   }
 

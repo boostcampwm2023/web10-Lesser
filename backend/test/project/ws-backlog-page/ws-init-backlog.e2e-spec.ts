@@ -17,10 +17,14 @@ describe('WS epic', () => {
       await initBacklog(socket1);
       const epicName = '회원';
       const epicColor = 'yellow';
-      const epicRankValue = LexoRank.middle().toString();
+      const middleRankValue = LexoRank.middle().toString();
       socket1.emit('epic', {
         action: 'create',
-        content: { name: epicName, color: epicColor, rankValue: epicRankValue },
+        content: {
+          name: epicName,
+          color: epicColor,
+          rankValue: middleRankValue,
+        },
       });
       const epicId = await getEpicId(socket1);
       const storyTitle = '타이틀';
@@ -33,6 +37,7 @@ describe('WS epic', () => {
           point: storyPoint,
           status: storyStatus,
           epicId,
+          rankValue: middleRankValue,
         },
       });
       const storyId = await getStoryId(socket1);

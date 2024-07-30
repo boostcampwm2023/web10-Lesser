@@ -22,10 +22,10 @@ describe('WS task', () => {
 
       const name = '회원';
       const color = 'yellow';
-      const rankValue = LexoRank.middle().toString();
+      const middleRankValue = LexoRank.middle().toString();
       let requestData: any = {
         action: 'create',
-        content: { name, color, rankValue },
+        content: { name, color, rankValue: middleRankValue },
       };
       socket1.emit('epic', requestData);
       const [epicId] = await Promise.all([
@@ -43,6 +43,7 @@ describe('WS task', () => {
           point: storyPoint,
           status: storyStatus,
           epicId,
+          rankValue: middleRankValue,
         },
       };
       socket1.emit('story', requestData);
@@ -180,11 +181,11 @@ describe('WS task', () => {
 
       const name = '회원';
       const color = 'yellow';
-	  const rankValue = LexoRank.middle().toString();
+      const middleRankValue = LexoRank.middle().toString();
 
       let requestData: any = {
         action: 'create',
-        content: { name, color, rankValue },
+        content: { name, color, rankValue: middleRankValue },
       };
       socket.emit('epic', requestData);
       const [epicId] = await Promise.all([getEpicId(socket)]);
@@ -194,7 +195,7 @@ describe('WS task', () => {
       const status = '시작전';
       requestData = {
         action: 'create',
-        content: { title, point, status, epicId },
+        content: { title, point, status, epicId, rankValue: middleRankValue },
       };
       socket.emit('story', requestData);
       const storyId = await getStoryId(socket);
@@ -249,10 +250,10 @@ describe('WS task', () => {
 
       const name = '회원';
       const color = 'yellow';
-	  const rankValue = LexoRank.middle().toString();
+      const middleRankValue = LexoRank.middle().toString();
       let requestData: any = {
         action: 'create',
-        content: { name, color, rankValue },
+        content: { name, color, rankValue: middleRankValue },
       };
       socket.emit('epic', requestData);
       const [epicId] = await Promise.all([getEpicId(socket)]);
@@ -262,7 +263,7 @@ describe('WS task', () => {
       const status = '시작전';
       requestData = {
         action: 'create',
-        content: { title, point, status, epicId },
+        content: { title, point, status, epicId, rankValue: middleRankValue },
       };
       socket.emit('story', requestData);
       const storyId = await getStoryId(socket);
@@ -358,10 +359,10 @@ describe('WS task', () => {
 
       const name = '회원';
       const color = 'yellow';
-	  const rankValue = LexoRank.middle().toString();
+      const middleRankValue = LexoRank.middle().toString();
       let requestData: any = {
         action: 'create',
-        content: { name, color, rankValue },
+        content: { name, color, rankValue: middleRankValue },
       };
       socket.emit('epic', requestData);
       const [epicId] = await Promise.all([getEpicId(socket)]);
@@ -371,7 +372,7 @@ describe('WS task', () => {
       const status = '시작전';
       requestData = {
         action: 'create',
-        content: { title, point, status, epicId },
+        content: { title, point, status, epicId, rankValue: middleRankValue },
       };
       socket.emit('story', requestData);
       const storyId = await getStoryId(socket);

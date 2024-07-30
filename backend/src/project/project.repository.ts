@@ -181,6 +181,7 @@ export class ProjectRepository {
     title: string | undefined,
     point: number | undefined,
     status: StoryStatus | undefined,
+    rankValue: string | undefined,
   ): Promise<boolean> {
     const updateData: any = {};
 
@@ -195,6 +196,9 @@ export class ProjectRepository {
     }
     if (status !== undefined) {
       updateData.status = status;
+    }
+    if (rankValue !== undefined) {
+      updateData.rankValue = rankValue;
     }
 
     const result = await this.storyRepository.update(

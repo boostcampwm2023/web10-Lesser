@@ -11,17 +11,13 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
+import { IsLexoRankValue } from 'src/common/decorator/IsLexoRankValue';
 import { StoryStatus } from 'src/project/entity/story.entity';
 import { AtLeastOneProperty } from 'src/project/util/validation.util';
 
 class Story {
   @IsInt()
-  @AtLeastOneProperty([
-	'epicId',
-	'title',
-	'point',
-	'status'
-  ])
+  @AtLeastOneProperty(['epicId', 'title', 'point', 'status', 'rankValue'])
   id: number;
 
   @IsOptional()
@@ -32,7 +28,7 @@ class Story {
   @IsString()
   @Length(1, 100)
   title?: string;
-  
+
   @IsOptional()
   @IsInt()
   @Min(0)
@@ -42,6 +38,12 @@ class Story {
   @IsOptional()
   @IsEnum(StoryStatus)
   status?: StoryStatus;
+
+  @IsOptional()
+  @IsString()
+  @IsLexoRankValue()
+  @Length(2, 255)
+  rankValue?: string;
 }
 
 export class StoryUpdateRequestDto {
