@@ -5,6 +5,8 @@ class StoryDto {
   point: number;
   status: StoryStatus;
   epicId: number;
+  rankValue: string;
+
   static of(story: Story) {
     const dto = new StoryDto();
     dto.id = story.id;
@@ -12,6 +14,7 @@ class StoryDto {
     dto.point = story.point;
     dto.status = story.status;
     dto.epicId = story.epicId;
+    dto.rankValue = story.rankValue;
     return dto;
   }
 }

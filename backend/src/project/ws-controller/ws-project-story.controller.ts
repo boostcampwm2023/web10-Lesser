@@ -28,6 +28,7 @@ export class WsProjectStoryController {
       content.title,
       content.point,
       content.status,
+      content.rankValue,
     );
     client.nsp
       .to('backlog')
@@ -68,6 +69,7 @@ export class WsProjectStoryController {
       content.title,
       content.point,
       content.status,
+      content.rankValue,
     );
 
     if (isUpdated) {
@@ -81,6 +83,7 @@ export class WsProjectStoryController {
             content.title,
             content.point,
             content.status,
+            content.rankValue,
           ),
         );
     }

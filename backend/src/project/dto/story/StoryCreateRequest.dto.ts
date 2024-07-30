@@ -10,6 +10,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
+import { IsLexoRankValue } from 'src/common/decorator/IsLexoRankValue';
 import { StoryStatus } from 'src/project/entity/story.entity';
 
 class Story {
@@ -27,6 +28,11 @@ class Story {
 
   @IsInt()
   epicId: number;
+
+  @IsString()
+  @IsLexoRankValue()
+  @Length(2, 255)
+  rankValue: string;
 }
 
 export class StoryCreateRequestDto {
