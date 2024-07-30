@@ -1,3 +1,5 @@
+import { LexoRank } from 'lexorank';
+import { resolve } from 'path';
 import { Socket } from 'socket.io-client';
 import { app, appInit } from 'test/setup';
 import {
@@ -20,20 +22,21 @@ describe('WS epic', () => {
       await Promise.all([initBacklog(socket1), initBacklog(socket2)]);
       const name = '회원';
       const color = 'yellow';
+      const rankValue = LexoRank.middle().toString();
       const requestData = {
         action: 'create',
-        content: { name, color },
+        content: { name, color, rankValue },
       };
       socket1.emit('epic', requestData);
       await Promise.all([
-        expectCreateEpic(socket1, name, color),
-        expectCreateEpic(socket2, name, color),
+        expectCreateEpic(socket1, name, color, rankValue),
+        expectCreateEpic(socket2, name, color, rankValue),
       ]);
       socket1.close();
       socket2.close();
     });
 
-    const expectCreateEpic = (socket, name, color) => {
+    const expectCreateEpic = (socket, name, color, rankValue) => {
       return new Promise<void>((resolve) => {
         socket.once('backlog', async (data) => {
           const { content, action, domain } = data;
@@ -42,6 +45,7 @@ describe('WS epic', () => {
           expect(content?.id).toBeDefined();
           expect(content?.name).toBe(name);
           expect(content?.color).toBe(color);
+          expect(content?.rankValue).toBe(rankValue);
           resolve();
         });
       });
@@ -56,9 +60,10 @@ describe('WS epic', () => {
       await Promise.all([initBacklog(socket1), initBacklog(socket2)]);
       const name = '회원';
       const color = 'yellow';
+      const rankValue = LexoRank.middle().toString();
       let requestData: any = {
         action: 'create',
-        content: { name, color },
+        content: { name, color, rankValue },
       };
       socket1.emit('epic', requestData);
 
@@ -99,9 +104,10 @@ describe('WS epic', () => {
       await initBacklog(socket);
       const name = '회원';
       let color = 'yellow';
+      const rankValue = LexoRank.middle().toString();
       let requestData: any = {
         action: 'create',
-        content: { name, color },
+        content: { name, color, rankValue },
       };
       socket.emit('epic', requestData);
       const id = await getEpicId(socket);
@@ -137,9 +143,10 @@ describe('WS epic', () => {
       await initBacklog(socket);
       let name = '회원';
       let color = 'yellow';
+      const rankValue = LexoRank.middle().toString();
       let requestData: any = {
         action: 'create',
-        content: { name, color },
+        content: { name, color, rankValue },
       };
       socket.emit('epic', requestData);
       const id = await getEpicId(socket);
@@ -170,6 +177,51 @@ describe('WS epic', () => {
         });
       });
     };
+
+    it('should return updated epic data when update rankValue', async () => {
+      const socket = await getMemberJoinedLandingPage();
+      socket.emit('joinBacklog');
+      await initBacklog(socket);
+      const name1 = '회원';
+      const color1 = 'yellow';
+      const rankValue1 = LexoRank.middle().toString();
+      const requestData1: any = {
+        action: 'create',
+        content: { name: name1, color: color1, rankValue: rankValue1 },
+      };
+      socket.emit('epic', requestData1);
+      const id1 = await getEpicId(socket);
+
+      const name2 = '회원';
+      const color2 = 'yellow';
+      const rankValue2 = LexoRank.parse(rankValue1).genNext().toString();
+      const requestData2: any = {
+        action: 'create',
+        content: { name: name2, color: color2, rankValue: rankValue2 },
+      };
+      socket.emit('epic', requestData2);
+      const id2 = await getEpicId(socket);
+
+      const updateRankValue = LexoRank.parse(rankValue2).genNext().toString();
+      const requestData3 = {
+        action: 'update',
+        content: { id: id1, rankValue: updateRankValue },
+      };
+
+      socket.emit('epic', requestData3);
+      await new Promise<void>((resolve) => {
+        socket.once('backlog', async (data) => {
+          const { content, action, domain } = data;
+          expect(domain).toBe('epic');
+          expect(action).toBe('update');
+          expect(content?.id).toBe(id1);
+          expect(content?.rankValue).toBe(updateRankValue);
+          resolve();
+        });
+      });
+
+      socket.close();
+    });
   });
 });
 

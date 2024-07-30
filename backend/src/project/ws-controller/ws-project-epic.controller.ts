@@ -26,6 +26,7 @@ export class WsProjectEpicController {
       client.project,
       content.name,
       content.color,
+      content.rankValue,
     );
     client.nsp
       .to('backlog')
@@ -35,6 +36,7 @@ export class WsProjectEpicController {
           createdEpic.id,
           createdEpic.name,
           createdEpic.color,
+          createdEpic.rankValue,
         ),
       );
   }
@@ -71,6 +73,7 @@ export class WsProjectEpicController {
       content.id,
       content.name,
       content.color,
+      content.rankValue,
     );
 
     if (isUpdated) {
@@ -78,7 +81,12 @@ export class WsProjectEpicController {
         .to('backlog')
         .emit(
           'backlog',
-          EpicUpdateNotifyDto.of(content.id, content.name, content.color),
+          EpicUpdateNotifyDto.of(
+            content.id,
+            content.name,
+            content.color,
+            content.rankValue,
+          ),
         );
     }
   }

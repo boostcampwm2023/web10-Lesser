@@ -9,13 +9,14 @@ import {
   ValidateNested,
   Length,
 } from 'class-validator';
+import { IsLexoRankValue } from 'src/common/decorator/IsLexoRankValue';
 import { EpicColor } from 'src/project/entity/epic.entity';
 import { AtLeastOneProperty } from 'src/project/util/validation.util';
 
 class Epic {
   @IsNotEmpty()
   @IsInt()
-  @AtLeastOneProperty(['name', 'color'])
+  @AtLeastOneProperty(['name', 'color', 'rankValue'])
   id: number;
 
   @IsOptional()
@@ -26,6 +27,11 @@ class Epic {
   @IsOptional()
   @IsEnum(EpicColor)
   color?: EpicColor;
+
+  @IsOptional()
+  @IsLexoRankValue()
+  @Length(2, 255)
+  rankValue?: string;
 }
 
 export class EpicUpdateRequestDto {

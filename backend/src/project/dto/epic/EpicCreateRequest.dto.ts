@@ -7,6 +7,7 @@ import {
   Matches,
   ValidateNested,
 } from 'class-validator';
+import { IsLexoRankValue } from 'src/common/decorator/IsLexoRankValue';
 import { EpicColor } from 'src/project/entity/epic.entity';
 
 class Epic {
@@ -16,6 +17,11 @@ class Epic {
 
   @IsEnum(EpicColor)
   color: EpicColor;
+
+  @IsString()
+  @IsLexoRankValue()
+  @Length(2, 255)
+  rankValue: string;
 }
 
 export class EpicCreateRequestDto {
