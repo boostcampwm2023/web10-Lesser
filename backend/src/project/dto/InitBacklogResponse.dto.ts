@@ -10,6 +10,7 @@ class TaskDto {
   actualTime: number | null;
   status: TaskStatus;
   assignedMemberId: number | null;
+  rankValue: string;
 
   static of(task: Task): TaskDto {
     const dto = new TaskDto();
@@ -20,6 +21,7 @@ class TaskDto {
     dto.actualTime = task.actualTime;
     dto.status = task.status;
     dto.assignedMemberId = task.assignedMemberId;
+    dto.rankValue = task.rankValue;
     return dto;
   }
 }
@@ -29,6 +31,7 @@ class StoryDto {
   title: string;
   point: number | null;
   status: StoryStatus;
+  rankValue: string;
   taskList: TaskDto[];
 
   static of(story: Story): StoryDto {
@@ -37,6 +40,7 @@ class StoryDto {
     dto.title = story.title;
     dto.point = story.point;
     dto.status = story.status;
+    dto.rankValue = story.rankValue;
     dto.taskList = story.taskList.map(TaskDto.of);
     return dto;
   }
@@ -46,6 +50,7 @@ class EpicDto {
   id: number;
   name: string;
   color: EpicColor;
+  rankValue: string;
   storyList: StoryDto[];
 
   static of(epic: Epic): EpicDto {
@@ -53,6 +58,7 @@ class EpicDto {
     dto.id = epic.id;
     dto.name = epic.name;
     dto.color = epic.color;
+    dto.rankValue = epic.rankValue;
     dto.storyList = epic.storyList.map(StoryDto.of);
     return dto;
   }

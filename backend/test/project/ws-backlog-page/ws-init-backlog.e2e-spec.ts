@@ -75,12 +75,16 @@ describe('WS epic', () => {
               expect(epic.id).toBe(epicId);
               expect(epic.name).toBe(epicName);
               expect(epic.color).toBe(epicColor);
+              expect(epic.rankValue).toBe(middleRankValue);
+
               expect(epic.storyList).toHaveLength(1);
               const story = epic.storyList[0];
               expect(story.id).toBe(storyId);
               expect(story.title).toBe(storyTitle);
               expect(story.point).toBe(storyPoint);
               expect(story.status).toBe(storyStatus);
+              expect(story.rankValue).toBe(middleRankValue);
+
               expect(story.taskList).toHaveLength(1);
               const task = story.taskList[0];
               expect(task.id).toBe(taskId);
@@ -90,6 +94,7 @@ describe('WS epic', () => {
               expect(task.actualTime).toBe(taskActualTime);
               expect(task.status).toBe(taskStatus);
               expect(task.assignedMemberId).toBe(taskAssignedMemberId);
+              expect(task.rankValue).toBe(middleRankValue);
             } catch (e) {
               reject(e);
             }
