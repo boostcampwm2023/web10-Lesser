@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { Project } from './project.entity';
 import { Story } from './story.entity';
@@ -16,6 +17,7 @@ export enum TaskStatus {
 }
 
 @Entity()
+@Unique(['rankValue', 'storyId'])
 export class Task {
   @PrimaryGeneratedColumn('increment', { type: 'int' })
   id: number;
@@ -62,6 +64,9 @@ export class Task {
   @JoinColumn({ name: 'member_id' })
   member: Member;
 
+  @Column({ type: 'varchar', length: 255, nullable: false, name: 'rank_value' })
+  rankValue: string;
+
   static of(
     project: Project,
     storyId: number,
@@ -71,17 +76,18 @@ export class Task {
     actualTime: number,
     memberId: number,
     status: TaskStatus,
+    rankValue: string,
   ) {
     const newTask = new Task();
     newTask.project = project;
     newTask.storyId = storyId;
     newTask.title = title;
     newTask.displayId = displayId;
-
     newTask.expectedTime = expectedTime;
     newTask.actualTime = actualTime;
     newTask.assignedMemberId = memberId;
     newTask.status = status;
+    newTask.rankValue = rankValue;
     return newTask;
   }
 }

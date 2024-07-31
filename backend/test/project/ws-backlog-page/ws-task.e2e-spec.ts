@@ -61,6 +61,7 @@ describe('WS task', () => {
         null,
         null,
         null,
+        middleRankValue,
       );
 
       await testCreateTask(
@@ -72,6 +73,7 @@ describe('WS task', () => {
         2.1,
         3.3,
         null,
+        LexoRank.parse(middleRankValue).genNext().toString(),
       );
 
       await testCreateTask(
@@ -83,6 +85,7 @@ describe('WS task', () => {
         null,
         null,
         null,
+        LexoRank.parse(middleRankValue).genNext().genNext().toString(),
       );
 
       await testCreateTask(
@@ -94,6 +97,11 @@ describe('WS task', () => {
         null,
         null,
         null,
+        LexoRank.parse(middleRankValue)
+          .genNext()
+          .genNext()
+          .genNext()
+          .toString(),
       );
 
       socket1.close();
@@ -109,6 +117,7 @@ describe('WS task', () => {
       expectedTime,
       actualTime,
       assignedMemberId,
+      rankValue,
     ) => {
       const requestData = {
         action: 'create',
@@ -119,6 +128,7 @@ describe('WS task', () => {
           expectedTime,
           actualTime,
           assignedMemberId,
+          rankValue,
         },
       };
       socket1.emit('task', requestData);
@@ -132,6 +142,7 @@ describe('WS task', () => {
           expectedTime,
           actualTime,
           assignedMemberId,
+          rankValue,
         ),
         expectCreateTask(
           socket2,
@@ -141,6 +152,7 @@ describe('WS task', () => {
           expectedTime,
           actualTime,
           assignedMemberId,
+          rankValue,
         ),
       ]);
     };
@@ -153,6 +165,7 @@ describe('WS task', () => {
       expectedTime,
       actualTime,
       assignedMemberId,
+      rankValue,
     ) => {
       return new Promise<void>((resolve) => {
         socket.once('backlog', async (data) => {
@@ -167,6 +180,7 @@ describe('WS task', () => {
           expect(content?.actualTime).toBe(actualTime);
           expect(content?.expectedTime).toBe(expectedTime);
           expect(content?.assignedMemberId).toBe(assignedMemberId);
+          expect(content?.rankValue).toBe(rankValue);
           resolve();
         });
       });
@@ -214,6 +228,7 @@ describe('WS task', () => {
           expectedTime,
           actualTime,
           assignedMemberId,
+          rankValue: middleRankValue,
         },
       };
       socket.emit('task', requestData);
@@ -282,6 +297,7 @@ describe('WS task', () => {
           expectedTime,
           actualTime,
           assignedMemberId,
+          rankValue: middleRankValue,
         },
       };
       socket.emit('task', requestData);
@@ -391,6 +407,7 @@ describe('WS task', () => {
           expectedTime,
           actualTime,
           assignedMemberId,
+          rankValue: middleRankValue,
         },
       };
       socket.emit('task', requestData);
@@ -416,6 +433,160 @@ describe('WS task', () => {
           expect(content?.id).toBe(taskId);
           expect(content?.actualTime).toBe(newActualTime);
           expect(content?.expectedTime).toBe(newExpectedTime);
+          resolve();
+        });
+      });
+
+      socket.close();
+    });
+
+    it('should return updated task data when update rankValue within same story', async () => {
+      const socket = await getMemberJoinedLandingPage();
+      socket.emit('joinBacklog');
+      await initBacklog(socket);
+
+      const name = '회원';
+      const color = 'yellow';
+      const middleRankValue = LexoRank.middle().toString();
+
+      let requestData: any = {
+        action: 'create',
+        content: { name, color, rankValue: middleRankValue },
+      };
+      socket.emit('epic', requestData);
+      const [epicId] = await Promise.all([getEpicId(socket)]);
+
+      const title = '타이틀';
+      const point = 2;
+      const status = '시작전';
+      requestData = {
+        action: 'create',
+        content: { title, point, status, epicId, rankValue: middleRankValue },
+      };
+      socket.emit('story', requestData);
+      const storyId = await getStoryId(socket);
+
+      let taskTitle = '타이틀';
+      let taskStatus = '시작전';
+      let expectedTime = null;
+      let actualTime = null;
+      let assignedMemberId = null;
+      requestData = {
+        action: 'create',
+        content: {
+          title: taskTitle,
+          status: taskStatus,
+          storyId,
+          expectedTime,
+          actualTime,
+          assignedMemberId,
+          rankValue: middleRankValue,
+        },
+      };
+      socket.emit('task', requestData);
+      const taskId = await getTaskId(socket);
+
+      const newRankValue = LexoRank.parse(middleRankValue).genNext().toString();
+      requestData = {
+        action: 'update',
+        content: {
+          id: taskId,
+          rankValue: newRankValue,
+        },
+      };
+      socket.emit('task', requestData);
+
+      await new Promise<void>((resolve) => {
+        socket.once('backlog', async (data) => {
+          const { content, action, domain } = data;
+          expect(domain).toBe('task');
+          expect(action).toBe('update');
+          expect(content?.id).toBe(taskId);
+          expect(content?.rankValue).toBe(newRankValue);
+          resolve();
+        });
+      });
+
+      socket.close();
+    });
+
+    it('should return updated task data when update rankValue within same story', async () => {
+      const socket = await getMemberJoinedLandingPage();
+      socket.emit('joinBacklog');
+      await initBacklog(socket);
+
+      const name = '회원';
+      const color = 'yellow';
+      const middleRankValue = LexoRank.middle().toString();
+
+      let requestData: any = {
+        action: 'create',
+        content: { name, color, rankValue: middleRankValue },
+      };
+      socket.emit('epic', requestData);
+      const epicId = await getEpicId(socket);
+
+      const title = '타이틀';
+      const point = 2;
+      const status = '시작전';
+      requestData = {
+        action: 'create',
+        content: { title, point, status, epicId, rankValue: middleRankValue },
+      };
+      socket.emit('story', requestData);
+      const storyId1 = await getStoryId(socket);
+
+      requestData = {
+        action: 'create',
+        content: {
+          title,
+          point,
+          status,
+          epicId,
+          rankValue: LexoRank.parse(middleRankValue).genNext().toString(),
+        },
+      };
+      socket.emit('story', requestData);
+      const storyId2 = await getStoryId(socket);
+
+      let taskTitle = '타이틀';
+      let taskStatus = '시작전';
+      let expectedTime = null;
+      let actualTime = null;
+      let assignedMemberId = null;
+      requestData = {
+        action: 'create',
+        content: {
+          title: taskTitle,
+          status: taskStatus,
+          storyId: storyId1,
+          expectedTime,
+          actualTime,
+          assignedMemberId,
+          rankValue: middleRankValue,
+        },
+      };
+      socket.emit('task', requestData);
+      const taskId = await getTaskId(socket);
+
+      const newRankValue = LexoRank.middle().toString();
+      requestData = {
+        action: 'update',
+        content: {
+          id: taskId,
+          stroyId: storyId2,
+          rankValue: newRankValue,
+        },
+      };
+      socket.emit('task', requestData);
+
+      await new Promise<void>((resolve) => {
+        socket.once('backlog', async (data) => {
+          const { content, action, domain } = data;
+          expect(domain).toBe('task');
+          expect(action).toBe('update');
+          expect(content?.id).toBe(taskId);
+          expect(content?.rankValue).toBe(newRankValue);
           resolve();
         });
       });

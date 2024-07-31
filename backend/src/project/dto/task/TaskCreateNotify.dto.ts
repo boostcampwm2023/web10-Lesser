@@ -8,6 +8,8 @@ class TaskDto {
   status: TaskStatus;
   assignedMemberId: number|null;
   storyId: number;
+  rankValue: string;
+
   static of(task: Task) {
     const dto = new TaskDto();
     dto.id = task.id;
@@ -18,6 +20,7 @@ class TaskDto {
     dto.status = task.status;
     dto.assignedMemberId = task.assignedMemberId;
     dto.storyId = task.storyId;
+    dto.rankValue = task.rankValue;
     return dto;
   }
 }

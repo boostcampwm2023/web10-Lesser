@@ -31,6 +31,7 @@ export class WsProjectTaskController {
       content.status,
       content.assignedMemberId,
       content.storyId,
+      content.rankValue,
     );
     client.nsp
       .to('backlog')
@@ -73,6 +74,7 @@ export class WsProjectTaskController {
       content.actualTime,
       content.status,
       content.assignedMemberId,
+      content.rankValue,
     );
 
     if (isUpdated) {
@@ -88,6 +90,7 @@ export class WsProjectTaskController {
             content.actualTime,
             content.status,
             content.assignedMemberId,
+            content.rankValue,
           ),
         );
     }

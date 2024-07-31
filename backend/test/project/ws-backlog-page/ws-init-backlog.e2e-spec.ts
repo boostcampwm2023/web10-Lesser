@@ -56,6 +56,7 @@ describe('WS epic', () => {
           status: taskStatus,
           assignedMemberId: taskAssignedMemberId,
           storyId,
+          rankValue: middleRankValue,
         },
       });
 

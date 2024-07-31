@@ -9,6 +9,7 @@ import {
   Matches,
   ValidateNested,
 } from 'class-validator';
+import { IsLexoRankValue } from 'src/common/decorator/IsLexoRankValue';
 import { TaskStatus } from 'src/project/entity/task.entity';
 import { AtLeastOneProperty } from 'src/project/util/validation.util';
 import { IsOneDecimalPlace } from './TaskCreateRequest.dto';
@@ -22,6 +23,7 @@ class Task {
     'actualTime',
     'assignedMemberId',
     'status',
+    'rankValue',
   ])
   id: number;
 
@@ -49,6 +51,12 @@ class Task {
   @IsOptional()
   @IsEnum(TaskStatus)
   status?: TaskStatus;
+
+  @IsOptional()
+  @IsString()
+  @IsLexoRankValue()
+  @Length(2, 255)
+  rankValue?: string;
 }
 
 export class TaskUpdateRequestDto {
