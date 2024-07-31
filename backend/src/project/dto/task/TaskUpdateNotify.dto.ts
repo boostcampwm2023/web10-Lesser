@@ -8,6 +8,7 @@ class Task {
   actualTime?: number;
   status?: TaskStatus;
   assignedMemberId?: number;
+  rankValue?: string;
 
   static of(
     id: number,
@@ -17,6 +18,7 @@ class Task {
     actualTime: number | undefined,
     status: TaskStatus | undefined,
     assignedMemberId: number | undefined,
+    rankValue: string | undefined,
   ) {
     const dto = new Task();
     dto.id = id;
@@ -26,6 +28,7 @@ class Task {
     if (actualTime !== undefined) dto.actualTime = actualTime;
     if (status !== undefined) dto.status = status;
     if (assignedMemberId !== undefined) dto.assignedMemberId = assignedMemberId;
+    if (rankValue !== undefined) dto.rankValue = rankValue;
     return dto;
   }
 }
@@ -43,6 +46,7 @@ export class TaskUpdateNotifyDto {
     actualTime: number | undefined,
     status: TaskStatus | undefined,
     assignedMemberId: number | undefined,
+    rankValue: string | undefined,
   ) {
     const dto = new TaskUpdateNotifyDto();
     dto.domain = 'task';
@@ -55,6 +59,7 @@ export class TaskUpdateNotifyDto {
       actualTime,
       status,
       assignedMemberId,
+      rankValue,
     );
     return dto;
   }

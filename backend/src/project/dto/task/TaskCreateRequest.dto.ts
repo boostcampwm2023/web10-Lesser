@@ -16,6 +16,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from 'class-validator';
+import { IsLexoRankValue } from 'src/common/decorator/IsLexoRankValue';
 
 export function IsOneDecimalPlace(validationOptions?: ValidationOptions) {
   return function (object: Object, propertyName: string) {
@@ -61,6 +62,11 @@ class Task {
 
   @IsInt()
   storyId: number;
+
+  @IsString()
+  @IsLexoRankValue()
+  @Length(2, 255)
+  rankValue: string;
 }
 
 export class TaskCreateRequestDto {

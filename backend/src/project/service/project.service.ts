@@ -177,6 +177,7 @@ export class ProjectService {
     status: TaskStatus,
     assignedMemberId: number,
     storyId: number,
+    rankValue: string,
   ) {
     const story = await this.projectRepository.getStoryById(project, storyId);
     if (!story) throw new Error('Story id not found');
@@ -192,6 +193,7 @@ export class ProjectService {
       actualTime,
       assignedMemberId,
       status,
+      rankValue,
     );
     return this.projectRepository.createTask(newTask);
   }
@@ -210,6 +212,7 @@ export class ProjectService {
     actualTime: number | undefined,
     status: TaskStatus | undefined,
     assignedMemberId: number | undefined,
+    rankValue: string | undefined,
   ): Promise<boolean> {
     if (storyId !== undefined) {
       const story = await this.projectRepository.getStoryById(project, storyId);
@@ -224,6 +227,7 @@ export class ProjectService {
       actualTime,
       status,
       assignedMemberId,
+      rankValue,
     );
   }
 

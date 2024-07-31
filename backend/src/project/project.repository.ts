@@ -245,6 +245,7 @@ export class ProjectRepository {
     actualTime: number | undefined,
     status: TaskStatus | undefined,
     assignedMemberId: number | undefined,
+    rankValue: string | undefined,
   ): Promise<boolean> {
     const updateData: any = {};
 
@@ -265,6 +266,9 @@ export class ProjectRepository {
     }
     if (assignedMemberId !== undefined) {
       updateData.assignedMemberId = assignedMemberId;
+    }
+    if (rankValue !== undefined) {
+      updateData.rankValue = rankValue;
     }
 
     const result = await this.taskRepository.update(
