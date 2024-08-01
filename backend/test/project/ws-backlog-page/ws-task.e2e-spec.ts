@@ -185,6 +185,70 @@ describe('WS task', () => {
         });
       });
     };
+
+    it('should return created task data when creating multiple tasks simultaneously', async () => {
+      const socket = await getMemberJoinedLandingPage();
+      socket.emit('joinBacklog');
+      await initBacklog(socket);
+      const name = '회원';
+      const color = 'yellow';
+      const rankValue = LexoRank.middle().toString();
+      let requestData: any = {
+        action: 'create',
+        content: { name, color, rankValue },
+      };
+
+      socket.emit('epic', requestData);
+      const epicId = await getEpicId(socket);
+
+      const title = '타이틀';
+      const point = 2;
+      const status = '시작전';
+      requestData = {
+        action: 'create',
+        content: { title, point, status, epicId, rankValue },
+      };
+      socket.emit('story', requestData);
+      const storyId = await getStoryId(socket);
+
+      let taskTitle = '타이틀';
+      let taskStatus = '시작전';
+      let expectedTime = null;
+      let actualTime = null;
+      let assignedMemberId = null;
+      requestData = {
+        action: 'create',
+        content: {
+          title: taskTitle,
+          status: taskStatus,
+          storyId,
+          expectedTime,
+          actualTime,
+          assignedMemberId,
+          rankValue,
+        },
+      };
+      socket.emit('task', requestData);
+      socket.emit('task', requestData);
+
+      await new Promise<void>((resolve) => {
+        const flag = {};
+        socket.on('backlog', async (data) => {
+          const { content, action, domain } = data;
+          if (domain === 'task' && action === 'create') {
+            flag[content.id] = content.rankValue === rankValue.toString();
+            if (
+              Object.values(flag).length === 2 &&
+              Object.values(flag).includes(true) &&
+              Object.values(flag).includes(false)
+            )
+              resolve();
+          }
+        });
+      });
+
+      socket.close();
+    });
   });
 
   describe('task delete', () => {
@@ -593,6 +657,113 @@ describe('WS task', () => {
 
       socket.close();
     });
+
+    it('should return updated task data when updating multiple tasks simultaneously', async () => {
+      const socket = await getMemberJoinedLandingPage();
+      socket.emit('joinBacklog');
+      await initBacklog(socket);
+
+      const name = '회원';
+      const color = 'yellow';
+      const middleRankValue = LexoRank.middle().toString();
+
+      let requestData: any = {
+        action: 'create',
+        content: { name, color, rankValue: middleRankValue },
+      };
+      socket.emit('epic', requestData);
+      const epicId = await getEpicId(socket);
+
+      const title = '타이틀';
+      const point = 2;
+      const status = '시작전';
+      requestData = {
+        action: 'create',
+        content: { title, point, status, epicId, rankValue: middleRankValue },
+      };
+      socket.emit('story', requestData);
+      const storyId = await getStoryId(socket);
+
+      let taskTitle = '타이틀';
+      let taskStatus = '시작전';
+      let expectedTime = null;
+      let actualTime = null;
+      let assignedMemberId = null;
+      const rankValue1 = middleRankValue;
+      requestData = {
+        action: 'create',
+        content: {
+          title: taskTitle,
+          status: taskStatus,
+          storyId,
+          expectedTime,
+          actualTime,
+          assignedMemberId,
+          rankValue: rankValue1,
+        },
+      };
+
+      socket.emit('task', requestData);
+      await waitCreateTaskNotify(socket);
+
+      const rankValue2 = LexoRank.parse(rankValue1).genNext().toString();
+      requestData.content.rankValue = rankValue2;
+      socket.emit('task', requestData);
+      await waitCreateTaskNotify(socket);
+
+      const rankValue3 = LexoRank.parse(rankValue2).genNext().toString();
+      requestData.content.rankValue = rankValue3;
+      socket.emit('task', requestData);
+      const taskId3 = await getTaskId(socket);
+
+      const rankValue4 = LexoRank.parse(rankValue3).genNext().toString();
+      requestData.content.rankValue = rankValue4;
+      socket.emit('task', requestData);
+      const taskId4 = await getTaskId(socket);
+
+      const newRankValue = LexoRank.parse(rankValue1).between(
+        LexoRank.parse(rankValue2),
+      );
+
+      const requestData3 = {
+        action: 'update',
+        content: { id: taskId3, rankValue: newRankValue.toString() },
+      };
+      const requestData4 = {
+        action: 'update',
+        content: { id: taskId4, rankValue: newRankValue.toString() },
+      };
+      socket.emit('task', requestData3);
+      socket.emit('task', requestData4);
+
+      await new Promise<void>((resolve) => {
+        const flag = {};
+        socket.on('backlog', async (data) => {
+          const { content, action, domain } = data;
+          if (domain === 'task' && action === 'update') {
+            flag[content.id] = content.rankValue === newRankValue.toString();
+            if (
+              Object.values(flag).length === 2 &&
+              Object.values(flag).includes(true) &&
+              Object.values(flag).includes(false)
+            )
+              resolve();
+          }
+        });
+      });
+      socket.close();
+    });
+
+    const waitCreateTaskNotify = (socket) => {
+      return new Promise<void>((resolve) => {
+        socket.on('backlog', async (data) => {
+          const { content, action, domain } = data;
+          if (domain === 'task' && action === 'create') {
+            resolve();
+          }
+        });
+      });
+    };
   });
 });
 

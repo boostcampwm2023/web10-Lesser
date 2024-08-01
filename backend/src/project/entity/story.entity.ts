@@ -18,7 +18,7 @@ export enum StoryStatus {
 }
 
 @Entity()
-@Unique(['rankValue', 'epicId'])
+@Unique('STORY_UQ_RANK_VALUE_AND_EPIC_ID', ['rankValue', 'epicId'])
 export class Story {
   @PrimaryGeneratedColumn('increment', { type: 'int' })
   id: number;

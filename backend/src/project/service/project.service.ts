@@ -8,6 +8,8 @@ import { Link } from '../entity/link.entity.';
 import { Epic, EpicColor } from '../entity/epic.entity';
 import { Story, StoryStatus } from '../entity/story.entity';
 import { Task, TaskStatus } from '../entity/task.entity';
+import e from 'express';
+import { LexoRank } from 'lexorank';
 
 @Injectable()
 export class ProjectService {
@@ -95,14 +97,45 @@ export class ProjectService {
     return result ? true : false;
   }
 
-  createEpic(
+  private async getAdjustedEpicRankValue(
+    currentRankValue: string,
+    nextRankValue: string | null,
+  ): Promise<string> {
+    if (!nextRankValue) {
+      return LexoRank.parse(currentRankValue).genNext().toString();
+    } else {
+      const nextRank = LexoRank.parse(nextRankValue);
+      return LexoRank.parse(currentRankValue).between(nextRank).toString();
+    }
+  }
+
+  async createEpic(
     project: Project,
     name: string,
     color: EpicColor,
     rankValue: string,
   ) {
+    const maxRetries = 10;
+    let attempts = 0;
     const newEpic = Epic.of(project, name, color, rankValue);
-    return this.projectRepository.createEpic(newEpic);
+    while (attempts < maxRetries) {
+      try {
+        return await this.projectRepository.createEpic(newEpic);
+      } catch (e) {
+        if (e.message === 'DUPLICATED RANK VALUE') {
+          const nextEpic = await this.projectRepository.getNextEpicByRankValue(
+            newEpic.projectId,
+            newEpic.rankValue,
+          );
+          newEpic.rankValue = await this.getAdjustedEpicRankValue(
+            newEpic.rankValue,
+            nextEpic?.rankValue,
+          );
+          attempts++;
+          if (attempts === 10) throw e;
+        } else throw e;
+      }
+    }
   }
 
   async deleteEpic(project: Project, epicId: number) {
@@ -110,20 +143,45 @@ export class ProjectService {
     return result ? true : false;
   }
 
-  updateEpic(
+  async updateEpic(
     project: Project,
     id: number,
     name?: string,
     color?: EpicColor,
     rankValue?: string,
-  ): Promise<boolean> {
-    return this.projectRepository.updateEpic(
-      project,
-      id,
-      name,
-      color,
-      rankValue,
-    );
+  ) {
+    const maxRetries = 10;
+    let attempts = 0;
+
+    let updatedRankValue = rankValue;
+
+    while (attempts < maxRetries) {
+      try {
+        return {
+          isUpdated: await this.projectRepository.updateEpic(
+            project,
+            id,
+            name,
+            color,
+            updatedRankValue,
+          ),
+          updatedRankValue,
+        };
+      } catch (e) {
+        if (e.message === 'DUPLICATED RANK VALUE') {
+          const nextEpic = await this.projectRepository.getNextEpicByRankValue(
+            project.id,
+            updatedRankValue,
+          );
+          updatedRankValue = await this.getAdjustedEpicRankValue(
+            updatedRankValue,
+            nextEpic?.rankValue,
+          );
+          attempts++;
+          if (attempts === 10) throw e;
+        } else throw e;
+      }
+    }
   }
 
   async createStory(
@@ -136,8 +194,30 @@ export class ProjectService {
   ) {
     const epic = await this.projectRepository.getEpicById(project, epicId);
     if (!epic) throw new Error('epic id not found');
+
+    const maxRetries = 10;
+    let attempts = 0;
     const newStory = Story.of(project, epicId, title, point, status, rankValue);
-    return this.projectRepository.createStory(newStory);
+    while (attempts < maxRetries) {
+      try {
+        return await this.projectRepository.createStory(newStory);
+      } catch (e) {
+        if (e.message === 'DUPLICATED RANK VALUE') {
+          const nextStory =
+            await this.projectRepository.getNextStoryByRankValue(
+              newStory.epicId,
+              newStory.rankValue,
+            );
+          newStory.rankValue = await this.getAdjustedEpicRankValue(
+            newStory.rankValue,
+            nextStory?.rankValue,
+          );
+
+          attempts++;
+          if (attempts === 10) throw e;
+        } else throw e;
+      }
+    }
   }
 
   async deleteStory(project: Project, storyId: number) {
@@ -153,20 +233,48 @@ export class ProjectService {
     point: number | undefined,
     status: StoryStatus | undefined,
     rankValue: string | undefined,
-  ): Promise<boolean> {
+  ) {
     if (epicId !== undefined) {
       const epic = await this.projectRepository.getEpicById(project, epicId);
       if (!epic) throw new Error('epic id not found');
     }
-    return this.projectRepository.updateStory(
-      project,
-      id,
-      epicId,
-      title,
-      point,
-      status,
-      rankValue,
-    );
+
+    const maxRetries = 100;
+    let attempts = 0;
+
+    let updatedRankValue = rankValue;
+
+    while (attempts < maxRetries) {
+      try {
+        return {
+          isUpdated: await this.projectRepository.updateStory(
+            project,
+            id,
+            epicId,
+            title,
+            point,
+            status,
+            updatedRankValue,
+          ),
+          updatedRankValue,
+        };
+      } catch (e) {
+        if (e.message === 'DUPLICATED RANK VALUE') {
+          const nextStory =
+            await this.projectRepository.getNextStoryByRankValue(
+              project.id,
+              updatedRankValue,
+            );
+
+          updatedRankValue = await this.getAdjustedEpicRankValue(
+            updatedRankValue,
+            nextStory?.rankValue,
+          );
+          attempts++;
+          if (attempts === maxRetries) throw e;
+        } else throw e;
+      }
+    }
   }
 
   async createTask(
@@ -184,6 +292,8 @@ export class ProjectService {
     const displayIdCount =
       await this.projectRepository.getAndIncrementDisplayIdCount(project);
 
+    const maxRetries = 10;
+    let attempts = 0;
     const newTask = Task.of(
       project,
       storyId,
@@ -195,7 +305,25 @@ export class ProjectService {
       status,
       rankValue,
     );
-    return this.projectRepository.createTask(newTask);
+    while (attempts < maxRetries) {
+      try {
+        return await this.projectRepository.createTask(newTask);
+      } catch (e) {
+        if (e.message === 'DUPLICATED RANK VALUE') {
+          const nextTask = await this.projectRepository.getNextTaskByRankValue(
+            newTask.storyId,
+            newTask.rankValue,
+          );
+          newTask.rankValue = await this.getAdjustedEpicRankValue(
+            newTask.rankValue,
+            nextTask?.rankValue,
+          );
+
+          attempts++;
+          if (attempts === 10) throw e;
+        } else throw e;
+      }
+    }
   }
 
   async deleteTask(project: Project, taskId: number) {
@@ -213,22 +341,49 @@ export class ProjectService {
     status: TaskStatus | undefined,
     assignedMemberId: number | undefined,
     rankValue: string | undefined,
-  ): Promise<boolean> {
+  ) {
     if (storyId !== undefined) {
       const story = await this.projectRepository.getStoryById(project, storyId);
       if (!story) throw new Error('story id not found');
     }
-    return this.projectRepository.updateTask(
-      project,
-      id,
-      storyId,
-      title,
-      expectedTime,
-      actualTime,
-      status,
-      assignedMemberId,
-      rankValue,
-    );
+
+    const maxRetries = 100;
+    let attempts = 0;
+
+    let updatedRankValue = rankValue;
+
+    while (attempts < maxRetries) {
+      try {
+        return {
+          isUpdated: await this.projectRepository.updateTask(
+            project,
+            id,
+            storyId,
+            title,
+            expectedTime,
+            actualTime,
+            status,
+            assignedMemberId,
+            updatedRankValue,
+          ),
+          updatedRankValue,
+        };
+      } catch (e) {
+        if (e.message === 'DUPLICATED RANK VALUE') {
+          const nextTask = await this.projectRepository.getNextTaskByRankValue(
+            project.id,
+            updatedRankValue,
+          );
+
+          updatedRankValue = await this.getAdjustedEpicRankValue(
+            updatedRankValue,
+            nextTask?.rankValue,
+          );
+          attempts++;
+          if (attempts === maxRetries) throw e;
+        } else throw e;
+      }
+    }
   }
 
   getProjectBacklog(project: Project) {

@@ -62,15 +62,16 @@ export class WsProjectStoryController {
       return;
     }
     const { content } = data as StoryUpdateRequestDto;
-    const isUpdated = await this.projectService.updateStory(
-      client.project,
-      content.id,
-      content.epicId,
-      content.title,
-      content.point,
-      content.status,
-      content.rankValue,
-    );
+    const { isUpdated, updatedRankValue } =
+      await this.projectService.updateStory(
+        client.project,
+        content.id,
+        content.epicId,
+        content.title,
+        content.point,
+        content.status,
+        content.rankValue,
+      );
 
     if (isUpdated) {
       client.nsp
@@ -83,7 +84,7 @@ export class WsProjectStoryController {
             content.title,
             content.point,
             content.status,
-            content.rankValue,
+            updatedRankValue,
           ),
         );
     }

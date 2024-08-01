@@ -68,13 +68,14 @@ export class WsProjectEpicController {
       return;
     }
     const { content } = data as EpicUpdateRequestDto;
-    const isUpdated = await this.projectService.updateEpic(
-      client.project,
-      content.id,
-      content.name,
-      content.color,
-      content.rankValue,
-    );
+    const { isUpdated, updatedRankValue } =
+      await this.projectService.updateEpic(
+        client.project,
+        content.id,
+        content.name,
+        content.color,
+        content.rankValue,
+      );
 
     if (isUpdated) {
       client.nsp
@@ -85,7 +86,7 @@ export class WsProjectEpicController {
             content.id,
             content.name,
             content.color,
-            content.rankValue,
+            updatedRankValue,
           ),
         );
     }

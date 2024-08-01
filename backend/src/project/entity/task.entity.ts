@@ -17,7 +17,7 @@ export enum TaskStatus {
 }
 
 @Entity()
-@Unique(['rankValue', 'storyId'])
+@Unique('TASK_UQ_RANK_VALUE_AND_STORY_ID', ['rankValue', 'storyId'])
 export class Task {
   @PrimaryGeneratedColumn('increment', { type: 'int' })
   id: number;

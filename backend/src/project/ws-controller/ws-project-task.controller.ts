@@ -65,17 +65,18 @@ export class WsProjectTaskController {
       return;
     }
     const { content } = data as TaskUpdateRequestDto;
-    const isUpdated = await this.projectService.updateTask(
-      client.project,
-      content.id,
-      content.storyId,
-      content.title,
-      content.expectedTime,
-      content.actualTime,
-      content.status,
-      content.assignedMemberId,
-      content.rankValue,
-    );
+    const { isUpdated, updatedRankValue } =
+      await this.projectService.updateTask(
+        client.project,
+        content.id,
+        content.storyId,
+        content.title,
+        content.expectedTime,
+        content.actualTime,
+        content.status,
+        content.assignedMemberId,
+        content.rankValue,
+      );
 
     if (isUpdated) {
       client.nsp
@@ -90,7 +91,7 @@ export class WsProjectTaskController {
             content.actualTime,
             content.status,
             content.assignedMemberId,
-            content.rankValue,
+            updatedRankValue,
           ),
         );
     }

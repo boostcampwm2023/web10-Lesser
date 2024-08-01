@@ -50,6 +50,42 @@ describe('WS epic', () => {
         });
       });
     };
+
+    it('should return created epic data when creating multiple epics simultaneously', async () => {
+      const socket = await getMemberJoinedLandingPage();
+      socket.emit('joinBacklog');
+      await initBacklog(socket);
+      const name = '회원';
+      const color = 'yellow';
+      const rankValue = LexoRank.middle().toString();
+      const requestData = {
+        action: 'create',
+        content: { name, color, rankValue },
+      };
+
+      socket.emit('epic', requestData);
+      socket.emit('epic', requestData);
+
+      await Promise.all([
+        new Promise<void>((resolve) => {
+          socket.on('backlog', async (data) => {
+            const { content, action, domain } = data;
+            if (domain === 'epic' && action === 'create') {
+              if (content.rankValue === rankValue) resolve();
+            }
+          });
+        }),
+        new Promise<void>((resolve) => {
+          socket.on('backlog', async (data) => {
+            const { content, action, domain } = data;
+            if (domain === 'epic' && action === 'create') {
+              if (content.rankValue !== rankValue) resolve();
+            }
+          });
+        }),
+      ]);
+      socket.close();
+    });
   });
 
   describe('epic delete', () => {
@@ -222,6 +258,86 @@ describe('WS epic', () => {
 
       socket.close();
     });
+
+    it('should return updated epic data when updating multiple epics simultaneously', async () => {
+      const socket = await getMemberJoinedLandingPage();
+      socket.emit('joinBacklog');
+      await initBacklog(socket);
+      const name = '회원';
+      const color = 'yellow';
+      const rankValue1 = LexoRank.middle().toString();
+      let requestData: any = {
+        action: 'create',
+        content: { name, color, rankValue: rankValue1 },
+      };
+      socket.emit('epic', requestData);
+      await waitCreateEpicNotify(socket);
+
+      const rankValue2 = LexoRank.parse(rankValue1).genNext().toString();
+      requestData = {
+        action: 'create',
+        content: { name, color, rankValue: rankValue2 },
+      };
+      socket.emit('epic', requestData);
+      await waitCreateEpicNotify(socket);
+
+      const rankValue3 = LexoRank.parse(rankValue2).genNext().toString();
+      requestData = {
+        action: 'create',
+        content: { name, color, rankValue: rankValue3 },
+      };
+      socket.emit('epic', requestData);
+      const epicId3 = await getEpicId(socket);
+
+      const rankValue4 = LexoRank.parse(rankValue3).genNext().toString();
+      requestData = {
+        action: 'create',
+        content: { name, color, rankValue: rankValue4 },
+      };
+      socket.emit('epic', requestData);
+      const epicId4 = await getEpicId(socket);
+
+      const newRankValue = LexoRank.parse(rankValue1).between(
+        LexoRank.parse(rankValue2),
+      );
+      const requestData3 = {
+        action: 'update',
+        content: { id: epicId3, rankValue: newRankValue.toString() },
+      };
+      const requestData4 = {
+        action: 'update',
+        content: { id: epicId4, rankValue: newRankValue.toString() },
+      };
+      socket.emit('epic', requestData3);
+      socket.emit('epic', requestData4);
+
+      await new Promise<void>((resolve) => {
+        const flag = {};
+        socket.on('backlog', async (data) => {
+          const { content, action, domain } = data;
+          if (domain === 'epic' && action === 'update') {
+            flag[content.id] = content.rankValue === newRankValue.toString();
+            if (
+              Object.values(flag).length === 2 &&
+              Object.values(flag).includes(true) &&
+              Object.values(flag).includes(false)
+            )
+              resolve();
+          }
+        });
+      });
+      socket.close();
+    });
+    const waitCreateEpicNotify = (socket) => {
+      return new Promise<void>((resolve) => {
+        socket.on('backlog', async (data) => {
+          const { content, action, domain } = data;
+          if (domain === 'epic' && action === 'create') {
+            resolve();
+          }
+        });
+      });
+    };
   });
 });
 
