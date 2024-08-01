@@ -65,6 +65,50 @@ describe('WS story', () => {
         });
       });
     };
+
+    it('should return created story data when creating multiple stories simultaneously', async () => {
+      const socket = await getMemberJoinedLandingPage();
+      socket.emit('joinBacklog');
+      await initBacklog(socket);
+      const name = '회원';
+      const color = 'yellow';
+      const rankValue = LexoRank.middle().toString();
+      let requestData: any = {
+        action: 'create',
+        content: { name, color, rankValue },
+      };
+
+      socket.emit('epic', requestData);
+      const epicId = await getEpicId(socket);
+
+      const title = '타이틀';
+      const point = 2;
+      const status = '시작전';
+      requestData = {
+        action: 'create',
+        content: { title, point, status, epicId, rankValue },
+      };
+      socket.emit('story', requestData);
+      socket.emit('story', requestData);
+
+      await new Promise<void>((resolve) => {
+        const flag = {};
+        socket.on('backlog', async (data) => {
+          const { content, action, domain } = data;
+          if (domain === 'story' && action === 'create') {
+            flag[content.id] = content.rankValue === rankValue.toString();
+            if (
+              Object.values(flag).length === 2 &&
+              Object.values(flag).includes(true) &&
+              Object.values(flag).includes(false)
+            )
+              resolve();
+          }
+        });
+      });
+
+      socket.close();
+    });
   });
 
   describe('story delete', () => {
@@ -312,6 +356,98 @@ describe('WS story', () => {
       });
       socket.close();
     });
+
+    it('should return updated story data when updating multiple stories simultaneously', async () => {
+      const socket = await getMemberJoinedLandingPage();
+      socket.emit('joinBacklog');
+      await initBacklog(socket);
+
+      const name = '회원';
+      const color = 'yellow';
+      const middleRankValue = LexoRank.middle().toString();
+
+      let requestData: any = {
+        action: 'create',
+        content: { name, color, rankValue: middleRankValue },
+      };
+      socket.emit('epic', requestData);
+      const epicId = await getEpicId(socket);
+
+      const title = '타이틀';
+      const point = 2;
+      const status = '시작전';
+      const rankValue1 = middleRankValue;
+      requestData = {
+        action: 'create',
+        content: {
+          title,
+          point,
+          status,
+          epicId,
+          rankValue: rankValue1,
+        },
+      };
+      socket.emit('story', requestData);
+      await waitCreateStoryNotify(socket);
+
+      const rankValue2 = LexoRank.parse(rankValue1).genNext().toString();
+      requestData.content.rankValue = rankValue2;
+      socket.emit('story', requestData);
+      await waitCreateStoryNotify(socket);
+
+      const rankValue3 = LexoRank.parse(rankValue2).genNext().toString();
+      requestData.content.rankValue = rankValue3;
+      socket.emit('story', requestData);
+      const storyId3 = await getStoryId(socket);
+
+      const rankValue4 = LexoRank.parse(rankValue3).genNext().toString();
+      requestData.content.rankValue = rankValue4;
+      socket.emit('story', requestData);
+      const storyId4 = await getStoryId(socket);
+
+      const newRankValue = LexoRank.parse(rankValue1).between(
+        LexoRank.parse(rankValue2),
+      );
+      const requestData3 = {
+        action: 'update',
+        content: { id: storyId3, rankValue: newRankValue.toString() },
+      };
+
+      const requestData4 = {
+        action: 'update',
+        content: { id: storyId4, rankValue: newRankValue.toString() },
+      };
+      socket.emit('story', requestData3);
+      socket.emit('story', requestData4);
+
+      await new Promise<void>((resolve) => {
+        const flag = {};
+        socket.on('backlog', async (data) => {
+          const { content, action, domain } = data;
+          if (domain === 'story' && action === 'update') {
+            flag[content.id] = content.rankValue === newRankValue.toString();
+            if (
+              Object.values(flag).length === 2 &&
+              Object.values(flag).includes(true) &&
+              Object.values(flag).includes(false)
+            )
+              resolve();
+          }
+        });
+      });
+      socket.close();
+    });
+
+    const waitCreateStoryNotify = (socket) => {
+      return new Promise<void>((resolve) => {
+        socket.on('backlog', async (data) => {
+          const { content, action, domain } = data;
+          if (domain === 'story' && action === 'create') {
+            resolve();
+          }
+        });
+      });
+    };
   });
 });
 

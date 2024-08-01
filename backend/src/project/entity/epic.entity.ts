@@ -23,7 +23,7 @@ export enum EpicColor {
 }
 
 @Entity()
-@Unique(['rankValue', 'projectId'])
+@Unique('EPIC_UQ_RANK_VALUE_AND_PROJECT_ID', ['rankValue', 'projectId'])
 export class Epic {
   @PrimaryGeneratedColumn('increment', { type: 'int' })
   id: number;

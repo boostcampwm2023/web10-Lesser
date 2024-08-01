@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Connection, DataSource, MoreThan, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Project } from './entity/project.entity';
 import { ProjectToMember } from './entity/project-member.entity';
@@ -9,6 +9,7 @@ import { Link } from './entity/link.entity.';
 import { Epic, EpicColor } from './entity/epic.entity';
 import { Story, StoryStatus } from './entity/story.entity';
 import { Task, TaskStatus } from './entity/task.entity';
+import { LexoRank } from 'lexorank';
 
 @Injectable()
 export class ProjectRepository {
@@ -29,6 +30,7 @@ export class ProjectRepository {
     private readonly storyRepository: Repository<Story>,
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
+    private readonly dataSource: DataSource,
   ) {}
 
   create(project: Project): Promise<Project> {
@@ -117,8 +119,27 @@ export class ProjectRepository {
     return result.affected ? result.affected : 0;
   }
 
-  createEpic(epic: Epic): Promise<Epic> {
-    return this.epicRepository.save(epic);
+  async createEpic(epic: Epic): Promise<Epic> {
+    try {
+      return await this.epicRepository.save(epic);
+    } catch (e) {
+      if (
+        e.code === 'ER_DUP_ENTRY' &&
+        e.sqlMessage.includes('EPIC_UQ_RANK_VALUE_AND_PROJECT_ID')
+      )
+        throw new Error('DUPLICATED RANK VALUE');
+      throw e;
+    }
+  }
+
+  getNextEpicByRankValue(projectId: number, rankValue: string) {
+    return this.epicRepository.findOne({
+      where: {
+        projectId,
+        rankValue: MoreThan(rankValue),
+      },
+      order: { rankValue: 'ASC' },
+    });
   }
 
   async deleteEpic(project: Project, epicId: number): Promise<number> {
@@ -149,11 +170,20 @@ export class ProjectRepository {
       updateData.rankValue = rankValue;
     }
 
-    const result = await this.epicRepository.update(
-      { id, project: { id: project.id } },
-      updateData,
-    );
-    return !!result.affected;
+    try {
+      const result = await this.epicRepository.update(
+        { id, project: { id: project.id } },
+        updateData,
+      );
+      return !!result.affected;
+    } catch (e) {
+      if (
+        e.code === 'ER_DUP_ENTRY' &&
+        e.sqlMessage.includes('EPIC_UQ_RANK_VALUE_AND_PROJECT_ID')
+      )
+        throw new Error('DUPLICATED RANK VALUE');
+      throw e;
+    }
   }
 
   getEpicById(project: Project, id: number) {
@@ -162,8 +192,27 @@ export class ProjectRepository {
     });
   }
 
-  createStory(story: Story): Promise<Story> {
-    return this.storyRepository.save(story);
+  async createStory(story: Story): Promise<Story> {
+    try {
+      return await this.storyRepository.save(story);
+    } catch (e) {
+      if (
+        e.code === 'ER_DUP_ENTRY' &&
+        e.sqlMessage.includes('STORY_UQ_RANK_VALUE_AND_EPIC_ID')
+      )
+        throw new Error('DUPLICATED RANK VALUE');
+      throw e;
+    }
+  }
+
+  getNextStoryByRankValue(epicId: number, rankValue: string) {
+    return this.storyRepository.findOne({
+      where: {
+        epicId,
+        rankValue: MoreThan(rankValue),
+      },
+      order: { rankValue: 'ASC' },
+    });
   }
 
   async deleteStory(project: Project, storyId: number): Promise<number> {
@@ -201,11 +250,20 @@ export class ProjectRepository {
       updateData.rankValue = rankValue;
     }
 
-    const result = await this.storyRepository.update(
-      { id, project: { id: project.id } },
-      updateData,
-    );
-    return !!result.affected;
+    try {
+      const result = await this.storyRepository.update(
+        { id, project: { id: project.id } },
+        updateData,
+      );
+      return !!result.affected;
+    } catch (e) {
+      if (
+        e.code === 'ER_DUP_ENTRY' &&
+        e.sqlMessage.includes('STORY_UQ_RANK_VALUE_AND_EPIC_ID')
+      )
+        throw new Error('DUPLICATED RANK VALUE');
+      throw e;
+    }
   }
 
   getStoryById(project: Project, id: number) {
@@ -224,8 +282,27 @@ export class ProjectRepository {
     return targetProject.displayIdCount;
   }
 
-  async createTask(task: Task) {
-    return this.taskRepository.save(task);
+  async createTask(task: Task): Promise<Task> {
+    try {
+      return await this.taskRepository.save(task);
+    } catch (e) {
+      if (
+        e.code === 'ER_DUP_ENTRY' &&
+        e.sqlMessage.includes('TASK_UQ_RANK_VALUE_AND_STORY_ID')
+      )
+        throw new Error('DUPLICATED RANK VALUE');
+      throw e;
+    }
+  }
+
+  getNextTaskByRankValue(storyId: number, rankValue: string) {
+    return this.taskRepository.findOne({
+      where: {
+        storyId,
+        rankValue: MoreThan(rankValue),
+      },
+      order: { rankValue: 'ASC' },
+    });
   }
 
   async deleteTask(project: Project, taskId: number): Promise<number> {
@@ -271,11 +348,20 @@ export class ProjectRepository {
       updateData.rankValue = rankValue;
     }
 
-    const result = await this.taskRepository.update(
-      { id, project: { id: project.id } },
-      updateData,
-    );
-    return !!result.affected;
+    try {
+      const result = await this.taskRepository.update(
+        { id, project: { id: project.id } },
+        updateData,
+      );
+      return !!result.affected;
+    } catch (e) {
+      if (
+        e.code === 'ER_DUP_ENTRY' &&
+        e.sqlMessage.includes('TASK_UQ_RANK_VALUE_AND_STORY_ID')
+      )
+        throw new Error('DUPLICATED RANK VALUE');
+      throw e;
+    }
   }
 
   getProjectBacklog(project: Project) {
