@@ -22,6 +22,7 @@ import InvitePage from "./pages/invite/InvitePage";
 import UnfinishedStoryPage from "./pages/backlog/UnfinishedStoryPage";
 import BacklogPage from "./pages/backlog/BacklogPage";
 import FinishedStoryPage from "./pages/backlog/FinishedStoryPage";
+import EpicPage from "./pages/backlog/EpicPage";
 
 type RouteType = "PRIVATE" | "PUBLIC";
 
@@ -86,7 +87,7 @@ const router = createBrowserRouter([
                 },
                 {
                   path: ROUTER_URL.BACKLOG.EPIC,
-                  element: <div>backlog epic Page</div>,
+                  element: <EpicPage />,
                 },
                 {
                   path: ROUTER_URL.BACKLOG.COMPLETED,
