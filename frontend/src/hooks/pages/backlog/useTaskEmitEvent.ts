@@ -15,13 +15,14 @@ const useTaskEmitEvent = (socket: Socket) => {
     assignedMemberId?: number;
     storyId?: number;
     status?: BacklogStatusType;
+    rankValue?: string;
   }) => {
     socket.emit("task", { action: "update", content });
   };
 
-  const emitTaskDeleteEvent = (content: {id: number}) => {
-    socket.emit("task", {action: "delete", content})
-  }
+  const emitTaskDeleteEvent = (content: { id: number }) => {
+    socket.emit("task", { action: "delete", content });
+  };
 
   return { emitTaskCreateEvent, emitTaskUpdateEvent, emitTaskDeleteEvent };
 };

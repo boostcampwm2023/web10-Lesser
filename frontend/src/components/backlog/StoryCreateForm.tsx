@@ -9,33 +9,42 @@ import { useOutletContext } from "react-router-dom";
 import EpicDropdown from "./EpicDropdown";
 import { EpicCategoryDTO } from "../../types/DTO/backlogDTO";
 import useDropdownState from "../../hooks/common/dropdown/useDropdownState";
+import { LexoRank } from "lexorank";
 
 interface StoryCreateFormProps {
   onCloseClick: () => void;
   epicList: EpicCategoryDTO[];
+  lastStoryRankValue?: string;
 }
 
-const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
+const StoryCreateForm = ({
+  onCloseClick,
+  epicList,
+  lastStoryRankValue,
+}: StoryCreateFormProps) => {
   const { socket }: { socket: Socket } = useOutletContext();
-  const [{ title, point, epicId, status }, setStoryFormData] =
+  const [{ title, point, epicId, status, rankValue }, setStoryFormData] =
     useState<StoryForm>({
       title: "",
       point: undefined,
       status: "시작전",
       epicId: undefined,
+      rankValue: lastStoryRankValue
+        ? LexoRank.parse(lastStoryRankValue).genNext().toString()
+        : LexoRank.middle().toString(),
     });
   const { open, handleClose, handleOpen, dropdownRef } = useDropdownState();
   const { emitStoryCreateEvent } = useStoryEmitEvent(socket);
 
   const handleTitleChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const { value } = target;
-    setStoryFormData({ title: value, point, epicId, status });
+    setStoryFormData({ title: value, point, epicId, status, rankValue });
   };
 
   const handlePointChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const { value } = target;
     const newPoint = value === "" ? undefined : Number(value);
-    setStoryFormData({ title, point: newPoint, epicId, status });
+    setStoryFormData({ title, point: newPoint, epicId, status, rankValue });
   };
 
   const handleSubmit = (event: FormEvent) => {
@@ -71,12 +80,18 @@ const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
       return;
     }
 
-    emitStoryCreateEvent({ title, status, epicId, point });
+    emitStoryCreateEvent({ title, status, epicId, point, rankValue });
     onCloseClick();
   };
 
   const handleEpicChange = (selectedEpicId: number | undefined) => {
-    setStoryFormData({ title, status, point, epicId: selectedEpicId });
+    setStoryFormData({
+      title,
+      status,
+      point,
+      epicId: selectedEpicId,
+      rankValue,
+    });
     handleClose();
   };
 
@@ -93,7 +108,7 @@ const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
 
   useEffect(() => {
     if (!epicList.filter(({ id }) => id === epicId).length) {
-      setStoryFormData({ title, point, status, epicId: undefined });
+      setStoryFormData({ title, point, status, epicId: undefined, rankValue });
     }
   }, [epicList]);
 

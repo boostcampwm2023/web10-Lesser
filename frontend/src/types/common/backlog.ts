@@ -28,6 +28,7 @@ export interface StoryForm {
   title: string;
   point: number | undefined;
   status: "시작전";
+  rankValue: string;
 }
 
 export interface TaskForm {
@@ -37,6 +38,7 @@ export interface TaskForm {
   actualTime: number | null | "";
   status: "시작전";
   assignedMemberId: null;
+  rankValue: string;
 }
 
 export enum BacklogSocketDomain {

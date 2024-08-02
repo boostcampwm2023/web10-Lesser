@@ -18,6 +18,7 @@ export interface TaskDTO {
   status: BacklogStatusType;
   assignedMemberId: number | null;
   storyId: number;
+  rankValue: string;
 }
 
 export interface StoryDTO {
@@ -27,12 +28,14 @@ export interface StoryDTO {
   status: BacklogStatusType;
   taskList: TaskDTO[];
   epicId: number;
+  rankValue: string;
 }
 
 export interface EpicCategoryDTO {
   id: number;
   name: string;
   color: EpicColor;
+  rankValue: string;
 }
 
 export interface EpicDTO extends EpicCategoryDTO {

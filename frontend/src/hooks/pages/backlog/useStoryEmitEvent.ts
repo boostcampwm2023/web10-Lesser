@@ -17,6 +17,7 @@ const useStoryEmitEvent = (socket: Socket) => {
     status?: BacklogStatusType;
     epicId?: number;
     point?: number;
+    rankValue?: string;
   }) => {
     socket.emit("story", { action: "update", content });
   };

@@ -31,6 +31,7 @@ interface StoryBlockProps {
   taskExist: boolean;
   epicList: EpicCategoryDTO[];
   finished?: boolean;
+  lastTaskRankValue?: string;
 }
 
 const StoryBlock = ({
@@ -43,6 +44,7 @@ const StoryBlock = ({
   taskExist,
   epicList,
   finished = false,
+  lastTaskRankValue,
   children,
 }: StoryBlockProps) => {
   const { socket }: { socket: Socket } = useOutletContext();
@@ -279,7 +281,9 @@ const StoryBlock = ({
         <TaskContainer>
           <TaskHeader />
           {children}
-          {!finished && <TaskCreateBlock storyId={id} />}
+          {!finished && (
+            <TaskCreateBlock storyId={id} {...{ lastTaskRankValue }} />
+          )}
         </TaskContainer>
       )}
     </>
