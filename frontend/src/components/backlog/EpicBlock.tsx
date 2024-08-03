@@ -9,16 +9,10 @@ import EpicDropdown from "./EpicDropdown";
 interface EpicBlockProps {
   storyExist: boolean;
   epic: EpicCategoryDTO;
-  epicList: EpicCategoryDTO[];
   children: React.ReactNode;
 }
 
-const EpicBlock = ({
-  storyExist,
-  epic,
-  epicList,
-  children,
-}: EpicBlockProps) => {
+const EpicBlock = ({ storyExist, epic, children }: EpicBlockProps) => {
   const { showDetail, handleShowDetail } = useShowDetail();
   const {
     open: epicUpdating,
@@ -66,7 +60,7 @@ const EpicBlock = ({
           {epicUpdating && (
             <EpicDropdown
               selectedEpic={epic}
-              epicList={epicList}
+              epicList={[epic]}
               onEpicChange={() => {}}
             />
           )}

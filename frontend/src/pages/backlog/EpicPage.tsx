@@ -28,7 +28,6 @@ const EpicPage = () => {
         ({ id: epicId, name, color, rankValue, storyList }) => (
           <EpicBlock
             storyExist={storyList.length > 1}
-            epicList={epicCategoryList}
             epic={{ id: epicId, name, color, rankValue }}
           >
             {...storyList.map(({ id, title, point, status, taskList }) => {
