@@ -15,7 +15,13 @@ const FinishedStoryPage = () => {
     [backlog.epicList]
   );
   const epicCategoryList = useMemo(
-    () => backlog.epicList.map(({ id, name, color }) => ({ id, name, color })),
+    () =>
+      backlog.epicList.map(({ id, name, color, rankValue }) => ({
+        id,
+        name,
+        color,
+        rankValue,
+      })),
     [backlog.epicList]
   );
 

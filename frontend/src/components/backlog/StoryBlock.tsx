@@ -29,8 +29,9 @@ interface StoryBlockProps {
   status: BacklogStatusType;
   children: React.ReactNode;
   taskExist: boolean;
-  epicList: EpicCategoryDTO[];
+  epicList?: EpicCategoryDTO[];
   finished?: boolean;
+  lastTaskRankValue?: string;
 }
 
 const StoryBlock = ({
@@ -43,6 +44,7 @@ const StoryBlock = ({
   taskExist,
   epicList,
   finished = false,
+  lastTaskRankValue,
   children,
 }: StoryBlockProps) => {
   const { socket }: { socket: Socket } = useOutletContext();
@@ -170,21 +172,24 @@ const StoryBlock = ({
         onContextMenu={(event) => event.preventDefault()}
         ref={blockRef}
       >
-        <div
-          className="w-[5rem] mr-5 hover:cursor-pointer"
-          onClick={handleEpicColumnClick}
-          ref={epicRef}
-        >
-          <CategoryChip content={epic.name} bgColor={epic.color} />
+        {epicList && (
+          <div
+            className="w-[5rem] mr-5 hover:cursor-pointer"
+            onClick={handleEpicColumnClick}
+            ref={epicRef}
+          >
+            <CategoryChip content={epic.name} bgColor={epic.color} />
 
-          {epicUpdating && (
-            <EpicDropdown
-              selectedEpic={epic}
-              epicList={epicList}
-              onEpicChange={updateEpic}
-            />
-          )}
-        </div>
+            {epicUpdating && (
+              <EpicDropdown
+                selectedEpic={epic}
+                epicList={epicList}
+                onEpicChange={updateEpic}
+              />
+            )}
+          </div>
+        )}
+
         <div
           className="flex items-center gap-1 w-[40.9rem] mr-4 hover:cursor-pointer"
           onClick={() => handleTitleUpdatingOpen(true)}
@@ -279,7 +284,9 @@ const StoryBlock = ({
         <TaskContainer>
           <TaskHeader />
           {children}
-          {!finished && <TaskCreateBlock storyId={id} />}
+          {!finished && (
+            <TaskCreateBlock storyId={id} {...{ lastTaskRankValue }} />
+          )}
         </TaskContainer>
       )}
     </>

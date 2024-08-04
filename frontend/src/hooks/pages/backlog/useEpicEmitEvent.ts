@@ -5,6 +5,7 @@ const useEpicEmitEvent = (socket: Socket) => {
   const emitEpicCreateEvent = (content: {
     name: string;
     color: BacklogCategoryColor;
+    rankValue: string;
   }) => {
     socket.emit("epic", { action: "create", content });
   };

@@ -4,15 +4,19 @@ import TaskCreateForm from "./TaskCreateForm";
 
 interface TaskCreateBlockProps {
   storyId: number;
+  lastTaskRankValue?: string;
 }
 
-const TaskCreateBlock = ({ storyId }: TaskCreateBlockProps) => {
+const TaskCreateBlock = ({
+  storyId,
+  lastTaskRankValue,
+}: TaskCreateBlockProps) => {
   const { showDetail, handleShowDetail } = useShowDetail();
   return (
     <>
       {showDetail ? (
         <TaskCreateForm
-          {...{ storyId }}
+          {...{ storyId, lastTaskRankValue }}
           onCloseClick={() => handleShowDetail(false)}
         />
       ) : (

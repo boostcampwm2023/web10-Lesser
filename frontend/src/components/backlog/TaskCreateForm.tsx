@@ -5,13 +5,19 @@ import Check from "../../assets/icons/check.svg?react";
 import Closed from "../../assets/icons/closed.svg?react";
 import useTaskEmitEvent from "../../hooks/pages/backlog/useTaskEmitEvent";
 import { TaskForm } from "../../types/common/backlog";
+import { LexoRank } from "lexorank";
 
 interface TaskCreateFormProps {
   onCloseClick: () => void;
   storyId: number;
+  lastTaskRankValue?: string;
 }
 
-const TaskCreateForm = ({ onCloseClick, storyId }: TaskCreateFormProps) => {
+const TaskCreateForm = ({
+  onCloseClick,
+  storyId,
+  lastTaskRankValue,
+}: TaskCreateFormProps) => {
   const [taskFormData, setTaskFormData] = useState<TaskForm>({
     title: "",
     expectedTime: null,
@@ -19,6 +25,9 @@ const TaskCreateForm = ({ onCloseClick, storyId }: TaskCreateFormProps) => {
     status: "시작전",
     assignedMemberId: null,
     storyId,
+    rankValue: lastTaskRankValue
+      ? LexoRank.parse(lastTaskRankValue).genNext().toString()
+      : LexoRank.middle().toString(),
   });
   const { socket }: { socket: Socket } = useOutletContext();
   const { emitTaskCreateEvent } = useTaskEmitEvent(socket);

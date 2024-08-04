@@ -9,33 +9,44 @@ import { useOutletContext } from "react-router-dom";
 import EpicDropdown from "./EpicDropdown";
 import { EpicCategoryDTO } from "../../types/DTO/backlogDTO";
 import useDropdownState from "../../hooks/common/dropdown/useDropdownState";
+import { LexoRank } from "lexorank";
 
 interface StoryCreateFormProps {
   onCloseClick: () => void;
   epicList: EpicCategoryDTO[];
+  epic?: EpicCategoryDTO;
+  lastStoryRankValue?: string;
 }
 
-const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
+const StoryCreateForm = ({
+  onCloseClick,
+  epicList,
+  epic,
+  lastStoryRankValue,
+}: StoryCreateFormProps) => {
   const { socket }: { socket: Socket } = useOutletContext();
-  const [{ title, point, epicId, status }, setStoryFormData] =
+  const [{ title, point, epicId, status, rankValue }, setStoryFormData] =
     useState<StoryForm>({
       title: "",
       point: undefined,
       status: "시작전",
-      epicId: undefined,
+      epicId: epic?.id,
+      rankValue: lastStoryRankValue
+        ? LexoRank.parse(lastStoryRankValue).genNext().toString()
+        : LexoRank.middle().toString(),
     });
   const { open, handleClose, handleOpen, dropdownRef } = useDropdownState();
   const { emitStoryCreateEvent } = useStoryEmitEvent(socket);
 
   const handleTitleChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const { value } = target;
-    setStoryFormData({ title: value, point, epicId, status });
+    setStoryFormData({ title: value, point, epicId, status, rankValue });
   };
 
   const handlePointChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const { value } = target;
     const newPoint = value === "" ? undefined : Number(value);
-    setStoryFormData({ title, point: newPoint, epicId, status });
+    setStoryFormData({ title, point: newPoint, epicId, status, rankValue });
   };
 
   const handleSubmit = (event: FormEvent) => {
@@ -71,12 +82,18 @@ const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
       return;
     }
 
-    emitStoryCreateEvent({ title, status, epicId, point });
+    emitStoryCreateEvent({ title, status, epicId, point, rankValue });
     onCloseClick();
   };
 
   const handleEpicChange = (selectedEpicId: number | undefined) => {
-    setStoryFormData({ title, status, point, epicId: selectedEpicId });
+    setStoryFormData({
+      title,
+      status,
+      point,
+      epicId: selectedEpicId,
+      rankValue,
+    });
     handleClose();
   };
 
@@ -93,7 +110,7 @@ const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
 
   useEffect(() => {
     if (!epicList.filter(({ id }) => id === epicId).length) {
-      setStoryFormData({ title, point, status, epicId: undefined });
+      setStoryFormData({ title, point, status, epicId: undefined, rankValue });
     }
   }, [epicList]);
 
@@ -102,32 +119,39 @@ const StoryCreateForm = ({ onCloseClick, epicList }: StoryCreateFormProps) => {
       className="flex items-center w-full py-1 border-t border-b"
       onSubmit={handleSubmit}
     >
-      <div
-        className="w-[5rem] min-h-[1.75rem] bg-light-gray rounded-md mr-7 hover:cursor-pointer relative"
-        onClick={handleEpicColumnClick}
-        ref={dropdownRef}
-      >
-        {epicId && (
-          <CategoryChip
-            content={selectedEpic?.name}
-            bgColor={selectedEpic?.color}
-          />
-        )}
-        {open && (
-          <EpicDropdown
-            selectedEpic={selectedEpic}
-            epicList={epicList}
-            onEpicChange={handleEpicChange}
-          />
-        )}
-      </div>
+      {!epic ? (
+        <div
+          className="w-[5rem] min-h-[1.75rem] bg-light-gray rounded-md mr-7 hover:cursor-pointer relative"
+          onClick={handleEpicColumnClick}
+          ref={dropdownRef}
+        >
+          {epicId && (
+            <CategoryChip
+              content={selectedEpic?.name}
+              bgColor={selectedEpic?.color}
+            />
+          )}
+          {open && (
+            <EpicDropdown
+              selectedEpic={selectedEpic}
+              epicList={epicList}
+              onEpicChange={handleEpicChange}
+            />
+          )}
+        </div>
+      ) : (
+        <div className="w-[1.45rem]" />
+      )}
+
       <input
         className="w-[34.7rem] h-[1.75rem] mr-[1.5rem] bg-light-gray rounded-md focus:outline-none"
         type="text"
         value={title}
         onChange={handleTitleChange}
       />
-      <div className="flex items-center mr-[2.8rem] ">
+      <div
+        className={`flex items-center ${epic ? "mr-[1.85rem]" : "mr-[2.8rem]"}`}
+      >
         <input
           className="w-24 h-[1.75rem] mr-1 text-right rounded-md bg-light-gray no-arrows focus:outline-none"
           type="number"

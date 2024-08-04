@@ -13,6 +13,7 @@ import {
   BacklogSocketEpicAction,
 } from "../../types/common/backlog";
 import EpicDropdownOption from "./EpicDropdownOption";
+import { LexoRank } from "lexorank";
 
 interface EpicDropdownProps {
   selectedEpic?: EpicCategoryDTO;
@@ -53,8 +54,14 @@ const EpicDropdown = ({
         return;
       }
 
+      const rankValue = epicList.length
+        ? LexoRank.parse(epicList[epicList.length - 1].rankValue)
+            .genNext()
+            .toString()
+        : LexoRank.middle().toString();
+
       setValue("");
-      emitEpicCreateEvent({ name: value, color: epicColor });
+      emitEpicCreateEvent({ name: value, color: epicColor, rankValue });
     }
   };
 
