@@ -97,7 +97,7 @@ export class ProjectService {
     return result ? true : false;
   }
 
-  private async getAdjustedEpicRankValue(
+  private async getAdjustedRankValue(
     currentRankValue: string,
     nextRankValue: string | null,
   ): Promise<string> {
@@ -127,7 +127,7 @@ export class ProjectService {
             newEpic.projectId,
             newEpic.rankValue,
           );
-          newEpic.rankValue = await this.getAdjustedEpicRankValue(
+          newEpic.rankValue = await this.getAdjustedRankValue(
             newEpic.rankValue,
             nextEpic?.rankValue,
           );
@@ -173,7 +173,7 @@ export class ProjectService {
             project.id,
             updatedRankValue,
           );
-          updatedRankValue = await this.getAdjustedEpicRankValue(
+          updatedRankValue = await this.getAdjustedRankValue(
             updatedRankValue,
             nextEpic?.rankValue,
           );
@@ -205,10 +205,10 @@ export class ProjectService {
         if (e.message === 'DUPLICATED RANK VALUE') {
           const nextStory =
             await this.projectRepository.getNextStoryByRankValue(
-              newStory.epicId,
+              newStory.projectId,
               newStory.rankValue,
             );
-          newStory.rankValue = await this.getAdjustedEpicRankValue(
+          newStory.rankValue = await this.getAdjustedRankValue(
             newStory.rankValue,
             nextStory?.rankValue,
           );
@@ -239,7 +239,7 @@ export class ProjectService {
       if (!epic) throw new Error('epic id not found');
     }
 
-    const maxRetries = 100;
+    const maxRetries = 10;
     let attempts = 0;
 
     let updatedRankValue = rankValue;
@@ -266,7 +266,7 @@ export class ProjectService {
               updatedRankValue,
             );
 
-          updatedRankValue = await this.getAdjustedEpicRankValue(
+          updatedRankValue = await this.getAdjustedRankValue(
             updatedRankValue,
             nextStory?.rankValue,
           );
@@ -314,7 +314,7 @@ export class ProjectService {
             newTask.storyId,
             newTask.rankValue,
           );
-          newTask.rankValue = await this.getAdjustedEpicRankValue(
+          newTask.rankValue = await this.getAdjustedRankValue(
             newTask.rankValue,
             nextTask?.rankValue,
           );
@@ -347,7 +347,7 @@ export class ProjectService {
       if (!story) throw new Error('story id not found');
     }
 
-    const maxRetries = 100;
+    const maxRetries = 10;
     let attempts = 0;
 
     let updatedRankValue = rankValue;
@@ -375,7 +375,7 @@ export class ProjectService {
             updatedRankValue,
           );
 
-          updatedRankValue = await this.getAdjustedEpicRankValue(
+          updatedRankValue = await this.getAdjustedRankValue(
             updatedRankValue,
             nextTask?.rankValue,
           );

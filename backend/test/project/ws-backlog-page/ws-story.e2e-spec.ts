@@ -294,69 +294,6 @@ describe('WS story', () => {
       socket.close();
     });
 
-    it('should return updated story data when update rankValue within different epic', async () => {
-      const socket = await getMemberJoinedLandingPage();
-      socket.emit('joinBacklog');
-      await initBacklog(socket);
-
-      const name = '회원';
-      const color = 'yellow';
-      const middleRankValue = LexoRank.middle().toString();
-
-      const requestData1: any = {
-        action: 'create',
-        content: { name, color, rankValue: middleRankValue },
-      };
-      socket.emit('epic', requestData1);
-      const epicId1 = await getEpicId(socket);
-
-      const requestData2: any = {
-        action: 'create',
-        content: {
-          name,
-          color,
-          rankValue: LexoRank.parse(middleRankValue).genNext().toString(),
-        },
-      };
-      socket.emit('epic', requestData2);
-      const epicId2 = await getEpicId(socket);
-
-      const title = '타이틀';
-      const point = 2;
-      const status = '시작전';
-      const requestData3 = {
-        action: 'create',
-        content: {
-          title,
-          point,
-          status,
-          epicId: epicId1,
-          rankValue: middleRankValue,
-        },
-      };
-      socket.emit('story', requestData3);
-      const storyId = await getStoryId(socket);
-
-      //변경햘 에픽에서의 첫번째 스토리이기 때문에 middle 메서드를 사용한다.
-      const newRankValue = LexoRank.middle().toString();
-      const requestData4 = {
-        action: 'update',
-        content: { id: storyId, epicId: epicId2, rankValue: newRankValue },
-      };
-      socket.emit('story', requestData4);
-      await new Promise<void>((resolve) => {
-        socket.once('backlog', (data) => {
-          const { content, action, domain } = data;
-          expect(domain).toBe('story');
-          expect(action).toBe('update');
-          expect(content?.id).toBe(storyId);
-          expect(content?.rankValue).toBe(newRankValue);
-          resolve();
-        });
-      });
-      socket.close();
-    });
-
     it('should return updated story data when updating multiple stories simultaneously', async () => {
       const socket = await getMemberJoinedLandingPage();
       socket.emit('joinBacklog');
