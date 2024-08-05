@@ -198,17 +198,17 @@ export class ProjectRepository {
     } catch (e) {
       if (
         e.code === 'ER_DUP_ENTRY' &&
-        e.sqlMessage.includes('STORY_UQ_RANK_VALUE_AND_EPIC_ID')
+        e.sqlMessage.includes('STORY_UQ_RANK_VALUE_AND_PROJECT_ID')
       )
         throw new Error('DUPLICATED RANK VALUE');
       throw e;
     }
   }
 
-  getNextStoryByRankValue(epicId: number, rankValue: string) {
+  getNextStoryByRankValue(projectId: number, rankValue: string) {
     return this.storyRepository.findOne({
       where: {
-        epicId,
+        projectId,
         rankValue: MoreThan(rankValue),
       },
       order: { rankValue: 'ASC' },
@@ -259,7 +259,7 @@ export class ProjectRepository {
     } catch (e) {
       if (
         e.code === 'ER_DUP_ENTRY' &&
-        e.sqlMessage.includes('STORY_UQ_RANK_VALUE_AND_EPIC_ID')
+        e.sqlMessage.includes('STORY_UQ_RANK_VALUE_AND_PROJECT_ID')
       )
         throw new Error('DUPLICATED RANK VALUE');
       throw e;
