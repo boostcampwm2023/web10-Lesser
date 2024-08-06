@@ -4,13 +4,14 @@ import { LexoRank } from "lexorank";
 import { BacklogDTO } from "../../types/DTO/backlogDTO";
 import StoryCreateButton from "../../components/backlog/StoryCreateButton";
 import StoryCreateForm from "../../components/backlog/StoryCreateForm";
-import { DragEvent, useMemo, useRef, useState } from "react";
+import { DragEvent, useEffect, useMemo, useRef, useState } from "react";
 import changeEpicListToStoryList from "../../utils/changeEpicListToStoryList";
 import StoryBlock from "../../components/backlog/StoryBlock";
 import TaskBlock from "../../components/backlog/TaskBlock";
 import useShowDetail from "../../hooks/pages/backlog/useShowDetail";
 import useStoryEmitEvent from "../../hooks/pages/backlog/useStoryEmitEvent";
 import getDragElementIndex from "../../utils/getDragElementIndex";
+import { BacklogSocketData } from "../../types/common/backlog";
 
 const UnfinishedStoryPage = () => {
   const { socket, backlog }: { socket: Socket; backlog: BacklogDTO } =
@@ -18,7 +19,7 @@ const UnfinishedStoryPage = () => {
   const { showDetail, handleShowDetail } = useShowDetail();
   const [storyElementIndex, setStoryElementIndex] = useState<number>();
   const storyComponentRefList = useRef<HTMLDivElement[]>([]);
-  const draggingComponentIndexRef = useRef<number>();
+  const draggingComponentIdRef = useRef<number>();
   const storyList = useMemo(
     () =>
       changeEpicListToStoryList(backlog.epicList).sort((storyA, storyB) => {
@@ -52,23 +53,26 @@ const UnfinishedStoryPage = () => {
     event.preventDefault();
     const index = getDragElementIndex(
       storyComponentRefList.current,
-      draggingComponentIndexRef.current,
+      draggingComponentIdRef.current,
       event.clientY
     );
 
     setStoryElementIndex(index);
   };
 
-  const handleDragStart = (index: number) => {
-    draggingComponentIndexRef.current = index;
+  const handleDragStart = (id: number) => {
+    draggingComponentIdRef.current = id;
   };
 
   const handleDragEnd = (event: DragEvent) => {
     event.stopPropagation();
+    const targetIndex = storyList.findIndex(
+      ({ id }) => id === draggingComponentIdRef.current
+    );
     let rankValue;
 
-    if (storyElementIndex === draggingComponentIndexRef.current) {
-      draggingComponentIndexRef.current = undefined;
+    if (storyElementIndex === targetIndex) {
+      draggingComponentIdRef.current = undefined;
       setStoryElementIndex(undefined);
       return;
     }
@@ -90,13 +94,35 @@ const UnfinishedStoryPage = () => {
     }
 
     emitStoryUpdateEvent({
-      id: storyList[draggingComponentIndexRef.current as number].id,
+      id: draggingComponentIdRef.current as number,
       rankValue,
     });
 
-    draggingComponentIndexRef.current = undefined;
+    draggingComponentIdRef.current = undefined;
     setStoryElementIndex(undefined);
   };
+
+  useEffect(() => {
+    const handleDragEvent = ({
+      domain,
+      action,
+      content,
+    }: BacklogSocketData) => {
+      if (
+        domain === "story" &&
+        action === "delete" &&
+        content.id === draggingComponentIdRef.current
+      ) {
+        setStoryElementIndex(undefined);
+      }
+    };
+
+    socket.on("backlog", handleDragEvent);
+
+    return () => {
+      socket.off("backlog", handleDragEvent);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -116,7 +142,7 @@ const UnfinishedStoryPage = () => {
                 className="relative"
                 ref={setStoryComponentRef(index)}
                 draggable={true}
-                onDragStart={() => handleDragStart(index)}
+                onDragStart={() => handleDragStart(id)}
                 onDragEnd={handleDragEnd}
               >
                 <div
@@ -146,7 +172,7 @@ const UnfinishedStoryPage = () => {
           ref={setStoryComponentRef(storyList.length)}
           className={`${
             storyElementIndex === storyList.length
-              ? "w-full h-1 bg-blue-400"
+              ? "w-[67.9rem] h-1 bg-blue-400"
               : ""
           } absolute`}
         />
