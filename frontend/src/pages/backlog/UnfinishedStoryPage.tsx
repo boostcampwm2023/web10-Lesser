@@ -22,15 +22,17 @@ const UnfinishedStoryPage = () => {
   const draggingComponentIdRef = useRef<number>();
   const storyList = useMemo(
     () =>
-      changeEpicListToStoryList(backlog.epicList).sort((storyA, storyB) => {
-        if (storyA.rankValue < storyB.rankValue) {
-          return -1;
-        }
-        if (storyA.rankValue > storyB.rankValue) {
-          return 1;
-        }
-        return 0;
-      }),
+      changeEpicListToStoryList(backlog.epicList)
+        .sort((storyA, storyB) => {
+          if (storyA.rankValue < storyB.rankValue) {
+            return -1;
+          }
+          if (storyA.rankValue > storyB.rankValue) {
+            return 1;
+          }
+          return 0;
+        })
+        .filter(({ status }) => status !== "완료"),
     [backlog.epicList]
   );
   const epicCategoryList = useMemo(
