@@ -89,7 +89,7 @@ const EpicDropdown = ({
   }, []);
 
   return (
-    <div className="absolute z-10 p-1 bg-white rounded-md w-72 shadow-box">
+    <div className="max-h-[18.7rem] overflow-y-auto absolute z-10 p-1 bg-white rounded-md w-72 shadow-box">
       <div className="flex p-1 border-b-2">
         {selectedEpic && (
           <div className="min-w-[5rem]">
@@ -109,27 +109,28 @@ const EpicDropdown = ({
           ref={inputElementRef}
         />
       </div>
-      <ul className="pt-1">
-        {...epicList.map((epic) => (
-          <li
-            key={epic.id}
-            onClick={() => {
-              handleEpicChange(epic.id);
-            }}
-          >
-            <EpicDropdownOption
-              key={epic.id}
-              epic={epic}
-              onEpicChange={handleEpicChange}
-            />
-          </li>
-        ))}
-      </ul>
-      {value && (
+      {value ? (
         <div className="flex items-center gap-2 p-1">
           <span>생성</span>
           <CategoryChip content={value} bgColor={epicColor} />
         </div>
+      ) : (
+        <ul className="pt-1">
+          {...epicList.map((epic) => (
+            <li
+              key={epic.id}
+              onClick={() => {
+                handleEpicChange(epic.id);
+              }}
+            >
+              <EpicDropdownOption
+                key={epic.id}
+                epic={epic}
+                onEpicChange={handleEpicChange}
+              />
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
