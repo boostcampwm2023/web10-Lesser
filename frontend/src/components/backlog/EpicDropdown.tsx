@@ -1,19 +1,18 @@
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import { EpicCategoryDTO } from "../../types/DTO/backlogDTO";
 import CategoryChip from "./CategoryChip";
 import useEpicEmitEvent from "../../hooks/pages/backlog/useEpicEmitEvent";
 import { CATEGORY_COLOR } from "../../constants/backlog";
-import getRandomNumber from "../../utils/getRandomNumber";
 import {
-  BacklogCategoryColor,
   BacklogSocketData,
   BacklogSocketDomain,
   BacklogSocketEpicAction,
 } from "../../types/common/backlog";
 import EpicDropdownOption from "./EpicDropdownOption";
 import { LexoRank } from "lexorank";
+import getNewColor from "../../utils/getNewColor";
 
 interface EpicDropdownProps {
   selectedEpic?: EpicCategoryDTO;
@@ -29,13 +28,10 @@ const EpicDropdown = ({
   const { socket }: { socket: Socket } = useOutletContext();
   const { emitEpicCreateEvent } = useEpicEmitEvent(socket);
   const [value, setValue] = useState("");
+  const [epicColor, setEpicColor] = useState(
+    getNewColor(Object.keys(CATEGORY_COLOR))
+  );
   const inputElementRef = useRef<HTMLInputElement | null>(null);
-  const epicColor = useMemo(() => {
-    const colors = Object.keys(CATEGORY_COLOR);
-    return colors[
-      getRandomNumber(0, colors.length - 1)
-    ] as BacklogCategoryColor;
-  }, []);
 
   const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const { value } = target;
@@ -60,8 +56,9 @@ const EpicDropdown = ({
             .toString()
         : LexoRank.middle().toString();
 
-      setValue("");
       emitEpicCreateEvent({ name: value, color: epicColor, rankValue });
+      setValue("");
+      setEpicColor(getNewColor(Object.keys(CATEGORY_COLOR)));
     }
   };
 
@@ -109,27 +106,28 @@ const EpicDropdown = ({
           ref={inputElementRef}
         />
       </div>
-      <ul className="pt-1">
-        {...epicList.map((epic) => (
-          <li
-            key={epic.id}
-            onClick={() => {
-              handleEpicChange(epic.id);
-            }}
-          >
-            <EpicDropdownOption
-              key={epic.id}
-              epic={epic}
-              onEpicChange={handleEpicChange}
-            />
-          </li>
-        ))}
-      </ul>
-      {value && (
+      {value ? (
         <div className="flex items-center gap-2 p-1">
           <span>생성</span>
           <CategoryChip content={value} bgColor={epicColor} />
         </div>
+      ) : (
+        <ul className="max-h-[16rem] overflow-y-auto scrollbar-thin pt-1">
+          {...epicList.map((epic) => (
+            <li
+              key={epic.id}
+              onClick={() => {
+                handleEpicChange(epic.id);
+              }}
+            >
+              <EpicDropdownOption
+                key={epic.id}
+                epic={epic}
+                onEpicChange={handleEpicChange}
+              />
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

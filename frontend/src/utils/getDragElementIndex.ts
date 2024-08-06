@@ -7,7 +7,6 @@ const getDragElementIndex = (
     (closest, child, index) => {
       const box = child.getBoundingClientRect();
       const offset = y - box.top - box.height / 2;
-      console.log(offset);
 
       if (offset < 0 && offset > closest.offset) {
         return { offset, index };
