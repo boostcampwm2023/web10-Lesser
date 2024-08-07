@@ -27,7 +27,7 @@ const EpicPage = () => {
       {...backlog.epicList.map(
         ({ id: epicId, name, color, rankValue, storyList }) => (
           <EpicBlock
-            storyExist={storyList.length > 1}
+            storyExist={storyList.length > 0}
             epic={{ id: epicId, name, color, rankValue }}
           >
             {...storyList.map(({ id, title, point, status, taskList }) => {
