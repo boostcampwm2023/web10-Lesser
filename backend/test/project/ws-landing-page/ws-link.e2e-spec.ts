@@ -6,6 +6,7 @@ import {
   createProject,
   getProjectLinkId,
   joinProject,
+  listenAppAndSetPortEnv,
   memberFixture,
   memberFixture2,
   projectPayload,
@@ -23,7 +24,7 @@ describe('WS link', () => {
   beforeEach(async () => {
     await app.close();
     await appInit();
-    await app.listen(3000);
+    await listenAppAndSetPortEnv(app);
   });
   describe('link create', () => {
     it('should return created link data when received create link request', async () => {

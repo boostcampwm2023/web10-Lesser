@@ -7,6 +7,7 @@ import {
   createProject,
   getProjectLinkId,
   joinProject,
+  listenAppAndSetPortEnv,
   memberFixture,
   memberFixture2,
   projectPayload,
@@ -23,7 +24,7 @@ describe('WS memo', () => {
   beforeEach(async () => {
     await app.close();
     await appInit();
-    await app.listen(3000);
+    await listenAppAndSetPortEnv(app);
   });
   describe('memo create', () => {
     it('should return created memo data when received create memo request', async () => {

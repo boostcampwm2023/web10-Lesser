@@ -5,6 +5,7 @@ import {
   createMember,
   createProject,
   githubApiService,
+  listenAppAndSetPortEnv,
   memberFixture,
   memberFixture2,
   projectPayload,
@@ -12,13 +13,14 @@ import {
 import { io } from 'socket.io-client';
 
 describe('WS landing', () => {
-  const serverUrl = 'http://localhost:3000/project';
+  let serverUrl;
   let socket;
 
   beforeEach(async () => {
     await app.close();
     await appInit();
-    await app.listen(3000);
+    await listenAppAndSetPortEnv(app);
+    serverUrl = `http://localhost:${process.env.PORT}/project`;
   });
 
   afterEach(async () => {

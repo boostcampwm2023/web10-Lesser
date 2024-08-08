@@ -5,6 +5,7 @@ import {
   createMember,
   createProject,
   getProjectLinkId,
+  listenAppAndSetPortEnv,
   memberFixture,
   memberFixture2,
   projectPayload,
@@ -14,7 +15,7 @@ describe('Join Project', () => {
   beforeEach(async () => {
     await app.close();
     await appInit();
-    await app.listen(3000);
+    await listenAppAndSetPortEnv(app);
   });
 
   it('should return 201', async () => {

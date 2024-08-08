@@ -1,7 +1,7 @@
 import { LexoRank } from 'lexorank';
 import { resolve } from 'path';
 import { Socket } from 'socket.io-client';
-import { app, appInit } from 'test/setup';
+import { app, appInit, listenAppAndSetPortEnv } from 'test/setup';
 import {
   getMemberJoinedLandingPage,
   getTwoMemberJoinedLandingPage,
@@ -11,7 +11,7 @@ describe('WS epic', () => {
   beforeEach(async () => {
     await app.close();
     await appInit();
-    await app.listen(3000);
+	await listenAppAndSetPortEnv(app);
   });
 
   describe('epic create', () => {

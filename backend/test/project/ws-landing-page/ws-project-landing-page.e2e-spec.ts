@@ -8,6 +8,7 @@ import {
   getMemberByAccessToken,
   getProjectLinkId,
   joinProject,
+  listenAppAndSetPortEnv,
   memberFixture,
   memberFixture2,
   projectPayload,
@@ -22,7 +23,7 @@ describe('WS landing', () => {
   beforeEach(async () => {
     await app.close();
     await appInit();
-    await app.listen(3000);
+    await listenAppAndSetPortEnv(app);
   });
 
   it('should return project landing page data', async () => {

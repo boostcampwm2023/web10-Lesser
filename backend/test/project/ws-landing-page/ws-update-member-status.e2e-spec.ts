@@ -9,6 +9,7 @@ import {
   getProjectLinkId,
   memberFixture2,
   joinProject,
+  listenAppAndSetPortEnv,
 } from 'test/setup';
 import {
   emitJoinLanding,
@@ -24,7 +25,7 @@ describe('WS update member status', () => {
   beforeEach(async () => {
     await app.close();
     await appInit();
-    await app.listen(3000);
+    await listenAppAndSetPortEnv(app);
   });
 
   it('should return updated member status', async () => {

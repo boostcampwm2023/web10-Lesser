@@ -1,13 +1,13 @@
 import { LexoRank } from 'lexorank';
 import { Socket } from 'socket.io-client';
-import { app, appInit } from 'test/setup';
+import { app, appInit, listenAppAndSetPortEnv } from 'test/setup';
 import { getTwoMemberJoinedLandingPage } from '../ws-common';
 
 describe('WS epic', () => {
   beforeEach(async () => {
     await app.close();
     await appInit();
-    await app.listen(3000);
+    await listenAppAndSetPortEnv(app);
   });
 
   describe('backlog init', () => {
