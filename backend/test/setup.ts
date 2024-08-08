@@ -11,6 +11,7 @@ import { io } from 'socket.io-client';
 import { Member } from 'src/member/entity/member.entity';
 import { MemberService } from 'src/member/service/member.service';
 import * as portfinder from 'portfinder';
+import { v4 as uuidv4 } from 'uuid';
 
 export let app: INestApplication;
 export let githubApiService: GithubApiService;
@@ -178,7 +179,33 @@ export const listenAppAndSetPortEnv = async (app) => {
   process.env.PORT = port.toString();
 };
 
+const createDatabase = async (dbName: string) => {
+  const normalDataSource = getDataSource();
+  await normalDataSource.initialize();
+  await normalDataSource.query(`CREATE DATABASE \`${dbName}\`;`);
+  await normalDataSource.destroy();
+};
+
+const dropDatabase = async (dbName: string) => {
+  const normalDataSource = getDataSource();
+  await normalDataSource.initialize();
+  await normalDataSource.query(`DROP DATABASE IF EXISTS \`${dbName}\`;`);
+  await normalDataSource.destroy();
+};
+
+const getDataSource = () => {
+  return new DataSource({
+    type: 'mysql',
+    host: process.env.DATABASE_HOST,
+    port: +process.env.DATABASE_PORT,
+    username: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+  });
+};
+
 beforeAll(async () => {
+  process.env.DATABASE_NAME = uuidv4();
+  await createDatabase(process.env.DATABASE_NAME);
   await appInit();
 });
 
@@ -195,4 +222,5 @@ beforeEach(async () => {
 
 afterAll(async () => {
   await app.close();
+  await dropDatabase(process.env.DATABASE_NAME);
 });
