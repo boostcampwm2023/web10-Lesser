@@ -1,7 +1,11 @@
 import { Socket } from "socket.io-client";
 import { useOutletContext } from "react-router-dom";
 import useShowDetail from "../../hooks/pages/backlog/useShowDetail";
-import { BacklogStatusType, EpicCategoryDTO } from "../../types/DTO/backlogDTO";
+import {
+  BacklogStatusType,
+  EpicCategoryDTO,
+  TaskDTO,
+} from "../../types/DTO/backlogDTO";
 import BacklogStatusChip from "./BacklogStatusChip";
 import CategoryChip from "./CategoryChip";
 import ChevronDown from "../../assets/icons/chevron-down.svg?react";
@@ -19,6 +23,7 @@ import { useModal } from "../../hooks/common/modal/useModal";
 import ConfirmModal from "../common/ConfirmModal";
 import EpicDropdown from "./EpicDropdown";
 import TaskCreateBlock from "./TaskCreateBlock";
+import TaskBlock from "./TaskBlock";
 
 interface StoryBlockProps {
   id: number;
@@ -27,11 +32,11 @@ interface StoryBlockProps {
   point: number | null;
   progress: number;
   status: BacklogStatusType;
-  children: React.ReactNode;
   taskExist: boolean;
   epicList?: EpicCategoryDTO[];
   finished?: boolean;
   lastTaskRankValue?: string;
+  taskList: TaskDTO[];
 }
 
 const StoryBlock = ({
@@ -45,7 +50,7 @@ const StoryBlock = ({
   epicList,
   finished = false,
   lastTaskRankValue,
-  children,
+  taskList,
 }: StoryBlockProps) => {
   const { socket }: { socket: Socket } = useOutletContext();
   const { showDetail, handleShowDetail } = useShowDetail();
@@ -283,7 +288,7 @@ const StoryBlock = ({
       {showDetail && (
         <TaskContainer>
           <TaskHeader />
-          {children}
+          {...taskList.map((task) => <TaskBlock {...task} />)}
           {!finished && (
             <TaskCreateBlock storyId={id} {...{ lastTaskRankValue }} />
           )}

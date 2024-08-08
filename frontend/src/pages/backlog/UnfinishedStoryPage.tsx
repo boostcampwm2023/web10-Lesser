@@ -1,17 +1,17 @@
+import { DragEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import { LexoRank } from "lexorank";
-import { BacklogDTO } from "../../types/DTO/backlogDTO";
 import StoryCreateButton from "../../components/backlog/StoryCreateButton";
 import StoryCreateForm from "../../components/backlog/StoryCreateForm";
-import { DragEvent, useEffect, useMemo, useRef, useState } from "react";
-import changeEpicListToStoryList from "../../utils/changeEpicListToStoryList";
 import StoryBlock from "../../components/backlog/StoryBlock";
-import TaskBlock from "../../components/backlog/TaskBlock";
 import useShowDetail from "../../hooks/pages/backlog/useShowDetail";
 import useStoryEmitEvent from "../../hooks/pages/backlog/useStoryEmitEvent";
+import changeEpicListToStoryList from "../../utils/changeEpicListToStoryList";
 import getDragElementIndex from "../../utils/getDragElementIndex";
 import { BacklogSocketData } from "../../types/common/backlog";
+import { BacklogDTO } from "../../types/DTO/backlogDTO";
+import DragContainer from "../../components/backlog/DragContainer";
 
 const UnfinishedStoryPage = () => {
   const { socket, backlog }: { socket: Socket; backlog: BacklogDTO } =
@@ -140,22 +140,15 @@ const UnfinishedStoryPage = () => {
               : 0;
 
             return (
-              <div
-                className="relative"
-                ref={setStoryComponentRef(index)}
-                draggable={true}
+              <DragContainer
+                index={index}
+                setRef={setStoryComponentRef}
                 onDragStart={() => handleDragStart(id)}
                 onDragEnd={handleDragEnd}
+                currentlyDraggedOver={index === storyElementIndex}
               >
-                <div
-                  className={`${
-                    index === storyElementIndex ? "w-full h-1 bg-blue-400" : ""
-                  } absolute`}
-                />
                 <StoryBlock
-                  {...{ id, title, point, status }}
-                  epic={epic}
-                  progress={progress}
+                  {...{ id, title, point, status, epic, progress, taskList }}
                   taskExist={taskList.length > 0}
                   epicList={epicCategoryList}
                   lastTaskRankValue={
@@ -163,10 +156,8 @@ const UnfinishedStoryPage = () => {
                       ? taskList[taskList.length - 1].rankValue
                       : undefined
                   }
-                >
-                  {...taskList.map((task) => <TaskBlock {...task} />)}
-                </StoryBlock>
-              </div>
+                />
+              </DragContainer>
             );
           }
         )}
