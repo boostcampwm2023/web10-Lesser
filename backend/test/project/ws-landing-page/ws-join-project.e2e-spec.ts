@@ -9,6 +9,7 @@ import {
   getProjectLinkId,
   memberFixture2,
   joinProject,
+  listenAppAndSetPortEnv,
 } from 'test/setup';
 import {
   emitJoinLanding,
@@ -23,7 +24,7 @@ describe('WS join project', () => {
   beforeEach(async () => {
     await app.close();
     await appInit();
-    await app.listen(3000);
+    await listenAppAndSetPortEnv(app);
   });
 
   it('should return joined member', async () => {

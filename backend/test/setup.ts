@@ -10,6 +10,7 @@ import { CreateProjectRequestDto } from 'src/project/dto/CreateProjectRequest.dt
 import { io } from 'socket.io-client';
 import { Member } from 'src/member/entity/member.entity';
 import { MemberService } from 'src/member/service/member.service';
+import * as portfinder from 'portfinder';
 
 export let app: INestApplication;
 export let githubApiService: GithubApiService;
@@ -126,12 +127,15 @@ export const joinProject = async (
 };
 
 export const connectServer = (projectId, accessToken) => {
-  const socket = io(`http://localhost:3000/project-${projectId}`, {
-    path: '/api/socket.io',
-    auth: {
-      accessToken,
+  const socket = io(
+    `http://localhost:${process.env.PORT}/project-${projectId}`,
+    {
+      path: '/api/socket.io',
+      auth: {
+        accessToken,
+      },
     },
-  });
+  );
   return socket;
 };
 
@@ -157,6 +161,21 @@ export const appInit = async () => {
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   );
   await app.init();
+};
+
+export const listenAppAndSetPortEnv = async (app) => {
+  let port = await portfinder.getPortPromise();
+  while (1) {
+    try {
+      await app.listen(port);
+      break;
+    } catch (error) {
+      if (error.code === 'EADDRINUSE') {
+        port = await portfinder.getPortPromise();
+      } else throw error;
+    }
+  }
+  process.env.PORT = port.toString();
 };
 
 beforeAll(async () => {
