@@ -1,25 +1,30 @@
-import React, { DragEvent } from "react";
+import { DragEvent } from "react";
 
-interface DragContainerProps {
-  index: number;
-  setRef: (index: number) => (element: HTMLDivElement) => void;
+interface TaskDragContainerProps {
+  storyIndex: number;
+  taskIndex: number;
+  setRef: (
+    storyIndex: number,
+    taskIndex: number
+  ) => (element: HTMLDivElement) => void;
   onDragStart: () => void;
   onDragEnd: (event: DragEvent) => void;
   currentlyDraggedOver: boolean;
   children: React.ReactNode;
 }
 
-const DragContainer = ({
-  index,
+const TaskDragContainer = ({
+  storyIndex,
+  taskIndex,
   setRef,
   onDragStart,
   onDragEnd,
   currentlyDraggedOver,
   children,
-}: DragContainerProps) => (
+}: TaskDragContainerProps) => (
   <div
     className="relative"
-    ref={setRef(index)}
+    ref={setRef(storyIndex, taskIndex)}
     draggable={true}
     onDragStart={onDragStart}
     onDragEnd={onDragEnd}
@@ -33,4 +38,4 @@ const DragContainer = ({
   </div>
 );
 
-export default DragContainer;
+export default TaskDragContainer;

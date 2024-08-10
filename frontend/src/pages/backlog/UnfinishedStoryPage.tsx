@@ -11,15 +11,29 @@ import changeEpicListToStoryList from "../../utils/changeEpicListToStoryList";
 import getDragElementIndex from "../../utils/getDragElementIndex";
 import { BacklogSocketData } from "../../types/common/backlog";
 import { BacklogDTO } from "../../types/DTO/backlogDTO";
-import DragContainer from "../../components/backlog/DragContainer";
+import StoryDragContainer from "../../components/backlog/StoryDragContainer";
+import TaskBlock from "../../components/backlog/TaskBlock";
+import TaskDragContainer from "../../components/backlog/TaskDragContainer";
+import TaskContainer from "../../components/backlog/TaskContainer";
+import TaskHeader from "../../components/backlog/TaskHeader";
+import TaskCreateBlock from "../../components/backlog/TaskCreateBlock";
 
 const UnfinishedStoryPage = () => {
   const { socket, backlog }: { socket: Socket; backlog: BacklogDTO } =
     useOutletContext();
   const { showDetail, handleShowDetail } = useShowDetail();
   const [storyElementIndex, setStoryElementIndex] = useState<number>();
+  const [taskElementIndex, setTaskElementIndex] = useState<{
+    storyId?: number;
+    taskIndex?: number;
+  }>({
+    storyId: undefined,
+    taskIndex: undefined,
+  });
+  const [draggingStoryId, setDraggingStoryId] = useState<number>();
+  const [draggingTaskId, setDraggingTaskId] = useState<number>();
   const storyComponentRefList = useRef<HTMLDivElement[]>([]);
-  const draggingComponentIdRef = useRef<number>();
+  const taskComponentRefList = useRef<HTMLDivElement[][]>([]);
   const storyList = useMemo(
     () =>
       changeEpicListToStoryList(backlog.epicList)
@@ -51,11 +65,20 @@ const UnfinishedStoryPage = () => {
     storyComponentRefList.current[index] = element;
   };
 
+  const setTaskComponentRef =
+    (storyIndex: number, taskIndex: number) => (element: HTMLDivElement) => {
+      taskComponentRefList.current[storyIndex][taskIndex] = element;
+    };
+
   const handleDragOver = (event: DragEvent) => {
+    if (draggingTaskId) {
+      return;
+    }
+
     event.preventDefault();
     const index = getDragElementIndex(
       storyComponentRefList.current,
-      draggingComponentIdRef.current,
+      storyList.findIndex(({ id }) => id === draggingStoryId),
       event.clientY
     );
 
@@ -63,18 +86,23 @@ const UnfinishedStoryPage = () => {
   };
 
   const handleDragStart = (id: number) => {
-    draggingComponentIdRef.current = id;
+    if (draggingTaskId) {
+      return;
+    }
+    setDraggingStoryId(id);
   };
 
   const handleDragEnd = (event: DragEvent) => {
+    if (draggingTaskId) {
+      return;
+    }
+
     event.stopPropagation();
-    const targetIndex = storyList.findIndex(
-      ({ id }) => id === draggingComponentIdRef.current
-    );
+    const targetIndex = storyList.findIndex(({ id }) => id === draggingStoryId);
     let rankValue;
 
     if (storyElementIndex === targetIndex) {
-      draggingComponentIdRef.current = undefined;
+      setDraggingStoryId(undefined);
       setStoryElementIndex(undefined);
       return;
     }
@@ -96,11 +124,11 @@ const UnfinishedStoryPage = () => {
     }
 
     emitStoryUpdateEvent({
-      id: draggingComponentIdRef.current as number,
+      id: draggingStoryId as number,
       rankValue,
     });
 
-    draggingComponentIdRef.current = undefined;
+    setDraggingStoryId(undefined);
     setStoryElementIndex(undefined);
   };
 
@@ -113,7 +141,7 @@ const UnfinishedStoryPage = () => {
       if (
         domain === "story" &&
         action === "delete" &&
-        content.id === draggingComponentIdRef.current
+        content.id === draggingStoryId
       ) {
         setStoryElementIndex(undefined);
       }
@@ -125,6 +153,37 @@ const UnfinishedStoryPage = () => {
       socket.off("backlog", handleDragEvent);
     };
   }, []);
+
+  const handleTaskDragOver = (event: DragEvent, storyIndex: number) => {
+    if (draggingStoryId) {
+      return;
+    }
+
+    event.preventDefault();
+    const mouseIndex = storyList[storyIndex].taskList.findIndex(
+      ({ id }) => id === draggingTaskId
+    );
+
+    const index = getDragElementIndex(
+      taskComponentRefList.current[storyIndex],
+      mouseIndex,
+      event.clientY
+    );
+
+    setTaskElementIndex({
+      storyId: storyList[storyIndex].id,
+      taskIndex: index,
+    });
+  };
+
+  const handleTaskDragStart = (taskId: number) => {
+    setDraggingTaskId(taskId);
+  };
+
+  const handleTaskDragEnd = () => {
+    setDraggingTaskId(undefined);
+    setTaskElementIndex({ storyId: undefined, taskIndex: undefined });
+  };
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -138,26 +197,63 @@ const UnfinishedStoryPage = () => {
                     100
                 )
               : 0;
+            taskComponentRefList.current[index] = [];
 
             return (
-              <DragContainer
-                index={index}
-                setRef={setStoryComponentRef}
-                onDragStart={() => handleDragStart(id)}
-                onDragEnd={handleDragEnd}
-                currentlyDraggedOver={index === storyElementIndex}
+              <div
+                className="relative"
+                onDragOver={(event) => handleTaskDragOver(event, index)}
               >
-                <StoryBlock
-                  {...{ id, title, point, status, epic, progress, taskList }}
-                  taskExist={taskList.length > 0}
-                  epicList={epicCategoryList}
-                  lastTaskRankValue={
-                    taskList.length
-                      ? taskList[taskList.length - 1].rankValue
-                      : undefined
-                  }
-                />
-              </DragContainer>
+                <StoryDragContainer
+                  index={index}
+                  setRef={setStoryComponentRef}
+                  onDragStart={() => handleDragStart(id)}
+                  onDragEnd={handleDragEnd}
+                  currentlyDraggedOver={index === storyElementIndex}
+                >
+                  <StoryBlock
+                    key={id}
+                    {...{ id, title, point, status, epic, progress }}
+                    taskExist={taskList.length > 0}
+                    epicList={epicCategoryList}
+                  />
+                </StoryDragContainer>
+                <TaskContainer>
+                  <TaskHeader />
+                  {...taskList.map((task, taskIndex) => (
+                    <TaskDragContainer
+                      storyIndex={index}
+                      taskIndex={taskIndex}
+                      setRef={setTaskComponentRef}
+                      onDragEnd={handleTaskDragEnd}
+                      onDragStart={() => handleTaskDragStart(task.id)}
+                      currentlyDraggedOver={
+                        id === taskElementIndex.storyId &&
+                        taskIndex === taskElementIndex.taskIndex
+                      }
+                    >
+                      <TaskBlock key={task.id} {...task} />
+                    </TaskDragContainer>
+                  ))}
+                  <div
+                    ref={setTaskComponentRef(index, taskList.length)}
+                    className={`${
+                      id === taskElementIndex.storyId &&
+                      taskElementIndex.taskIndex === taskList.length
+                        ? "w-[67.9rem] h-1 bg-blue-400"
+                        : ""
+                    } absolute`}
+                  />
+                  <TaskCreateBlock
+                    storyId={id}
+                    lastTaskRankValue={
+                      taskList.length
+                        ? taskList[taskList.length - 1].rankValue
+                        : undefined
+                    }
+                  />
+                </TaskContainer>
+              </div>
             );
           }
         )}
