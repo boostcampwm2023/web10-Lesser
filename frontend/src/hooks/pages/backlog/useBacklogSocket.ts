@@ -78,7 +78,7 @@ const useBacklogSocket = (socket: Socket) => {
         if (content.epicId) {
           setBacklog((prevBacklog) => {
             let targetStory: StoryDTO | null = null;
-            backlog.epicList.some((epic) => {
+            prevBacklog.epicList.some((epic) => {
               const foundStory = epic.storyList.find(
                 (story) => story.id === content.id
               );
@@ -168,6 +168,56 @@ const useBacklogSocket = (socket: Socket) => {
         });
         break;
       case BacklogSocketTaskAction.UPDATE:
+        if (content.storyId) {
+          setBacklog((prevBacklog) => {
+            let targetTask: TaskDTO | null = null;
+            prevBacklog.epicList.some((epic) => {
+              epic.storyList.some((story) => {
+                const foundTask = story.taskList.find(
+                  (task) => task.id === content.id
+                );
+
+                if (foundTask) {
+                  targetTask = { ...foundTask };
+                  return true;
+                }
+
+                return false;
+              });
+
+              if (targetTask) {
+                return true;
+              }
+
+              return false;
+            });
+
+            if (!targetTask) {
+              return prevBacklog;
+            }
+
+            const newEpicList = prevBacklog.epicList.map((epic) => {
+              const newStoryList = epic.storyList.map((story) => {
+                const newTaskList = story.taskList.filter(
+                  (task) => task.id !== content.id
+                );
+
+                if (story.id === content.storyId) {
+                  newTaskList.push({
+                    ...targetTask,
+                    ...content,
+                  } as TaskDTO);
+                }
+                return { ...story, taskList: newTaskList };
+              });
+
+              return { ...epic, storyList: newStoryList };
+            });
+            return { epicList: newEpicList };
+          });
+          break;
+        }
+
         setBacklog((prevBacklog) => {
           const newEpicList = prevBacklog.epicList.map((epic) => {
             const newStoryList = epic.storyList.map((story) => {

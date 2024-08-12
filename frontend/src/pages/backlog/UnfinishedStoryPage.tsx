@@ -10,13 +10,14 @@ import useStoryEmitEvent from "../../hooks/pages/backlog/useStoryEmitEvent";
 import changeEpicListToStoryList from "../../utils/changeEpicListToStoryList";
 import getDragElementIndex from "../../utils/getDragElementIndex";
 import { BacklogSocketData } from "../../types/common/backlog";
-import { BacklogDTO } from "../../types/DTO/backlogDTO";
+import { BacklogDTO, TaskDTO } from "../../types/DTO/backlogDTO";
 import StoryDragContainer from "../../components/backlog/StoryDragContainer";
 import TaskBlock from "../../components/backlog/TaskBlock";
 import TaskDragContainer from "../../components/backlog/TaskDragContainer";
 import TaskContainer from "../../components/backlog/TaskContainer";
 import TaskHeader from "../../components/backlog/TaskHeader";
 import TaskCreateBlock from "../../components/backlog/TaskCreateBlock";
+import useTaskEmitEvent from "../../hooks/pages/backlog/useTaskEmitEvent";
 
 const UnfinishedStoryPage = () => {
   const { socket, backlog }: { socket: Socket; backlog: BacklogDTO } =
@@ -37,6 +38,20 @@ const UnfinishedStoryPage = () => {
   const storyList = useMemo(
     () =>
       changeEpicListToStoryList(backlog.epicList)
+        .filter(({ status }) => status !== "완료")
+        .map((story) => {
+          const newTaskList = story.taskList.slice();
+          newTaskList.sort((taskA, taskB) => {
+            if (taskA.rankValue < taskB.rankValue) {
+              return -1;
+            }
+            if (taskA.rankValue > taskB.rankValue) {
+              return 1;
+            }
+            return 0;
+          });
+          return { ...story, taskList: newTaskList };
+        })
         .sort((storyA, storyB) => {
           if (storyA.rankValue < storyB.rankValue) {
             return -1;
@@ -45,8 +60,7 @@ const UnfinishedStoryPage = () => {
             return 1;
           }
           return 0;
-        })
-        .filter(({ status }) => status !== "완료"),
+        }),
     [backlog.epicList]
   );
   const epicCategoryList = useMemo(
@@ -60,6 +74,7 @@ const UnfinishedStoryPage = () => {
     [backlog.epicList]
   );
   const { emitStoryUpdateEvent } = useStoryEmitEvent(socket);
+  const { emitTaskUpdateEvent } = useTaskEmitEvent(socket);
 
   const setStoryComponentRef = (index: number) => (element: HTMLDivElement) => {
     storyComponentRefList.current[index] = element;
@@ -181,6 +196,45 @@ const UnfinishedStoryPage = () => {
   };
 
   const handleTaskDragEnd = () => {
+    const { storyId, taskIndex } = taskElementIndex;
+    const taskList = storyList.find(({ id }) => id === storyId)
+      ?.taskList as TaskDTO[];
+    const targetIndex = taskList?.findIndex(({ id }) => id === draggingTaskId);
+
+    let rankValue;
+
+    if (taskIndex === targetIndex) {
+      setDraggingTaskId(undefined);
+      setTaskElementIndex({ storyId: undefined, taskIndex: undefined });
+      return;
+    }
+
+    if (taskIndex === 0 && !taskList.length) {
+      console.log("아무 것도 없을 때");
+
+      rankValue = LexoRank.middle().toString();
+    } else if (taskIndex === 0) {
+      const firstTaskRank = taskList[0].rankValue;
+      rankValue = LexoRank.parse(firstTaskRank).genPrev().toString();
+    } else if (taskIndex === taskList.length) {
+      const lastTaskRank = taskList[taskList.length - 1].rankValue;
+      rankValue = LexoRank.parse(lastTaskRank).genNext().toString();
+    } else {
+      const prevTaskRank = LexoRank.parse(
+        taskList[(taskIndex as number) - 1].rankValue
+      );
+      const nextTaskRank = LexoRank.parse(
+        taskList[taskIndex as number].rankValue
+      );
+      rankValue = prevTaskRank.between(nextTaskRank).toString();
+    }
+
+    emitTaskUpdateEvent({
+      id: draggingTaskId as number,
+      storyId,
+      rankValue,
+    });
+
     setDraggingTaskId(undefined);
     setTaskElementIndex({ storyId: undefined, taskIndex: undefined });
   };
