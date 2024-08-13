@@ -38,16 +38,16 @@ const FinishedStoryPage = () => {
             : 0;
 
           return (
-            <StoryBlock
-              {...{ id, title, point, status }}
-              epic={epic}
-              progress={progress}
-              taskExist={taskList.length > 0}
-              epicList={epicCategoryList}
-              finished={true}
-            >
+            <>
+              <StoryBlock
+                {...{ id, title, point, status }}
+                epic={epic}
+                progress={progress}
+                taskExist={taskList.length > 0}
+                epicList={epicCategoryList}
+              />
               {...taskList.map((task) => <TaskBlock {...task} />)}
-            </StoryBlock>
+            </>
           );
         })}
       </div>
