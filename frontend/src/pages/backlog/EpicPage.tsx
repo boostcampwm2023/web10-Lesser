@@ -40,19 +40,15 @@ const EpicPage = () => {
                 : 0;
 
               return (
-                <StoryBlock
-                  {...{ id, title, point, status }}
-                  epic={{ id: epicId, name, color, rankValue }}
-                  progress={progress}
-                  taskExist={taskList.length > 0}
-                  lastTaskRankValue={
-                    taskList.length
-                      ? taskList[taskList.length - 1].rankValue
-                      : undefined
-                  }
-                >
+                <>
+                  <StoryBlock
+                    {...{ id, title, point, status }}
+                    epic={{ id: epicId, name, color, rankValue }}
+                    progress={progress}
+                    taskExist={taskList.length > 0}
+                  />
                   {...taskList.map((task) => <TaskBlock {...task} />)}
-                </StoryBlock>
+                </>
               );
             })}
             {showDetail ? (
