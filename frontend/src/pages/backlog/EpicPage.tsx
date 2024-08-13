@@ -27,7 +27,7 @@ const EpicPage = () => {
       {...backlog.epicList.map(
         ({ id: epicId, name, color, rankValue, storyList }) => (
           <EpicBlock
-            storyExist={storyList.length > 1}
+            storyExist={storyList.length > 0}
             epic={{ id: epicId, name, color, rankValue }}
           >
             {...storyList.map(({ id, title, point, status, taskList }) => {
@@ -40,19 +40,15 @@ const EpicPage = () => {
                 : 0;
 
               return (
-                <StoryBlock
-                  {...{ id, title, point, status }}
-                  epic={{ id: epicId, name, color, rankValue }}
-                  progress={progress}
-                  taskExist={taskList.length > 0}
-                  lastTaskRankValue={
-                    taskList.length
-                      ? taskList[taskList.length - 1].rankValue
-                      : undefined
-                  }
-                >
+                <>
+                  <StoryBlock
+                    {...{ id, title, point, status }}
+                    epic={{ id: epicId, name, color, rankValue }}
+                    progress={progress}
+                    taskExist={taskList.length > 0}
+                  />
                   {...taskList.map((task) => <TaskBlock {...task} />)}
-                </StoryBlock>
+                </>
               );
             })}
             {showDetail ? (

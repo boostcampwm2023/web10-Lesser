@@ -1,24 +1,21 @@
+import { MouseEvent } from "react";
 import { Socket } from "socket.io-client";
 import { useOutletContext } from "react-router-dom";
-import useShowDetail from "../../hooks/pages/backlog/useShowDetail";
-import { BacklogStatusType, EpicCategoryDTO } from "../../types/DTO/backlogDTO";
+import EpicDropdown from "./EpicDropdown";
 import BacklogStatusChip from "./BacklogStatusChip";
 import CategoryChip from "./CategoryChip";
-import ChevronDown from "../../assets/icons/chevron-down.svg?react";
-import ChevronRight from "../../assets/icons/chevron-right.svg?react";
-import TaskContainer from "./TaskContainer";
-import TaskHeader from "./TaskHeader";
 import BacklogStatusDropdown from "./BacklogStatusDropdown";
-import useStoryEmitEvent from "../../hooks/pages/backlog/useStoryEmitEvent";
-import useBacklogInputChange from "../../hooks/pages/backlog/useBacklogInputChange";
-import { MouseEvent } from "react";
-import { MOUSE_KEY } from "../../constants/event";
-import useDropdownState from "../../hooks/common/dropdown/useDropdownState";
-import TrashCan from "../../assets/icons/trash-can.svg?react";
-import { useModal } from "../../hooks/common/modal/useModal";
 import ConfirmModal from "../common/ConfirmModal";
-import EpicDropdown from "./EpicDropdown";
-import TaskCreateBlock from "./TaskCreateBlock";
+import useShowDetail from "../../hooks/pages/backlog/useShowDetail";
+import useBacklogInputChange from "../../hooks/pages/backlog/useBacklogInputChange";
+import useStoryEmitEvent from "../../hooks/pages/backlog/useStoryEmitEvent";
+import useDropdownState from "../../hooks/common/dropdown/useDropdownState";
+import { useModal } from "../../hooks/common/modal/useModal";
+import ChevronRight from "../../assets/icons/chevron-right.svg?react";
+import ChevronDown from "../../assets/icons/chevron-down.svg?react";
+import TrashCan from "../../assets/icons/trash-can.svg?react";
+import { MOUSE_KEY } from "../../constants/event";
+import { BacklogStatusType, EpicCategoryDTO } from "../../types/DTO/backlogDTO";
 
 interface StoryBlockProps {
   id: number;
@@ -27,11 +24,8 @@ interface StoryBlockProps {
   point: number | null;
   progress: number;
   status: BacklogStatusType;
-  children: React.ReactNode;
   taskExist: boolean;
   epicList?: EpicCategoryDTO[];
-  finished?: boolean;
-  lastTaskRankValue?: string;
 }
 
 const StoryBlock = ({
@@ -43,9 +37,6 @@ const StoryBlock = ({
   status,
   taskExist,
   epicList,
-  finished = false,
-  lastTaskRankValue,
-  children,
 }: StoryBlockProps) => {
   const { socket }: { socket: Socket } = useOutletContext();
   const { showDetail, handleShowDetail } = useShowDetail();
@@ -279,15 +270,6 @@ const StoryBlock = ({
             <span>삭제</span>
           </button>
         </div>
-      )}
-      {showDetail && (
-        <TaskContainer>
-          <TaskHeader />
-          {children}
-          {!finished && (
-            <TaskCreateBlock storyId={id} {...{ lastTaskRankValue }} />
-          )}
-        </TaskContainer>
       )}
     </>
   );
