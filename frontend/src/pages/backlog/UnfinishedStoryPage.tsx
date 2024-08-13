@@ -294,7 +294,7 @@ const UnfinishedStoryPage = () => {
                     className={`${
                       id === taskElementIndex.storyId &&
                       taskElementIndex.taskIndex === taskList.length
-                        ? "w-[67.9rem] h-1 bg-blue-400"
+                        ? "w-[60.13rem] h-1 bg-blue-400"
                         : ""
                     } absolute`}
                   />
