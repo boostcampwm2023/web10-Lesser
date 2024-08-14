@@ -219,8 +219,6 @@ const UnfinishedStoryPage = () => {
     }
 
     if (taskIndex === 0 && !taskList.length) {
-      console.log("아무 것도 없을 때");
-
       rankValue = LexoRank.middle().toString();
     } else if (taskIndex === 0) {
       const firstTaskRank = taskList[0].rankValue;
