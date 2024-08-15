@@ -7,10 +7,28 @@ on:
     paths:
       - 'backend/**'
       - 'frontend/**'
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: test
+          MYSQL_USER: user
+          MYSQL_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -30,13 +48,31 @@ jobs:
         with:
           node-version: '20'
 
-      - name: DevServer Backend CI
+      - name: DevServer Backend CI(Unit Test)
         if: steps.changes.outputs.backend == 'true'
         run: |
           cd ./backend
           npm install
           npm run build
           NODE_ENV=CI npm run test
+          cd ..
+
+      - name: DevServer Backend CI(E2E Test)
+        if: steps.changes.outputs.backend == 'true'
+        env:
+          DATABASE_HOST: 127.0.0.1
+          DATABASE_PORT: 3306
+          DATABASE_USER: root
+          DATABASE_PASSWORD: password
+          DATABASE_NAME: test
+          JWT_SECRET: JWT_SECRET
+          GITHUB_CLIENT_ID: GITHUB_CLIENT_ID
+          GITHUB_CLIENT_SECRETS: GITHUB_CLIENT_SECRETS
+        run: |
+          cd ./backend
+          npm install
+          npm run build
+          NODE_ENV=CI npm run test:e2e
           cd ..
       
       - name: DevServer Frontend CI
