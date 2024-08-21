@@ -73,15 +73,15 @@ const UnfinishedStoryPage = () => {
       })),
     [backlog.epicList]
   );
-  const [showTaskList, setShowTaskList] = useState(
-    new Array(storyList.length).fill(false)
+  const [showTaskList, setShowTaskList] = useState<{ [key: number]: boolean }>(
+    {}
   );
   const { emitStoryUpdateEvent } = useStoryEmitEvent(socket);
   const { emitTaskUpdateEvent } = useTaskEmitEvent(socket);
 
-  const handleShowTaskList = (index: number) => {
-    const newShowTaskList = [...showTaskList];
-    newShowTaskList[index] = !newShowTaskList[index];
+  const handleShowTaskList = (id: number) => {
+    const newShowTaskList = { ...showTaskList };
+    newShowTaskList[id] = !newShowTaskList[id];
     setShowTaskList(newShowTaskList);
   };
 
@@ -277,11 +277,11 @@ const UnfinishedStoryPage = () => {
                     {...{ id, title, point, status, epic, progress }}
                     taskExist={taskList.length > 0}
                     epicList={epicCategoryList}
-                    onShowTaskList={() => handleShowTaskList(index)}
-                    showTaskList={showTaskList[index]}
+                    onShowTaskList={() => handleShowTaskList(id)}
+                    showTaskList={showTaskList[id]}
                   />
                 </StoryDragContainer>
-                {showTaskList[index] && (
+                {showTaskList[id] && (
                   <TaskContainer>
                     <TaskHeader />
                     {...taskList.map((task, taskIndex) => (

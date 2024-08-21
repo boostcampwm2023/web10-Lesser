@@ -27,50 +27,48 @@ const FinishedStoryPage = () => {
     [backlog.epicList]
   );
 
-  const [showTaskList, setShowTaskList] = useState(
-    new Array(storyList.length).fill(false)
+  const [showTaskList, setShowTaskList] = useState<{ [key: number]: boolean }>(
+    {}
   );
 
-  const handleShowTaskList = (index: number) => {
-    const newShowTaskList = [...showTaskList];
-    newShowTaskList[index] = !newShowTaskList[index];
+  const handleShowTaskList = (id: number) => {
+    const newShowTaskList = { ...showTaskList };
+    newShowTaskList[id] = !newShowTaskList[id];
     setShowTaskList(newShowTaskList);
   };
 
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="w-full border-b">
-        {...storyList.map(
-          ({ id, epic, title, point, status, taskList }, index) => {
-            const progress = taskList.length
-              ? Math.round(
-                  (taskList.filter(({ status }) => status === "완료").length /
-                    taskList.length) *
-                    100
-                )
-              : 0;
+        {...storyList.map(({ id, epic, title, point, status, taskList }) => {
+          const progress = taskList.length
+            ? Math.round(
+                (taskList.filter(({ status }) => status === "완료").length /
+                  taskList.length) *
+                  100
+              )
+            : 0;
 
-            return (
-              <>
-                <StoryBlock
-                  {...{ id, title, point, status }}
-                  epic={epic}
-                  progress={progress}
-                  taskExist={taskList.length > 0}
-                  epicList={epicCategoryList}
-                  showTaskList={showTaskList[index]}
-                  onShowTaskList={() => handleShowTaskList(index)}
-                />
-                {showTaskList[index] && (
-                  <TaskContainer>
-                    <TaskHeader />
-                    {...taskList.map((task) => <TaskBlock {...task} />)}
-                  </TaskContainer>
-                )}
-              </>
-            );
-          }
-        )}
+          return (
+            <>
+              <StoryBlock
+                {...{ id, title, point, status }}
+                epic={epic}
+                progress={progress}
+                taskExist={taskList.length > 0}
+                epicList={epicCategoryList}
+                showTaskList={showTaskList[id]}
+                onShowTaskList={() => handleShowTaskList(id)}
+              />
+              {showTaskList[id] && (
+                <TaskContainer>
+                  <TaskHeader />
+                  {...taskList.map((task) => <TaskBlock {...task} />)}
+                </TaskContainer>
+              )}
+            </>
+          );
+        })}
       </div>
     </div>
   );

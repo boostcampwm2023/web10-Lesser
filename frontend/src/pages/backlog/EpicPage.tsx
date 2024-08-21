@@ -23,15 +23,33 @@ import TaskCreateBlock from "../../components/backlog/TaskCreateBlock";
 const EpicPage = () => {
   const { socket, backlog }: { socket: Socket; backlog: BacklogDTO } =
     useOutletContext();
-  const [showTaskList, setShowTaskList] = useState(
-    backlog.epicList.map(({ storyList }) => storyList.map(() => false))
+  const [showTaskList, setShowTaskList] = useState<{ [key: number]: boolean }>(
+    {}
   );
-  const [showStory, setShowStory] = useState(
-    Array.from(new Array(backlog.epicList.length), () => ({
-      showStoryList: false,
-      showStoryForm: false,
-    }))
-  );
+  const [showStory, setShowStory] = useState<{
+    [key: number]: { showStoryList: boolean; showStoryForm: boolean };
+  }>({});
+
+  useEffect(() => {
+    setShowStory((prevShowStory) => {
+      if (!Object.keys(prevShowStory).length) {
+        const newShowStory: {
+          [key: number]: { showStoryList: boolean; showStoryForm: boolean };
+        } = {};
+        backlog.epicList.forEach(({ id }) => {
+          newShowStory[id] = {
+            showStoryList: false,
+            showStoryForm: false,
+          };
+        });
+
+        return newShowStory;
+      }
+
+      return prevShowStory;
+    });
+  }, [backlog]);
+
   const epicList = useMemo(
     () =>
       backlog.epicList
@@ -82,23 +100,22 @@ const EpicPage = () => {
     [backlog.epicList]
   );
 
-  const handleShowTaskList = (epicIndex: number, storyIndex: number) => {
-    const newShowTaskList = showTaskList.map((innerArray1) => [...innerArray1]);
-    newShowTaskList[epicIndex][storyIndex] =
-      !newShowTaskList[epicIndex][storyIndex];
+  const handleShowTaskList = (storyId: number) => {
+    const newShowTaskList = { ...showTaskList };
+    newShowTaskList[storyId] = !newShowTaskList[storyId];
 
     setShowTaskList(newShowTaskList);
   };
 
-  const handleShowStoryList = (epicIndex: number) => {
-    const newShowStory = [...showStory];
-    const currentShowStory = newShowStory[epicIndex];
+  const handleShowStoryList = (epicId: number) => {
+    const newShowStory = { ...showStory };
+    const currentShowStory = newShowStory[epicId];
 
-    if (currentShowStory.showStoryList) {
-      newShowStory[epicIndex] = { showStoryList: false, showStoryForm: false };
+    if (currentShowStory?.showStoryList) {
+      newShowStory[epicId] = { showStoryList: false, showStoryForm: false };
     } else {
-      newShowStory[epicIndex] = {
-        ...newShowStory[epicIndex],
+      newShowStory[epicId] = {
+        ...currentShowStory,
         showStoryList: true,
       };
     }
@@ -106,11 +123,12 @@ const EpicPage = () => {
     setShowStory(newShowStory);
   };
 
-  const handleShowStoryForm = (epicIndex: number) => {
-    const newShowStory = [...showStory];
-    newShowStory[epicIndex] = {
-      ...newShowStory[epicIndex],
-      showStoryForm: !newShowStory[epicIndex].showStoryForm,
+  const handleShowStoryForm = (epicId: number) => {
+    const newShowStory = { ...showStory };
+
+    newShowStory[epicId] = {
+      ...newShowStory[epicId],
+      showStoryForm: !newShowStory[epicId]?.showStoryForm,
     };
 
     setShowStory(newShowStory);
@@ -156,7 +174,13 @@ const EpicPage = () => {
   const setTaskComponentRef =
     (epicIndex: number, storyIndex: number, taskIndex: number) =>
     (element: HTMLDivElement) => {
-      taskComponentRefList.current[epicIndex][storyIndex][taskIndex] = element;
+      if (
+        taskComponentRefList.current[epicIndex] &&
+        taskComponentRefList.current[epicIndex][storyIndex]
+      ) {
+        taskComponentRefList.current[epicIndex][storyIndex][taskIndex] =
+          element;
+      }
     };
 
   const handleEpicDragOver = (event: DragEvent) => {
@@ -183,7 +207,7 @@ const EpicPage = () => {
   };
 
   const handleEpicDragEnd = (event: DragEvent) => {
-    event.stopPropagation();
+    event.preventDefault();
 
     if (draggingTaskId || draggingStoryId) {
       return;
@@ -436,11 +460,11 @@ const EpicPage = () => {
                 <EpicBlock
                   storyExist={storyList.length > 0}
                   epic={{ id: epicId, name, color, rankValue }}
-                  showStoryList={showStory[epicIndex]?.showStoryList}
-                  onShowStoryList={() => handleShowStoryList(epicIndex)}
+                  showStoryList={showStory[epicId]?.showStoryList}
+                  onShowStoryList={() => handleShowStoryList(epicId)}
                 />
               </EpicDragContainer>
-              {showStory[epicIndex]?.showStoryList && (
+              {showStory[epicId]?.showStoryList && (
                 <div
                   className="w-[65rem] ml-auto"
                   onDragOver={(event) => handleStoryDragOver(event, epicIndex)}
@@ -482,13 +506,11 @@ const EpicPage = () => {
                               epic={{ id: epicId, name, color, rankValue }}
                               progress={progress}
                               taskExist={taskList.length > 0}
-                              showTaskList={showTaskList[epicIndex][storyIndex]}
-                              onShowTaskList={() =>
-                                handleShowTaskList(epicIndex, storyIndex)
-                              }
+                              showTaskList={showTaskList[storyId]}
+                              onShowTaskList={() => handleShowTaskList(storyId)}
                             />
                           </EpicPageStoryDragContainer>
-                          {showTaskList[epicIndex][storyIndex] && (
+                          {showTaskList[storyId] && (
                             <TaskContainer>
                               <TaskHeader />
                               {...taskList.map((task, taskIndex) => (
@@ -543,11 +565,11 @@ const EpicPage = () => {
                         : ""
                     } absolute`}
                   />
-                  {showStory[epicIndex].showStoryForm ? (
+                  {showStory[epicId].showStoryForm ? (
                     <StoryCreateForm
                       epicList={epicCategoryList}
                       epic={{ id: epicId, name, color, rankValue }}
-                      onCloseClick={() => handleShowStoryForm(epicIndex)}
+                      onCloseClick={() => handleShowStoryForm(epicId)}
                       lastStoryRankValue={
                         storyList.length
                           ? storyList[storyList.length - 1].rankValue
@@ -556,7 +578,7 @@ const EpicPage = () => {
                     />
                   ) : (
                     <StoryCreateButton
-                      onClick={() => handleShowStoryForm(epicIndex)}
+                      onClick={() => handleShowStoryForm(epicId)}
                     />
                   )}
                 </div>
