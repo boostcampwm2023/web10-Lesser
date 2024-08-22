@@ -67,6 +67,7 @@ const EpicPage = () => {
             });
             return { ...story, taskList: newTaskList };
           });
+          console.log(newStoryList);
           newStoryList.sort((storyA, storyB) => {
             if (storyA.rankValue < storyB.rankValue) {
               return -1;
@@ -302,19 +303,20 @@ const EpicPage = () => {
     if (storyIndex === 0 && !storyList.length) {
       rankValue = LexoRank.middle().toString();
     } else if (storyIndex === 0) {
-      const firstTaskRank = storyList[0].rankValue;
-      rankValue = LexoRank.parse(firstTaskRank).genPrev().toString();
+      const firstStoryRank = storyList[0].rankValue;
+      rankValue = LexoRank.parse(firstStoryRank).genPrev().toString();
     } else if (storyIndex === storyList.length) {
-      const lastTaskRank = storyList[storyList.length - 1].rankValue;
-      rankValue = LexoRank.parse(lastTaskRank).genNext().toString();
+      const lastStoryRank = storyList[storyList.length - 1].rankValue;
+      rankValue = LexoRank.parse(lastStoryRank).genNext().toString();
     } else {
-      const prevTaskRank = LexoRank.parse(
+      const prevStoryRank = LexoRank.parse(
         storyList[(storyIndex as number) - 1].rankValue
       );
-      const nextTaskRank = LexoRank.parse(
+      const nextStoryRank = LexoRank.parse(
         storyList[storyIndex as number].rankValue
       );
-      rankValue = prevTaskRank.between(nextTaskRank).toString();
+      rankValue = prevStoryRank.between(nextStoryRank).toString();
+      console.log("중간", rankValue);
     }
 
     emitStoryUpdateEvent({
