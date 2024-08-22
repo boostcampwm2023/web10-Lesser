@@ -184,16 +184,18 @@ const EpicPage = () => {
     };
 
   const handleEpicDragOver = (event: DragEvent) => {
+    event.preventDefault();
+
     if (draggingStoryId || draggingTaskId) {
       return;
     }
-    event.preventDefault();
 
     const index = getDragElementIndex(
       epicComponentRefList.current,
       epicList.findIndex(({ id }) => id === draggingEpicId),
       event.clientY
     );
+    console.log(epicComponentRefList.current, index);
 
     setEpicElementIndex(index);
   };
@@ -439,17 +441,14 @@ const EpicPage = () => {
   };
 
   return (
-    <div className="relative flex flex-col gap-4 pb-10">
+    <div className="gap-4 pb-10" onDragOver={handleEpicDragOver}>
       {...epicList.map(
         ({ id: epicId, name, color, rankValue, storyList }, epicIndex) => {
           storyComponentRefList.current[epicIndex] = [];
           taskComponentRefList.current[epicIndex] = [];
 
           return (
-            <div
-              className="py-2 border-t border-b"
-              onDragOver={handleEpicDragOver}
-            >
+            <div className="py-2 border-t border-b">
               <EpicDragContainer
                 {...{ epicIndex }}
                 onDragStart={() => handleEpicDragStart(epicId)}
