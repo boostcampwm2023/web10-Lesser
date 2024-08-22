@@ -67,7 +67,6 @@ const EpicPage = () => {
             });
             return { ...story, taskList: newTaskList };
           });
-          console.log(newStoryList);
           newStoryList.sort((storyA, storyB) => {
             if (storyA.rankValue < storyB.rankValue) {
               return -1;
@@ -316,7 +315,6 @@ const EpicPage = () => {
         storyList[storyIndex as number].rankValue
       );
       rankValue = prevStoryRank.between(nextStoryRank).toString();
-      console.log("중간", rankValue);
     }
 
     emitStoryUpdateEvent({
