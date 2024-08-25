@@ -6,7 +6,6 @@ import BacklogStatusChip from "./BacklogStatusChip";
 import CategoryChip from "./CategoryChip";
 import BacklogStatusDropdown from "./BacklogStatusDropdown";
 import ConfirmModal from "../common/ConfirmModal";
-import useShowDetail from "../../hooks/pages/backlog/useShowDetail";
 import useBacklogInputChange from "../../hooks/pages/backlog/useBacklogInputChange";
 import useStoryEmitEvent from "../../hooks/pages/backlog/useStoryEmitEvent";
 import useDropdownState from "../../hooks/common/dropdown/useDropdownState";
@@ -26,6 +25,8 @@ interface StoryBlockProps {
   status: BacklogStatusType;
   taskExist: boolean;
   epicList?: EpicCategoryDTO[];
+  showTaskList: boolean;
+  onShowTaskList: () => void;
 }
 
 const StoryBlock = ({
@@ -37,9 +38,10 @@ const StoryBlock = ({
   status,
   taskExist,
   epicList,
+  showTaskList,
+  onShowTaskList,
 }: StoryBlockProps) => {
   const { socket }: { socket: Socket } = useOutletContext();
-  const { showDetail, handleShowDetail } = useShowDetail();
   const {
     updating: titleUpdating,
     handleUpdating: handleTitleUpdatingOpen,
@@ -191,10 +193,10 @@ const StoryBlock = ({
             type="button"
             onClick={(event) => {
               event.stopPropagation();
-              handleShowDetail(!showDetail);
+              onShowTaskList();
             }}
           >
-            {showDetail ? (
+            {showTaskList ? (
               <ChevronDown
                 width={16}
                 height={16}

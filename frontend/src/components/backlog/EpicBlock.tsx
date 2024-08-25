@@ -1,4 +1,3 @@
-import useShowDetail from "../../hooks/pages/backlog/useShowDetail";
 import ChevronDown from "../../assets/icons/chevron-down.svg?react";
 import ChevronRight from "../../assets/icons/chevron-right.svg?react";
 import CategoryChip from "./CategoryChip";
@@ -9,11 +8,16 @@ import EpicDropdown from "./EpicDropdown";
 interface EpicBlockProps {
   storyExist: boolean;
   epic: EpicCategoryDTO;
-  children: React.ReactNode;
+  showStoryList: boolean;
+  onShowStoryList: () => void;
 }
 
-const EpicBlock = ({ storyExist, epic, children }: EpicBlockProps) => {
-  const { showDetail, handleShowDetail } = useShowDetail();
+const EpicBlock = ({
+  storyExist,
+  epic,
+  showStoryList,
+  onShowStoryList,
+}: EpicBlockProps) => {
   const {
     open: epicUpdating,
     handleOpen: handleEpicUpdateOpen,
@@ -28,16 +32,16 @@ const EpicBlock = ({ storyExist, epic, children }: EpicBlockProps) => {
 
   return (
     <>
-      <div className="flex items-center justify-start py-1 border-t border-b text-s">
+      <div className="flex items-center justify-start pb-1 text-s">
         <button
           className="flex items-center justify-center w-5 h-5 rounded-md hover:bg-dark-gray hover:bg-opacity-20"
           type="button"
           onClick={(event) => {
             event.stopPropagation();
-            handleShowDetail(!showDetail);
+            onShowStoryList();
           }}
         >
-          {showDetail ? (
+          {showStoryList ? (
             <ChevronDown
               width={16}
               height={16}
@@ -66,7 +70,6 @@ const EpicBlock = ({ storyExist, epic, children }: EpicBlockProps) => {
           )}
         </div>
       </div>
-      {showDetail && <div className="w-[65rem] ml-auto">{children}</div>}
     </>
   );
 };

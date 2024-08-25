@@ -73,8 +73,17 @@ const UnfinishedStoryPage = () => {
       })),
     [backlog.epicList]
   );
+  const [showTaskList, setShowTaskList] = useState<{ [key: number]: boolean }>(
+    {}
+  );
   const { emitStoryUpdateEvent } = useStoryEmitEvent(socket);
   const { emitTaskUpdateEvent } = useTaskEmitEvent(socket);
+
+  const handleShowTaskList = (id: number) => {
+    const newShowTaskList = { ...showTaskList };
+    newShowTaskList[id] = !newShowTaskList[id];
+    setShowTaskList(newShowTaskList);
+  };
 
   const setStoryComponentRef = (index: number) => (element: HTMLDivElement) => {
     storyComponentRefList.current[index] = element;
@@ -210,8 +219,6 @@ const UnfinishedStoryPage = () => {
     }
 
     if (taskIndex === 0 && !taskList.length) {
-      console.log("아무 것도 없을 때");
-
       rankValue = LexoRank.middle().toString();
     } else if (taskIndex === 0) {
       const firstTaskRank = taskList[0].rankValue;
@@ -270,43 +277,47 @@ const UnfinishedStoryPage = () => {
                     {...{ id, title, point, status, epic, progress }}
                     taskExist={taskList.length > 0}
                     epicList={epicCategoryList}
+                    onShowTaskList={() => handleShowTaskList(id)}
+                    showTaskList={showTaskList[id]}
                   />
                 </StoryDragContainer>
-                <TaskContainer>
-                  <TaskHeader />
-                  {...taskList.map((task, taskIndex) => (
-                    <TaskDragContainer
-                      storyIndex={index}
-                      taskIndex={taskIndex}
-                      setRef={setTaskComponentRef}
-                      onDragEnd={handleTaskDragEnd}
-                      onDragStart={() => handleTaskDragStart(task.id)}
-                      currentlyDraggedOver={
+                {showTaskList[id] && (
+                  <TaskContainer>
+                    <TaskHeader />
+                    {...taskList.map((task, taskIndex) => (
+                      <TaskDragContainer
+                        storyIndex={index}
+                        taskIndex={taskIndex}
+                        setRef={setTaskComponentRef}
+                        onDragEnd={handleTaskDragEnd}
+                        onDragStart={() => handleTaskDragStart(task.id)}
+                        currentlyDraggedOver={
+                          id === taskElementIndex.storyId &&
+                          taskIndex === taskElementIndex.taskIndex
+                        }
+                      >
+                        <TaskBlock key={task.id} {...task} />
+                      </TaskDragContainer>
+                    ))}
+                    <div
+                      ref={setTaskComponentRef(index, taskList.length)}
+                      className={`${
                         id === taskElementIndex.storyId &&
-                        taskIndex === taskElementIndex.taskIndex
+                        taskElementIndex.taskIndex === taskList.length
+                          ? "w-[60.13rem] h-1 bg-blue-400"
+                          : ""
+                      } absolute`}
+                    />
+                    <TaskCreateBlock
+                      storyId={id}
+                      lastTaskRankValue={
+                        taskList.length
+                          ? taskList[taskList.length - 1].rankValue
+                          : undefined
                       }
-                    >
-                      <TaskBlock key={task.id} {...task} />
-                    </TaskDragContainer>
-                  ))}
-                  <div
-                    ref={setTaskComponentRef(index, taskList.length)}
-                    className={`${
-                      id === taskElementIndex.storyId &&
-                      taskElementIndex.taskIndex === taskList.length
-                        ? "w-[60.13rem] h-1 bg-blue-400"
-                        : ""
-                    } absolute`}
-                  />
-                  <TaskCreateBlock
-                    storyId={id}
-                    lastTaskRankValue={
-                      taskList.length
-                        ? taskList[taskList.length - 1].rankValue
-                        : undefined
-                    }
-                  />
-                </TaskContainer>
+                    />
+                  </TaskContainer>
+                )}
               </div>
             );
           }

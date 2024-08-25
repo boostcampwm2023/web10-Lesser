@@ -96,7 +96,7 @@ const useBacklogSocket = (socket: Socket) => {
             const newEpicList = prevBacklog.epicList.map((epic) => {
               const newStoryList = epic.storyList.filter((story) => {
                 if (story.id === content.id) {
-                  targetStory = { ...story, epicId: content.epicId };
+                  targetStory = { ...story, ...content };
                 }
                 return story.id !== content.id;
               });

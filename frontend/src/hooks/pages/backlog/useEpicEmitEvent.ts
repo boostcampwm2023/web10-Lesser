@@ -18,6 +18,7 @@ const useEpicEmitEvent = (socket: Socket) => {
     id: number;
     name?: string;
     color?: BacklogCategoryColor;
+    rankValue?: string;
   }) => {
     socket.emit("epic", { action: "update", content });
   };
