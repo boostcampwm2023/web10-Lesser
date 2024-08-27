@@ -65,11 +65,18 @@ const ProjectList = () => {
         </div>
       </div>
       <div className="flex flex-wrap gap-10 w-[720px] max-h-[37.25rem] overflow-y-auto scrollbar-hide">
-        {projectList.map((project: ProjectDTO) => (
-          <Link key={project.id} to={`${ROUTER_URL.PROJECTS}/${project.id}`}>
-            <ProjectCard project={project} />
-          </Link>
-        ))}
+        {!projectList.length ? (
+          projectList.map((project: ProjectDTO) => (
+            <Link key={project.id} to={`${ROUTER_URL.PROJECTS}/${project.id}`}>
+              <ProjectCard project={project} />
+            </Link>
+          ))
+        ) : (
+          <div className="flex flex-col items-center w-full gap-1 py-6 text-xs bg-gray-100 rounded-md">
+            <p>진행 중인 프로젝트가 없습니다.</p>
+            <p>프로젝트를 추가해주세요.</p>
+          </div>
+        )}
       </div>
     </section>
   );
