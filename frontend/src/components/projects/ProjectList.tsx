@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import useDropdown from "../../hooks/common/dropdown/useDropdown";
 import { ProjectCard } from ".";
 import { PROJECT_SORT_OPTION } from "../../constants/projects";
-import plus from "../../assets/icons/plus.svg";
+import Plus from "../../assets/icons/plus.svg?react";
 import { ProjectDTO } from "../../types/DTO/projectDTO";
 import projectSortByOption from "../../utils/projectSortByOption";
 import { useGetProjects } from "../../hooks/queries/project";
@@ -59,7 +59,7 @@ const ProjectList = () => {
             className="flex items-center justify-center w-[10.45rem] h-[2.5rem] py-2 pl-3 pr-9 text-white text-xs bg-middle-green gap-3 rounded-[0.375rem] shadow-box"
             onClick={handleCreateButtonClick}
           >
-            <img src={plus} alt="더하기" className="w-7" />
+            <Plus width={32} height={32} stroke="white" />
             추가하기
           </button>
         </div>
