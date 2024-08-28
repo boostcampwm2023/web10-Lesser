@@ -8,7 +8,6 @@ import {
   LoginPage,
   SignupPage,
   AuthPage,
-  TempHomepage,
   ProjectsPage,
   ProjectCreatePage,
 } from "./pages";
@@ -48,7 +47,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <TempHomepage />,
+        element: <LoginPage />,
       },
       ...createAuthCheckRouter("PUBLIC", [
         {

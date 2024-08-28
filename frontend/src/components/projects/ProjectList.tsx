@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import useDropdown from "../../hooks/common/dropdown/useDropdown";
 import { ProjectCard } from ".";
 import { PROJECT_SORT_OPTION } from "../../constants/projects";
-import plus from "../../assets/icons/plus.svg";
+import Plus from "../../assets/icons/plus.svg?react";
 import { ProjectDTO } from "../../types/DTO/projectDTO";
 import projectSortByOption from "../../utils/projectSortByOption";
 import { useGetProjects } from "../../hooks/queries/project";
@@ -59,17 +59,24 @@ const ProjectList = () => {
             className="flex items-center justify-center w-[10.45rem] h-[2.5rem] py-2 pl-3 pr-9 text-white text-xs bg-middle-green gap-3 rounded-[0.375rem] shadow-box"
             onClick={handleCreateButtonClick}
           >
-            <img src={plus} alt="더하기" className="w-7" />
+            <Plus width={32} height={32} stroke="white" />
             추가하기
           </button>
         </div>
       </div>
       <div className="flex flex-wrap gap-10 w-[720px] max-h-[37.25rem] overflow-y-auto scrollbar-hide">
-        {projectList.map((project: ProjectDTO) => (
-          <Link key={project.id} to={`${ROUTER_URL.PROJECTS}/${project.id}`}>
-            <ProjectCard project={project} />
-          </Link>
-        ))}
+        {projectList.length ? (
+          projectList.map((project: ProjectDTO) => (
+            <Link key={project.id} to={`${ROUTER_URL.PROJECTS}/${project.id}`}>
+              <ProjectCard project={project} />
+            </Link>
+          ))
+        ) : (
+          <div className="flex flex-col items-center w-full gap-1 py-6 text-xs bg-gray-100 rounded-md">
+            <p>진행 중인 프로젝트가 없습니다.</p>
+            <p>프로젝트를 추가해주세요.</p>
+          </div>
+        )}
       </div>
     </section>
   );

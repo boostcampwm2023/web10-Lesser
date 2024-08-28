@@ -1,6 +1,6 @@
 import { useModal } from "../../hooks/common/modal/useModal";
 import TechStackModal from "./TechStackModal";
-import plus from "../../assets/icons/plus.svg";
+import Plus from "../../assets/icons/plus.svg?react";
 import NextStepButton from "../common/NextStepButton";
 import CategoryButton from "../common/CategoryButton";
 import { WheelEvent } from "react";
@@ -48,7 +48,7 @@ const TechStackInput = ({
             open(<TechStackModal {...{ close, onAddTechStack }} />)
           }
         >
-          <img src={plus} alt="plus" />
+          <Plus width={40} height={40} stroke="white" />
           추가하기
         </button>
         <p className="text-3xl font-semibold text-dark-gray">입니다</p>
