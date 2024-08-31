@@ -14,6 +14,8 @@ import { MOUSE_KEY } from "../../constants/event";
 import ConfirmModal from "../common/ConfirmModal";
 import TrashCan from "../../assets/icons/trash-can.svg?react";
 import isIntegerOrOneDecimalPlace from "../../utils/isIntegerOrOneDecimalPlace";
+import TextInputColumn from "./common/TextInputColumn";
+import NumberInputColumn from "./common/NumberInputColumn";
 
 const TaskBlock = ({
   id,
@@ -203,17 +205,12 @@ const TaskBlock = ({
           ref={titleRef}
           onClick={() => handleTitleUpdating(true)}
         >
-          {titleUpdating ? (
-            <input
-              className="w-full min-w-[1rem] focus:outline-none rounded-sm bg-gray-200 hover:cursor-pointer"
-              ref={titleInputRef}
-              defaultValue={title}
-              type="text"
-              onKeyUp={handleTitleKeyup}
-            />
-          ) : (
-            <span title={title}>{title}</span>
-          )}
+          <TextInputColumn
+            inputRef={titleInputRef}
+            value={title}
+            onKeyUp={handleTitleKeyup}
+            updating={titleUpdating}
+          />
         </div>
         <div
           className="w-12 min-h-[1.5rem] hover:cursor-pointer relative"
@@ -235,34 +232,24 @@ const TaskBlock = ({
           ref={expectedTimeRef}
           onClick={() => handleExpectedTimeUpdating(true)}
         >
-          {expectedTimeUpdating ? (
-            <input
-              className="w-full min-w-[1rem] no-arrows text-right focus:outline-none rounded-sm bg-gray-200 hover:cursor-pointer"
-              ref={expectedTimeInputRef}
-              defaultValue={expectedTime === null ? "" : expectedTime}
-              type="number"
-              onKeyUp={handleExpectedTimeKeyup}
-            />
-          ) : (
-            <p className="max-w-full text-right">{expectedTime}</p>
-          )}
+          <NumberInputColumn
+            updating={expectedTimeUpdating}
+            inputRef={expectedTimeInputRef}
+            value={expectedTime}
+            onKeyUp={handleExpectedTimeKeyup}
+          />
         </div>
         <div
           className="w-16 min-h-[1.5rem] hover:cursor-pointer"
           ref={actualTimeRef}
           onClick={() => handleActualTimeUpdating(true)}
         >
-          {actualTimeUpdating ? (
-            <input
-              className="w-full min-w-[1rem] no-arrows text-right focus:outline-none rounded-sm bg-gray-200 hover:cursor-pointer"
-              ref={actualTimeInputRef}
-              defaultValue={actualTime === null ? "" : actualTime}
-              type="number"
-              onKeyUp={handleActualTimeKeyup}
-            />
-          ) : (
-            <p className="min-w-full text-right">{actualTime}</p>
-          )}
+          <NumberInputColumn
+            updating={actualTimeUpdating}
+            inputRef={actualTimeInputRef}
+            value={actualTime}
+            onKeyUp={handleActualTimeKeyup}
+          />
         </div>
         <div
           className="w-[6.25rem] hover:cursor-pointer relative"

@@ -15,6 +15,8 @@ import ChevronDown from "../../assets/icons/chevron-down.svg?react";
 import TrashCan from "../../assets/icons/trash-can.svg?react";
 import { MOUSE_KEY } from "../../constants/event";
 import { BacklogStatusType, EpicCategoryDTO } from "../../types/DTO/backlogDTO";
+import TextInputColumn from "./common/TextInputColumn";
+import NumberInputColumn from "./common/NumberInputColumn";
 
 interface StoryBlockProps {
   id: number;
@@ -210,40 +212,24 @@ const StoryBlock = ({
               />
             )}
           </button>
-          {titleUpdating ? (
-            <input
-              className={`w-full rounded-sm focus:outline-none bg-gray-200 hover:cursor-pointer`}
-              type="text"
-              ref={titleInputRef}
-              defaultValue={title}
-              onKeyUp={handleTitleEnterKeyup}
-            />
-          ) : (
-            <span
-              title={title}
-              className="w-full overflow-hidden hover:cursor-pointer text-ellipsis whitespace-nowrap"
-            >
-              {title}
-            </span>
-          )}
+          <TextInputColumn
+            updating={titleUpdating}
+            inputRef={titleInputRef}
+            value={title}
+            onKeyUp={handleTitleEnterKeyup}
+          />
         </div>
         <div
           className="flex items-center gap-1 w-[4rem] mr-[2.76rem] text-right hover:cursor-pointer"
           onClick={() => handlePointUpdatingOpen(true)}
           ref={pointRef}
         >
-          {pointUpdating ? (
-            <input
-              className={`min-w-[1.75rem] no-arrows text-right focus:outline-none rounded-sm bg-gray-200 hover:cursor-pointer`}
-              type="number"
-              ref={pointInputRef}
-              defaultValue={point !== 0 && !point ? 0 : point}
-              onKeyUp={handlePointEnterKeyup}
-            />
-          ) : (
-            <span className="min-w-[1.75rem] text-right">{point}</span>
-          )}
-
+          <NumberInputColumn
+            updating={pointUpdating}
+            inputRef={pointInputRef}
+            value={point}
+            onKeyUp={handlePointEnterKeyup}
+          />
           <span> POINT</span>
         </div>
         <div className="w-[4rem] mr-[2.76rem] text-right">
