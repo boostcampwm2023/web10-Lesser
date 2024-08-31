@@ -336,11 +336,34 @@ const EpicPage = () => {
       content,
     }: BacklogSocketData) => {
       if (
+        domain === "epic" &&
+        action === "delete" &&
+        content.id === draggingEpicId
+      ) {
+        setEpicElementIndex(undefined);
+        return;
+      }
+
+      if (
         domain === "story" &&
         action === "delete" &&
         content.id === draggingStoryId
       ) {
         setStoryElementIndex({ epicId: undefined, storyIndex: undefined });
+
+        return;
+      }
+
+      if (
+        domain === "task" &&
+        action === "delete" &&
+        content.id === draggingTaskId
+      ) {
+        setTaskElementIndex({
+          epicId: undefined,
+          storyId: undefined,
+          taskIndex: undefined,
+        });
       }
     };
 

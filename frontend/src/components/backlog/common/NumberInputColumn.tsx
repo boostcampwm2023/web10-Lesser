@@ -23,7 +23,7 @@ const NumberInputColumn = ({
     );
   }
 
-  return <span className="w-full text-right">{value}</span>;
+  return <span className="w-full text-right truncate">{value}</span>;
 };
 
 export default NumberInputColumn;
