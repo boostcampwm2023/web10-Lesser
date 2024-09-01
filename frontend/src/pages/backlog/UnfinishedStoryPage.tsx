@@ -168,6 +168,15 @@ const UnfinishedStoryPage = () => {
         content.id === draggingStoryId
       ) {
         setStoryElementIndex(undefined);
+        return;
+      }
+
+      if (
+        domain === "task" &&
+        action === "delete" &&
+        content.id === draggingTaskId
+      ) {
+        setTaskElementIndex({ storyId: undefined, taskIndex: undefined });
       }
     };
 
