@@ -163,7 +163,13 @@ const EpicPage = () => {
 
   const setEpicComponentRef =
     (epicIndex: number) => (element: HTMLDivElement) => {
-      epicComponentRefList.current[epicIndex] = element;
+      if (element) {
+        epicComponentRefList.current[epicIndex] = element;
+      } else {
+        epicComponentRefList.current = epicComponentRefList.current.filter(
+          (ref) => ref !== null
+        );
+      }
     };
 
   const setStoryComponentRef =

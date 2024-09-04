@@ -86,7 +86,13 @@ const UnfinishedStoryPage = () => {
   };
 
   const setStoryComponentRef = (index: number) => (element: HTMLDivElement) => {
-    storyComponentRefList.current[index] = element;
+    if (element) {
+      storyComponentRefList.current[index] = element;
+    } else {
+      storyComponentRefList.current = storyComponentRefList.current.filter(
+        (ref) => ref !== null
+      );
+    }
   };
 
   const setTaskComponentRef =
