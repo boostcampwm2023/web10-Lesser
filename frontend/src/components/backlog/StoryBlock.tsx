@@ -253,7 +253,7 @@ const StoryBlock = ({
         </div>
       </div>
       {deleteMenuOpen && (
-        <div className="absolute px-2 py-1 bg-white rounded-md shadow-box">
+        <div className="absolute z-10 px-2 py-1 bg-white rounded-md shadow-box">
           <button
             className="flex items-center w-full gap-3"
             type="button"
