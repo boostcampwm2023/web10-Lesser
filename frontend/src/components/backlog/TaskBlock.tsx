@@ -228,7 +228,7 @@ const TaskBlock = ({
           )}
         </div>
         <div
-          className="w-16 min-h-[1.5rem] hover:cursor-pointer"
+          className="w-16 min-h-[1.5rem] hover:cursor-pointer text-right"
           ref={expectedTimeRef}
           onClick={() => handleExpectedTimeUpdating(true)}
         >
@@ -240,7 +240,7 @@ const TaskBlock = ({
           />
         </div>
         <div
-          className="w-16 min-h-[1.5rem] hover:cursor-pointer"
+          className="w-16 min-h-[1.5rem] hover:cursor-pointer text-right"
           ref={actualTimeRef}
           onClick={() => handleActualTimeUpdating(true)}
         >

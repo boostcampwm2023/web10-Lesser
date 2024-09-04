@@ -225,7 +225,7 @@ const StoryBlock = ({
           />
         </div>
         <div
-          className="flex items-center gap-1 w-[4rem] mr-[2.76rem] text-right hover:cursor-pointer"
+          className="flex items-center gap-1 w-[4.5rem] mr-[2.76rem] text-right hover:cursor-pointer"
           onClick={() => handlePointUpdatingOpen(true)}
           ref={pointRef}
         >
