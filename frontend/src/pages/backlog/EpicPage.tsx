@@ -589,26 +589,28 @@ const EpicPage = () => {
                     className={`${
                       epicId === storyElementIndex.epicId &&
                       storyElementIndex.storyIndex === storyList.length
-                        ? "w-[60.13rem] h-1 bg-blue-400"
+                        ? "w-[60.13rem] border-t-4 border-t-blue-400"
                         : ""
-                    } absolute`}
+                    } h-2`}
                   />
-                  {showStory[epicId].showStoryForm ? (
-                    <StoryCreateForm
-                      epicList={epicCategoryList}
-                      epic={{ id: epicId, name, color, rankValue }}
-                      onCloseClick={() => handleShowStoryForm(epicId)}
-                      lastStoryRankValue={
-                        storyList.length
-                          ? storyList[storyList.length - 1].rankValue
-                          : undefined
-                      }
-                    />
-                  ) : (
-                    <StoryCreateButton
-                      onClick={() => handleShowStoryForm(epicId)}
-                    />
-                  )}
+                  <div className="w-full mt-2">
+                    {showStory[epicId].showStoryForm ? (
+                      <StoryCreateForm
+                        epicList={epicCategoryList}
+                        epic={{ id: epicId, name, color, rankValue }}
+                        onCloseClick={() => handleShowStoryForm(epicId)}
+                        lastStoryRankValue={
+                          storyList.length
+                            ? storyList[storyList.length - 1].rankValue
+                            : undefined
+                        }
+                      />
+                    ) : (
+                      <StoryCreateButton
+                        onClick={() => handleShowStoryForm(epicId)}
+                      />
+                    )}
+                  </div>
                 </div>
               )}
             </div>
