@@ -18,12 +18,14 @@ interface EpicDropdownProps {
   selectedEpic?: EpicCategoryDTO;
   epicList: EpicCategoryDTO[];
   onEpicChange: (epicId: number | undefined) => void;
+  lastRankValue?: string;
 }
 
 const EpicDropdown = ({
   selectedEpic,
   epicList,
   onEpicChange,
+  lastRankValue,
 }: EpicDropdownProps) => {
   const { socket }: { socket: Socket } = useOutletContext();
   const { emitEpicCreateEvent } = useEpicEmitEvent(socket);
@@ -50,11 +52,10 @@ const EpicDropdown = ({
         return;
       }
 
-      const rankValue = epicList.length
-        ? LexoRank.parse(epicList[epicList.length - 1].rankValue)
-            .genNext()
-            .toString()
-        : LexoRank.middle().toString();
+      const rankValue =
+        lastRankValue !== undefined
+          ? LexoRank.parse(lastRankValue).genNext().toString()
+          : LexoRank.middle().toString();
 
       emitEpicCreateEvent({ name: value, color: epicColor, rankValue });
       setValue("");

@@ -483,6 +483,7 @@ const EpicPage = () => {
                   epic={{ id: epicId, name, color, rankValue }}
                   showStoryList={showStory[epicId]?.showStoryList}
                   onShowStoryList={() => handleShowStoryList(epicId)}
+                  lastRankValue={epicList[epicList.length - 1].rankValue}
                 />
               </EpicDragContainer>
               {showStory[epicId]?.showStoryList && (

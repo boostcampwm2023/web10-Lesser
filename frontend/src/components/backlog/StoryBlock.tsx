@@ -180,6 +180,11 @@ const StoryBlock = ({
                 selectedEpic={epic}
                 epicList={epicList}
                 onEpicChange={updateEpic}
+                lastRankValue={
+                  epicList.length
+                    ? epicList[epicList.length - 1].rankValue
+                    : undefined
+                }
               />
             )}
           </div>
