@@ -195,7 +195,6 @@ const EpicPage = () => {
       epicList.findIndex(({ id }) => id === draggingEpicId),
       event.clientY
     );
-    console.log(epicComponentRefList.current, index);
 
     setEpicElementIndex(index);
   };
