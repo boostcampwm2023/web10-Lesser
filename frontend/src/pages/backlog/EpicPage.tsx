@@ -1,6 +1,12 @@
 import { DragEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { BacklogDTO, StoryDTO, TaskDTO } from "../../types/DTO/backlogDTO";
+import { Socket } from "socket.io-client";
+import { LexoRank } from "lexorank";
+import useStoryEmitEvent from "../../hooks/pages/backlog/useStoryEmitEvent";
+import useTaskEmitEvent from "../../hooks/pages/backlog/useTaskEmitEvent";
+import getDragElementIndex from "../../utils/getDragElementIndex";
+import useEpicEmitEvent from "../../hooks/pages/backlog/useEpicEmitEvent";
+import useShowDetail from "../../hooks/pages/backlog/useShowDetail";
 import StoryCreateButton from "../../components/backlog/StoryCreateButton";
 import StoryCreateForm from "../../components/backlog/StoryCreateForm";
 import StoryBlock from "../../components/backlog/StoryBlock";
@@ -8,17 +14,14 @@ import TaskBlock from "../../components/backlog/TaskBlock";
 import EpicBlock from "../../components/backlog/EpicBlock";
 import TaskContainer from "../../components/backlog/TaskContainer";
 import TaskHeader from "../../components/backlog/TaskHeader";
-import { Socket } from "socket.io-client";
-import useStoryEmitEvent from "../../hooks/pages/backlog/useStoryEmitEvent";
-import useTaskEmitEvent from "../../hooks/pages/backlog/useTaskEmitEvent";
-import getDragElementIndex from "../../utils/getDragElementIndex";
-import { LexoRank } from "lexorank";
-import useEpicEmitEvent from "../../hooks/pages/backlog/useEpicEmitEvent";
-import { BacklogSocketData } from "../../types/common/backlog";
 import EpicPageStoryDragContainer from "../../components/backlog/EpicPageStoryDragContainer";
 import EpicPageTaskDragContainer from "../../components/backlog/EpicPageTaskDragContainer";
 import EpicDragContainer from "../../components/backlog/EpicDragContainer";
 import TaskCreateBlock from "../../components/backlog/TaskCreateBlock";
+import EpicCreateButton from "../../components/backlog/EpicCreateButton";
+import { BacklogSocketData } from "../../types/common/backlog";
+import { BacklogDTO, StoryDTO, TaskDTO } from "../../types/DTO/backlogDTO";
+import EpicCreateForm from "../../components/backlog/EpicCreateForm";
 
 const EpicPage = () => {
   const { socket, backlog }: { socket: Socket; backlog: BacklogDTO } =
@@ -29,6 +32,10 @@ const EpicPage = () => {
   const [showStory, setShowStory] = useState<{
     [key: number]: { showStoryList: boolean; showStoryForm: boolean };
   }>({});
+  const {
+    showDetail: showEpicCreateForm,
+    handleShowDetail: handleShowEpicCreateForm,
+  } = useShowDetail();
 
   useEffect(() => {
     setShowStory((prevShowStory) => {
@@ -469,7 +476,18 @@ const EpicPage = () => {
   };
 
   return (
-    <div className="gap-4 pb-10" onDragOver={handleEpicDragOver}>
+    <div className="gap-4 pb-10 border-t" onDragOver={handleEpicDragOver}>
+      {!epicList.length && (
+        <div className="mt-4">
+          {showEpicCreateForm ? (
+            <EpicCreateForm
+              onCloseClick={() => handleShowEpicCreateForm(false)}
+            />
+          ) : (
+            <EpicCreateButton onClick={() => handleShowEpicCreateForm(true)} />
+          )}
+        </div>
+      )}
       {...epicList.map(
         ({ id: epicId, name, color, rankValue, storyList }, epicIndex) => {
           storyComponentRefList.current[epicIndex] = [];
