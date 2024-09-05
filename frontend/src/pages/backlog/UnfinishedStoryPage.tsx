@@ -221,24 +221,24 @@ const UnfinishedStoryPage = () => {
 
   const handleTaskDragEnd = () => {
     const { storyId, taskIndex } = taskElementIndex;
-    const taskList = storyList.find(({ id }) => id === storyId)
-      ?.taskList as TaskDTO[];
+    const targetStory = storyList.find(({ id }) => id === storyId);
+    const taskList = targetStory?.taskList as TaskDTO[];
     const targetIndex = taskList?.findIndex(({ id }) => id === draggingTaskId);
 
     let rankValue;
 
-    if (taskIndex === targetIndex) {
+    if (taskIndex !== -1 && taskIndex === targetIndex) {
       setDraggingTaskId(undefined);
       setTaskElementIndex({ storyId: undefined, taskIndex: undefined });
       return;
     }
 
-    if (taskIndex === 0 && !taskList.length) {
+    if ((taskIndex === -1 || taskIndex === 0) && !taskList.length) {
       rankValue = LexoRank.middle().toString();
     } else if (taskIndex === 0) {
       const firstTaskRank = taskList[0].rankValue;
       rankValue = LexoRank.parse(firstTaskRank).genPrev().toString();
-    } else if (taskIndex === taskList.length) {
+    } else if (taskIndex === -1 || taskIndex === taskList.length) {
       const lastTaskRank = taskList[taskList.length - 1].rankValue;
       rankValue = LexoRank.parse(lastTaskRank).genNext().toString();
     } else {
