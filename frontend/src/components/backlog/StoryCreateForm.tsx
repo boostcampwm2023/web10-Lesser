@@ -121,7 +121,9 @@ const StoryCreateForm = ({
     >
       {!epic ? (
         <div
-          className="w-[5rem] min-h-[1.75rem] bg-light-gray rounded-md mr-7 hover:cursor-pointer relative"
+          className={`w-[5rem] min-h-[1.75rem] rounded-md mr-7 hover:cursor-pointer relative ${
+            epicId ? "" : "bg-light-gray"
+          }`}
           onClick={handleEpicColumnClick}
           ref={dropdownRef}
         >
@@ -136,6 +138,7 @@ const StoryCreateForm = ({
               selectedEpic={selectedEpic}
               epicList={epicList}
               onEpicChange={handleEpicChange}
+              onCloseDropdown={handleClose}
             />
           )}
         </div>
