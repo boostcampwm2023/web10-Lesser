@@ -41,25 +41,29 @@ const EpicDropdown = ({
     setValue(value);
   };
 
+  const handleCreateButtonClick = () => {
+    if (value.length > 10) {
+      alert("에픽 이름은 10자 이하여야 합니다.");
+      return;
+    }
+
+    const rankValue =
+      lastRankValue !== undefined
+        ? LexoRank.parse(lastRankValue).genNext().toString()
+        : LexoRank.middle().toString();
+
+    emitEpicCreateEvent({ name: value, color: epicColor, rankValue });
+    setValue("");
+    setEpicColor(getNewColor(Object.keys(CATEGORY_COLOR)));
+  };
+
   const handleEnterKeydown = (event: React.KeyboardEvent) => {
     if (event.nativeEvent.isComposing) {
       return;
     }
 
     if (event.key === "Enter" && value) {
-      if (value.length > 10) {
-        alert("에픽 이름은 10자 이하여야 합니다.");
-        return;
-      }
-
-      const rankValue =
-        lastRankValue !== undefined
-          ? LexoRank.parse(lastRankValue).genNext().toString()
-          : LexoRank.middle().toString();
-
-      emitEpicCreateEvent({ name: value, color: epicColor, rankValue });
-      setValue("");
-      setEpicColor(getNewColor(Object.keys(CATEGORY_COLOR)));
+      handleCreateButtonClick();
     }
   };
 
@@ -108,10 +112,13 @@ const EpicDropdown = ({
         />
       </div>
       {value ? (
-        <div className="flex items-center gap-2 p-1">
+        <button
+          className="flex items-center gap-2 p-1"
+          onClick={handleCreateButtonClick}
+        >
           <span>생성</span>
           <CategoryChip content={value} bgColor={epicColor} />
-        </div>
+        </button>
       ) : (
         <ul className="max-h-[16rem] overflow-y-auto scrollbar-thin pt-1">
           {...epicList.map((epic) => (
