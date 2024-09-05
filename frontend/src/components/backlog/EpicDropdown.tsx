@@ -19,6 +19,7 @@ interface EpicDropdownProps {
   epicList: EpicCategoryDTO[];
   onEpicChange: (epicId: number | undefined) => void;
   lastRankValue?: string;
+  onCloseDropdown: () => void;
 }
 
 const EpicDropdown = ({
@@ -26,6 +27,7 @@ const EpicDropdown = ({
   epicList,
   onEpicChange,
   lastRankValue,
+  onCloseDropdown,
 }: EpicDropdownProps) => {
   const { socket }: { socket: Socket } = useOutletContext();
   const { emitEpicCreateEvent } = useEpicEmitEvent(socket);
@@ -81,12 +83,20 @@ const EpicDropdown = ({
     }
   };
 
+  const handleESCClick = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      onCloseDropdown();
+    }
+  };
+
   useEffect(() => {
     socket.on("backlog", handleEpicEvent);
     inputElementRef.current?.focus();
+    window.addEventListener("keydown", handleESCClick);
 
     return () => {
       socket.off("backlog", handleEpicEvent);
+      window.removeEventListener("keydown", handleESCClick);
     };
   }, []);
 

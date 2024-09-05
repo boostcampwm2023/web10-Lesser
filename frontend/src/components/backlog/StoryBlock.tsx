@@ -72,7 +72,6 @@ const StoryBlock = ({
   const {
     open: deleteMenuOpen,
     handleOpen: handleDeleteMenuOpen,
-
     dropdownRef: blockRef,
   } = useDropdownState();
   const { emitStoryUpdateEvent, emitStoryDeleteEvent } =
@@ -185,6 +184,7 @@ const StoryBlock = ({
                     ? epicList[epicList.length - 1].rankValue
                     : undefined
                 }
+                onCloseDropdown={handleEpicUpdateClose}
               />
             )}
           </div>

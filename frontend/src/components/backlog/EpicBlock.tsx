@@ -23,6 +23,7 @@ const EpicBlock = ({
   const {
     open: epicUpdating,
     handleOpen: handleEpicUpdateOpen,
+    handleClose: handleEpicUpdateClose,
     dropdownRef: epicRef,
   } = useDropdownState();
 
@@ -69,6 +70,7 @@ const EpicBlock = ({
               epicList={[epic]}
               onEpicChange={() => {}}
               lastRankValue={lastRankValue}
+              onCloseDropdown={handleEpicUpdateClose}
             />
           )}
         </div>
