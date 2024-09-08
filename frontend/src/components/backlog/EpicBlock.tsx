@@ -10,6 +10,7 @@ interface EpicBlockProps {
   epic: EpicCategoryDTO;
   showStoryList: boolean;
   onShowStoryList: () => void;
+  lastRankValue: string;
 }
 
 const EpicBlock = ({
@@ -17,10 +18,12 @@ const EpicBlock = ({
   epic,
   showStoryList,
   onShowStoryList,
+  lastRankValue,
 }: EpicBlockProps) => {
   const {
     open: epicUpdating,
     handleOpen: handleEpicUpdateOpen,
+    handleClose: handleEpicUpdateClose,
     dropdownRef: epicRef,
   } = useDropdownState();
 
@@ -66,6 +69,8 @@ const EpicBlock = ({
               selectedEpic={epic}
               epicList={[epic]}
               onEpicChange={() => {}}
+              lastRankValue={lastRankValue}
+              onCloseDropdown={handleEpicUpdateClose}
             />
           )}
         </div>

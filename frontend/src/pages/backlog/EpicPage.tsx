@@ -1,6 +1,12 @@
 import { DragEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { BacklogDTO, StoryDTO, TaskDTO } from "../../types/DTO/backlogDTO";
+import { Socket } from "socket.io-client";
+import { LexoRank } from "lexorank";
+import useStoryEmitEvent from "../../hooks/pages/backlog/useStoryEmitEvent";
+import useTaskEmitEvent from "../../hooks/pages/backlog/useTaskEmitEvent";
+import getDragElementIndex from "../../utils/getDragElementIndex";
+import useEpicEmitEvent from "../../hooks/pages/backlog/useEpicEmitEvent";
+import useShowDetail from "../../hooks/pages/backlog/useShowDetail";
 import StoryCreateButton from "../../components/backlog/StoryCreateButton";
 import StoryCreateForm from "../../components/backlog/StoryCreateForm";
 import StoryBlock from "../../components/backlog/StoryBlock";
@@ -8,17 +14,14 @@ import TaskBlock from "../../components/backlog/TaskBlock";
 import EpicBlock from "../../components/backlog/EpicBlock";
 import TaskContainer from "../../components/backlog/TaskContainer";
 import TaskHeader from "../../components/backlog/TaskHeader";
-import { Socket } from "socket.io-client";
-import useStoryEmitEvent from "../../hooks/pages/backlog/useStoryEmitEvent";
-import useTaskEmitEvent from "../../hooks/pages/backlog/useTaskEmitEvent";
-import getDragElementIndex from "../../utils/getDragElementIndex";
-import { LexoRank } from "lexorank";
-import useEpicEmitEvent from "../../hooks/pages/backlog/useEpicEmitEvent";
-import { BacklogSocketData } from "../../types/common/backlog";
 import EpicPageStoryDragContainer from "../../components/backlog/EpicPageStoryDragContainer";
 import EpicPageTaskDragContainer from "../../components/backlog/EpicPageTaskDragContainer";
 import EpicDragContainer from "../../components/backlog/EpicDragContainer";
 import TaskCreateBlock from "../../components/backlog/TaskCreateBlock";
+import EpicCreateButton from "../../components/backlog/EpicCreateButton";
+import { BacklogSocketData } from "../../types/common/backlog";
+import { BacklogDTO, StoryDTO, TaskDTO } from "../../types/DTO/backlogDTO";
+import EpicCreateForm from "../../components/backlog/EpicCreateForm";
 
 const EpicPage = () => {
   const { socket, backlog }: { socket: Socket; backlog: BacklogDTO } =
@@ -29,6 +32,10 @@ const EpicPage = () => {
   const [showStory, setShowStory] = useState<{
     [key: number]: { showStoryList: boolean; showStoryForm: boolean };
   }>({});
+  const {
+    showDetail: showEpicCreateForm,
+    handleShowDetail: handleShowEpicCreateForm,
+  } = useShowDetail();
 
   useEffect(() => {
     setShowStory((prevShowStory) => {
@@ -163,7 +170,13 @@ const EpicPage = () => {
 
   const setEpicComponentRef =
     (epicIndex: number) => (element: HTMLDivElement) => {
-      epicComponentRefList.current[epicIndex] = element;
+      if (element) {
+        epicComponentRefList.current[epicIndex] = element;
+      } else {
+        epicComponentRefList.current = epicComponentRefList.current.filter(
+          (ref) => ref !== null
+        );
+      }
     };
 
   const setStoryComponentRef =
@@ -195,7 +208,6 @@ const EpicPage = () => {
       epicList.findIndex(({ id }) => id === draggingEpicId),
       event.clientY
     );
-    console.log(epicComponentRefList.current, index);
 
     setEpicElementIndex(index);
   };
@@ -209,12 +221,11 @@ const EpicPage = () => {
   };
 
   const handleEpicDragEnd = (event: DragEvent) => {
-    event.preventDefault();
-
     if (draggingTaskId || draggingStoryId) {
       return;
     }
 
+    event.preventDefault();
     const targetIndex = epicList.findIndex(({ id }) => id === draggingEpicId);
     let rankValue;
 
@@ -250,12 +261,11 @@ const EpicPage = () => {
   };
 
   const handleStoryDragOver = (event: DragEvent, epicIndex: number) => {
-    event.preventDefault();
-
     if (draggingTaskId || draggingEpicId) {
       return;
     }
 
+    event.preventDefault();
     const mouseIndex = epicList[epicIndex].storyList.findIndex(
       ({ id }) => id === draggingStoryId
     );
@@ -287,26 +297,26 @@ const EpicPage = () => {
     }
 
     const { epicId, storyIndex } = storyElementIndex;
-    const storyList = epicList.find(({ id }) => id === epicId)
-      ?.storyList as StoryDTO[];
+    const targetEpic = epicList.find(({ id }) => id === epicId);
+    const storyList = targetEpic?.storyList as StoryDTO[];
     const currentIndex = storyList?.findIndex(
       ({ id }) => id === draggingStoryId
     );
 
     let rankValue;
 
-    if (storyIndex === currentIndex) {
+    if (storyIndex !== -1 && storyIndex === currentIndex) {
       setDraggingStoryId(undefined);
       setStoryElementIndex({ epicId: undefined, storyIndex: undefined });
       return;
     }
 
-    if (storyIndex === 0 && !storyList.length) {
+    if ((storyIndex === -1 || storyIndex === 0) && !storyList.length) {
       rankValue = LexoRank.middle().toString();
     } else if (storyIndex === 0) {
       const firstStoryRank = storyList[0].rankValue;
       rankValue = LexoRank.parse(firstStoryRank).genPrev().toString();
-    } else if (storyIndex === storyList.length) {
+    } else if (storyIndex === -1 || storyIndex === storyList.length) {
       const lastStoryRank = storyList[storyList.length - 1].rankValue;
       rankValue = LexoRank.parse(lastStoryRank).genNext().toString();
     } else {
@@ -327,6 +337,102 @@ const EpicPage = () => {
 
     setDraggingStoryId(undefined);
     setStoryElementIndex({ epicId: undefined, storyIndex: undefined });
+  };
+
+  const handleTaskDragOver = (
+    event: DragEvent,
+    epicIndex: number,
+    storyIndex: number
+  ) => {
+    if (draggingStoryId || draggingEpicId) {
+      return;
+    }
+
+    event.preventDefault();
+    const { storyList } = epicList[epicIndex];
+
+    const mouseIndex = storyList[storyIndex].taskList.findIndex(
+      ({ id }) => id === draggingTaskId
+    );
+
+    const index = getDragElementIndex(
+      taskComponentRefList.current[epicIndex][storyIndex],
+      mouseIndex,
+      event.clientY
+    );
+
+    setTaskElementIndex({
+      epicId: epicList[epicIndex].id,
+      storyId: storyList[storyIndex].id,
+      taskIndex: index,
+    });
+  };
+
+  const handleTaskDragStart = (taskId: number) => {
+    if (draggingEpicId || draggingStoryId) {
+      return;
+    }
+
+    setDraggingTaskId(taskId);
+  };
+
+  const handleTaskDragEnd = () => {
+    const { epicId, storyId, taskIndex } = taskElementIndex;
+    const targetEpic = epicList.find(({ id }) => epicId === id);
+    const targetStory = targetEpic?.storyList.find(({ id }) => id === storyId);
+    const taskList = targetStory?.taskList as TaskDTO[];
+    const currentIndex = taskList?.findIndex(({ id }) => id === draggingTaskId);
+
+    let rankValue;
+
+    if (!taskIndex || (taskIndex !== -1 && taskIndex === currentIndex)) {
+      setDraggingTaskId(undefined);
+      setTaskElementIndex({
+        epicId: undefined,
+        storyId: undefined,
+        taskIndex: undefined,
+      });
+      return;
+    }
+
+    if ((taskIndex === -1 || taskIndex === 0) && !taskList.length) {
+      rankValue = LexoRank.middle().toString();
+    } else if (taskIndex === 0) {
+      const firstTaskRank = taskList[0].rankValue;
+      rankValue = LexoRank.parse(firstTaskRank).genPrev().toString();
+    } else if (taskIndex === -1 || taskIndex === taskList.length) {
+      const lastTaskRank = taskList[taskList.length - 1].rankValue;
+      rankValue = LexoRank.parse(lastTaskRank).genNext().toString();
+    } else {
+      const prevTaskRank = LexoRank.parse(
+        taskList[(taskIndex as number) - 1].rankValue
+      );
+      const nextTaskRank = LexoRank.parse(
+        taskList[taskIndex as number].rankValue
+      );
+      rankValue = prevTaskRank.between(nextTaskRank).toString();
+    }
+
+    emitTaskUpdateEvent({
+      id: draggingTaskId as number,
+      storyId,
+      rankValue,
+    });
+
+    setDraggingTaskId(undefined);
+    setTaskElementIndex({
+      epicId: undefined,
+      storyId: undefined,
+      taskIndex: undefined,
+    });
+  };
+
+  const handleDropTaskOnEpic = () => {
+    setTaskElementIndex({
+      epicId: undefined,
+      storyId: undefined,
+      taskIndex: undefined,
+    });
   };
 
   useEffect(() => {
@@ -374,104 +480,30 @@ const EpicPage = () => {
     };
   }, []);
 
-  const handleTaskDragOver = (
-    event: DragEvent,
-    epicIndex: number,
-    storyIndex: number
-  ) => {
-    event.preventDefault();
-
-    if (draggingStoryId || draggingEpicId) {
-      return;
-    }
-    const { storyList } = epicList[epicIndex];
-
-    const mouseIndex = storyList[storyIndex].taskList.findIndex(
-      ({ id }) => id === draggingTaskId
-    );
-
-    const index = getDragElementIndex(
-      taskComponentRefList.current[epicIndex][storyIndex],
-      mouseIndex,
-      event.clientY
-    );
-
-    setTaskElementIndex({
-      epicId: epicList[epicIndex].id,
-      storyId: storyList[storyIndex].id,
-      taskIndex: index,
-    });
-  };
-
-  const handleTaskDragStart = (taskId: number) => {
-    if (draggingEpicId || draggingStoryId) {
-      return;
-    }
-
-    setDraggingTaskId(taskId);
-  };
-
-  const handleTaskDragEnd = () => {
-    const { epicId, storyId, taskIndex } = taskElementIndex;
-    const storyList = epicList.find(({ id }) => epicId === id)
-      ?.storyList as StoryDTO[];
-    const taskList = storyList.find(({ id }) => id === storyId)
-      ?.taskList as TaskDTO[];
-    const currentIndex = taskList?.findIndex(({ id }) => id === draggingTaskId);
-
-    let rankValue;
-
-    if (taskIndex === currentIndex) {
-      setDraggingTaskId(undefined);
-      setTaskElementIndex({
-        epicId: undefined,
-        storyId: undefined,
-        taskIndex: undefined,
-      });
-      return;
-    }
-
-    if (taskIndex === 0 && !taskList.length) {
-      rankValue = LexoRank.middle().toString();
-    } else if (taskIndex === 0) {
-      const firstTaskRank = taskList[0].rankValue;
-      rankValue = LexoRank.parse(firstTaskRank).genPrev().toString();
-    } else if (taskIndex === taskList.length) {
-      const lastTaskRank = taskList[taskList.length - 1].rankValue;
-      rankValue = LexoRank.parse(lastTaskRank).genNext().toString();
-    } else {
-      const prevTaskRank = LexoRank.parse(
-        taskList[(taskIndex as number) - 1].rankValue
-      );
-      const nextTaskRank = LexoRank.parse(
-        taskList[taskIndex as number].rankValue
-      );
-      rankValue = prevTaskRank.between(nextTaskRank).toString();
-    }
-
-    emitTaskUpdateEvent({
-      id: draggingTaskId as number,
-      storyId,
-      rankValue,
-    });
-
-    setDraggingTaskId(undefined);
-    setTaskElementIndex({
-      epicId: undefined,
-      storyId: undefined,
-      taskIndex: undefined,
-    });
-  };
-
   return (
-    <div className="gap-4 pb-10" onDragOver={handleEpicDragOver}>
+    <div className="gap-4 pb-10 border-t" onDragOver={handleEpicDragOver}>
+      {!epicList.length && (
+        <div className="mt-4">
+          {showEpicCreateForm ? (
+            <EpicCreateForm
+              onCloseClick={() => handleShowEpicCreateForm(false)}
+            />
+          ) : (
+            <EpicCreateButton onClick={() => handleShowEpicCreateForm(true)} />
+          )}
+        </div>
+      )}
       {...epicList.map(
         ({ id: epicId, name, color, rankValue, storyList }, epicIndex) => {
           storyComponentRefList.current[epicIndex] = [];
           taskComponentRefList.current[epicIndex] = [];
 
           return (
-            <div className="py-2 border-t border-b">
+            <div
+              className="py-2 border-t border-b"
+              onDragOver={(event) => handleStoryDragOver(event, epicIndex)}
+              onDrop={handleDropTaskOnEpic}
+            >
               <EpicDragContainer
                 {...{ epicIndex }}
                 onDragStart={() => handleEpicDragStart(epicId)}
@@ -484,13 +516,11 @@ const EpicPage = () => {
                   epic={{ id: epicId, name, color, rankValue }}
                   showStoryList={showStory[epicId]?.showStoryList}
                   onShowStoryList={() => handleShowStoryList(epicId)}
+                  lastRankValue={epicList[epicList.length - 1].rankValue}
                 />
               </EpicDragContainer>
               {showStory[epicId]?.showStoryList && (
-                <div
-                  className="w-[65rem] ml-auto"
-                  onDragOver={(event) => handleStoryDragOver(event, epicIndex)}
-                >
+                <div className="w-[65rem] ml-auto">
                   {...storyList.map(
                     (
                       { id: storyId, title, point, status, taskList },
@@ -512,6 +542,9 @@ const EpicPage = () => {
                           onDragOver={(event) =>
                             handleTaskDragOver(event, epicIndex, storyIndex)
                           }
+                          onDrop={(event) => {
+                            event.stopPropagation();
+                          }}
                         >
                           <EpicPageStoryDragContainer
                             {...{ epicIndex, storyIndex }}
@@ -583,26 +616,28 @@ const EpicPage = () => {
                     className={`${
                       epicId === storyElementIndex.epicId &&
                       storyElementIndex.storyIndex === storyList.length
-                        ? "w-[60.13rem] h-1 bg-blue-400"
+                        ? "w-[60.13rem] border-t-4 border-t-blue-400"
                         : ""
-                    } absolute`}
+                    } h-2`}
                   />
-                  {showStory[epicId].showStoryForm ? (
-                    <StoryCreateForm
-                      epicList={epicCategoryList}
-                      epic={{ id: epicId, name, color, rankValue }}
-                      onCloseClick={() => handleShowStoryForm(epicId)}
-                      lastStoryRankValue={
-                        storyList.length
-                          ? storyList[storyList.length - 1].rankValue
-                          : undefined
-                      }
-                    />
-                  ) : (
-                    <StoryCreateButton
-                      onClick={() => handleShowStoryForm(epicId)}
-                    />
-                  )}
+                  <div className="w-full mt-2">
+                    {showStory[epicId].showStoryForm ? (
+                      <StoryCreateForm
+                        epicList={epicCategoryList}
+                        epic={{ id: epicId, name, color, rankValue }}
+                        onCloseClick={() => handleShowStoryForm(epicId)}
+                        lastStoryRankValue={
+                          storyList.length
+                            ? storyList[storyList.length - 1].rankValue
+                            : undefined
+                        }
+                      />
+                    ) : (
+                      <StoryCreateButton
+                        onClick={() => handleShowStoryForm(epicId)}
+                      />
+                    )}
+                  </div>
                 </div>
               )}
             </div>

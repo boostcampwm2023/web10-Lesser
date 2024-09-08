@@ -72,7 +72,6 @@ const StoryBlock = ({
   const {
     open: deleteMenuOpen,
     handleOpen: handleDeleteMenuOpen,
-
     dropdownRef: blockRef,
   } = useDropdownState();
   const { emitStoryUpdateEvent, emitStoryDeleteEvent } =
@@ -180,6 +179,12 @@ const StoryBlock = ({
                 selectedEpic={epic}
                 epicList={epicList}
                 onEpicChange={updateEpic}
+                lastRankValue={
+                  epicList.length
+                    ? epicList[epicList.length - 1].rankValue
+                    : undefined
+                }
+                onCloseDropdown={handleEpicUpdateClose}
               />
             )}
           </div>
@@ -220,7 +225,7 @@ const StoryBlock = ({
           />
         </div>
         <div
-          className="flex items-center gap-1 w-[4rem] mr-[2.76rem] text-right hover:cursor-pointer"
+          className="flex items-center gap-1 w-[4.5rem] mr-[2.76rem] text-right hover:cursor-pointer"
           onClick={() => handlePointUpdatingOpen(true)}
           ref={pointRef}
         >
@@ -248,7 +253,7 @@ const StoryBlock = ({
         </div>
       </div>
       {deleteMenuOpen && (
-        <div className="absolute px-2 py-1 bg-white rounded-md shadow-box">
+        <div className="absolute z-10 px-2 py-1 bg-white rounded-md shadow-box">
           <button
             className="flex items-center w-full gap-3"
             type="button"

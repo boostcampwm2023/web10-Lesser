@@ -228,7 +228,7 @@ const TaskBlock = ({
           )}
         </div>
         <div
-          className="w-16 min-h-[1.5rem] hover:cursor-pointer"
+          className="w-16 min-h-[1.5rem] hover:cursor-pointer text-right"
           ref={expectedTimeRef}
           onClick={() => handleExpectedTimeUpdating(true)}
         >
@@ -240,7 +240,7 @@ const TaskBlock = ({
           />
         </div>
         <div
-          className="w-16 min-h-[1.5rem] hover:cursor-pointer"
+          className="w-16 min-h-[1.5rem] hover:cursor-pointer text-right"
           ref={actualTimeRef}
           onClick={() => handleActualTimeUpdating(true)}
         >
@@ -264,7 +264,7 @@ const TaskBlock = ({
         </div>
       </div>
       {deleteMenuOpen && (
-        <div className="absolute px-2 py-1 bg-white rounded-md shadow-box">
+        <div className="absolute z-10 px-2 py-1 bg-white rounded-md shadow-box">
           <button
             className="flex items-center w-full gap-3"
             type="button"
