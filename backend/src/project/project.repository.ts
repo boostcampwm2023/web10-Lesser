@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, DataSource, MoreThan, Repository } from 'typeorm';
+import { DataSource, MoreThan, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Project } from './entity/project.entity';
 import { ProjectToMember } from './entity/project-member.entity';
@@ -9,7 +9,7 @@ import { Link } from './entity/link.entity.';
 import { Epic, EpicColor } from './entity/epic.entity';
 import { Story, StoryStatus } from './entity/story.entity';
 import { Task, TaskStatus } from './entity/task.entity';
-import { LexoRank } from 'lexorank';
+import { MemberRole } from './enum/MemberRole.enum';
 
 @Injectable()
 export class ProjectRepository {
@@ -37,9 +37,13 @@ export class ProjectRepository {
     return this.projectRepository.save(project);
   }
 
-  addProjectMember(project: Project, member: Member): Promise<ProjectToMember> {
+  addProjectMember(
+    project: Project,
+    member: Member,
+    role: MemberRole,
+  ): Promise<ProjectToMember> {
     return this.projectToMemberRepository.save(
-      ProjectToMember.of(project, member),
+      ProjectToMember.of(project, member, role),
     );
   }
 

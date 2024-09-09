@@ -8,8 +8,8 @@ import { Link } from '../entity/link.entity.';
 import { Epic, EpicColor } from '../entity/epic.entity';
 import { Story, StoryStatus } from '../entity/story.entity';
 import { Task, TaskStatus } from '../entity/task.entity';
-import e from 'express';
 import { LexoRank } from 'lexorank';
+import { MemberRole } from '../enum/MemberRole.enum';
 
 @Injectable()
 export class ProjectService {
@@ -19,7 +19,11 @@ export class ProjectService {
     const createdProject = await this.projectRepository.create(
       Project.of(title, subject),
     );
-    await this.projectRepository.addProjectMember(createdProject, member);
+    await this.projectRepository.addProjectMember(
+      createdProject,
+      member,
+      MemberRole.LEADER,
+    );
   }
 
   async getProjectList(member: Member): Promise<Project[]> {
@@ -37,7 +41,11 @@ export class ProjectService {
     if ((await this.getProjectMemberList(project)).length >= 10)
       throw new Error('Project reached its maximum member capacity');
 
-    await this.projectRepository.addProjectMember(project, member);
+    await this.projectRepository.addProjectMember(
+      project,
+      member,
+      MemberRole.MEMBER,
+    );
   }
 
   async getProjectMemberList(project: Project) {
