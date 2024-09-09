@@ -6,6 +6,7 @@ import { Project } from '../entity/project.entity';
 import { ProjectToMember } from '../entity/project-member.entity';
 import { Memo, memoColor } from '../entity/memo.entity';
 import { Link } from '../entity/link.entity.';
+import { MemberRole } from '../enum/MemberRole.enum';
 
 describe('ProjectService', () => {
   let projectService: ProjectService;
@@ -62,6 +63,7 @@ describe('ProjectService', () => {
       expect(projectRepository.addProjectMember).toHaveBeenCalledWith(
         project,
         member,
+        MemberRole.LEADER,
       );
     });
   });
@@ -113,13 +115,16 @@ describe('ProjectService', () => {
       expect(projectRepository.addProjectMember).toHaveBeenCalledWith(
         project,
         member,
+        MemberRole.MEMBER,
       );
     });
 
     it('should throw when already joined member', async () => {
       jest
         .spyOn(projectRepository, 'getProjectToMember')
-        .mockResolvedValue(ProjectToMember.of(project, member));
+        .mockResolvedValue(
+          ProjectToMember.of(project, member, MemberRole.LEADER),
+        );
 
       jest
         .spyOn(projectRepository, 'getProjectMemberList')
