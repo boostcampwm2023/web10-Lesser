@@ -32,7 +32,7 @@ export class Member {
   tech_stack: { stacks: string[] };
 
   @OneToMany(() => ProjectToMember, (projectToMember) => projectToMember.member)
-  projectToMember: ProjectToMember;
+  projectToMember: ProjectToMember[];
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;

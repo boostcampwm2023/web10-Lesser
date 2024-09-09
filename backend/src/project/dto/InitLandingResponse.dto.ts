@@ -4,6 +4,7 @@ import { Memo, memoColor } from '../entity/memo.entity';
 import { Project } from '../entity/project.entity';
 import { MemberStatus } from '../enum/MemberStatus.enum';
 import { ClientSocket } from '../type/ClientSocket.type';
+import { MemberRole } from '../enum/MemberRole.enum';
 
 class MemoDto {
   id: number;
@@ -57,6 +58,7 @@ class MemberInfo {
   id: number;
   username: string;
   imageUrl: string;
+  role: MemberRole;
   status: MemberStatus;
 
   static of(member: Member, status: MemberStatus) {
@@ -65,6 +67,7 @@ class MemberInfo {
     newMemberInfo.username = member.username;
     newMemberInfo.imageUrl = member.github_image_url;
     newMemberInfo.status = status;
+    newMemberInfo.role = member.projectToMember[0].role;
     return newMemberInfo;
   }
 }
@@ -89,7 +92,10 @@ class ProjectLandingPageContentDto {
   ) {
     const dto = new ProjectLandingPageContentDto();
     dto.project = ProjectDto.of(project);
-    dto.myInfo = MemberInfo.of(myInfo, status);
+    dto.myInfo = MemberInfo.of(
+      projectMemberList.find((member) => member.id === myInfo.id),
+      status,
+    );
     dto.member = projectMemberList
       .filter((member) => member.id !== myInfo.id)
       .map((member) => {
