@@ -22,6 +22,7 @@ import UnfinishedStoryPage from "./pages/backlog/UnfinishedStoryPage";
 import BacklogPage from "./pages/backlog/BacklogPage";
 import FinishedStoryPage from "./pages/backlog/FinishedStoryPage";
 import EpicPage from "./pages/backlog/EpicPage";
+import SettingPage from "./pages/setting/SettingPage";
 
 type RouteType = "PRIVATE" | "PUBLIC";
 
@@ -96,7 +97,7 @@ const router = createBrowserRouter([
               element: <BacklogPage />,
             },
             { path: ROUTER_URL.SPRINT, element: <div>sprint Page</div> },
-            { path: ROUTER_URL.SETTINGS, element: <div>setting Page</div> },
+            { path: ROUTER_URL.SETTINGS, element: <SettingPage /> },
           ],
         },
       ]),
