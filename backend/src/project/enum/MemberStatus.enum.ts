@@ -1,5 +1,5 @@
 export enum MemberStatus {
-	ON = 'on',
-	OFF = 'off',
-	AWAY = 'away',
-  }
+  ON = 'on',
+  OFF = 'off',
+  AWAY = 'away',
+}
