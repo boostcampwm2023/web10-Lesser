@@ -16,7 +16,7 @@ const MemberSettingSection = ({ memberList }: MemberSettingSectionProps) => (
         <p className="w-[18.75rem]">역할</p>
         <p className="w-[30rem]">작업</p>
       </div>
-      <div className="overflow-y-auto scrollbar-thin">
+      <div className="flex flex-col gap-3 overflow-y-auto scrollbar-thin">
         {...memberList.map((member) => <MemberBlock {...member} />)}
       </div>
     </div>
