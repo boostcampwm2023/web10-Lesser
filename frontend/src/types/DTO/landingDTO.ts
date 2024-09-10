@@ -2,6 +2,8 @@ import { MemoColorType } from "../common/landing";
 
 export type MemberStatus = "on" | "off" | "away";
 
+export type MemberRole = "LEADER" | "MEMBER";
+
 export interface LandingProjectDTO {
   title: string;
   subject: string;
@@ -13,6 +15,7 @@ export interface LandingMemberDTO {
   username: string;
   imageUrl: string;
   status: MemberStatus;
+  role: MemberRole;
 }
 
 export interface LandingSprintDTO {

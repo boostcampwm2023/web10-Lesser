@@ -64,7 +64,7 @@ const InformationSettingSection = ({
 
   return (
     <>
-      <div className="w-full mb-7">
+      <div className="w-full mb-2">
         <p className="font-bold text-m text-middle-green">프로젝트 설정</p>
       </div>
       <div className="flex flex-col w-full">
