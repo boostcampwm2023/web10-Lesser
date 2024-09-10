@@ -1,54 +1,8 @@
+import InformationSettingSection from "../../components/setting/InformationSettingSection";
+
 const SettingPage = () => (
   <div className="w-full h-full">
-    <div className="w-full mb-7">
-      <p className="font-bold text-m text-middle-green">프로젝트 설정</p>
-    </div>
-    <div className="flex flex-col w-full">
-      <div className="flex w-full gap-6 mb-5">
-        <label
-          className="min-w-[6.125rem] text-xs font-semibold text-middle-green"
-          htmlFor="name"
-        >
-          프로젝트 이름
-        </label>
-        <div>
-          <input
-            className="w-[60.8rem] mb-1 h-10 border-[2px] border-text-gray rounded-lg focus:outline-middle-green px-1 hover:cursor-pointer"
-            type="text"
-            id="name"
-            autoComplete="off"
-          />
-          <p className="text-xxxs text-error-red">
-            프로젝트 이름을 입력해주세요
-          </p>
-        </div>
-      </div>
-      <div className="flex gap-6 mb-5">
-        <label
-          className="min-w-[6.125rem] text-xs font-semibold text-middle-green"
-          htmlFor="name"
-        >
-          프로젝트 주제
-        </label>
-        <div>
-          <input
-            className="w-[60.8rem] mb-1 h-10 border-[2px] border-text-gray rounded-lg focus:outline-middle-green px-1 hover:cursor-pointer"
-            type="text"
-            id="name"
-            autoComplete="off"
-          />
-          <p className="text-xxxs text-error-red">
-            프로젝트 주제를 입력해주세요
-          </p>
-        </div>
-      </div>
-      <button
-        className="w-[4.5rem] h-10 bg-middle-green text-white rounded-lg text-xs self-end"
-        type="button"
-      >
-        저장
-      </button>
-    </div>
+    <InformationSettingSection title="프로젝트 이름" subject="프로젝트 주제" />
     <div className="">
       <p className="font-bold text-m text-middle-green">멤버 관리</p>
     </div>
