@@ -176,6 +176,10 @@ export class ProjectWebsocketGateway
       this.wsProjectTaskController.updateTask(client, data);
     }
   }
+  @SubscribeMessage('joinSetting')
+  async handleJoinSettingEvent(@ConnectedSocket() client: ClientSocket) {
+    this.wsProjectController.joinSettingPage(client);
+  }
 
   notifyJoinToConnectedMembers(projectId: number, member: Member) {
     const projectNamespace = this.namespaceMap.get(projectId);
