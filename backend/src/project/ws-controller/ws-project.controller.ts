@@ -5,6 +5,7 @@ import { MemberUpdateNotifyDto } from '../dto/member/MemberUpdateNotify.dto';
 import { MemberStatus } from '../enum/MemberStatus.enum';
 import { ProjectService } from '../service/project.service';
 import { ClientSocket } from '../type/ClientSocket.type';
+import { InitSettingResponseDto } from '../dto/setting-page/InitSettingResponse.dto';
 
 @Injectable()
 export class WsProjectController {
@@ -39,6 +40,9 @@ export class WsProjectController {
       linkList,
     );
     client.emit('landing', response);
+
+    client.leave('landing');
+    client.leave('setting');
     client.join('landing');
 
     if (sameMemberSocket) return;
@@ -53,9 +57,26 @@ export class WsProjectController {
 
   async joinBacklogPage(client: ClientSocket) {
     client.leave('landing');
+    client.leave('setting');
     client.join('backlog');
     const backlog = await this.projectService.getProjectBacklog(client.project);
 
     client.emit('backlog', InitBacklogResponseDto.of(backlog));
+  }
+
+  async joinSettingPage(client: ClientSocket) {
+    client.leave('landing');
+    client.leave('backlog');
+    client.join('setting');
+
+    const [project, projectMemberList] = await Promise.all([
+      this.projectService.getProject(client.projectId),
+      this.projectService.getProjectMemberList(client.project),
+    ]);
+
+    client.emit(
+      'setting',
+      InitSettingResponseDto.of(project, projectMemberList),
+    );
   }
 }
