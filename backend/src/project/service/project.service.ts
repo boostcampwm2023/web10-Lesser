@@ -59,6 +59,14 @@ export class ProjectService {
     return true;
   }
 
+  async isProjectLeader(project: Project, member: Member): Promise<boolean> {
+    const projectToMember = await this.projectRepository.getProjectToMember(
+      project,
+      member,
+    );
+    return projectToMember?.role === MemberRole.LEADER;
+  }
+
   getProjectByLinkId(projectLinkId: string): Promise<Project | null> {
     return this.projectRepository.getProjectByLinkId(projectLinkId);
   }
