@@ -65,6 +65,16 @@ export class WsProjectController {
   }
 
   async joinSettingPage(client: ClientSocket) {
+    if (
+      !(await this.projectService.isProjectLeader(
+        client.project,
+        client.member,
+      ))
+    ) {
+      client.disconnect(true);
+      return;
+    }
+
     client.leave('landing');
     client.leave('backlog');
     client.join('setting');

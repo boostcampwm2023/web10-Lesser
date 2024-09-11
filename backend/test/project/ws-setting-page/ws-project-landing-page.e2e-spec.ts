@@ -72,4 +72,26 @@ describe('WS Setting', () => {
       socket1.close();
     });
   });
+
+  it('Should close connection when member(not leader) enters setting page', async () => {
+    let socket2: Socket;
+
+    return new Promise<void>(async (resolve) => {
+      const accessToken1 = (await createMember(memberFixture, app)).accessToken;
+      const project = await createProject(accessToken1, projectPayload, app);
+      const projectLinkId = await getProjectLinkId(accessToken1, project.id);
+
+      const accessToken2 = (await createMember(memberFixture2, app))
+        .accessToken;
+      await joinProject(accessToken2, projectLinkId);
+
+      socket2 = connectServer(project.id, accessToken2);
+      socket2.emit('joinSetting');
+      socket2.on('disconnect', () => {
+        resolve();
+      });
+    }).finally(() => {
+      socket2.close();
+    });
+  });
 });
