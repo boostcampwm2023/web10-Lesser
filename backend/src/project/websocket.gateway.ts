@@ -21,6 +21,7 @@ import { ClientSocket } from './type/ClientSocket.type';
 import { WsProjectEpicController } from './ws-controller/ws-project-epic.controller';
 import { WsProjectStoryController } from './ws-controller/ws-project-story.controller';
 import { WsProjectTaskController } from './ws-controller/ws-project-task.controller';
+import { WsProjectInfoController } from './ws-controller/ws-project-info.controller';
 
 @WebSocketGateway({
   namespace: /project-\d+/,
@@ -40,6 +41,7 @@ export class ProjectWebsocketGateway
     private readonly wsProjectEpicController: WsProjectEpicController,
     private readonly wsProjectStoryController: WsProjectStoryController,
     private readonly wsProjectTaskController: WsProjectTaskController,
+    private readonly wsProjectInfoController: WsProjectInfoController,
   ) {
     this.namespaceMap = new Map();
   }
@@ -179,6 +181,16 @@ export class ProjectWebsocketGateway
   @SubscribeMessage('joinSetting')
   async handleJoinSettingEvent(@ConnectedSocket() client: ClientSocket) {
     this.wsProjectController.joinSettingPage(client);
+  }
+
+  @SubscribeMessage('projectInfo')
+  async handleProjectInfoEvent(
+    @ConnectedSocket() client: ClientSocket,
+    @MessageBody() data: any,
+  ) {
+    if (data.action === 'update') {
+      this.wsProjectInfoController.updateProjectInfo(client, data);
+    }
   }
 
   notifyJoinToConnectedMembers(projectId: number, member: Member) {

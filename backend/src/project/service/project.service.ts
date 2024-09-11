@@ -26,6 +26,18 @@ export class ProjectService {
     );
   }
 
+  async updateProjectInfo(
+    project: Project,
+    member: Member,
+    title: string,
+    subject: string,
+  ): Promise<boolean> {
+    if (!(await this.isProjectLeader(project, member))) {
+      throw new Error('Member is not the project leader');
+    }
+    return this.projectRepository.updateProjectInfo(project, title, subject);
+  }
+
   async getProjectList(member: Member): Promise<Project[]> {
     return await this.projectRepository.getProjectList(member);
   }
