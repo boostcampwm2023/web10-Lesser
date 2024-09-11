@@ -37,6 +37,29 @@ export class ProjectRepository {
     return this.projectRepository.save(project);
   }
 
+  async updateProjectInfo(
+    project: Project,
+    title: string,
+    subject: string,
+  ): Promise<boolean> {
+    const updateData: Partial<Project> = {};
+
+    if (title !== undefined) {
+      updateData.title = title;
+    }
+    if (subject !== undefined) {
+      updateData.subject = subject;
+    }
+
+    const result = await this.projectRepository.update(
+      {
+        id: project.id,
+      },
+      updateData,
+    );
+    return !!result.affected;
+  }
+
   addProjectMember(
     project: Project,
     member: Member,
