@@ -24,7 +24,7 @@ const InformationInput = ({
     </label>
     <div>
       <input
-        className="w-[60.8rem] mb-1 h-10 border-[2px] border-text-gray rounded-lg focus:outline-middle-green px-1 hover:cursor-pointer"
+        className="w-[60.3rem] mb-1 h-10 border-[2px] border-text-gray rounded-lg focus:outline-middle-green px-1 hover:cursor-pointer"
         type="text"
         id={inputId}
         autoComplete="off"
