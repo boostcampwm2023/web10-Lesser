@@ -1,18 +1,19 @@
-import { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import InformationInput from "./InformationInput";
+import { useOutletContext } from "react-router-dom";
+import { Socket } from "socket.io-client";
+import useSettingProjectInfoSocket from "../../hooks/pages/setting/useSettingProjectInfoSocket";
 
-interface InformationSettingSectionProps {
-  title: string;
-  subject: string;
-}
+interface InformationSettingSectionProps {}
 
-const InformationSettingSection = ({
-  title,
-  subject,
-}: InformationSettingSectionProps) => {
-  const [titleValue, setTitleValue] = useState(title);
+const InformationSettingSection = ({}: InformationSettingSectionProps) => {
+  const { socket }: { socket: Socket } = useOutletContext();
+  const {
+    projectInfo: { title, subject },
+  } = useSettingProjectInfoSocket(socket);
+  const [titleValue, setTitleValue] = useState("");
   const [titleErrorMessage, setTitleErrorMessage] = useState("");
-  const [subjectValue, setSubjectValue] = useState(subject);
+  const [subjectValue, setSubjectValue] = useState("");
   const [subjectErrorMessage, setSubjectErrorMessage] = useState("");
   const submitActivated = useMemo(
     () =>
@@ -61,6 +62,11 @@ const InformationSettingSection = ({
   };
 
   const handleSubmit = () => {};
+
+  useEffect(() => {
+    setTitleValue(title);
+    setSubjectValue(subject);
+  }, [title, subject]);
 
   return (
     <>

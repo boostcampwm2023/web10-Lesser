@@ -1,7 +1,10 @@
+import { Socket } from "socket.io-client";
 import InformationSettingSection from "../../components/setting/InformationSettingSection";
 import MemberSettingSection from "../../components/setting/MemberSettingSection";
 import ProjectDeleteSection from "../../components/setting/ProjectDeleteSection";
 import { LandingMemberDTO } from "../../types/DTO/landingDTO";
+import { useOutletContext } from "react-router-dom";
+import useSettingSocket from "../../hooks/pages/setting/useSettingSocket";
 
 const memberList: LandingMemberDTO[] = [
   { id: 1, username: "lesserTest", role: "LEADER", imageUrl: "", status: "on" },
@@ -21,12 +24,17 @@ const memberList: LandingMemberDTO[] = [
   },
 ];
 
-const SettingPage = () => (
-  <div className="w-full h-full">
-    <InformationSettingSection title="프로젝트 이름" subject="프로젝트 주제" />
-    <MemberSettingSection memberList={memberList} />
-    <ProjectDeleteSection projectTitle="프로젝트 이름" />
-  </div>
-);
+const SettingPage = () => {
+  const { socket }: { socket: Socket } = useOutletContext();
+  useSettingSocket(socket);
+
+  return (
+    <div className="w-full h-full">
+      <InformationSettingSection />
+      <MemberSettingSection memberList={memberList} />
+      <ProjectDeleteSection projectTitle="프로젝트 이름" />
+    </div>
+  );
+};
 
 export default SettingPage;
