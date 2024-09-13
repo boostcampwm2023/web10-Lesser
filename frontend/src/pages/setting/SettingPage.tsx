@@ -26,11 +26,13 @@ const memberList: LandingMemberDTO[] = [
 
 const SettingPage = () => {
   const { socket }: { socket: Socket } = useOutletContext();
-  useSettingSocket(socket);
+  const {
+    projectInfo: { title, subject },
+  } = useSettingSocket(socket);
 
   return (
     <div className="w-full h-full">
-      <InformationSettingSection />
+      <InformationSettingSection {...{ title, subject }} />
       <MemberSettingSection memberList={memberList} />
       <ProjectDeleteSection projectTitle="프로젝트 이름" />
     </div>
