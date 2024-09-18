@@ -67,7 +67,7 @@ export class WsProjectController {
   async joinSettingPage(client: ClientSocket) {
     if (
       !(await this.projectService.isProjectLeader(
-        client.project,
+        client.project.id,
         client.member,
       ))
     ) {

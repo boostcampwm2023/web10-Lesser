@@ -95,11 +95,11 @@ export class ProjectRepository {
   }
 
   getProjectToMember(
-    project: Project,
+    projectId: number,
     member: Member,
   ): Promise<ProjectToMember | null> {
     return this.projectToMemberRepository.findOne({
-      where: { project: { id: project.id }, member: { id: member.id } },
+      where: { project: { id: projectId }, member: { id: member.id } },
     });
   }
 

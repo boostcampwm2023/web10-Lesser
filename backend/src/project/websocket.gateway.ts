@@ -229,7 +229,7 @@ export class ProjectWebsocketGateway
     const project = await this.projectService.getProject(client.projectId);
     if (!project) throw new Error('Project not found');
     const isProjectMember = await this.projectService.isProjectMember(
-      project,
+      project.id,
       client.member,
     );
     if (!isProjectMember) throw new Error('Not project member');

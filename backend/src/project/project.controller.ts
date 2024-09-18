@@ -61,7 +61,7 @@ export class ProjectController {
     if (!project) throw new NotFoundException();
 
     const isProjectMember = await this.projectService.isProjectMember(
-      project,
+      project.id,
       request.member,
     );
     if (isProjectMember)
@@ -71,7 +71,9 @@ export class ProjectController {
       await this.projectService.addMember(project, request.member);
     } catch (err) {
       if (err.message === 'Project reached its maximum member capacity')
-        throw new ConflictException('Project reached its maximum member capacity');
+        throw new ConflictException(
+          'Project reached its maximum member capacity',
+        );
       throw err;
     }
     this.projectWebsocketGateway.notifyJoinToConnectedMembers(
