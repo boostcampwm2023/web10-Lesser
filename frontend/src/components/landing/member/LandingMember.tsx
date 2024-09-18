@@ -94,12 +94,20 @@ const LandingMember = ({ projectTitle }: LandingMemberProps) => {
         />
         <div className="flex justify-between text-white">
           <p className="text-xs font-bold">| 함께하는 사람들</p>
-          <button
-            className="text-xxs hover:underline"
-            onClick={handleInviteButtonClick}
-          >
-            초대링크 복사
-          </button>
+          {myInfo.role === "LEADER" && (
+            <div className="flex gap-1">
+              <button
+                className="text-xxs hover:underline"
+                onClick={handleInviteButtonClick}
+              >
+                초대링크 복사
+              </button>
+              <span>|</span>
+              <button className="text-xxs hover:underline" onClick={() => {}}>
+                링크 변경
+              </button>
+            </div>
+          )}
         </div>
         {memberList.map((memberData: LandingMemberDTO) => (
           <UserBlock {...memberData} key={memberData.id} />
