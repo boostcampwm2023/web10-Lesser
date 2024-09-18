@@ -226,13 +226,10 @@ export class ProjectWebsocketGateway
       client.projectId = parseInt(projectId[1], 10);
       if (isNaN(client.projectId)) throw new Error('Project is not number');
     }
-    const project = await this.projectService.getProject(client.projectId);
-    if (!project) throw new Error('Project not found');
-    const isProjectMember = await this.projectService.isProjectMember(
-      project.id,
+    const project = await this.projectService.getProject(
+      client.projectId,
       client.member,
     );
-    if (!isProjectMember) throw new Error('Not project member');
     client.project = project;
   }
 }

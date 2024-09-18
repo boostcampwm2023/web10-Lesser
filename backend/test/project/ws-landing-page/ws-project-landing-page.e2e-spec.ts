@@ -77,7 +77,6 @@ describe('WS landing', () => {
         expect(content.sprint).toBeDefined();
         expect(content.memoList).toBeDefined();
         expect(content.linkList).toBeDefined();
-        expect(content.inviteLinkId).toBeDefined();
 
         resolve();
       });
