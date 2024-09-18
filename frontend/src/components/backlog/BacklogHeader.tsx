@@ -14,7 +14,9 @@ const BacklogHeader = () => {
   return (
     <header className="flex items-baseline justify-between">
       <div className="flex items-baseline gap-2">
-        <h1 className="text-m text-dark-green">{TAB_TITLE[lastPath]} 백로그</h1>
+        <h1 className="font-bold text-m text-middle-green">
+          {TAB_TITLE[lastPath]} 백로그
+        </h1>
         <p className="">우선순위 내림차순</p>
       </div>
       <div className="flex gap-1">

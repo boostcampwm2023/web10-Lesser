@@ -15,7 +15,7 @@ interface MemberState extends InitialMemberState {
 }
 
 const initialState: InitialMemberState = {
-  myInfo: { id: -1, username: "", imageUrl: "", status: "on" },
+  myInfo: { id: -1, username: "", imageUrl: "", status: "on", role: "MEMBER" },
   memberList: [],
 };
 
