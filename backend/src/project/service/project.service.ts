@@ -32,7 +32,7 @@ export class ProjectService {
     title: string,
     subject: string,
   ): Promise<boolean> {
-    if (!(await this.isProjectLeader(project, member))) {
+    if (!(await this.isProjectLeader(project.id, member))) {
       throw new Error('Member is not the project leader');
     }
     return this.projectRepository.updateProjectInfo(project, title, subject);
@@ -47,7 +47,7 @@ export class ProjectService {
   }
 
   async addMember(project: Project, member: Member): Promise<void> {
-    const isProjectMember = await this.isProjectMember(project, member);
+    const isProjectMember = await this.isProjectMember(project.id, member);
     if (isProjectMember) throw new Error('already joined member');
 
     if ((await this.getProjectMemberList(project)).length >= 10)
@@ -64,16 +64,16 @@ export class ProjectService {
     return this.projectRepository.getProjectMemberList(project);
   }
 
-  async isProjectMember(project: Project, member: Member): Promise<boolean> {
+  async isProjectMember(projectId: number, member: Member): Promise<boolean> {
     const projectToMember: ProjectToMember | null =
-      await this.projectRepository.getProjectToMember(project, member);
+      await this.projectRepository.getProjectToMember(projectId, member);
     if (!projectToMember) return false;
     return true;
   }
 
-  async isProjectLeader(project: Project, member: Member): Promise<boolean> {
+  async isProjectLeader(projectId: number, member: Member): Promise<boolean> {
     const projectToMember = await this.projectRepository.getProjectToMember(
-      project,
+      projectId,
       member,
     );
     return projectToMember?.role === MemberRole.LEADER;
