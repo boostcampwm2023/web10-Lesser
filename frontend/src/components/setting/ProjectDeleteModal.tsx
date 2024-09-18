@@ -1,17 +1,23 @@
 import { ChangeEvent, MouseEventHandler, useState } from "react";
+import useSettingProjectSocket from "../../hooks/pages/setting/useSettingProjectSocket";
 import Closed from "../../assets/icons/closed.svg?react";
+import { Socket } from "socket.io-client";
 
 interface ProjectDeleteModalProps {
   projectTitle: string;
+  socket: Socket;
   close: () => void;
 }
 
 const ProjectDeleteModal = ({
   projectTitle,
+  socket,
   close,
 }: ProjectDeleteModalProps) => {
   const [inputValue, setInputValue] = useState("");
   const [confirmed, setConfirmed] = useState(false);
+
+  const { emitProjectDeleteEvent } = useSettingProjectSocket(socket);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -32,6 +38,12 @@ const ProjectDeleteModal = ({
       return;
     }
     close();
+  };
+
+  const handleDeleteButtonClick = () => {
+    if (confirmed) {
+      emitProjectDeleteEvent();
+    }
   };
 
   return (
@@ -63,12 +75,15 @@ const ProjectDeleteModal = ({
             } h-7 relative`}
           >
             {!confirmed && (
-              <div className="absolute w-full h-full bg-black rounded opacity-20"></div>
+              <div className="absolute w-full h-full bg-black rounded opacity-40"></div>
             )}
             <button
-              className="w-full h-full text-sm text-center text-white rounded bg-error-red"
+              className={`w-full h-full text-sm text-center text-white rounded ${
+                !confirmed ? "bg-gray-300" : "bg-error-red"
+              }`}
               type="button"
               disabled={!confirmed}
+              onClick={handleDeleteButtonClick}
             >
               프로젝트 삭제
             </button>

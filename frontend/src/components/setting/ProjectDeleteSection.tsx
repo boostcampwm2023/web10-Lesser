@@ -1,3 +1,5 @@
+import { useOutletContext } from "react-router-dom";
+import { Socket } from "socket.io-client";
 import { useModal } from "../../hooks/common/modal/useModal";
 import ProjectDeleteModal from "./ProjectDeleteModal";
 
@@ -7,8 +9,9 @@ interface ProjectDeleteSectionProps {
 
 const ProjectDeleteSection = ({ projectTitle }: ProjectDeleteSectionProps) => {
   const { open, close } = useModal(true);
+  const { socket }: { socket: Socket } = useOutletContext();
   const handleDeleteButtonClick = () => {
-    open(<ProjectDeleteModal {...{ projectTitle, close }} />);
+    open(<ProjectDeleteModal {...{ projectTitle, close, socket }} />);
   };
 
   return (

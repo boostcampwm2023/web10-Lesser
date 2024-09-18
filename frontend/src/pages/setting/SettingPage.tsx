@@ -34,7 +34,7 @@ const SettingPage = () => {
     <div className="w-full h-full">
       <InformationSettingSection {...{ title, subject }} />
       <MemberSettingSection memberList={memberList} />
-      <ProjectDeleteSection projectTitle="프로젝트 이름" />
+      <ProjectDeleteSection projectTitle={title} />
     </div>
   );
 };
