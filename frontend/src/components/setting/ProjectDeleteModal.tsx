@@ -60,7 +60,7 @@ const ProjectDeleteModal = ({
         </div>
         <p className="mb-10 text-lg">프로젝트 삭제 후 되돌릴 수 없습니다.</p>
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-bold">
+          <p className="text-sm font-bold select-none">
             삭제하시려면 "{projectTitle}"을(를) 입력해주세요.
           </p>
           <input
