@@ -6,6 +6,11 @@ import {
   LandingSocketData,
   LandingSocketDomain,
 } from "../../../types/common/landing";
+import {
+  SettingSocketData,
+  SettingSocketDomain,
+} from "../../../types/common/setting";
+import { SettingProjectDTO } from "../../../types/DTO/settingDTO";
 
 const useLandingProjectSocket = (socket: Socket) => {
   const [project, setProject] = useState<LandingProjectDTO>(
@@ -17,11 +22,22 @@ const useLandingProjectSocket = (socket: Socket) => {
     setProject(project);
   };
 
-  const handleOnLanding = ({ domain, content }: LandingSocketData) => {
-    if (domain !== LandingSocketDomain.INIT) {
+  const handleProjectInfoEvent = (content: SettingProjectDTO) => {
+    setProject({ ...project, title: content.title, subject: content.subject });
+  };
+
+  const handleOnLanding = ({
+    domain,
+    content,
+  }: LandingSocketData | SettingSocketData) => {
+    if (domain === SettingSocketDomain.PROJECT_INFO) {
+      handleProjectInfoEvent(content);
+    }
+
+    if (domain === LandingSocketDomain.INIT) {
+      handleInitEvent(content);
       return;
     }
-    handleInitEvent(content);
   };
 
   useEffect(() => {
