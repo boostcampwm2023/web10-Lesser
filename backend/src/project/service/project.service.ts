@@ -42,8 +42,25 @@ export class ProjectService {
     return await this.projectRepository.getProjectList(member);
   }
 
-  async getProject(projectId: number): Promise<Project | null> {
-    return await this.projectRepository.getProject(projectId);
+  private getProjectWithInviteLink(projectId: number) {
+    return this.projectRepository.getProject(projectId);
+  }
+  private async getProjectWithOutInviteLink(projectId: number) {
+    const project = await this.projectRepository.getProject(projectId);
+    delete project.inviteLinkId;
+    return project;
+  }
+
+  async getProject(projectId: number, member: Member): Promise<Project | null> {
+    if (!(await this.isExistProject(projectId)))
+      throw new Error('Project not found');
+    if (!(await this.isProjectMember(projectId, member))) {
+      throw new Error('Not project member');
+    }
+    if (await this.isProjectLeader(projectId, member)) {
+      return this.getProjectWithInviteLink(projectId);
+    }
+    return this.getProjectWithOutInviteLink(projectId);
   }
 
   async addMember(project: Project, member: Member): Promise<void> {
@@ -62,6 +79,11 @@ export class ProjectService {
 
   async getProjectMemberList(project: Project) {
     return this.projectRepository.getProjectMemberList(project);
+  }
+
+  async isExistProject(projectId: number): Promise<boolean> {
+    const project = await this.projectRepository.getProject(projectId);
+    return !!project;
   }
 
   async isProjectMember(projectId: number, member: Member): Promise<boolean> {

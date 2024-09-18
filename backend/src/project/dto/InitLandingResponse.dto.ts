@@ -79,7 +79,7 @@ class ProjectLandingPageContentDto {
   sprint: null;
   memoList: MemoDto[];
   linkList: LinkDto[];
-  inviteLinkId: string;
+  inviteLinkId?: string;
 
   static of(
     project: Project,
@@ -112,7 +112,7 @@ class ProjectLandingPageContentDto {
     const linkDtoList = linkList.map((link) => LinkDto.of(link));
     dto.linkList = linkDtoList;
 
-    dto.inviteLinkId = project.inviteLinkId;
+    if (project.inviteLinkId) dto.inviteLinkId = project.inviteLinkId;
     return dto;
   }
 }

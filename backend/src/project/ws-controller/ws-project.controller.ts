@@ -14,7 +14,7 @@ export class WsProjectController {
   async joinLandingPage(client: ClientSocket) {
     const [project, projectMemberList, memoListWithMember, linkList] =
       await Promise.all([
-        this.projectService.getProject(client.projectId),
+        this.projectService.getProject(client.projectId, client.member),
         this.projectService.getProjectMemberList(client.project),
         this.projectService.getProjectMemoListWithMember(client.project.id),
         this.projectService.getProjectLinkList(client.project),
@@ -80,7 +80,7 @@ export class WsProjectController {
     client.join('setting');
 
     const [project, projectMemberList] = await Promise.all([
-      this.projectService.getProject(client.projectId),
+      this.projectService.getProject(client.projectId, client.member),
       this.projectService.getProjectMemberList(client.project),
     ]);
 
