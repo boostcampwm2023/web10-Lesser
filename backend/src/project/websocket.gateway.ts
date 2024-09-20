@@ -22,6 +22,7 @@ import { WsProjectEpicController } from './ws-controller/ws-project-epic.control
 import { WsProjectStoryController } from './ws-controller/ws-project-story.controller';
 import { WsProjectTaskController } from './ws-controller/ws-project-task.controller';
 import { WsProjectInfoController } from './ws-controller/ws-project-info.controller';
+import { WsProjectInviteLinkController } from './ws-controller/ws-project-invite-link.controller';
 
 @WebSocketGateway({
   namespace: /project-\d+/,
@@ -42,6 +43,7 @@ export class ProjectWebsocketGateway
     private readonly wsProjectStoryController: WsProjectStoryController,
     private readonly wsProjectTaskController: WsProjectTaskController,
     private readonly wsProjectInfoController: WsProjectInfoController,
+    private readonly wsProjectInviteLinkController: WsProjectInviteLinkController,
   ) {
     this.namespaceMap = new Map();
   }
@@ -129,6 +131,16 @@ export class ProjectWebsocketGateway
       this.wsProjectLinkController.createLink(client, data);
     } else if (data.action === 'delete') {
       this.wsProjectLinkController.deleteLink(client, data);
+    }
+  }
+
+  @SubscribeMessage('inviteLink')
+  async handleInviteLinkEvent(
+    @ConnectedSocket() client: ClientSocket,
+    @MessageBody() data: any,
+  ) {
+    if (data.action === 'update') {
+      this.wsProjectInviteLinkController.updateInviteLink(client, data);
     }
   }
 
