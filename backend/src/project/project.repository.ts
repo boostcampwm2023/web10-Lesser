@@ -76,6 +76,17 @@ export class ProjectRepository {
     });
   }
 
+  async updateInviteLink(
+    projectId: number,
+    newInviteLinkId: string,
+  ): Promise<boolean> {
+    const result = await this.projectRepository.update(
+      { id: projectId },
+      { inviteLinkId: newInviteLinkId },
+    );
+    return !!result.affected;
+  }
+
   getProject(projectId: number): Promise<Project | null> {
     return this.projectRepository.findOne({ where: { id: projectId } });
   }

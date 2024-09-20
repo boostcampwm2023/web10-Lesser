@@ -10,6 +10,7 @@ import { Story, StoryStatus } from '../entity/story.entity';
 import { Task, TaskStatus } from '../entity/task.entity';
 import { LexoRank } from 'lexorank';
 import { MemberRole } from '../enum/MemberRole.enum';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ProjectService {
@@ -49,6 +50,19 @@ export class ProjectService {
     const project = await this.projectRepository.getProject(projectId);
     delete project.inviteLinkId;
     return project;
+  }
+
+  async updateInviteLink(projectId: number, member: Member): Promise<string> {
+    if (!(await this.isProjectLeader(projectId, member))) {
+      throw new Error('Member is not the project leader');
+    }
+    const newInviteLinkId = await uuidv4();
+    const isUpdated = await this.projectRepository.updateInviteLink(
+      projectId,
+      newInviteLinkId,
+    );
+    if (!isUpdated) throw new Error('invite link not updated');
+    return newInviteLinkId;
   }
 
   async getProject(projectId: number, member: Member): Promise<Project | null> {

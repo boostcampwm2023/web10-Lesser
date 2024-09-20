@@ -23,6 +23,7 @@ import { WsProjectStoryController } from './ws-controller/ws-project-story.contr
 import { Task } from './entity/task.entity';
 import { WsProjectTaskController } from './ws-controller/ws-project-task.controller';
 import { WsProjectInfoController } from './ws-controller/ws-project-info.controller';
+import { WsProjectInviteLinkController } from './ws-controller/ws-project-invite-link.controller';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { WsProjectInfoController } from './ws-controller/ws-project-info.control
     WsProjectStoryController,
     WsProjectTaskController,
     WsProjectInfoController,
+    WsProjectInviteLinkController,
   ],
 })
 export class ProjectModule {}
