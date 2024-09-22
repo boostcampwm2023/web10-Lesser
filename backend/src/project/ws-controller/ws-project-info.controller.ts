@@ -6,6 +6,8 @@ import { getRecursiveErrorMsgList } from '../util/validation.util';
 import { ProjectService } from '../service/project.service';
 import { ProjectInfoUpdateRequestDto } from '../dto/project-info/ProjectInfoUpdateRequest.dto';
 import { ProjectInfoUpdateNotifyDto } from '../dto/project-info/ProjectInfoUpdateNotify.dto';
+import { ProjectDeleteRequestDto } from '../dto/project-info/ProjectDeleteRequest.dto';
+import { ProjectDeleteNotifyDto } from '../dto/project-info/ProjectDeleteNotify.dto';
 
 @Injectable()
 export class WsProjectInfoController {
@@ -40,5 +42,39 @@ export class WsProjectInfoController {
         client.disconnect(true);
       } else throw e;
     }
+  }
+
+  async deleteProject(client: ClientSocket, data: any) {
+    const errors = await validate(plainToClass(ProjectDeleteRequestDto, data));
+    if (errors.length > 0) {
+      const errorList = getRecursiveErrorMsgList(errors);
+      client.emit('error', { errorList });
+      return;
+    }
+    const isLeader = await this.projectService.isProjectLeader(
+      client.project.id,
+      client.member,
+    );
+    if (!isLeader) {
+      client.disconnect();
+      return;
+    }
+    client.nsp.emit('main', ProjectDeleteNotifyDto.of());
+    //TODO: 프로젝트가 조회되지 않게 함
+    await this.waitNSecond(1);
+    const isDeleted = await this.projectService.deleteProject(
+      client.project.id,
+      client.member,
+    );
+    if (!isDeleted) throw new Error('Project Not Deleted');
+    client.nsp.disconnectSockets(true);
+  }
+
+  private waitNSecond(N: number): Promise<void> {
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, N * 1000);
+    });
   }
 }

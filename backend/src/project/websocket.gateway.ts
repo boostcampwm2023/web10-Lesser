@@ -202,7 +202,14 @@ export class ProjectWebsocketGateway
   ) {
     if (data.action === 'update') {
       this.wsProjectInfoController.updateProjectInfo(client, data);
+    } else if (data.action === 'delete') {
+      this.wsProjectInfoController.deleteProject(client, data);
+      this.deleteProjectFromNamespaceMap(client.project.id);
     }
+  }
+
+  deleteProjectFromNamespaceMap(projectId: number) {
+    this.namespaceMap.delete(projectId);
   }
 
   notifyJoinToConnectedMembers(projectId: number, member: Member) {
