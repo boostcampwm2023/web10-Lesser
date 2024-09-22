@@ -37,6 +37,11 @@ export class ProjectRepository {
     return this.projectRepository.save(project);
   }
 
+  async delete(projectId: number) {
+    const result = await this.projectRepository.delete({ id: projectId });
+    return result.affected ? result.affected : 0;
+  }
+
   async updateProjectInfo(
     project: Project,
     title: string,

@@ -39,6 +39,15 @@ export class ProjectService {
     return this.projectRepository.updateProjectInfo(project, title, subject);
   }
 
+  async deleteProject(projectId: number, member: Member): Promise<boolean> {
+    if (!(await this.isProjectLeader(projectId, member))) {
+      throw new Error('Member is not the project leader');
+    }
+    const affected = await this.projectRepository.delete(projectId);
+    if (affected === 0) return false;
+    return true;
+  }
+
   async getProjectList(member: Member): Promise<Project[]> {
     return await this.projectRepository.getProjectList(member);
   }
