@@ -41,7 +41,7 @@ export class WsProjectController {
     );
     client.emit('landing', response);
 
-    client.leave('landing');
+    client.leave('backlog');
     client.leave('setting');
     client.join('landing');
 
