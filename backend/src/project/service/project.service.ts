@@ -11,6 +11,7 @@ import { Task, TaskStatus } from '../entity/task.entity';
 import { LexoRank } from 'lexorank';
 import { MemberRole } from '../enum/MemberRole.enum';
 import { v4 as uuidv4 } from 'uuid';
+import { ProjectBriefInfoDto } from '../dto/service/ProjectBriefInfo.dto';
 
 @Injectable()
 export class ProjectService {
@@ -122,6 +123,27 @@ export class ProjectService {
       member,
     );
     return projectToMember?.role === MemberRole.LEADER;
+  }
+
+  async getProjectBriefInfoByInviteLinkId(
+    inviteLinkId: string,
+  ): Promise<ProjectBriefInfoDto> {
+    const project =
+      await this.projectRepository.getProjectWithMemberListByLinkId(
+        inviteLinkId,
+      );
+    const leader = project.projectToMember.find(
+      (member) => member.role === MemberRole.LEADER,
+    );
+    if (!leader) {
+      throw new Error('Project does not have a leader');
+    }
+    return ProjectBriefInfoDto.of(
+      project.id,
+      project.title,
+      project.subject,
+      leader.member.username,
+    );
   }
 
   getProjectByLinkId(projectLinkId: string): Promise<Project | null> {
