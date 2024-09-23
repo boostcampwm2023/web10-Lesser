@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   NotFoundException,
+  Param,
   Post,
   Req,
   Res,
@@ -14,6 +15,7 @@ import { MemberRequest } from 'src/common/guard/authentication.guard';
 import { JoinProjectRequestDto } from './dto/JoinProjectRequest.dto';
 import { Response } from 'express';
 import { ProjectWebsocketGateway } from './websocket.gateway';
+import { ProjectInvitePreviewResponseDto } from './dto/ProjectInvitePreviewResponse.dto';
 
 @Controller('project')
 export class ProjectController {
@@ -81,5 +83,32 @@ export class ProjectController {
       request.member,
     );
     return response.status(201).send();
+  }
+
+  @Get('/invite-preview/:inviteLinkId')
+  async getProjectInvitePreview(
+    @Param('inviteLinkId') inviteLinkId: string,
+    @Res() response: Response,
+  ) {
+    let projectPublicInfo;
+    try {
+      projectPublicInfo =
+        await this.projectService.getProjectBriefInfoByInviteLinkId(
+          inviteLinkId,
+        );
+    } catch (err) {
+      if (err.message === 'Project Not Found') throw new NotFoundException();
+      throw err;
+    }
+    return response
+      .status(200)
+      .send(
+        ProjectInvitePreviewResponseDto.of(
+          projectPublicInfo.id,
+          projectPublicInfo.title,
+          projectPublicInfo.subject,
+          projectPublicInfo.leaderUsername,
+        ),
+      );
   }
 }

@@ -75,6 +75,17 @@ export class ProjectRepository {
     );
   }
 
+  async getProjectWithMemberListByLinkId(
+    inviteLinkId: string,
+  ): Promise<Project> {
+    const projectWithMemberList = await this.projectRepository.findOne({
+      where: { inviteLinkId },
+      relations: { projectToMember: { member: true } },
+    });
+    if (!projectWithMemberList) throw new Error('Project Not Found');
+    return projectWithMemberList;
+  }
+
   getProjectByLinkId(projectLinkId: string): Promise<Project | null> {
     return this.projectRepository.findOne({
       where: { inviteLinkId: projectLinkId },
