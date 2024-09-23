@@ -73,6 +73,12 @@ const LandingMember = ({ projectTitle }: LandingMemberProps) => {
     });
   }
 
+  const handleChangeInviteLinkClick = () => {
+    console.log("Asdfsdf");
+
+    socket.emit("inviteLink", { action: "update", content: {} });
+  };
+
   return (
     <div className="w-full px-6 py-6 overflow-y-scroll rounded-lg shadow-box bg-gradient-to-tr to-light-green-linear-from from-light-green scrollbar-thin scrollbar-thumb-light-green scrollbar-track-transparent scrollbar-thumb-rounded-full">
       <div className="flex flex-col gap-3">
@@ -103,7 +109,10 @@ const LandingMember = ({ projectTitle }: LandingMemberProps) => {
                 초대링크 복사
               </button>
               <span>|</span>
-              <button className="text-xxs hover:underline" onClick={() => {}}>
+              <button
+                className="text-xxs hover:underline"
+                onClick={handleChangeInviteLinkClick}
+              >
                 링크 변경
               </button>
             </div>

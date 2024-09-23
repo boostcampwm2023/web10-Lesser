@@ -24,7 +24,7 @@ const useSocket = (projectId: string) => {
       alert("프로젝트가 삭제되었습니다.");
       setTimeout(() => {
         navigate(ROUTER_URL.PROJECTS);
-      }, 1000);
+      }, 500);
     }
   };
 
