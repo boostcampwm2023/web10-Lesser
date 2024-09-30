@@ -9,7 +9,7 @@ export const API_URL = {
   NICKNAME_AVAILABLILITY: "/member/availability",
   GITHUB_USERNAME: "/auth/github/username",
   PROJECT: "/project",
-  PROJECT_JOIN: "/project/join",
+  PROJECT_JOIN: "/project/join-request",
 };
 
 export const ROUTER_URL = {
