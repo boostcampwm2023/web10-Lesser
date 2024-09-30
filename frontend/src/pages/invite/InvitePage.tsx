@@ -44,37 +44,39 @@ const InvitePage = () => {
 
   return (
     <div className="w-[100%] min-w-[720px] h-[720px] flex justify-center items-center">
-      <main className="bg-white shadow-box w-[42.5rem] h-[27.5rem] flex justify-center items-center">
-        <div className="w-[40rem] h-[25rem] border-middle-green border px-10 py-8">
-          <p className="self-start font-bold break-words text-xxl">
-            Leader<span className="font-light">님의</span>
-          </p>
-          <p className="self-start font-bold break-words text-xxl">
-            {projectTitle}
-          </p>
-          <p className="self-start mt-8">
-            leader님의 {projectTitle} 프로젝트에 참여하고 싶다면 요청을
-            보내세요.
-          </p>
-          <div className="flex flex-col w-[35rem] gap-5 mt-14">
-            <button
-              className="w-full h-[2.5rem] rounded-lg text-white bg-middle-green"
-              type="button"
-              onClick={handleJoinButtonClick}
-            >
-              프로젝트 참여 요청
-            </button>
-            <Link to={ROUTER_URL.PROJECTS}>
+      <div className="w-[49.37rem] h-[31.87rem] bg-middle-green flex justify-center items-center shadow-box">
+        <main className="bg-white w-[42.5rem] h-[27.5rem] flex justify-center items-center">
+          <div className="w-[40rem] h-[25rem] border-middle-green border px-10 py-8">
+            <p className="self-start font-bold break-words text-xxl">
+              Leader<span className="font-light">님의</span>
+            </p>
+            <p className="self-start font-bold break-words text-xxl">
+              {projectTitle}
+            </p>
+            <p className="self-start mt-8">
+              leader님의 {projectTitle} 프로젝트에 참여하고 싶다면 요청을
+              보내세요.
+            </p>
+            <div className="flex flex-col w-[35rem] gap-5 mt-14">
               <button
-                className="w-full h-[2.5rem] rounded-lg text-white bg-dark-gray"
+                className="w-full h-[2.5rem] rounded-lg text-white bg-middle-green"
                 type="button"
+                onClick={handleJoinButtonClick}
               >
-                내 프로젝트
+                프로젝트 참여 요청
               </button>
-            </Link>
+              <Link to={ROUTER_URL.PROJECTS}>
+                <button
+                  className="w-full h-[2.5rem] rounded-lg text-white bg-dark-gray"
+                  type="button"
+                >
+                  내 프로젝트
+                </button>
+              </Link>
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };
