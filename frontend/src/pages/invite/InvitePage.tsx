@@ -44,7 +44,7 @@ const InvitePage = () => {
 
   return (
     <div className="w-[100%] min-w-[720px] h-[720px] flex justify-center items-center">
-      <div className="w-[49.37rem] h-[31.87rem] bg-middle-green flex justify-center items-center shadow-box">
+      <div className="w-[47rem] h-[31rem] bg-middle-green flex justify-center items-center shadow-box">
         <main className="bg-white w-[42.5rem] h-[27.5rem] flex justify-center items-center">
           <div className="w-[40rem] h-[25rem] border-middle-green border px-10 py-8">
             <p className="self-start font-bold break-words text-xxl">
