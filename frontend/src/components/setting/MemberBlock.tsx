@@ -5,6 +5,7 @@ interface MemberBlockProps extends SettingMemberDTO {}
 
 const MemberBlock = ({ username, imageUrl, role }: MemberBlockProps) => {
   const myRole = useMemberStore((state) => state.myInfo.role);
+  const myUserName = useMemberStore((state) => state.myInfo.username);
 
   return (
     <div className="flex w-full gap-3">
@@ -16,7 +17,7 @@ const MemberBlock = ({ username, imageUrl, role }: MemberBlockProps) => {
         <p className="">{role}</p>
       </div>
       <div className="w-[30rem]">
-        {myRole === "LEADER" && (
+        {myRole === "LEADER" && myUserName !== username && (
           <button
             className="px-2 py-1 text-white rounded w-fit bg-error-red text-xxs"
             type="button"

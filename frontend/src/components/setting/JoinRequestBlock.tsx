@@ -15,12 +15,20 @@ const JoinRequestBlock = ({ username, imageUrl }: JoinRequestBlockProps) => {
       <div className="w-[18.75rem]"></div>
       <div className="w-[30rem]">
         {myRole === "LEADER" && (
-          <button
-            className="px-2 py-1 text-white rounded w-fit bg-error-red text-xxs"
-            type="button"
-          >
-            프로젝트에서 제거
-          </button>
+          <>
+            <button
+              className="px-2 py-1 text-white rounded w-fit text-xxs bg-middle-green"
+              type="button"
+            >
+              참여 수락
+            </button>
+            <button
+              className="px-2 py-1 text-white rounded w-fit bg-error-red text-xxs"
+              type="button"
+            >
+              참여 거절
+            </button>
+          </>
         )}
       </div>
     </div>
