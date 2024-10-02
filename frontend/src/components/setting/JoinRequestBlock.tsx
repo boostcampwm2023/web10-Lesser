@@ -1,9 +1,9 @@
 import useMemberStore from "../../stores/useMemberStore";
-import { SettingMemberDTO } from "../../types/DTO/settingDTO";
+import { SettingJoinRequestDTO } from "../../types/DTO/settingDTO";
 
-interface MemberBlockProps extends SettingMemberDTO {}
+interface JoinRequestBlockProps extends SettingJoinRequestDTO {}
 
-const MemberBlock = ({ username, imageUrl, role }: MemberBlockProps) => {
+const JoinRequestBlock = ({ username, imageUrl }: JoinRequestBlockProps) => {
   const myRole = useMemberStore((state) => state.myInfo.role);
 
   return (
@@ -12,9 +12,7 @@ const MemberBlock = ({ username, imageUrl, role }: MemberBlockProps) => {
         <img className="w-8 h-8 rounded-full" src={imageUrl} alt={username} />
         <p className="">{username}</p>
       </div>
-      <div className="w-[18.75rem]">
-        <p className="">{role}</p>
-      </div>
+      <div className="w-[18.75rem]"></div>
       <div className="w-[30rem]">
         {myRole === "LEADER" && (
           <button
@@ -29,4 +27,4 @@ const MemberBlock = ({ username, imageUrl, role }: MemberBlockProps) => {
   );
 };
 
-export default MemberBlock;
+export default JoinRequestBlock;

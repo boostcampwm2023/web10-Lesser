@@ -1,11 +1,19 @@
-import { LandingMemberDTO } from "../../types/DTO/landingDTO";
+import JoinRequestBlock from "./JoinRequestBlock";
 import MemberBlock from "./MemberBlock";
+import {
+  SettingJoinRequestDTO,
+  SettingMemberDTO,
+} from "../../types/DTO/settingDTO";
 
 interface MemberSettingSectionProps {
-  memberList: LandingMemberDTO[];
+  memberList: SettingMemberDTO[];
+  joinRequestList: SettingJoinRequestDTO[];
 }
 
-const MemberSettingSection = ({ memberList }: MemberSettingSectionProps) => (
+const MemberSettingSection = ({
+  memberList,
+  joinRequestList,
+}: MemberSettingSectionProps) => (
   <div className="mb-5">
     <div className="mb-2">
       <p className="font-bold text-m text-middle-green">멤버 관리</p>
@@ -18,6 +26,7 @@ const MemberSettingSection = ({ memberList }: MemberSettingSectionProps) => (
       </div>
       <div className="flex flex-col gap-3 overflow-y-auto scrollbar-thin">
         {...memberList.map((member) => <MemberBlock {...member} />)}
+        {...joinRequestList.map((request) => <JoinRequestBlock {...request} />)}
       </div>
     </div>
   </div>

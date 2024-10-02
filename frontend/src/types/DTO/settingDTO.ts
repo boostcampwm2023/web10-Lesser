@@ -12,7 +12,15 @@ export interface SettingMemberDTO {
   role: MemberRole;
 }
 
+export interface SettingJoinRequestDTO {
+  id: number;
+  memberId: number;
+  username: string;
+  imageUrl: string;
+}
+
 export interface SettingDTO {
   project: SettingProjectDTO;
   member: SettingMemberDTO[];
+  joinRequestList: SettingJoinRequestDTO[];
 }
