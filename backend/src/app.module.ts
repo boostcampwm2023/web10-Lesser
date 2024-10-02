@@ -32,6 +32,7 @@ import { Link } from './project/entity/link.entity.';
 import { Epic } from './project/entity/epic.entity';
 import { Story } from './project/entity/story.entity';
 import { Task } from './project/entity/task.entity';
+import { ProjectJoinRequest } from './project/entity/project-join-request.entity';
 
 @Module({
   imports: [
@@ -50,11 +51,12 @@ import { Task } from './project/entity/task.entity';
           LoginMember,
           Project,
           ProjectToMember,
+          ProjectJoinRequest,
           Memo,
           Link,
           Epic,
           Story,
-		  Task
+          Task,
         ],
         synchronize: ConfigService.get('NODE_ENV') == 'PROD' ? false : true,
       }),

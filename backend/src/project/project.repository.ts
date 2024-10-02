@@ -10,6 +10,7 @@ import { Epic, EpicColor } from './entity/epic.entity';
 import { Story, StoryStatus } from './entity/story.entity';
 import { Task, TaskStatus } from './entity/task.entity';
 import { MemberRole } from './enum/MemberRole.enum';
+import { ProjectJoinRequest } from './entity/project-join-request.entity';
 
 @Injectable()
 export class ProjectRepository {
@@ -30,6 +31,8 @@ export class ProjectRepository {
     private readonly storyRepository: Repository<Story>,
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
+    @InjectRepository(ProjectJoinRequest)
+    private readonly projectJoinRequestRepository: Repository<ProjectJoinRequest>,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -101,6 +104,23 @@ export class ProjectRepository {
       { inviteLinkId: newInviteLinkId },
     );
     return !!result.affected;
+  }
+
+  async createProjectJoinRequest(
+    projectJoinRequest: ProjectJoinRequest,
+  ): Promise<ProjectJoinRequest> {
+    try {
+      return await this.projectJoinRequestRepository.save(projectJoinRequest);
+    } catch (e) {
+      if (
+        e.code === 'ER_DUP_ENTRY' &&
+        e.sqlMessage.includes(
+          'PROJECT_JOIN_REQUEST_UQ_PROJECT_ID_AND_MEMBER_ID',
+        )
+      )
+        throw new Error('DUPLICATED PROJECT ID AND MEMBER ID');
+      throw e;
+    }
   }
 
   getProject(projectId: number): Promise<Project | null> {
