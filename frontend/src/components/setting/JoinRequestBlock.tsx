@@ -17,7 +17,7 @@ const JoinRequestBlock = ({ username, imageUrl }: JoinRequestBlockProps) => {
         {myRole === "LEADER" && (
           <>
             <button
-              className="px-2 py-1 text-white rounded w-fit text-xxs bg-middle-green"
+              className="px-2 py-1 mr-3 text-white rounded w-fit text-xxs bg-middle-green"
               type="button"
             >
               참여 수락
