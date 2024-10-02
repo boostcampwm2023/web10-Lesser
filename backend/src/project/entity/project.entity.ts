@@ -6,12 +6,12 @@ import {
   UpdateDateColumn,
   OneToMany,
   Generated,
-  JoinColumn,
 } from 'typeorm';
 import { Epic } from './epic.entity';
 import { Link } from './link.entity.';
 import { Memo } from './memo.entity';
 import { ProjectToMember } from './project-member.entity';
+import { ProjectJoinRequest } from './project-join-request.entity';
 
 @Entity()
 export class Project {
@@ -51,6 +51,9 @@ export class Project {
 
   @OneToMany(() => Epic, (epic) => epic.project)
   epicList: Epic[];
+
+  @OneToMany(() => ProjectJoinRequest, (JoinRequest) => JoinRequest.project)
+  joinRequestList: ProjectJoinRequest[];
 
   static of(title: string, subject: string) {
     const newProject = new Project();

@@ -24,6 +24,7 @@ import { Task } from './entity/task.entity';
 import { WsProjectTaskController } from './ws-controller/ws-project-task.controller';
 import { WsProjectInfoController } from './ws-controller/ws-project-info.controller';
 import { WsProjectInviteLinkController } from './ws-controller/ws-project-invite-link.controller';
+import { ProjectJoinRequest } from './entity/project-join-request.entity';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { WsProjectInviteLinkController } from './ws-controller/ws-project-invite
       Epic,
       Story,
       Task,
+      ProjectJoinRequest,
     ]),
   ],
   controllers: [ProjectController],

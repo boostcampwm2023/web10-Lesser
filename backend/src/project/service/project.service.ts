@@ -12,6 +12,7 @@ import { LexoRank } from 'lexorank';
 import { MemberRole } from '../enum/MemberRole.enum';
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectBriefInfoDto } from '../dto/service/ProjectBriefInfo.dto';
+import { ProjectJoinRequest } from '../entity/project-join-request.entity';
 
 @Injectable()
 export class ProjectService {
@@ -148,6 +149,29 @@ export class ProjectService {
 
   getProjectByLinkId(projectLinkId: string): Promise<Project | null> {
     return this.projectRepository.getProjectByLinkId(projectLinkId);
+  }
+
+  async createProjectJoinRequest(
+    inviteLinkId: string,
+    member: Member,
+  ): Promise<void> {
+    const project = await this.getProjectByLinkId(inviteLinkId);
+    if (!project) throw new Error('Project not found');
+    const isProjectMember = await this.isProjectMember(project.id, member);
+    if (isProjectMember) throw new Error('Already a project member');
+    try {
+      const newProjectJoinRequest = ProjectJoinRequest.of(
+        project.id,
+        member.id,
+      );
+      await this.projectRepository.createProjectJoinRequest(
+        newProjectJoinRequest,
+      );
+    } catch (e) {
+      if (e.message === 'DUPLICATED PROJECT ID AND MEMBER ID') {
+        throw new Error('Join request already submitted');
+      }
+    }
   }
 
   async createMemo(project: Project, member: Member, color: memoColor) {
