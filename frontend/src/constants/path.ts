@@ -10,6 +10,7 @@ export const API_URL = {
   GITHUB_USERNAME: "/auth/github/username",
   PROJECT: "/project",
   PROJECT_JOIN: "/project/join-request",
+  INVITE_PREVIEW: "/project/invite-preview",
 };
 
 export const ROUTER_URL = {

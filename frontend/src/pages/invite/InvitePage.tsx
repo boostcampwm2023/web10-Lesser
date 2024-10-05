@@ -1,13 +1,21 @@
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { checkAccessToken } from "../../apis/utils/authAPI";
 import { ROUTER_URL } from "../../constants/path";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { STORAGE_KEY } from "../../constants/storageKey";
 import { postJoinProject } from "../../apis/api/projectAPI";
+import { InvitePreview } from "../../types/DTO/inviteDTO";
+import { getInvitePreview } from "../../apis/api/inviteAPI";
 
 const InvitePage = () => {
   const { projectTitle, projectId: projectUUID } = useParams();
   const { pathname } = useLocation();
+  const [projectInfo, setProjectInfo] = useState<InvitePreview>({
+    id: -1,
+    title: "",
+    subject: "",
+    leaderUsername: "",
+  });
   const navigate = useNavigate();
 
   const handleJoinButtonClick = async () => {
@@ -35,6 +43,10 @@ const InvitePage = () => {
       navigate(ROUTER_URL.LOGIN, { replace: true });
     }
 
+    getInvitePreview(projectUUID!).then((response) => {
+      setProjectInfo(response.data);
+    });
+
     return () => {
       if (checkAccessToken()) {
         sessionStorage.removeItem(STORAGE_KEY.REDIRECT);
@@ -48,16 +60,20 @@ const InvitePage = () => {
         <main className="bg-white w-[42.5rem] h-[27.5rem] flex justify-center items-center">
           <div className="w-[40rem] h-[25rem] border-middle-green border px-10 py-8">
             <p className="self-start font-bold break-words text-xxl">
-              Leader<span className="font-light">님의</span>
+              {projectInfo.leaderUsername}
+              <span className="font-light">님의</span>
             </p>
             <p className="self-start font-bold break-words text-xxl">
               {projectTitle}
             </p>
-            <p className="self-start mt-8">
-              leader님의 {projectTitle} 프로젝트에 참여하고 싶다면 요청을
-              보내세요.
+            <p className="mt-1">{projectInfo.subject}</p>
+            <p className="self-start mt-3 text-xs truncate">
+              {projectInfo.leaderUsername}님의 {projectInfo.title}
             </p>
-            <div className="flex flex-col w-[35rem] gap-5 mt-14">
+            <p className="text-xs">
+              프로젝트에 참여하고 싶다면 요청을 보내세요.
+            </p>
+            <div className="flex flex-col w-[35rem] gap-5 mt-8">
               <button
                 className="w-full h-[2.5rem] rounded-lg text-white bg-middle-green"
                 type="button"
