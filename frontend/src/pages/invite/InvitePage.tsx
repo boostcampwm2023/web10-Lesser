@@ -23,7 +23,7 @@ const InvitePage = () => {
 
     switch (response.status) {
       case 201:
-        alert("프로젝트에 참여되었습니다.");
+        alert("참여 요청을 보냈습니다.");
         navigate("/projects");
         break;
       case 200:
@@ -43,9 +43,16 @@ const InvitePage = () => {
       navigate(ROUTER_URL.LOGIN, { replace: true });
     }
 
-    getInvitePreview(projectUUID!).then((response) => {
-      setProjectInfo(response.data);
-    });
+    getInvitePreview(projectUUID!)
+      .then((response) => {
+        setProjectInfo(response.data);
+      })
+      .catch((error) => {
+        if (error.response.status === 404) {
+          alert("유효하지 않은 요청 링크입니다.");
+          navigate("/projects");
+        }
+      });
 
     return () => {
       if (checkAccessToken()) {
