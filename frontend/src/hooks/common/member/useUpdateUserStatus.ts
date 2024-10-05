@@ -3,6 +3,7 @@ import { Socket } from "socket.io-client";
 import {
   LandingSocketData,
   LandingSocketDomain,
+  LandingSocketInviteLinkAction,
   LandingSocketMemberAction,
 } from "../../../types/common/landing";
 import { LandingDTO, LandingMemberDTO } from "../../../types/DTO/landingDTO";
@@ -76,6 +77,16 @@ const useUpdateUserStatus = (
     }
   };
 
+  const handleInviteLinkEvent = (
+    action: LandingSocketInviteLinkAction,
+    content: { inviteLinkId: string }
+  ) => {
+    if (action === "update") {
+      alert("초대링크가 변경되었습니다.");
+      inviteLinkIdRef.current = content.inviteLinkId;
+    }
+  };
+
   const handleOnLanding = ({ domain, action, content }: LandingSocketData) => {
     switch (domain) {
       case LandingSocketDomain.INIT:
@@ -83,6 +94,9 @@ const useUpdateUserStatus = (
         break;
       case LandingSocketDomain.MEMBER:
         handleMemberEvent(action, content);
+        break;
+      case LandingSocketDomain.INVITE_LINK:
+        handleInviteLinkEvent(action, content);
         break;
     }
   };

@@ -5,17 +5,28 @@ import {
   SettingSocketDomain,
   SettingSocketProjectInfoAction,
 } from "../../../types/common/setting";
-import { SettingDTO, SettingProjectDTO } from "../../../types/DTO/settingDTO";
+import {
+  SettingDTO,
+  SettingJoinRequestDTO,
+  SettingMemberDTO,
+  SettingProjectDTO,
+} from "../../../types/DTO/settingDTO";
 
 const useSettingSocket = (socket: Socket) => {
   const [projectInfo, setProjectInfo] = useState<SettingProjectDTO>({
     title: "",
     subject: "",
   });
+  const [memberList, setMemberList] = useState<SettingMemberDTO[]>([]);
+  const [joinRequestList, setJoinRequestList] = useState<
+    SettingJoinRequestDTO[]
+  >([]);
 
   const handleInitEvent = (content: SettingDTO) => {
-    const { project } = content;
+    const { project, member, joinRequestList } = content;
     setProjectInfo(project);
+    setMemberList(member);
+    setJoinRequestList(joinRequestList ? joinRequestList : []);
   };
 
   const handleProjectInfoEvent = (
@@ -53,7 +64,7 @@ const useSettingSocket = (socket: Socket) => {
     };
   }, []);
 
-  return { projectInfo };
+  return { projectInfo, memberList, joinRequestList };
 };
 
 export default useSettingSocket;

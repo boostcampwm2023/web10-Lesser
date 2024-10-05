@@ -10,6 +10,7 @@ export enum LandingSocketDomain {
   MEMO = "memo",
   MEMBER = "member",
   LINK = "link",
+  INVITE_LINK = "inviteLink",
 }
 
 export enum LandingSocketMemoAction {
@@ -28,6 +29,10 @@ export enum LandingSocketLinkAction {
   CREATE = "create",
   UPDATE = "update",
   DELETE = "delete",
+}
+
+export enum LandingSocketInviteLinkAction {
+  UPDATE = "update",
 }
 
 interface LandingSocketInitData {
@@ -54,11 +59,18 @@ interface LandingSocketLinkData {
   content: LandingLinkDTO;
 }
 
+interface LandingSocketInviteLinkData {
+  domain: LandingSocketDomain.INVITE_LINK;
+  action: LandingSocketInviteLinkAction;
+  content: { inviteLinkId: string };
+}
+
 export type LandingSocketData =
   | LandingSocketInitData
   | LandingSocketMemoData
   | LandingSocketMemberData
-  | LandingSocketLinkData;
+  | LandingSocketLinkData
+  | LandingSocketInviteLinkData;
 
 export enum MemoColorStyle {
   yellow = "bg-[#FFD966]",

@@ -4,6 +4,7 @@ import LandingProjectLink from "./LandingProjectLink";
 import { useOutletContext } from "react-router-dom";
 
 import useLandingProjectSocket from "../../../hooks/common/landing/useLandingProjectSocket";
+import useMemberStore from "../../../stores/useMemberStore";
 
 interface LandingProjectProps {
   projectId: string;
@@ -12,6 +13,7 @@ interface LandingProjectProps {
 const LandingProject = ({ projectId }: LandingProjectProps) => {
   const { socket }: { socket: Socket } = useOutletContext();
   const { project } = useLandingProjectSocket(socket);
+  const { role } = useMemberStore((state) => state.myInfo);
 
   return (
     <div className="flex flex-col justify-between w-full p-6 rounded-lg shadow-box">
@@ -22,10 +24,12 @@ const LandingProject = ({ projectId }: LandingProjectProps) => {
         </p>
       </div>
       <div className="text-xs">{project.subject}</div>
-      <div className="flex justify-between">
+      <div className="flex justify-between gap-4">
         <LandingProjectLink projectId={projectId} type="BACKLOG" />
         <LandingProjectLink projectId={projectId} type="SPRINT" />
-        <LandingProjectLink projectId={projectId} type="SETTINGS" />
+        {role === "LEADER" && (
+          <LandingProjectLink projectId={projectId} type="SETTINGS" />
+        )}
       </div>
     </div>
   );
