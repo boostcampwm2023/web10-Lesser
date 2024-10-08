@@ -123,6 +123,15 @@ export class ProjectRepository {
     }
   }
 
+  async getProjectJoinRequestListWithMember(
+    projectId: number,
+  ): Promise<ProjectJoinRequest[]> {
+    return this.projectJoinRequestRepository.find({
+      where: { projectId },
+      relations: { member: true },
+    });
+  }
+
   getProject(projectId: number): Promise<Project | null> {
     return this.projectRepository.findOne({ where: { id: projectId } });
   }
