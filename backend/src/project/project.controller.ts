@@ -93,8 +93,13 @@ export class ProjectController {
     @Res() response: Response,
   ) {
     try {
-      await this.projectService.createProjectJoinRequest(
-        body.inviteLinkId,
+      const projectJoinRequest =
+        await this.projectService.createProjectJoinRequest(
+          body.inviteLinkId,
+          request.member,
+        );
+      this.projectWebsocketGateway.notifyCreateJoinRequestToSettingPage(
+        projectJoinRequest,
         request.member,
       );
     } catch (e) {
