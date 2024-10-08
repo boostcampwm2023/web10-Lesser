@@ -154,7 +154,7 @@ export class ProjectService {
   async createProjectJoinRequest(
     inviteLinkId: string,
     member: Member,
-  ): Promise<void> {
+  ): Promise<ProjectJoinRequest> {
     const project = await this.getProjectByLinkId(inviteLinkId);
     if (!project) throw new Error('Project not found');
     const isProjectMember = await this.isProjectMember(project.id, member);
@@ -164,9 +164,11 @@ export class ProjectService {
         project.id,
         member.id,
       );
-      await this.projectRepository.createProjectJoinRequest(
-        newProjectJoinRequest,
-      );
+      const projectJoinRequest =
+        await this.projectRepository.createProjectJoinRequest(
+          newProjectJoinRequest,
+        );
+      return projectJoinRequest;
     } catch (e) {
       if (e.message === 'DUPLICATED PROJECT ID AND MEMBER ID') {
         throw new Error('Join request already submitted');

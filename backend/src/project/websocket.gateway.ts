@@ -23,6 +23,8 @@ import { WsProjectStoryController } from './ws-controller/ws-project-story.contr
 import { WsProjectTaskController } from './ws-controller/ws-project-task.controller';
 import { WsProjectInfoController } from './ws-controller/ws-project-info.controller';
 import { WsProjectInviteLinkController } from './ws-controller/ws-project-invite-link.controller';
+import { ProjectJoinRequest } from './entity/project-join-request.entity';
+import { CreateJoinRequestNotifyDto } from './dto/setting-page/CreateJoinRequestNotify.dto';
 
 @WebSocketGateway({
   namespace: /project-\d+/,
@@ -210,6 +212,22 @@ export class ProjectWebsocketGateway
 
   deleteProjectFromNamespaceMap(projectId: number) {
     this.namespaceMap.delete(projectId);
+  }
+
+  notifyCreateJoinRequestToSettingPage(
+    projectJoinRequest: ProjectJoinRequest,
+    member: Member,
+  ) {
+    const projectNamespace = this.namespaceMap.get(
+      projectJoinRequest.projectId,
+    );
+    if (!projectNamespace) return;
+    projectNamespace
+      .to('setting')
+      .emit(
+        'setting',
+        CreateJoinRequestNotifyDto.of(projectJoinRequest, member),
+      );
   }
 
   notifyJoinToConnectedMembers(projectId: number, member: Member) {
