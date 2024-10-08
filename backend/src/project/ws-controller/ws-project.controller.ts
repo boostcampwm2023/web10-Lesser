@@ -79,14 +79,18 @@ export class WsProjectController {
     client.leave('backlog');
     client.join('setting');
 
-    const [project, projectMemberList] = await Promise.all([
+    const [project, projectMemberList, joinRequestList] = await Promise.all([
       this.projectService.getProject(client.projectId, client.member),
       this.projectService.getProjectMemberList(client.project),
+      this.projectService.getProjectJoinRequestList(
+        client.projectId,
+        client.member,
+      ),
     ]);
 
     client.emit(
       'setting',
-      InitSettingResponseDto.of(project, projectMemberList),
+      InitSettingResponseDto.of(project, projectMemberList, joinRequestList),
     );
   }
 }

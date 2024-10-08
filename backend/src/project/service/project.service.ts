@@ -174,6 +174,21 @@ export class ProjectService {
     }
   }
 
+  async getProjectJoinRequestList(
+    projectId: number,
+    member: Member,
+  ): Promise<ProjectJoinRequest[]> {
+    if (!(await this.isExistProject(projectId))) {
+      throw new Error('Project not found');
+    }
+    if (!(await this.isProjectLeader(projectId, member))) {
+      throw new Error('Member is not the project leader');
+    }
+    return this.projectRepository.getProjectJoinRequestListWithMember(
+      projectId,
+    );
+  }
+
   async createMemo(project: Project, member: Member, color: memoColor) {
     const newMemo = Memo.of(project, member, '', '', color);
     return this.projectRepository.createMemo(newMemo);
